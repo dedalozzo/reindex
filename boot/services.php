@@ -7,73 +7,102 @@
 
 
 use Phalcon\DI\FactoryDefault;
-use Phalcon\Mvc\View;
+use Phalcon\Mvc\Router;
 use Phalcon\Mvc\Url as UrlResolver;
-use Phalcon\Mvc\View\Engine\Volt as VoltEngine;
-use Phalcon\Mvc\Model\Metadata\Memory as MetaDataAdapter;
+use Phalcon\Mvc\View\Engine\Volt;
+use Phalcon\Mvc\View;
 use Phalcon\Session\Adapter\Files as SessionAdapter;
+use ElephantOnCouch\ElephantOnCouch;
 
 
 // The FactoryDefault Dependency Injector automatically register the right services providing a full stack framework.
 $di = new FactoryDefault();
 
 
+// Setting up the router.
+$di->setShared('router',
+  function () {
+    $router = new Router();
+
+    //$router->setDefaultController("index");
+    //$router->setDefaultAction("recents");
+
+    $router->mount(new PitPress\Route\IndexGroup());
+    $router->mount(new PitPress\Route\NewsGroup());
+    $router->mount(new PitPress\Route\QuestionsGroup());
+    $router->mount(new PitPress\Route\ArticlesGroup());
+    $router->mount(new PitPress\Route\TutorialsGroup());
+    $router->mount(new PitPress\Route\BooksGroup());
+    $router->mount(new PitPress\Route\UsersGroup());
+    $router->mount(new PitPress\Route\TagsGroup());
+    $router->mount(new PitPress\Route\BadgesGroup());
+
+    return $router;
+  }
+);
+
+
 // The URL component is used to generate all kind of urls in the application.
-$di->set('url', function() use ($config) {
-	$url = new UrlResolver();
-	$url->setBaseUri($config->application->baseUri);
-	return $url;
-}, TRUE);
+$di->setShared('url',
+  function() use ($config) {
+	  $url = new UrlResolver();
+	  $url->setBaseUri($config->application->baseUri);
+	  return $url;
+  }
+);
+
+
+// Registers Volt as a service.
+$di->setShared('volt',
+  function($view, $di) use ($config) {
+    $volt = new Volt($view, $di);
+
+    $volt->setOptions(
+      [
+        'compiledPath' => __DIR__.$config->application->cacheDir.'volt/',
+        'compiledExtension' => '.compiled',
+        'compiledSeparator' => '_'
+      ]
+    );
+
+    return $volt;
+  }
+);
 
 
 // Setting up the view component.
-$di->set('view', function() use ($config) {
-	$view = new View();
+$di->setShared('view',
+  function() use ($config) {
+    $view = new View();
 
-	$view->setViewsDir($config->application->viewsDir);
+    $view->setViewsDir(__DIR__.$config->application->viewsDir);
 
-	$view->registerEngines(
-    [
-		  '.volt' => function($view, $di) use ($config) {
-			  $volt = new VoltEngine($view, $di);
+    $view->registerEngines(['.volt' => 'volt']);
 
-        $volt->setOptions(
-          [
-            'compiledPath' => $config->application->cacheDir,
-            'compiledSeparator' => '_'
-          ]
-        );
-
-			  return $volt;
-		  },
-		  '.phtml' => 'Phalcon\Mvc\View\Engine\Php' // Generates template files using PHP itself as the template engine.
-    ]
-	);
-
-	return $view;
-}, TRUE);
-
-
-// Database connection is created based in the parameters defined in the configuration file
-$di->set('db', function() use ($config) {
-	/*return new DbAdapter(array(
-		'host' => $config->database->host,
-		'username' => $config->database->username,
-		'password' => $config->database->password,
-		'dbname' => $config->database->dbname
-	));*/
-});
-
-
-// If the configuration specify the use of metadata adapter use it or use memory otherwise.
-$di->set('modelsMetadata', function() use ($config) {
-	return new MetaDataAdapter();
-});
+    return $view;
+  }
+);
 
 
 // Starts the session the first time some component request the session service.
-$di->set('session', function() {
-	$session = new SessionAdapter();
-	$session->start();
-	return $session;
-});
+$di->setShared('session',
+  function() {
+    $session = new SessionAdapter();
+    $session->start();
+    return $session;
+  }
+);
+
+
+// Creates an instance of ElephantOnCouch client.
+$di->setShared('couchdb',
+  function() use ($config) {
+    $couch = new ElephantOnCouch(ElephantOnCouch::DEFAULT_SERVER, $config->couchdb->user, $config->couchdb->password);
+
+    $couch->useCurl();
+
+    $couch->selectDb($config->couchdb->database);
+
+    return $couch;
+  }
+);
