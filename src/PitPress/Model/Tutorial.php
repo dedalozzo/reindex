@@ -1,16 +1,14 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: fff
- * Date: 9/15/11
- * Time: 4:07 PM
- * To change this template use File | Settings | File Templates.
- */
+
+//! @file Tutorial.php
+//! @brief This file contains the Tutorial class.
+//! @details
+//! @author Filippo F. Fadda
 
 
 namespace PitPress\Model;
 
 
-class BlogEntry extends Item {
+class Tutorial extends Article {
 
 }
