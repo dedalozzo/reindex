@@ -28,11 +28,9 @@ $di->setShared('router',
     //$router->setDefaultAction("recents");
 
     $router->mount(new PitPress\Route\IndexGroup());
-    $router->mount(new PitPress\Route\NewsGroup());
-    $router->mount(new PitPress\Route\QuestionsGroup());
-    $router->mount(new PitPress\Route\ArticlesGroup());
-    $router->mount(new PitPress\Route\TutorialsGroup());
-    $router->mount(new PitPress\Route\BooksGroup());
+    $router->mount(new PitPress\Route\LinksGroup());
+    $router->mount(new PitPress\Route\ForumGroup());
+    $router->mount(new PitPress\Route\BlogGroup());
     $router->mount(new PitPress\Route\UsersGroup());
     $router->mount(new PitPress\Route\TagsGroup());
     $router->mount(new PitPress\Route\BadgesGroup());
