@@ -1,11 +1,9 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: fff
- * Date: 9/15/11
- * Time: 4:08 PM
- * To change this template use File | Settings | File Templates.
- */
+
+//! @file Poll.php
+//! @brief This file contains the Poll class.
+//! @details
+//! @author Filippo F. Fadda
 
 
 namespace PitPress\Model;
