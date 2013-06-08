@@ -1,8 +1,9 @@
 <?php
+
 //! @file Tag.php
-//! @brief This file contains the Doc class.
+//! @brief This file contains the Tag class.
 //! @details
-//! @author fff
+//! @author Filippo F. Fadda
 
 
 namespace PitPress\Model;
