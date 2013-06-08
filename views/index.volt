@@ -45,9 +45,8 @@
       <li class="search">
         <span><input style="width: 250px; height: 28px;" type="text" /></span>
       </li>
-      <li><a href="#"><i class="icon-group"></i>&nbsp;Utenti</a></li>
-      <li><a href="#"><i class="icon-tags"></i>&nbsp;Tags</a></li>
-      <li><a href="#"><i class="icon-certificate"></i>&nbsp;Badges</a></li>
+      <li><a href="#"><i class="icon-puzzle-piece"></i>&nbsp;Collabora</a></li>
+      <li><a href="#"><i class="icon-h-sign"></i>&nbsp;Aiuto</a></li>
       <li class="space"></li>
       <li><a href="#"><img class="gravatar" src="http://www.gravatar.com/avatar/b6799a3261ca303c0b39f991fd9250b4.png" />&nbsp;dedalo</a></li>
     </ul>
