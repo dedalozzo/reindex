@@ -66,7 +66,7 @@
             <a href="#"><i class="icon-star-empty icon-large"></i></a>
           </div>
           <div class="item-section">
-            <a href="#">NEWS</a>
+            <a href="#">FORUM</a>
           </div>
           <div class="item-container">
             <a class="item-title" href="#">Add composer configuration and fix coding standards</a><br />
@@ -154,7 +154,7 @@
             <a href="#"><i class="icon-star-empty icon-large"></i></a>
           </div>
           <div class="item-section">
-            <a href="#">NEWS</a>
+            <a href="#">FORUM</a>
           </div>
           <div class="item-container">
             <a class="item-title" href="#">Add composer configuration and fix coding standards</a><br />
@@ -242,7 +242,7 @@
             <a href="#"><i class="icon-star-empty icon-large"></i></a>
           </div>
           <div class="item-section">
-            <a href="#">NEWS</a>
+            <a href="#">FORUM</a>
           </div>
           <div class="item-container">
             <a class="item-title" href="#">Add composer configuration and fix coding standards</a><br />
@@ -330,7 +330,7 @@
             <a href="#"><i class="icon-star-empty icon-large"></i></a>
           </div>
           <div class="item-section">
-            <a href="#">NEWS</a>
+            <a href="#">FORUM</a>
           </div>
           <div class="item-container">
             <a class="item-title" href="#">Add composer configuration and fix coding standards</a><br />
@@ -418,7 +418,7 @@
             <a href="#"><i class="icon-star-empty icon-large"></i></a>
           </div>
           <div class="item-section">
-            <a href="#">NEWS</a>
+            <a href="#">FORUM</a>
           </div>
           <div class="item-container">
             <a class="item-title" href="#">Add composer configuration and fix coding standards</a><br />
@@ -506,7 +506,7 @@
             <a href="#"><i class="icon-star-empty icon-large"></i></a>
           </div>
           <div class="item-section">
-            <a href="#">NEWS</a>
+            <a href="#">FORUM</a>
           </div>
           <div class="item-container">
             <a class="item-title" href="#">Add composer configuration and fix coding standards</a><br />
@@ -652,7 +652,7 @@
             <a href="#"><i class="icon-star-empty icon-large"></i></a>
           </div>
           <div class="item-section">
-            <a href="#">NEWS</a>
+            <a href="#">FORUM</a>
           </div>
           <div class="item-container">
             <a class="item-title" href="#">Add composer configuration and fix coding standards</a><br />
@@ -740,7 +740,7 @@
             <a href="#"><i class="icon-star-empty icon-large"></i></a>
           </div>
           <div class="item-section">
-            <a href="#">NEWS</a>
+            <a href="#">FORUM</a>
           </div>
           <div class="item-container">
             <a class="item-title" href="#">Add composer configuration and fix coding standards</a><br />
@@ -828,7 +828,7 @@
             <a href="#"><i class="icon-star-empty icon-large"></i></a>
           </div>
           <div class="item-section">
-            <a href="#">NEWS</a>
+            <a href="#">FORUM</a>
           </div>
           <div class="item-container">
             <a class="item-title" href="#">Add composer configuration and fix coding standards</a><br />
@@ -916,7 +916,7 @@
             <a href="#"><i class="icon-star-empty icon-large"></i></a>
           </div>
           <div class="item-section">
-            <a href="#">NEWS</a>
+            <a href="#">FORUM</a>
           </div>
           <div class="item-container">
             <a class="item-title" href="#">Add composer configuration and fix coding standards</a><br />
@@ -1034,11 +1034,11 @@
 
         <div class="tab-content" id="updates">
         <ul class="list tabs no-gutter">
-          <li class="active"><a href="#blog" data-toggle="tab">BLOG</a></li>
+          <li class="active"><a href="#articles" data-toggle="tab">ARTICOLI</a></li>
           <li><a href="#guides" data-toggle="tab">GUIDE</a></li>
           <li><a href="#books" data-toggle="tab">LIBRI</a></li>
         </ul>
-        <div class="tab-pane active" id="blog">
+        <div class="tab-pane active" id="articles">
           <ul class="items">
             <li>
               <a href="#">
@@ -1614,7 +1614,7 @@
             </li>
           </ul>
         </div>
-        <div class="tab-pane" id="news">
+        <div class="tab-pane" id="forum">
           <ul class="items">
             <li>
               <a href="#">
