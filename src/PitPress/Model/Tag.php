@@ -11,4 +11,29 @@ namespace PitPress\Model;
 
 class Tag extends Item {
 
+  public function getFollowersCount() {
+
+  }
+
+
+  public function subscribe() {
+
+  }
+
+
+  public function unsubscribe() {
+
+  }
+
+
+  public function setExcerpt($value) {
+    $this->meta["excerpt"] = $value;
+  }
+
+
+  public function getExcerpt() {
+    return $this->meta["excerpt"];
+  }
+
+
 }
