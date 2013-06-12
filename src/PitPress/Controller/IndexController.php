@@ -14,6 +14,8 @@ use ElephantOnCouch\ElephantOnCouch;
 use ElephantOnCouch\ViewQueryArgs;
 
 
+//! @brief
+//! @nosubgrouping
 class IndexController extends BaseController {
 
   public function initialize() {
