@@ -9,6 +9,8 @@
 namespace PitPress\Controller;
 
 
+//! @brief
+//! @nosubgrouping
 class BadgesController extends BaseController {
 
   public function initialize() {

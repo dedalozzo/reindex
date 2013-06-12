@@ -9,6 +9,8 @@
 namespace PitPress\Route;
 
 
+//! @brief
+//! @nosubgrouping
 class BlogGroup extends \Phalcon\Mvc\Router\Group {
 
   public function initialize() {
