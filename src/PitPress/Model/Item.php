@@ -6,14 +6,22 @@
 //! @author Filippo F. Fadda
 
 
+//! @brief PitPress models namespace.
 namespace PitPress\Model;
 
 
 use ElephantOnCouch\Doc\Doc;
 
+
 //! @brief
 //! @nosubgrouping
 class Item extends Doc {
+
+  //! @name Item's Attributes
+  //! @brief Those are standard item's attributes.
+  //@{
+  const NAME = "name"; //!< Document's name.
+  //@}
 
   //! @name States
   //@{
@@ -94,19 +102,27 @@ class Item extends Doc {
   }
 
 
-  public function setTitle($title) {
-    $this->meta["title"] = $title;
+  public function getName() {
+    return $this->meta[self::NAME];
+  }
+
+  public function issetName() {
+    return isset($this->meta[self::NAME]);
   }
 
 
-  public function getTitle() {
-    return $this->meta["title"];
+  public function setName($value) {
+    $this->meta[self::NAME] = $value;
   }
 
+  public function unsetName() {
+    if ($this->isMetadataPresent(self::NAME))
+      unset($this->meta[self::NAME]);
+  }
 
   // A general text field where store text.
-  public function setBody($body) {
-    $this->meta["body"] = $body;
+  public function setBody($value) {
+    $this->meta["body"] = $value;
   }
 
 
@@ -115,12 +131,12 @@ class Item extends Doc {
   }
 
 
-  public function addFollower() {
+  public function follow() {
 
   }
 
 
-  public function removeFollower() {
+  public function unfollow() {
 
   }
 
@@ -238,12 +254,27 @@ class Item extends Doc {
   }
 
 
-  public function reject($reason) {
+  public function acceptRevision() {
+
+  }
+
+
+  public function rejectRevision($reason) {
 
   }
 
 
   public function publish() {
+
+  }
+
+
+  public function getPermalink() {
+
+  }
+
+
+  public function flag() {
 
   }
 
