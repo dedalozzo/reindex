@@ -9,6 +9,8 @@
 namespace PitPress\Model;
 
 
+//! @brief
+//! @nosubgrouping
 class Poll extends Item {
 
 }
