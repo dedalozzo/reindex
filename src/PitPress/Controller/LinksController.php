@@ -9,6 +9,8 @@
 namespace PitPress\Controller;
 
 
+//! @brief
+//! @nosubgrouping
 class LinksController extends BaseController {
 
   public function initialize() {
