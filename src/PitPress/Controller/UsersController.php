@@ -9,6 +9,8 @@
 namespace PitPress\Controller;
 
 
+//! @brief
+//! @nosubgrouping
 class UsersController extends BaseController {
 
   public function initialize() {

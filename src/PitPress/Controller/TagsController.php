@@ -9,6 +9,8 @@
 namespace PitPress\Controller;
 
 
+//! @brief
+//! @nosubgrouping
 class TagsController extends BaseController {
 
   public function initialize() {
