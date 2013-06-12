@@ -6,9 +6,12 @@
 //! @author Filippo F. Fadda
 
 
+//! @brief PitPress routes namespace.
 namespace PitPress\Route;
 
 
+//! @brief
+//! @nosubgrouping
 class IndexGroup extends \Phalcon\Mvc\Router\Group {
 
   public function initialize() {

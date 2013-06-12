@@ -9,6 +9,8 @@
 namespace PitPress\Route;
 
 
+//! @brief
+//! @nosubgrouping
 class LinksGroup extends \Phalcon\Mvc\Router\Group {
 
   public function initialize() {
