@@ -5,16 +5,31 @@
 //! @details
 //! @author Filippo F. Fadda
 
+
+use Phalcon\DI\FactoryDefault;
+
+
 $start = microtime(true);
 
 try {
-  $config = new Phalcon\Config\Adapter\Ini(__DIR__.'/../config.ini');
-
   // Initializes the Composer autoloading system. (Note: We don't use the Phalcon loader.)
   require __DIR__."/../vendor/autoload.php";
 
+
+  // Reads the application's configuration.
+  $config = new Phalcon\Config\Adapter\Ini(__DIR__.'/../config.ini');
+
+  // The FactoryDefault Dependency Injector automatically register the right services providing a full stack framework.
+  $di = new FactoryDefault();
+
   // Start the services.
-  require __DIR__."/../boot/services.php";
+  require __DIR__."/../boot/services/couchdb.php";
+  require __DIR__."/../boot/services/mysql.php";
+  require __DIR__."/../boot/services/router.php";
+  require __DIR__."/../boot/services/view.php";
+  require __DIR__."/../boot/services/volt.php";
+  require __DIR__."/../boot/services/url.php";
+  require __DIR__."/../boot/services/session.php";
 
   // Retrieves the Router component.
   $router = $di['router'];
