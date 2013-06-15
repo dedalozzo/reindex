@@ -34,9 +34,6 @@ class Item extends Doc {
   //@}
 
 
-  public function __construct() {
-
-  }
 
 
   public function getState() {
@@ -158,14 +155,6 @@ class Item extends Doc {
 
   public function getReplaysCount() {
 
-  }
-
-
-  public function getDisplaysCount() {
-
-  }
-
-  public function incDisplays() {
   }
 
 
