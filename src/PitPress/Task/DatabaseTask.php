@@ -62,7 +62,6 @@ class DatabaseTask extends Task {
     }
 
     mysql_free_result($result);
-
   }
 
 
@@ -208,6 +207,13 @@ class DatabaseTask extends Task {
 
 
   public function compactAction() {
+    $this->couch = $this->_dependencyInjector['couchdb'];
+
+    $this->couch->compactDb();
+  }
+
+
+  public function commitAction() {
     $this->couch = $this->_dependencyInjector['couchdb'];
 
     $this->couch->compactDb();
