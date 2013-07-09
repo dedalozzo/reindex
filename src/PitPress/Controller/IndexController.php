@@ -1,7 +1,7 @@
 <?php
 
 //! @file IndexController.php
-//! @brief Controller of Updates actions.
+//! @brief This file contains the IndexController class.
 //! @details
 //! @author Filippo F. Fadda
 
@@ -9,12 +9,12 @@
 namespace PitPress\Controller;
 
 
-use ElephantOnCouch\DocOpts;
-use ElephantOnCouch\ElephantOnCouch;
-use ElephantOnCouch\ViewQueryArgs;
+use ElephantOnCouch\Couch;
+use ElephantOnCouch\Opt\DocOpts;
+use ElephantOnCouch\Opt\ViewQueryOpts;
 
 
-//! @brief
+//! @brief Controller of Updates actions.
 //! @nosubgrouping
 class IndexController extends BaseController {
 
@@ -25,30 +25,28 @@ class IndexController extends BaseController {
 
 
   public function indexAction() {
-    $queryArgs = new ViewQueryArgs();
+    //$this->latestAction();
+  }
 
-    $queryArgs->setLimit(20);
-    $queryArgs->doNotReduce();
-    //$queryArgs->includeDocs();
-    $results = $this->couch->queryView("articles", "articles_by_id", $queryArgs)->getBodyAsArray();
 
-    $docOpts = new DocOpts();
-    $docOpts->ignoreClassName = TRUE;
+  public function latestAction() {
+    $queryOpts = new ViewQueryOpts();
+    $queryOpts->doNotReduce();
+    $queryOpts->reverseOrderOfResults();
+    $queryOpts->setLimit(30);
+
+    $results = $this->couch->queryView("index", "latest", $queryOpts)->getBodyAsArray();
 
     $items = [];
     foreach ($results["rows"] as $row) {
-      $items[] = $this->couch->getDoc(ElephantOnCouch::STD_DOC_PATH, $row["id"], NULL, $docOpts);
+      $items[] = $this->couch->getDoc(Couch::STD_DOC_PATH, $row["id"], NULL, $docOpts);
     }
 
     $this->view->setVar("items", $items);
   }
 
 
-  public function recentsAction() {
-  }
-
-
-  public function popularsAction() {
+  public function popularAction() {
   }
 
 
