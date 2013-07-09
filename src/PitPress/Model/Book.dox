@@ -1,0 +1,23 @@
+<?php
+
+
+namespace PitPress\Model;
+
+
+class Book {
+
+  //! @name Properties
+  //! @brief Those are standard book's attributes.
+  //@{
+  public string $isbn; //!< Book's ISBN.
+  public string $authors; //!< Book's authors.
+  public string $publisher; //!< Book's publisher.
+  public string $language; //!< Book's language.
+  public int $year; //!< Book's publishing year.
+  public int $pages; //!< Book's pages.
+  public string $attachments; //!< Book's attachments.
+  public string $positive; //!< Book's positive aspects.
+  public string $negative; //!< Book's negative aspects.
+  //@}
+
+}

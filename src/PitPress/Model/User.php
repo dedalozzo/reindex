@@ -14,287 +14,258 @@ use ElephantOnCouch\Doc\Doc;
 
 //! @brief This class is used to represent a registered user.
 //! @nosubgrouping
-class User extends Doc {
-
-  //! @name User's Attributes
-  //! @brief Those are standard user's attributes.
-  //@{
-  const FIRST_NAME = "firstName"; //!< User's name.
-  const LAST_NAME = "lastName"; //!< User's surname.
-  const DISPLAY_NAME = "displayName"; //!< The name to be displayed on the site.
-
-  const EMAIL = "email"; //!< User's e-mail.
-  const PASSWORD = "password"; //!< Password chosen by the user.
-
-  const SEX = "sex"; //!< Sex.
-  const BIRTHDAY = "birthday"; //!< Date of birth.
-
-  const CREATION_DATE = "creationDate"; //!< Registration date.
-  const LAST_UPDATE = "lastUpdate"; //!< Last time the user has updated his profile.
-  const LAST_VISIT = "lastVisit"; //!< Last time the user has logged in.
-
-  // We don't use these constants, because every registered users must agree to the Terms of Services, Privacy Policy and
-  // Cookie policy. Here just to remember them.
-  //const TERMS_OF_SERVICE = "termsOfService";
-  //const PRIVACY_POLICY = "privacyPolicy";
-  //const COOKIE_POLICY = "cookiePolicy";
-
-  const IP_ADDRESS = "idAddress"; //!< Last known user's IP address.
-  const CONFIRMATION_HASH = "confirmationHash"; //!< Confirmation hash.
-  const AUTHENTICATED = "authenticated"; //!< The user has been authenticated.
-  const BANNED = "banned"; //!< The uses has been banned.
-  //@}
+class User extends AbstractItem {
 
 
   public function getFirstName($value) {
-    $this->meta[self::FIRST_NAME] = $value;
+    $this->meta['firstName'] = $value;
   }
 
 
   public function issetFirstName() {
-    return isset($this->meta[self::FIRST_NAME]);
+    return isset($this->meta['firstName']);
   }
 
 
   public function setFirstName() {
-    return $this->meta[self::FIRST_NAME];
+    return $this->meta['firstName'];
   }
 
 
   public function unsetFirstName() {
-    if ($this->isMetadataPresent(self::FIRST_NAME))
-      unset($this->meta[self::FIRST_NAME]);
+    if ($this->isMetadataPresent('firstName'))
+      unset($this->meta['firstName']);
   }
 
 
   public function getLastName($value) {
-    $this->meta[self::LAST_NAME] = $value;
+    $this->meta['lastName'] = $value;
   }
 
 
   public function issetLastName() {
-    return isset($this->meta[self::LAST_NAME]);
+    return isset($this->meta['lastName']);
   }
 
 
   public function setLastName() {
-    return $this->meta[self::LAST_NAME];
+    return $this->meta['lastName'];
   }
 
 
   public function unsetLastName() {
-    if ($this->isMetadataPresent(self::LAST_NAME))
-      unset($this->meta[self::LAST_NAME]);
+    if ($this->isMetadataPresent('lastName'))
+      unset($this->meta['lastName']);
   }
 
 
   public function getDisplayName($value) {
-    $this->meta[self::DISPLAY_NAME] = $value;
+    $this->meta['displayName'] = $value;
   }
 
 
   public function issetDisplayName() {
-    return isset($this->meta[self::DISPLAY_NAME]);
+    return isset($this->meta['displayName']);
   }
 
 
   public function setDisplayName() {
-    return $this->meta[self::DISPLAY_NAME];
+    return $this->meta['displayName'];
   }
 
 
   public function unsetDisplayName() {
-    if ($this->isMetadataPresent(self::DISPLAY_NAME))
-      unset($this->meta[self::DISPLAY_NAME]);
+    if ($this->isMetadataPresent('displayName'))
+      unset($this->meta['displayName']);
   }
 
 
   public function getEmail($value) {
-    $this->meta[self::EMAIL] = $value;
+    $this->meta['email'] = $value;
   }
 
 
   public function issetEmail() {
-    return isset($this->meta[self::EMAIL]);
+    return isset($this->meta['email']);
   }
 
 
   public function setEmail() {
-    return $this->meta[self::EMAIL];
+    return $this->meta['email'];
   }
 
 
   public function unsetEmail() {
-    if ($this->isMetadataPresent(self::EMAIL))
-      unset($this->meta[self::EMAIL]);
+    if ($this->isMetadataPresent('email'))
+      unset($this->meta['email']);
   }
 
 
   public function getPassword($value) {
-    $this->meta[self::PASSWORD] = $value;
+    $this->meta['password'] = $value;
   }
 
 
   public function issetPassword() {
-    return isset($this->meta[self::PASSWORD]);
+    return isset($this->meta['password']);
   }
 
 
   public function setPassword() {
-    return $this->meta[self::PASSWORD];
+    return $this->meta['password'];
   }
 
 
   public function unsetPassword() {
-    if ($this->isMetadataPresent(self::PASSWORD))
-      unset($this->meta[self::PASSWORD]);
+    if ($this->isMetadataPresent('password'))
+      unset($this->meta['password']);
   }
 
 
   public function getSex($value) {
-    $this->meta[self::SEX] = $value;
+    $this->meta['sex'] = $value;
   }
 
 
   public function issetSex() {
-    return isset($this->meta[self::SEX]);
+    return isset($this->meta['sex']);
   }
 
 
   public function setSex() {
-    return $this->meta[self::SEX];
+    return $this->meta['sex'];
   }
 
 
   public function unsetSex() {
-    if ($this->isMetadataPresent(self::SEX))
-      unset($this->meta[self::SEX]);
+    if ($this->isMetadataPresent('sex'))
+      unset($this->meta['sex']);
   }
 
 
   public function getBirthday($value) {
-    $this->meta[self::BIRTHDAY] = $value;
+    $this->meta['birthday'] = $value;
   }
 
 
   public function issetBirthday() {
-    return isset($this->meta[self::BIRTHDAY]);
+    return isset($this->meta['birthday']);
   }
 
 
   public function setBirthday() {
-    return $this->meta[self::BIRTHDAY];
+    return $this->meta['birthday'];
   }
 
 
   public function unsetBirthday() {
-    if ($this->isMetadataPresent(self::BIRTHDAY))
-      unset($this->meta[self::BIRTHDAY]);
+    if ($this->isMetadataPresent('birthday'))
+      unset($this->meta['birthday']);
   }
 
 
   public function getCreationDate($value) {
-    $this->meta[self::CREATION_DATE] = $value;
+    $this->meta['creationDate'] = $value;
   }
 
 
   public function issetCreationDate() {
-    return isset($this->meta[self::CREATION_DATE]);
+    return isset($this->meta['creationDate']);
   }
 
 
   public function setCreationDate() {
-    return $this->meta[self::CREATION_DATE];
+    return $this->meta['creationDate'];
   }
 
 
   public function unsetCreationDate() {
-    if ($this->isMetadataPresent(self::CREATION_DATE))
-      unset($this->meta[self::CREATION_DATE]);
+    if ($this->isMetadataPresent('creationDate'))
+      unset($this->meta['creationDate']);
   }
 
 
   public function getLastUpdate($value) {
-    $this->meta[self::LAST_UPDATE] = $value;
+    $this->meta['lastUpdate'] = $value;
   }
 
 
   public function issetLastUpdate() {
-    return isset($this->meta[self::LAST_UPDATE]);
+    return isset($this->meta['lastUpdate']);
   }
 
 
   public function setLastUpdate() {
-    return $this->meta[self::LAST_UPDATE];
+    return $this->meta['lastUpdate'];
   }
 
 
   public function unsetLastUpdate() {
-    if ($this->isMetadataPresent(self::LAST_UPDATE))
-      unset($this->meta[self::LAST_UPDATE]);
+    if ($this->isMetadataPresent('lastUpdate'))
+      unset($this->meta['lastUpdate']);
   }
 
 
   public function getLastVisit($value) {
-    $this->meta[self::LAST_VISIT] = $value;
+    $this->meta['lastVisit'] = $value;
   }
 
 
   public function issetLastVisit() {
-    return isset($this->meta[self::LAST_VISIT]);
+    return isset($this->meta['lastVisit']);
   }
 
 
   public function setLastVisit() {
-    return $this->meta[self::LAST_VISIT];
+    return $this->meta['lastVisit'];
   }
 
 
   public function unsetLastVisit() {
-    if ($this->isMetadataPresent(self::LAST_VISIT))
-      unset($this->meta[self::LAST_VISIT]);
+    if ($this->isMetadataPresent('lastVisit'))
+      unset($this->meta['lastVisit']);
   }
 
 
   public function getIPAddress($value) {
-    $this->meta[self::IP_ADDRESS] = $value;
+    $this->meta['ipAddress'] = $value;
   }
 
 
   public function issetIPAddress() {
-    return isset($this->meta[self::IP_ADDRESS]);
+    return isset($this->meta['ipAddress']);
   }
 
 
   public function setIPAddress() {
-    return $this->meta[self::IP_ADDRESS];
+    return $this->meta['ipAddress'];
   }
 
 
   public function unsetIPAddress() {
-    if ($this->isMetadataPresent(self::IP_ADDRESS))
-      unset($this->meta[self::IP_ADDRESS]);
+    if ($this->isMetadataPresent('ipAddress'))
+      unset($this->meta['ipAddress']);
   }
 
 
   public function getConfirmationHash($value) {
-    $this->meta[self::CONFIRMATION_HASH] = $value;
+    $this->meta['confirmationHash'] = $value;
   }
 
 
   public function issetConfirmationHash() {
-    return isset($this->meta[self::CONFIRMATION_HASH]);
+    return isset($this->meta['confirmationHash']);
   }
 
 
   public function setConfirmationHash() {
-    return $this->meta[self::CONFIRMATION_HASH];
+    return $this->meta['confirmationHash'];
   }
 
 
   public function unsetConfirmationHash() {
-    if ($this->isMetadataPresent(self::CONFIRMATION_HASH))
-      unset($this->meta[self::CONFIRMATION_HASH]);
+    if ($this->isMetadataPresent('confirmationHash'))
+      unset($this->meta['confirmationHash']);
   }
 
 
@@ -306,32 +277,32 @@ class User extends Doc {
 
   //! @brief Authenticate the user.
   public function authenticate() {
-    $this->meta[self::AUTHENTICATED] = "true";
+    $this->meta['authenticated'] = "true";
   }
 
 
   //! @brief Returns TRUE if the user has been authenticated.
   public function isAuthenticated() {
-    return isset($this->meta[self::AUTHENTICATED]);
+    return isset($this->meta['authenticated']);
   }
 
 
   //! @brief Bans the user.
   public function ban() {
-    $this->meta[self::BANNED] = "true";
+    $this->meta['banned'] = "true";
   }
 
 
   //! @brief Unban the user.
   public function unban() {
-    if ($this->isMetadataPresent(self::BANNED))
-      unset($this->meta[self::BANNED]);
+    if ($this->isMetadataPresent('banned'))
+      unset($this->meta['banned']);
   }
 
 
   //! @brief Returns TRUE if the user has been banned.
   public function isBanned() {
-    return isset($this->meta[self::BANNED]);
+    return isset($this->meta['banned']);
   }
 
 }

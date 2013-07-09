@@ -9,211 +9,207 @@
 namespace PitPress\Model;
 
 
-//! @brief
+//! @brief dfsfsfs
 //! @nosubgrouping
 class Book extends Article {
 
-  //! @name Book's Attributes
-  //! @brief Those are standard book's attributes.
-  //@{
-  const ISBN = "isbn"; //!< Book's ISBN.
-  const AUTHORS = "authors"; //!< Book's authors.
-  const PUBLISHER = "publisher"; //!< Book's publisher.
-  const LANGUAGE = "language"; //!< Book's language.
-  const YEAR = "year"; //!< Book's publishing year.
-  const PAGES = "pages"; //!< Book's pages.
-  const ATTACHMENTS = "attachments"; //!< Book's attachments.
-  const POSITIVE = "positive"; //!< Book's positive aspects.
-  const NEGATIVE = "negative"; //!< Book's negative aspects.
-  const COVER = "cover"; //!< Book's cover.
-  //@}
+  const ISBN = "isbn";
+  const AUTHORS = "authors";
+  const PUBLISHER = "publisher";
+  const LANGUAGE = "language";
+  const YEAR = "year";
+  const PAGES = "pages";
+  const ATTACHMENTS = "attachments";
+  const POSITIVE = "positive";
+  const NEGATIVE = "negative";
+  const COVER = "cover";
 
 
   public function getIsbn() {
-    return $this->meta[self::ISBN];
+    return $this->meta['isbn'];
   }
 
 
   public function issetIsbn() {
-    return isset($this->meta[self::ISBN]);
+    return isset($this->meta['isbn']);
   }
 
 
   public function setIsbn($value) {
-    $this->meta[self::ISBN] = $value;
+    $this->meta['isbn'] = $value;
   }
 
   public function unsetIsbn() {
-    if ($this->isMetadataPresent(self::ISBN))
-      unset($this->meta[self::ISBN]);
+    if ($this->isMetadataPresent('isbn'))
+      unset($this->meta['isbn']);
   }
 
 
   public function getAuthors() {
-    return $this->meta[self::AUTHORS];
+    return $this->meta['authors'];
   }
 
 
   public function issetAuthors() {
-    return isset($this->meta[self::AUTHORS]);
+    return isset($this->meta['authors']);
   }
 
 
   public function setAuthors($value) {
-    $this->meta[self::AUTHORS] = $value;
+    $this->meta['authors'] = $value;
   }
 
 
   public function unsetAuthors() {
-    if ($this->isMetadataPresent(self::AUTHORS))
-      unset($this->meta[self::AUTHORS]);
+    if ($this->isMetadataPresent('authors'))
+      unset($this->meta['authors']);
   }
 
 
   public function getPublisher($value) {
-    $this->meta[self::PUBLISHER] = $value;
+    $this->meta['publisher'] = $value;
   }
 
 
   public function issetPublisher() {
-    return isset($this->meta[self::PUBLISHER]);
+    return isset($this->meta['publisher']);
   }
 
 
   public function setPublisher() {
-    return $this->meta[self::PUBLISHER];
+    return $this->meta['publisher'];
   }
 
 
   public function unsetPublisher() {
-    if ($this->isMetadataPresent(self::PUBLISHER))
-      unset($this->meta[self::PUBLISHER]);
+    if ($this->isMetadataPresent('publisher'))
+      unset($this->meta['publisher']);
   }
 
 
   public function getLanguage() {
-    return $this->meta[self::LANGUAGE];
+    return $this->meta['language'];
   }
 
 
   public function issetLanguage() {
-    return isset($this->meta[self::LANGUAGE]);
+    return isset($this->meta['language']);
   }
 
 
   public function setLanguage($value) {
-    $this->meta[self::LANGUAGE] = $value;
+    $this->meta['language'] = $value;
   }
 
 
   public function unsetLanguage() {
-    if ($this->isMetadataPresent(self::LANGUAGE))
-      unset($this->meta[self::LANGUAGE]);
+    if ($this->isMetadataPresent('language'))
+      unset($this->meta['language']);
   }
 
 
   public function getYear() {
-    return $this->meta[self::YEAR];
+    return $this->meta['year'];
   }
 
 
   public function issetYear() {
-    return isset($this->meta[self::YEAR]);
+    return isset($this->meta['year']);
   }
 
 
   public function setYear($value) {
-    $this->meta[self::YEAR] = $value;
+    $this->meta['year'] = $value;
   }
 
 
   public function unsetYear() {
-    if ($this->isMetadataPresent(self::YEAR))
-      unset($this->meta[self::YEAR]);
+    if ($this->isMetadataPresent('year'))
+      unset($this->meta['year']);
   }
 
 
   public function getPages() {
-    return $this->meta[self::PAGES];
+    return $this->meta['pages'];
   }
 
 
   public function issetPages() {
-    return isset($this->meta[self::PAGES]);
+    return isset($this->meta['pages']);
   }
 
 
   public function setPages($value) {
-    $this->meta[self::PAGES] = $value;
+    $this->meta['pages'] = $value;
   }
 
 
   public function unsetPages() {
-    if ($this->isMetadataPresent(self::PAGES))
-      unset($this->meta[self::PAGES]);
+    if ($this->isMetadataPresent('pages'))
+      unset($this->meta['pages']);
   }
 
 
   public function getAttachments() {
-    return $this->meta[self::ATTACHMENTS];
+    return $this->meta['attachments'];
   }
 
 
   public function issetAttachments() {
-    return isset($this->meta[self::ATTACHMENTS]);
+    return isset($this->meta['attachments']);
   }
 
 
   public function setAttachments($value) {
-    $this->meta[self::ATTACHMENTS] = $value;
+    $this->meta['attachments'] = $value;
   }
 
 
   public function unsetAttachments() {
-    if ($this->isMetadataPresent(self::ATTACHMENTS))
-      unset($this->meta[self::ATTACHMENTS]);
+    if ($this->isMetadataPresent('attachments'))
+      unset($this->meta['attachments']);
   }
 
 
   public function getPositive() {
-    return $this->meta[self::POSITIVE];
+    return $this->meta['positive'];
   }
 
 
   public function issetPositive() {
-    return isset($this->meta[self::POSITIVE]);
+    return isset($this->meta['positive']);
   }
 
 
   public function setPositive($value) {
-    $this->meta[self::POSITIVE] = $value;
+    $this->meta['positive'] = $value;
   }
 
 
   public function unsetPositive() {
-    if ($this->isMetadataPresent(self::POSITIVE))
-      unset($this->meta[self::POSITIVE]);
+    if ($this->isMetadataPresent('positive'))
+      unset($this->meta['positive']);
   }
 
 
   public function getNegative() {
-    return $this->meta[self::NEGATIVE];
+    return $this->meta['negative'];
   }
 
 
   public function issetNegative() {
-    return isset($this->meta[self::NEGATIVE]);
+    return isset($this->meta['negative']);
   }
 
 
   public function setNegative($value) {
-    $this->meta[self::NEGATIVE] = $value;
+    $this->meta['negative'] = $value;
   }
 
 
   public function unsetNegative() {
-    if ($this->isMetadataPresent(self::NEGATIVE))
-      unset($this->meta[self::NEGATIVE]);
+    if ($this->isMetadataPresent('negative'))
+      unset($this->meta['negative']);
   }
 
 

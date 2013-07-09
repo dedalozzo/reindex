@@ -9,16 +9,9 @@
 namespace PitPress\Model;
 
 
-//! @brief
+//! @brief dfgjhsdhkasda
 //! @nosubgrouping
 class Article extends Item {
-
-  //! @name Item's Attributes
-  //! @brief Those are standard item's attributes.
-  //@{
-  const TITLE = "title"; //!< Document's title.
-  //@}
-
 
   // Overrides the Item implementation, because an article doesn't have a name but a title.
   public function getName() {
@@ -45,21 +38,21 @@ class Article extends Item {
 
 
   public function getTitle() {
-    return $this->meta[self::TITLE];
+    return $this->meta['title'];
   }
 
   public function issetTitle() {
-    return isset($this->meta[self::TITLE]);
+    return isset($this->meta['title']);
   }
 
 
   public function setTitle($value) {
-    $this->meta[self::TITLE] = $value;
+    $this->meta['title'] = $value;
   }
 
   public function unsetTitle() {
-    if ($this->isMetadataPresent(self::TITLE))
-      unset($this->meta[self::TITLE]);
+    if ($this->isMetadataPresent('title'))
+      unset($this->meta['title']);
   }
 
 }

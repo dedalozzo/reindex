@@ -1,0 +1,38 @@
+<?php
+
+
+namespace PitPress\Model;
+
+
+class User  {
+
+  //! @name Properties
+  //! @brief Those are standard user's attributes.
+  //@{
+  public string $firstName; //!< User's name.
+  public string $lastName; //!< User's surname.
+  public string $displayName; //!< The name to be displayed on the site.
+
+  public string $email; //!< User's e-mail.
+  public string $password; //!< Password chosen by the user.
+
+  public string $sex; //!< Sex.
+  public string $birthday; //!< Date of birth.
+
+  public string $creationDate; //!< Registration date.
+  public string $lastUpdate; //!< Last time the user has updated his profile.
+  public string $lastVisit; //!< Last time the user has logged in.
+
+  // We don't use these constants, because every registered users must agree to the Terms of Services, Privacy Policy and
+  // Cookie policy. Here just to remember them.
+  //public string $termsOfService;
+  //public string $privacyPolicy;
+  //public string $cookiePolicy;
+
+  public string $idAddress; //!< Last known user's IP address.
+  public string $confirmationHash; //!< Confirmation hash.
+  public string $authenticated; //!< The user has been authenticated.
+  public string $banned; //!< The uses has been banned.
+  //@}
+
+}
