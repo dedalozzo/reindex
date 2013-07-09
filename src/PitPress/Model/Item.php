@@ -15,13 +15,7 @@ use ElephantOnCouch\Doc\Doc;
 
 //! @brief
 //! @nosubgrouping
-class Item extends Doc {
-
-  //! @name Item's Attributes
-  //! @brief Those are standard item's attributes.
-  //@{
-  const NAME = "name"; //!< Document's name.
-  //@}
+class Item extends AbstractItem {
 
   //! @name States
   //@{
@@ -32,8 +26,6 @@ class Item extends Doc {
   const PUBLISHED_STATE = "published"; //!< The item has been published.
   const TRASHED_STATE = "trashed"; //!< The item has been trashed.
   //@}
-
-
 
 
   public function getState() {
@@ -100,21 +92,21 @@ class Item extends Doc {
 
 
   public function getName() {
-    return $this->meta[self::NAME];
+    return $this->meta['name'];
   }
 
   public function issetName() {
-    return isset($this->meta[self::NAME]);
+    return isset($this->meta['name']);
   }
 
 
   public function setName($value) {
-    $this->meta[self::NAME] = $value;
+    $this->meta['name'] = $value;
   }
 
   public function unsetName() {
-    if ($this->isMetadataPresent(self::NAME))
-      unset($this->meta[self::NAME]);
+    if ($this->isMetadataPresent('name'))
+      unset($this->meta['name']);
   }
 
   // A general text field where store text.
@@ -179,6 +171,11 @@ class Item extends Doc {
 
 
   public function removetag() {
+
+  }
+
+
+  public function saveTags() {
 
   }
 
@@ -265,6 +262,11 @@ class Item extends Doc {
 
   public function flag() {
 
+  }
+
+
+  public function save() {
+    $this->couch->saveDoc($this);
   }
 
 }
