@@ -10,9 +10,11 @@ namespace PitPress\Model;
 
 
 use ElephantOnCouch\Doc\Doc;
-use ElephantOnCouch\ElephantOnCouch;
+use ElephantOnCouch\Opt;
+
 use Phalcon\DI;
-use PitPress\Model\Accessory\Display;
+
+use PitPress\Model\Accessory\Hit;
 
 
 //! @brief This class is used to represent an abstract item.
@@ -28,15 +30,18 @@ abstract class AbstractItem extends Doc {
   }
 
 
-  public function getDisplaysCount() {
-    $this->couch->queryView("general", "displays");
+  public function getViewsCount() {
+    $opts = new Opt\ViewQueryOpts();
+    $opts->setKey($this->id);
+
+    $this->couch->queryView("hits", "all", NULL, $opts);
   }
 
 
-  public function incDisplays() {
-    $display = new Display($this->id);
+  public function incViews() {
+    $hit = new Hit($this->id);
 
-    $this->couch->saveDoc($display);
+    $this->couch->saveDoc($hit);
   }
 
 
