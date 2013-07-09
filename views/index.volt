@@ -8,16 +8,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="">
   <meta name="author" content="">
+
   <!-- Bootstrap -->
-  <link href="pit-bootstrap/css/bootstrap.css" rel="stylesheet/less" />
-  <!-- <link href="bootstrap/less/responsive.less" rel="stylesheet/less"> -->
-  <!-- <link href="google-theme.less" rel="stylesheet/less"> -->
+  <link rel="stylesheet" href="pit-bootstrap/css/bootstrap.css" rel="text/css" />
 
   <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-
-  <!-- <link href="pippo/less/google-bootstrap.less" rel="stylesheet/less"> -->
-
-  <script src="http://cloud.github.com/downloads/cloudhead/less.js/less-1.3.1.min.js" type="text/javascript"></script>
 
   <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
   <!--[if lt IE 9]>
