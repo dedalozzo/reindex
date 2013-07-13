@@ -9,7 +9,7 @@
 namespace PitPress\Controller;
 
 
-//! @brief
+//! @brief Controller of Tags actions.
 //! @nosubgrouping
 class TagsController extends BaseController {
 

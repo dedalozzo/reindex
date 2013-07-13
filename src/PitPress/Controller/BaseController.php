@@ -13,7 +13,7 @@ namespace PitPress\Controller;
 use Phalcon\Tag;
 
 
-//! @brief
+//! @brief The base controller, a subclass of Phalcon controller.
 //! @nosubgrouping
 class BaseController extends \Phalcon\Mvc\Controller {
   protected $couch;

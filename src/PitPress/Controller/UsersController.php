@@ -9,7 +9,7 @@
 namespace PitPress\Controller;
 
 
-//! @brief
+//! @brief Controller of Users actions.
 //! @nosubgrouping
 class UsersController extends BaseController {
 

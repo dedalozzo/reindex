@@ -11,6 +11,7 @@ use PitPress\Console\Console as PitPressConsole;
 use PitPress\Console\Command;
 use Phalcon\Config\Adapter\Ini as IniReader;
 use Phalcon\DI\FactoryDefault as DependencyInjector;
+use ElephantOnCouch\Couch;
 
 
 $start = microtime(true);
@@ -30,6 +31,8 @@ try {
   require __DIR__."/../services/couchdb.php";
   require __DIR__."/../services/mysql.php";
 
+  //Couch::useCurl();
+
   // Creates the application object.
   $console = new PitPressConsole('PitPress Console', '0.1.0');
   $console->setCatchExceptions(FALSE);
@@ -48,6 +51,7 @@ try {
   $console->add(new Command\ImportCommand());
   $console->add(new Command\InitCommand());
   $console->add(new Command\InstallCommand());
+  $console->add(new Command\TestCommand());
 
   $console->run();
 }

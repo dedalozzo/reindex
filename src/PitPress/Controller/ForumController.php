@@ -9,7 +9,7 @@
 namespace PitPress\Controller;
 
 
-//! @brief
+//! @brief Controller of Forum actions.
 //! @nosubgrouping
 class ForumController extends BaseController {
 

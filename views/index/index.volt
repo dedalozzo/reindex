@@ -1,5 +1,12 @@
       <div class="column-left">
 
+        {% for item in items %}
+        * Name: {{ product.name|e }}
+        {% if product.status == "Active" %}
+        Price: {{ product.price + product.taxes/100 }}
+        {% endif  %}
+        {% endfor  %}
+
         <div class="item">
           <div class="item-tools">
             <a href="#"><i class="icon-arrow-up icon-large"></i></a>11<a href="#"><i class="icon-arrow-down icon-large"></i></a>
@@ -66,7 +73,7 @@
             <a href="#"><i class="icon-star-empty icon-large"></i></a>
           </div>
           <div class="item-section">
-            <a href="#">FORUM</a>
+            <a href="#">LINKS</a>
           </div>
           <div class="item-container">
             <a class="item-title" href="#">Add composer configuration and fix coding standards</a><br />

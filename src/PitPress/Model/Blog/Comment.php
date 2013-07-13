@@ -6,9 +6,12 @@
 //! @author Filippo F. Fadda
 
 
-namespace PitPress\Model;
+namespace PitPress\Model\Blog;
 
 
-class Comment extends Item {
+use PitPress\Model\VersionedItem;
+
+
+class Comment extends VersionedItem {
 
 }

@@ -9,16 +9,16 @@
 namespace PitPress\Console\Command;
 
 
-use PitPress\Model\Accessory\Classification;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use PitPress\Model\Article;
-use PitPress\Model\Book;
-use PitPress\Model\Tag;
-use PitPress\Model\User;
+use PitPress\Model\Blog\Article;
+use PitPress\Model\Blog\Book;
+use PitPress\Model\Tag\Tag;
+use PitPress\Model\User\User;
+use PitPress\Model\Accessory\Classification;
 
 
 //! @brief Imports into CouchDB the data from Programmazione.it v6.4 MySQL database.
@@ -108,28 +108,28 @@ class ImportCommand extends AbstractCommand {
       $body = $item->body;
       unset($item->body);
 
-      preg_match('/\\[isbn\\](.*?)\\[\/isbn\\]/s', $body, $matches);
-      $item->isbn = utf8_encode($matches[1]);
-      preg_match('/\\[authors\\](.*?)\\[\/authors\\]/s', $body, $matches);
-      $item->authors = utf8_encode($matches[1]);
-      preg_match('/\\[publisher\\](.*?)\\[\/publisher\\]/s', $body, $matches);
-      $item->publisher = utf8_encode($matches[1]);
-      preg_match('/\\[language\\](.*?)\\[\/language\\]/s', $body, $matches);
-      $item->language = utf8_encode($matches[1]);
-      preg_match('/\\[year\\](.*?)\\[\/year\\]/s', $body, $matches);
-      $item->year = $matches[1];
-      preg_match('/\\[pages\\](.*?)\\[\/pages\\]/s', $body, $matches);
-      $item->pages = $matches[1];
-      preg_match('/\\[attachments\\](.*?)\\[\/attachments\\]/s', $body, $matches);
-      $item->attachments = utf8_encode($matches[1]);
-      preg_match('/\\[review\\](.*?)\\[\/review\\]/s', $body, $matches);
-      $item->review = utf8_encode($matches[1]);
-      preg_match('/\\[positive\\](.*?)\\[\/positive\\]/s', $body, $matches);
-      $item->positive = utf8_encode($matches[1]);
-      preg_match('/\\[negative\\](.*?)\\[\/negative\\]/s', $body, $matches);
-      $item->negative = utf8_encode($matches[1]);
+      if (preg_match('/\\[isbn\\](.*?)\\[\/isbn\\]/s', $body, $matches))
+        $item->isbn = utf8_encode($matches[1]);
+      if (preg_match('/\\[authors\\](.*?)\\[\/authors\\]/s', $body, $matches))
+        $item->authors = utf8_encode($matches[1]);
+      if (preg_match('/\\[publisher\\](.*?)\\[\/publisher\\]/s', $body, $matches))
+        $item->publisher = utf8_encode($matches[1]);
+      if (preg_match('/\\[language\\](.*?)\\[\/language\\]/s', $body, $matches))
+        $item->language = utf8_encode($matches[1]);
+      if (preg_match('/\\[year\\](.*?)\\[\/year\\]/s', $body, $matches))
+        $item->year = $matches[1];
+      if (preg_match('/\\[pages\\](.*?)\\[\/pages\\]/s', $body, $matches))
+        $item->pages = $matches[1];
+      if (preg_match('/\\[attachments\\](.*?)\\[\/attachments\\]/s', $body, $matches))
+        $item->attachments = utf8_encode($matches[1]);
+      if (preg_match('/\\[review\\](.*?)\\[\/review\\]/s', $body, $matches))
+        $item->review = utf8_encode($matches[1]);
+      if (preg_match('/\\[positive\\](.*?)\\[\/positive\\]/s', $body, $matches))
+        $item->positive = utf8_encode($matches[1]);
+      if (preg_match('/\\[negative\\](.*?)\\[\/negative\\]/s', $body, $matches))
+        $item->negative = utf8_encode($matches[1]);
 
-      if (preg_match('/\\[vendorLink\\](.*?)\\[\/vendorLink\\]/s', $body, $matches) === 1);
+      if (preg_match('/\\[vendorLink\\](.*?)\\[\/vendorLink\\]/s', $body, $matches))
         $item->vendorLink = utf8_encode($matches[1]);
 
       $item->contributorName = utf8_encode($item->contributorName);

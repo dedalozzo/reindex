@@ -48,7 +48,7 @@ class InitCommand extends AbstractCommand {
     $doc = DesignDoc::create('index');
 
     // Shows the most popular updates: posts (articles, books, tutorials), questions, links.
-    function recent() {
+    function popular() {
       $map = "function(\$doc) use (\$emit) {
                 \$types = [
                   'article' => NULL,
@@ -59,10 +59,10 @@ class InitCommand extends AbstractCommand {
                 ];
 
                 if (array_key_exists(\$doc->type, \$types)
-                  \$emit(\$doc->_id);
+                  \$emit(\$doc->publishingDate, \$doc->_id);
               };";
 
-      $handler = new ViewHandler("all");
+      $handler = new ViewHandler("popular");
       $handler->mapFn = $map;
       $handler->useBuiltInReduceFnCount(); // Used to count the updates.
 
@@ -81,22 +81,56 @@ class InitCommand extends AbstractCommand {
                 ];
 
                 if (array_key_exists(\$doc->type, \$types)
-                  \$emit(\$doc->_id, \$doc->_id);
+                  \$emit(\$doc->publishingDate, \$doc->_id);
               };";
 
-      $handler = new ViewHandler("all");
+      $handler = new ViewHandler("recent");
       $handler->mapFn = $map;
       $handler->useBuiltInReduceFnCount(); // Used to count the updates.
 
       return $handler;
     }
 
+    // Shows the most recent updates based on my tags: posts (articles, books, tutorials), questions, links.
+    function basedOnMyTags() {
+      $handler = new ViewHandler("basedOnMyTags");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the updates.
+
+      return $handler;
+    }
+
+    // Shows the most voted updates: posts (articles, books, tutorials), questions, links.
+    function mostVoted() {
+      $handler = new ViewHandler("mostVoted");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the updates.
+
+      return $handler;
+    }
+
+    // Shows the most discussed updates: posts (articles, books, tutorials), questions, links.
+    function mostDiscussed() {
+      $handler = new ViewHandler("mostDiscussed");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the updates.
+
+      return $handler;
+    }
+
+    // Generates the rss for the last 24 hours.
+    function rss() {
+      $handler = new ViewHandler("rss");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
 
     $doc->addHandler(popular());
     $doc->addHandler(recent());
     $doc->addHandler(basedOnMyTags());
     $doc->addHandler(mostVoted());
-    $doc->addHandler(mostDiscussesed());
+    $doc->addHandler(mostDiscussed());
     $doc->addHandler(rss());
   }
 

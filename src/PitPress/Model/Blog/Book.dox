@@ -1,0 +1,22 @@
+<?php
+
+
+namespace PitPress\Model\Blog;
+
+
+class Book {
+
+  //! @name Properties
+  //@{
+  public string $isbn; //!< ISBN.
+  public string $authors; //!< Authors.
+  public string $publisher; //!< Publisher.
+  public string $language; //!< Writing language.
+  public int $year; //!< Publishing year.
+  public int $pages; //!< Number of pages.
+  public string $attachments; //!< Attachments: CD, DVD, etc.
+  public string $positive; //!< Positive aspects.
+  public string $negative; //!< Negative aspects.
+  //@}
+
+}
