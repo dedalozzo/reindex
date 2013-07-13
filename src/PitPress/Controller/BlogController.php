@@ -9,7 +9,7 @@
 namespace PitPress\Controller;
 
 
-//! @brief
+//! @brief Controller of Blog actions.
 //! @nosubgrouping
 class BlogController extends BaseController {
 

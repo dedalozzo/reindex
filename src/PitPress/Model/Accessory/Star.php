@@ -1,7 +1,7 @@
 <?php
 
-//! @file Favourite.php
-//! @brief This file contains the Favourite class.
+//! @file Star.php
+//! @brief This file contains the Star class.
 //! @details
 //! @author Filippo F. Fadda
 
@@ -20,7 +20,7 @@ use ElephantOnCouch\Doc\Doc;
 //! Each time a document is deleted, we must delete all the favourites related; when instead a user is deleted, we must
 //! delete all the emitted favourites.
 //! @nosubgrouping
-class Favourite extends Doc {
+class Star extends Doc {
 
   public function __construct($itemId, $userId) {
     $this->meta["itemId"] = $itemId;

@@ -9,7 +9,7 @@
 namespace PitPress\Controller;
 
 
-//! @brief
+//! @brief Controller of Badges actions.
 //! @nosubgrouping
 class BadgesController extends BaseController {
 

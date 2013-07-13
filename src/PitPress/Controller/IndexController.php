@@ -14,7 +14,7 @@ use ElephantOnCouch\Opt\DocOpts;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
 
-//! @brief Controller of Updates actions.
+//! @brief Controller of Index actions.
 //! @nosubgrouping
 class IndexController extends BaseController {
 
@@ -47,6 +47,12 @@ class IndexController extends BaseController {
 
 
   public function popularAction() {
+    $queryOpts = new ViewQueryOpts();
+    $queryOpts->doNotReduce();
+    $queryOpts->reverseOrderOfResults();
+    $queryOpts->setLimit(30);
+
+    $results = $this->couch->queryView("index", "latest", $queryOpts)->getBodyAsArray();
   }
 
 

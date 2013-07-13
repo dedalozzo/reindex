@@ -1,0 +1,18 @@
+<?php
+
+
+namespace PitPress\Model;
+
+
+class VersionedItem {
+
+  //! @name Properties
+  //@{
+  public string $creationDate; //!< A timestamp of the creation.
+  public string $publishingDate; //! The publishing date.
+  public string $name; //!< The name.
+  public int $excerpt; //!< A short extract from the item's body.
+  public int $body; //!< // A general text field where store text.
+  //@}
+
+}

@@ -20,8 +20,9 @@ use ElephantOnCouch\Doc\Doc;
 //! @nosubgrouping
 class Hit extends Doc {
 
-  public function __construct($docId) {
+  public function __construct($docId, $docType) {
     $this->meta['docId'] = $docId;
+    $this->meta['docType'] = $docType;
   }
 
 }

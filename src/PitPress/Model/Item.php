@@ -1,271 +1,47 @@
 <?php
 
-//! @file Item.php
-//! @brief This file contains the Item class.
+//! @file Item.php@brief This file contains the Item class.
 //! @details
 //! @author Filippo F. Fadda
 
 
-//! @brief PitPress models namespace.
 namespace PitPress\Model;
 
 
 use ElephantOnCouch\Doc\Doc;
 
+use Phalcon\DI;
 
-//! @brief
+
+//! @brief This class is used to represent an abstract item.
 //! @nosubgrouping
-class Item extends AbstractItem {
-
-  //! @name States
-  //@{
-  const DRAFT_STATE = "draft"; //!< The item is a draft.
-  const REJECTED_STATE = "rejected"; //!< The item has been rejected.
-  const ASKED_FOR_REVISION_STATE = "asked_for_revision"; //!< The item has been asked for revision.
-  const SUBMITTED_FOR_PUBLISHING_STATE = "submitted_for_publishing"; //!< The item has been submitted for publishing.
-  const PUBLISHED_STATE = "published"; //!< The item has been published.
-  const TRASHED_STATE = "trashed"; //!< The item has been trashed.
-  //@}
+abstract class Item extends Doc {
+  protected $di; // Stores the default Dependency Injector.
+  protected $couch; // Stores the ElephantOnCouch client instance.
 
 
-  public function getState() {
-
+  //! @brief Constructor.
+  public function __construct() {
+    $this->di = DI::getDefault();
+    $this->couch = $this->di['couchdb'];
   }
 
 
-  // Creation timestamp.
-  public function setCreationDate($value) {
-    $this->meta["creationDate"] = $value;
-  }
-
-
+  //! @brief Returns the creation date.
   public function getCreationDate() {
-    return $this->meta["creationDate"];
+    return $this->meta['creationDate'];
   }
 
 
-  // Publishing timestamp.
-  public function setPublishingDate($value) {
-    $this->meta["publishingDate"] = $value;
-  }
-
-
-  public function getPublishingDate() {
-    return $this->meta["publishingDate"];
-  }
-
-
-  public function isTrashed() {
-    return $this->meta["trashed"];
-  }
-
-
-  public function isPinned() {
-    return $this->meta["pinned"];
-  }
-
-
-  public function isClosed() {
-    return $this->meta["closed"];
-  }
-
-
-  public function areCommentAllowed() {
-    return $this->meta["areCommentAllowed"];
-  }
-
-
-  // Tell if the item needs to be approved to appear on the Journal.
-  public function waitingForApproval() {
-    return $this->meta["waitingForApproval"];
-  }
-
-
-  public function setOwnerId($value) {
-    $this->meta["ownerId"] = $value;
-  }
-
-
-  public function getOwnerId() {
-    return $this->meta["ownerId"];
-  }
-
-
-  public function getName() {
-    return $this->meta['name'];
-  }
-
-  public function issetName() {
-    return isset($this->meta['name']);
-  }
-
-
-  public function setName($value) {
-    $this->meta['name'] = $value;
-  }
-
-  public function unsetName() {
-    if ($this->isMetadataPresent('name'))
-      unset($this->meta['name']);
-  }
-
-  // A general text field where store text.
-  public function setBody($value) {
-    $this->meta["body"] = $value;
-  }
-
-
-  public function getBody() {
-    return $this->meta["body"];
-  }
-
-
-  public function follow() {
-
-  }
-
-
-  public function unfollow() {
-
-  }
-
-
-  public function moveToTrash() {
-
-  }
-
-
-  public function putBack() {
-
-  }
-
-
+  //! @brief Returns information about the last update.
   public function getLastUpdateInfo() {
 
   }
 
 
-  public function getReplaysCount() {
-
-  }
-
-
-  public function getPosts() {
-
-  }
-
-
-  public function getTags() {
-
-  }
-
-
-  public function resetTags() {
-
-  }
-
-
-  public function addTag() {
-
-  }
-
-
-  public function removetag() {
-
-  }
-
-
-  public function saveTags() {
-
-  }
-
-
-  public function addMultipleTagAtOnce() {
-
-  }
-
-
-  public function star() {
-
-  }
-
-
-  public function unstar() {
-
-  }
-
-
-  public function pin() {
-
-  }
-
-
-  public function unpin() {
-
-  }
-
-
-  public function close() {
-
-  }
-
-
-  public function reopen() {
-
-  }
-
-
-  public function hide() {
-
-  }
-
-
-  protected function needForApproval() {
-
-  }
-
-
-  public function markAsDraft() {
-
-  }
-
-
-  public function submitForPublishing() {
-
-  }
-
-
-  public function askForRevision($reason) {
-
-  }
-
-
-  public function acceptRevision() {
-
-  }
-
-
-  public function rejectRevision($reason) {
-
-  }
-
-
-  public function publish() {
-
-  }
-
-
-  public function getPermalink() {
-
-  }
-
-
-  public function flag() {
-
-  }
-
-
+  //! @brief Saves the item to the database.
   public function save() {
+    $this->meta['lastUpdate'] = time();
     $this->couch->saveDoc($this);
   }
 

@@ -1,0 +1,16 @@
+<?php
+
+
+namespace PitPress\Model\Tag;
+
+
+class Tag  {
+
+  //! @name Properties
+  //@{
+  string $name; //!< The tag name
+  string $excerpt; //!< A short extract from the tag description.
+  string $body; //!< The full explanation of the tag.
+  //@}
+
+}

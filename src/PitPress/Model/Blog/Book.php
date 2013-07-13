@@ -1,28 +1,17 @@
 <?php
 
-//! @file Boook.php
+//! @file Book.php
 //! @brief This file contains the Book class.
 //! @details
 //! @author Filippo F. Fadda
 
 
-namespace PitPress\Model;
+namespace PitPress\Model\Blog;
 
 
 //! @brief dfsfsfs
 //! @nosubgrouping
 class Book extends Article {
-
-  const ISBN = "isbn";
-  const AUTHORS = "authors";
-  const PUBLISHER = "publisher";
-  const LANGUAGE = "language";
-  const YEAR = "year";
-  const PAGES = "pages";
-  const ATTACHMENTS = "attachments";
-  const POSITIVE = "positive";
-  const NEGATIVE = "negative";
-  const COVER = "cover";
 
 
   public function getIsbn() {

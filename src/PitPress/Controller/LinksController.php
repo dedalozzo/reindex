@@ -9,7 +9,7 @@
 namespace PitPress\Controller;
 
 
-//! @brief
+//! @brief Controller of Links actions.
 //! @nosubgrouping
 class LinksController extends BaseController {
 

@@ -6,7 +6,7 @@
 //! @author Filippo F. Fadda
 
 
-namespace PitPress\Model;
+namespace PitPress\Model\Blog;
 
 
 //! @brief

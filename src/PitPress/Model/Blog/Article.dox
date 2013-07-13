@@ -1,0 +1,15 @@
+<?php
+
+
+namespace PitPress\Model\Blog;
+
+
+class Article  {
+
+  //! @name Properties
+  //@{
+  string $excerpt; //!< A short extract from the content.
+  string $body; //!< Content.
+  //@}
+
+}
