@@ -20,6 +20,13 @@ abstract class Post extends VersionedItem {
   use Helper\ViewTrait;
 
 
+  //! @brief Constructor.
+  public function __construct() {
+    parent::__construct();
+    $this->meta['supertype'] = 'post';
+  }
+
+
   public function getPublishingDate() {
     return $this->meta["publishingDate"];
   }
