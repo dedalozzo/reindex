@@ -28,6 +28,7 @@ class Book extends Article {
     $this->meta['isbn'] = $value;
   }
 
+
   public function unsetIsbn() {
     if ($this->isMetadataPresent('isbn'))
       unset($this->meta['isbn']);
@@ -55,8 +56,8 @@ class Book extends Article {
   }
 
 
-  public function getPublisher($value) {
-    $this->meta['publisher'] = $value;
+  public function getPublisher() {
+    return $this->meta['publisher'];
   }
 
 
@@ -65,8 +66,8 @@ class Book extends Article {
   }
 
 
-  public function setPublisher() {
-    return $this->meta['publisher'];
+  public function setPublisher($value) {
+    $this->meta['publisher'] = $value;
   }
 
 
@@ -199,6 +200,27 @@ class Book extends Article {
   public function unsetNegative() {
     if ($this->isMetadataPresent('negative'))
       unset($this->meta['negative']);
+  }
+
+
+  public function getLink() {
+    return $this->meta['link'];
+  }
+
+
+  public function issetLink() {
+    return isset($this->meta['link']);
+  }
+
+
+  public function setLink($value) {
+    $this->meta['link'] = $value;
+  }
+
+
+  public function unsetLink() {
+    if ($this->isMetadataPresent('link'))
+      unset($this->meta['link']);
   }
 
 
