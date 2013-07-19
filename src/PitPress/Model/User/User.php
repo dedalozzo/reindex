@@ -74,8 +74,8 @@ class User extends Item {
   }
 
 
-  public function getFirstName($value) {
-    $this->meta['firstName'] = $value;
+  public function getFirstName() {
+    return $this->meta['firstName'];
   }
 
 
@@ -84,19 +84,13 @@ class User extends Item {
   }
 
 
-  public function setFirstName() {
-    return $this->meta['firstName'];
+  public function setFirstName($value) {
+    $this->meta['firstName'] = $value;
   }
 
 
-  public function unsetFirstName() {
-    if ($this->isMetadataPresent('firstName'))
-      unset($this->meta['firstName']);
-  }
-
-
-  public function getLastName($value) {
-    $this->meta['lastName'] = $value;
+  public function getLastName() {
+    return $this->meta['lastName'];
   }
 
 
@@ -105,13 +99,13 @@ class User extends Item {
   }
 
 
-  public function setLastName() {
-    return $this->meta['lastName'];
+  public function setLastName($value) {
+    $this->meta['lastName'] = $value;
   }
 
 
-  public function getDisplayName($value) {
-    $this->meta['displayName'] = $value;
+  public function getDisplayName() {
+    return $this->meta['displayName'];
   }
 
 
@@ -120,13 +114,13 @@ class User extends Item {
   }
 
 
-  public function setDisplayName() {
-    return $this->meta['displayName'];
+  public function setDisplayName($value) {
+    $this->meta['displayName'] = $value;
   }
 
 
-  public function getEmail($value) {
-    $this->meta['email'] = $value;
+  public function getEmail() {
+    return $this->meta['email'];
   }
 
 
@@ -135,13 +129,13 @@ class User extends Item {
   }
 
 
-  public function setEmail() {
-    return $this->meta['email'];
+  public function setEmail($value) {
+    $this->meta['email'] = $value;
   }
 
 
-  public function getPassword($value) {
-    $this->meta['password'] = $value;
+  public function getPassword() {
+    return $this->meta['password'];
   }
 
 
@@ -150,13 +144,13 @@ class User extends Item {
   }
 
 
-  public function setPassword() {
-    return $this->meta['password'];
+  public function setPassword($value) {
+    $this->meta['password'] = $value;
   }
 
 
-  public function getSex($value) {
-    $this->meta['sex'] = $value;
+  public function getSex() {
+    return $this->meta['sex'];
   }
 
 
@@ -165,13 +159,13 @@ class User extends Item {
   }
 
 
-  public function setSex() {
-    return $this->meta['sex'];
+  public function setSex($value) {
+    $this->meta['sex'] = $value;
   }
 
 
-  public function getBirthday($value) {
-    $this->meta['birthday'] = $value;
+  public function getBirthday() {
+    return $this->meta['birthday'];
   }
 
 
@@ -180,8 +174,8 @@ class User extends Item {
   }
 
 
-  public function setBirthday() {
-    return $this->meta['birthday'];
+  public function setBirthday($value) {
+    $this->meta['birthday'] = $value;
   }
 
 }
