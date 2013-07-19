@@ -26,4 +26,25 @@ abstract class VersionedItem extends Item {
 
   }
 
+
+  public function getCreator() {
+    return $this->meta['creator'];
+  }
+
+
+  public function issetCreator() {
+    return isset($this->meta['creator']);
+  }
+
+
+  public function setCreator($value) {
+    $this->meta['creator'] = $value;
+  }
+
+
+  public function unsetCreator() {
+    if ($this->isMetadataPresent('creator'))
+      unset($this->meta['creator']);
+  }
+
 }
