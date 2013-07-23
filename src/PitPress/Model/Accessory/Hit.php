@@ -15,14 +15,14 @@ use ElephantOnCouch\Doc\Doc;
 
 
 //! @brief This class is used to record a single request.
-//! @details Every time someone read an article, for example, you want increment the total number of views, creating and
-//! saving an Hit instance.
+//! @details To avoid conflicts on update, we need to emit a document every time an item has been viewed. We
+//! use a script that runs every 5/10 minutes, querying a view where the hits are registered, to count the hits. All the
+//! other queries will use 'stale=ok' to not refresh the view.
 //! @nosubgrouping
 class Hit extends Doc {
 
-  public function __construct($docId, $docType) {
+  public function __construct($docId) {
     $this->meta['docId'] = $docId;
-    $this->meta['docType'] = $docType;
   }
 
 }
