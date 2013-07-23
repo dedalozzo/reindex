@@ -24,7 +24,7 @@ class IndexGroup extends \Phalcon\Mvc\Router\Group {
 
     $this->addGet('/', ['action' => 'index']);
     $this->addGet('/popolari', ['action' => 'popular']);
-    $this->addGet('/recenti', ['action' => 'recent']);
+    $this->addGet('/recenti', ['action' => 'latest']);
     $this->addGet('/in-base-ai-miei-tag', ['action' => 'basedOnMyTags']);
     $this->addGet('/piu-votati', ['action' => 'mostVoted']);
     $this->addGet('/piu-discussi', ['action' => 'mostDiscussed']);
