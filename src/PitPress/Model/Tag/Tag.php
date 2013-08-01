@@ -9,16 +9,13 @@
 namespace PitPress\Model\Tag;
 
 
+use PitPress\Model\User\User;
 use PitPress\Model\VersionedItem;
-use PitPress\Model\Helper;
 
 
 //! @brief
 //! @nosubgrouping
 class Tag extends VersionedItem {
-  use Helper\SubscriptionTrait;
-  use Helper\ViewTrait;
-
 
   //! @name ModerationTrait
   //@{
@@ -26,6 +23,14 @@ class Tag extends VersionedItem {
   const PUBLISHED_STATE = "published"; //!< The item has been published.
   const REJECTED_STATE = "rejected"; //!< The item has been rejected.
   //@}
+
+
+  public function ignore(User $currentUser) {
+  }
+
+
+  public function unignore(User $currentUser) {
+  }
 
 
   //! @brief Gets the item state.
@@ -57,48 +62,6 @@ class Tag extends VersionedItem {
   public function unsetName() {
     if ($this->isMetadataPresent('name'))
       unset($this->meta['name']);
-  }
-
-
-  public function getExcerpt() {
-    return $this->meta['excerpt'];
-  }
-
-
-  public function issetExcerpt() {
-    return isset($this->meta['excerpt']);
-  }
-
-
-  public function setExcerpt($value) {
-    $this->meta["excerpt"] = $value;
-  }
-
-
-  public function unsetExcerpt() {
-    if ($this->isMetadataPresent('excerpt'))
-      unset($this->meta['excerpt']);
-  }
-
-
-  public function getBody() {
-    return $this->meta["body"];
-  }
-
-
-  public function issetBody() {
-    return isset($this->meta['body']);
-  }
-
-
-  public function setBody($value) {
-    $this->meta["body"] = $value;
-  }
-
-
-  public function unsetBody() {
-    if ($this->isMetadataPresent('body'))
-      unset($this->meta['body']);
   }
 
 }
