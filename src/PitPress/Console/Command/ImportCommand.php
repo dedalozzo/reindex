@@ -278,7 +278,7 @@ class ImportCommand extends AbstractCommand {
 
       // Converts from BBCode to Markdown!
 
-      // Replaces bold.
+      // Replaces BBCode bold.
       $body = preg_replace_callback('%\[b\]([\W\D\w\s]*?)\[/b\]%i',
 
         function ($matches) use ($item) {
@@ -288,7 +288,7 @@ class ImportCommand extends AbstractCommand {
         $body
       );
 
-      // Replaces italic.
+      // Replaces BBCode italic.
       $body = preg_replace_callback('%\[i\]([\W\D\w\s]*?)\[/i\]%i',
 
         function ($matches) use ($item) {
@@ -299,7 +299,7 @@ class ImportCommand extends AbstractCommand {
       );
 
 
-      // Replaces underline. Unfortunately Markdown doesn't support underline, so we just revert to normal text.
+      // Replaces BBCode underline. Unfortunately Markdown doesn't support underline, so we just revert to normal text.
       $body = preg_replace_callback('%\[u\]([\W\D\w\s]*?)\[/u\]%i',
 
         function ($matches) use ($item) {
@@ -310,7 +310,7 @@ class ImportCommand extends AbstractCommand {
       );
 
 
-      // Replaces strikethrough.
+      // Replaces BBCode strikethrough.
       $body = preg_replace_callback('%\[s\]([\W\D\w\s]*?)\[/s\]%i',
 
         function ($matches) use ($item) {
@@ -321,7 +321,7 @@ class ImportCommand extends AbstractCommand {
       );
 
 
-      // Replaces lists.
+      // Replaces BBCode lists.
       $body = preg_replace_callback('%\[list(?P<type>=1)?\](?P<items>[\W\D\w\s]*?)\[/list\]%i',
 
         function ($matches) use ($item) {
@@ -348,7 +348,7 @@ class ImportCommand extends AbstractCommand {
       );
 
 
-      // Replaces urls.
+      // Replaces BBCode urls.
       $body = preg_replace_callback('%\[\s*url\s*=\s*("(?:[^"]*")|\A[^\']*\Z|(?:[^\'">\s]+))\s*(?:[^]\s]*)\]([\W\D\w\s]*?)\[/url\]%i',
 
         function ($matches) use ($item) {
@@ -362,7 +362,7 @@ class ImportCommand extends AbstractCommand {
       );
 
 
-      // Replaces images.
+      // Replaces BBCode images.
       $body = preg_replace_callback('%\[\s*img\s*\]\s*("(?:[^"]*")|\A[^\']*\Z|(?:[^\'">\s]+))\s*(?:[^]\s]*)\[/img\]%i',
 
         function ($matches) use ($item) {
@@ -376,8 +376,8 @@ class ImportCommand extends AbstractCommand {
       );
 
 
-      // Replaces code snippets.
-      $body = preg_replace_callback('%\[\s*code\s*(?P<language>=?\w*)\](?P<snippet>[\W\D\w\s]*?)\[/code\]%i',
+      // Replaces BBCode snippets.
+      $body = preg_replace_callback('%\[\s*code\s*=?(?P<language>\w*)\](?P<snippet>[\W\D\w\s]*?)\[/code\]%i',
 
         function ($matches) use ($item) {
           if (isset($matches['snippet']))
