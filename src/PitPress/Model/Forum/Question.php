@@ -10,11 +10,20 @@ namespace PitPress\Model\Forum;
 
 
 use PitPress\Model\Post;
-use PitPress\Model\Helper;
 
 
 //! @brief
 //! @nosubgrouping
 class Question extends Post {
-  use Helper\SubscriptionTrait;
+
+
+  public function getSection() {
+    return 'forum';
+  }
+
+
+  public function getHumanReadableType() {
+    return 'DOMANDA';
+  }
+
 }
