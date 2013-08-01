@@ -10,13 +10,11 @@ namespace PitPress\Model\User;
 
 
 use PitPress\Model\Item;
-use PitPress\Model\Helper;
 
 
 //! @brief This class is used to represent a registered user.
 //! @nosubgrouping
 class User extends Item {
-  use Helper\ViewTrait;
 
 
   //! @brief Last time the user has logged in.
@@ -25,15 +23,8 @@ class User extends Item {
   }
 
 
-  public function getIPAddress($value) {
-    $this->meta['ipAddress'] = $value;
-  }
-
-
-  public function getConfirmationHash($value) {
-    $this->meta['confirmationHash'] = $value;
-  }
-
+  //! @name Authentication Methods
+  // @{
 
   //! @brief Authenticate the user.
   public function authenticate() {
@@ -46,6 +37,16 @@ class User extends Item {
     return isset($this->meta['authenticated']);
   }
 
+
+  public function getConfirmationHash($value) {
+    $this->meta['confirmationHash'] = $value;
+  }
+
+  //@}
+
+
+  //! @name Ban Management Methods
+  // @{
 
   //! @brief Bans the user.
   public function ban($days) {
@@ -67,8 +68,12 @@ class User extends Item {
     return isset($this->meta['banned']);
   }
 
+  //@}
 
-  //! @brief Returns the user's age.
+
+  //! @name Properties Accessors
+  //@{
+
   public function getAge() {
 
   }
@@ -177,5 +182,37 @@ class User extends Item {
   public function setBirthday($value) {
     $this->meta['birthday'] = $value;
   }
+
+
+  public function getAbout() {
+    return $this->meta['about'];
+  }
+
+
+  public function issetAbout() {
+    return isset($this->meta['about']);
+  }
+
+
+  public function setAbout($value) {
+    $this->meta['about'] = $value;
+  }
+  
+
+  public function getIPAddress($value) {
+    $this->meta['ipAddress'] = $value;
+  }
+
+
+  public function issetIPAddress() {
+    return isset($this->meta['ipAddress']);
+  }
+
+
+  public function setIPAddress($value) {
+    $this->meta['ipAddress'] = $value;
+  }
+
+  //! @}
 
 }
