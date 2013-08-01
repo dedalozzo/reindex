@@ -14,7 +14,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use ElephantOnCouch\Couch;
 use ElephantOnCouch\Doc\DesignDoc;
 use ElephantOnCouch\Handler\ViewHandler;
 
@@ -29,152 +28,148 @@ class InitCommand extends AbstractCommand {
 
   //! @brief Insert all design documents.
   private function initAll() {
-    $this->initIndex();
-    $this->initBlog();
-    $this->initForum();
-    $this->initLinks();
+    $this->initPosts();
     $this->initTags();
-    $this->initBadges();
-    $this->initUsers();
-    $this->initHits();
     $this->initVotes();
+    $this->initStars();
+    $this->initSubscriptions();
+    $this->initClassifications();
+    $this->initBadges();
     $this->initFavourites();
-    $this->initComments();
-    $this->initAnswers();
   }
 
 
-  private function initIndex() {
-    $doc = DesignDoc::create('index');
+  private function initPosts() {
+    $doc = DesignDoc::create('posts');
 
-    // Shows the most popular updates: posts (articles, books, tutorials), questions, links.
-    function popular() {
+
+    // @params: NONE
+    function allLatest() {
       $map = "function(\$doc) use (\$emit) {
-                \$types = [
-                  'article' => NULL,
-                  'tutorial' => NULL,
-                  'book' => NULL,
-                  'question' => NULL,
-                  'link' => NULL
-                ];
-
-                if (array_key_exists(\$doc->type, \$types)
-                  \$emit(\$doc->publishingDate, \$doc->_id);
+                if (isset(\$doc->supertype) and \$doc->supertype == 'post')
+                  \$emit(\$doc->publishingDate);
               };";
 
-      $handler = new ViewHandler("popular");
+      $handler = new ViewHandler("allLatest");
       $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount(); // Used to count the updates.
+      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
 
       return $handler;
     }
 
-    // Shows the most recent updates: posts (articles, books, tutorials), questions, links.
-    function recent() {
-      $map = "function(\$doc) use (\$emit) {
-                \$types = [
-                  'article' => NULL,
-                  'tutorial' => NULL,
-                  'book' => NULL,
-                  'question' => NULL,
-                  'link' => NULL
-                ];
+    $doc->addHandler(allLatest());
 
-                if (array_key_exists(\$doc->type, \$types)
-                  \$emit(\$doc->publishingDate, \$doc->_id);
+
+    // @params: type
+    function typeLatest() {
+      $map = "function(\$doc) use (\$emit) {
+                if (isset(\$doc->supertype) and \$doc->supertype == 'post')
+                  \$emit([\$doc->type, \$doc->publishingDate]);
               };";
 
-      $handler = new ViewHandler("recent");
+      $handler = new ViewHandler("typeLatest");
       $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount(); // Used to count the updates.
+      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
 
       return $handler;
     }
 
-    // Shows the most recent updates based on my tags: posts (articles, books, tutorials), questions, links.
-    function basedOnMyTags() {
-      $handler = new ViewHandler("basedOnMyTags");
+    $doc->addHandler(typeLatest());
+
+
+    // @params: section
+    function sectionLatest() {
+      $map = "function(\$doc) use (\$emit) {
+                if (isset(\$doc->section))
+                  \$emit([\$doc->section, \$doc->publishingDate]);
+              };";
+
+      $handler = new ViewHandler("sectionLatest");
       $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount(); // Used to count the updates.
+      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
 
       return $handler;
     }
 
-    // Shows the most voted updates: posts (articles, books, tutorials), questions, links.
-    function mostVoted() {
-      $handler = new ViewHandler("mostVoted");
+    $doc->addHandler(sectionLatest());
+
+
+    // @params: NONE
+    function allMostVoted() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'vote') {
+                  if (\$doc->choice == '+')
+                    \$emit(\$doc->postId, 1);
+                  elseif (\$doc->choice == '-')
+                    \$emit(\$doc->postId, -1);
+                }
+              };";
+
+      $handler = new ViewHandler("allMostVoted");
       $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount(); // Used to count the updates.
+      $handler->useBuiltInReduceFnSum(); // Used to count the votes.
 
       return $handler;
     }
 
-    // Shows the most discussed updates: posts (articles, books, tutorials), questions, links.
-    function mostDiscussed() {
-      $handler = new ViewHandler("mostDiscussed");
+    $doc->addHandler(allMostVoted());
+
+
+    // @params: type, [postId]
+    function typeMostVoted() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'vote') {
+                  if (\$doc->choice == '+')
+                    \$emit([\$doc->postType, \$doc->postId], 1);
+                  elseif (\$doc->choice == '-')
+                    \$emit([\$doc->postType, \$doc->postId], -1);
+                }
+              };";
+
+      $handler = new ViewHandler("typeMostVoted");
       $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount(); // Used to count the updates.
+      $handler->useBuiltInReduceFnSum(); // Used to count the votes.
 
       return $handler;
     }
 
-    // Generates the rss for the last 24 hours.
-    function rss() {
-      $handler = new ViewHandler("rss");
+    $doc->addHandler(typeMostVoted());
+
+
+    // @params: section, [postId]
+    function sectionMostVoted() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'vote') {
+                  if (\$doc->choice == '+')
+                    \$emit([\$doc->section, \$doc->postId], 1);
+                  elseif (\$doc->choice == '-')
+                    \$emit([\$doc->section, \$doc->postId], -1);
+                }
+              };";
+
+      $handler = new ViewHandler("sectionMostVoted");
       $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnSum(); // Used to count the votes.
 
       return $handler;
     }
 
-    $doc->addHandler(popular());
-    $doc->addHandler(recent());
-    $doc->addHandler(basedOnMyTags());
-    $doc->addHandler(mostVoted());
-    $doc->addHandler(mostDiscussed());
-    $doc->addHandler(rss());
-  }
+    $doc->addHandler(sectionMostVoted());
 
 
-  private function initBlog() {
-
-  }
-
-
-  private function initForum() {
-
-  }
-
-
-  private function initLinks() {
-
+    $this->couch->saveDoc($doc);
   }
 
 
   private function initTags() {
-    //Then, we must also create two different views (associated_tags, related_items), the first
-//! one will emit as key the item's ID and the classification document as value, the second one, instead, will emit the
-//! tag's ID as key and always the classification's document as value. It's important emit always the entire classification
-//! because it's easy to query items by tag and query tags by item
-  }
-
-  private function initBadges() {
-
-  }
+    $doc = DesignDoc::create('tags');
 
 
-  private function initUsers() {
-
-  }
-
-
-  private function initHits() {
-    $doc = DesignDoc::create('hits');
-
-    // Counts the hits for the given id.
+    // @params NONE
     function all() {
       $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'hit')
-                  \$emit(\$doc->docId, NULL);
+                if (\$doc->type == 'tag')
+                  \$emit(\$doc->_id, \$doc->name);
               };";
 
       $handler = new ViewHandler("all");
@@ -186,100 +181,195 @@ class InitCommand extends AbstractCommand {
 
     $doc->addHandler(all());
 
+
     $this->couch->saveDoc($doc);
   }
 
 
   private function initVotes() {
-
-  }
-
-
-  private function initFavourites() {
-    $doc = DesignDoc::create('favourites');
-
-    // @name items_starred_by_user
-    // @brief Returns the items that have been starred by the user.
-    $map = "function(\$doc) use (\$emit) {
-              if (\$doc->type == 'favourite')
-                \$emit(\$doc->userId, \$doc->itemId);
-            };";
-
-    $handler = new ViewHandler("items_starred_by_user");
-    $handler->mapFn = $map;
-
-    $doc->addHandler($handler);
+    $doc = DesignDoc::create('votes');
 
 
-    // @name items_starred_by_user
-    // @brief Given a key, composed by the itemId plus the userId, returns the which items included in the list are
-    // starred by the user.
-    // @key
-    $map = "function(\$doc) use (\$emit) {
-              if (\$doc->type == 'favourite')
-                \$emit(\$doc->itemId + \$doc->userId, NULL);
-            };";
+    // @params: postId, [userId]
+    // @methods: Post.isVoted(), Post.getVotesCount()
+    function votesPerPost() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'vote') {
+                  if (\$doc->choice == '+')
+                    \$emit([\$doc->postId, \$doc->userId], 1);
+                  elseif (\$doc->choice == '-')
+                    \$emit([\$doc->postId, \$doc->userId], -1);
+                }
+              };";
 
-    $handler = new ViewHandler("starred_items");
-    $handler->mapFn = $map;
+      $handler = new ViewHandler("perPost");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnSum(); // Used to count the votes.
 
-    $doc->addHandler($handler);
+      return $handler;
+    }
 
-
-    // @name users_count_by_item
-    // @brief
-    // @key userId
-    $map = "function(\$doc) use (\$emit) {
-              if (\$doc->type == 'favourite')
-                \$emit(\$doc->itemId, \$doc->userId);
-            };";
-
-    $handler = new ViewHandler("user_favourites");
-    $handler->mapFn = $map;
-    $handler->useBuiltInReduceFnCount();
-
-    $doc->addHandler($handler);
+    $doc->addHandler(votesPerPost());
 
 
     $this->couch->saveDoc($doc);
   }
 
 
-  private function initComments() {
-    $doc = DesignDoc::create('comments');
+  private function initStars() {
+    $doc = DesignDoc::create('stars');
 
-    function recent() {
+
+    // @params postId, [userId]
+    // @methods: VersionedItem.isStarred(), VersionedItem.getStarsCount()
+    function starsPerItem() {
       $map = "function(\$doc) use (\$emit) {
-              if (\$doc->type == 'hit')
-                \$emit(\$doc->_id, NULL);
-            };";
+                if (\$doc->type == 'star')
+                  \$emit([\$doc->itemId, \$doc->userId]);
+              };";
 
-      $handler = new ViewHandler("all");
+      $handler = new ViewHandler("perItem");
       $handler->mapFn = $map;
       $handler->useBuiltInReduceFnCount();
 
       return $handler;
     }
 
+    $doc->addHandler(starsPerItem());
 
-    $doc->addHandler(popular());
-    $doc->addHandler(recent());
-    $doc->addHandler(basedOnMyTags());
-    $doc->addHandler(mostVoted());
-    $doc->addHandler(mostDiscussesed());
-    $doc->addHandler(rss());
 
-    if (doc.type == "post") {
-      map([doc._id, 0], doc);
-    } else if (doc.type == "comment") {
-      map([doc.post, 1], doc);
-    }
-
+    $this->couch->saveDoc($doc);
   }
 
 
-  private function initAnswers() {
+  private function initSubscriptions() {
+    $doc = DesignDoc::create('subscriptions');
 
+
+    // @params itemId, [userId]
+    // @methods: VersionedItem.isStarred(), VersionedItem.getSubscribersCount()
+    function subscriptionsPerItem() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'subscription')
+                  \$emit([\$doc->itemId, \$doc->userId]);
+              };";
+
+      $handler = new ViewHandler("perItem");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(subscriptionsPerItem());
+
+
+    $this->couch->saveDoc($doc);
+  }
+
+
+  private function initClassifications() {
+    $doc = DesignDoc::create('classifications');
+
+
+    // @params postId
+    // @methods: Post.getTags()
+    function classificationsPerPost() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'classification')
+                  \$emit(\$doc->postId, \$doc->tagId);
+              };";
+
+      $handler = new ViewHandler("perPost");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
+
+      return $handler;
+    }
+
+    $doc->addHandler(classificationsPerPost());
+
+
+    // @params NONE
+    function allLatest() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'classification')
+                  \$emit(\$doc->timestamp, \$doc->tagId);
+              };";
+
+      $handler = new ViewHandler("allLatest");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
+
+      return $handler;
+    }
+
+    $doc->addHandler(allLatest());
+
+
+    // @params tagId
+    function perTag() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'classification')
+                  \$emit(\$doc->tagId);
+              };";
+
+      $handler = new ViewHandler("perTag");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
+
+      return $handler;
+    }
+
+    $doc->addHandler(perTag());
+
+
+    $this->couch->saveDoc($doc);
+  }
+
+
+  private function initBadges() {
+  }
+
+
+  private function initFavourites() {
+    $doc = DesignDoc::create('favourites');
+
+
+    // @params userId
+    // @methods: todo
+    function allLastAdded() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'star')
+                  \$emit([\$doc->userId, \$doc->timestamp], \$doc->postId);
+              };";
+
+      $handler = new ViewHandler("allLastAdded");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(allLastAdded());
+
+
+    // @params userId, type
+    // @methods: todo
+    function typeLastAdded() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'star')
+                  \$emit([\$doc->userId, \$doc->postType, \$doc->timestamp], \$doc->postId);
+              };";
+
+      $handler = new ViewHandler("typeLastAdded");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(typeLastAdded());
+
+
+    $this->couch->saveDoc($doc);
   }
 
 
@@ -301,7 +391,7 @@ class InitCommand extends AbstractCommand {
     $this->mysql = $this->_di['mysql'];
     $this->couch = $this->_di['couchdb'];
 
-    $entities = $input->getArgument('documents');
+    $documents = $input->getArgument('documents');
 
     // Checks if the argument 'all' is provided.
     $index = array_search("all", $documents);
@@ -310,24 +400,36 @@ class InitCommand extends AbstractCommand {
 
       foreach ($documents as $name)
         switch ($name) {
-          case 'users':
-            $this->importUsers();
-            break;
-
-          case 'articles':
-            $this->importArticles();
-            break;
-
-          case 'books':
-            $this->importBooks();
+          case 'posts':
+            $this->initPosts();
             break;
 
           case 'tags':
-            $this->importTags();
+            $this->initTags();
+            break;
+
+          case 'votes':
+            $this->initVotes();
+            break;
+
+          case 'stars':
+            $this->initStars();
+            break;
+
+          case 'subscriptions':
+            $this->initSubscriptions();
             break;
 
           case 'classifications':
-            $this->importClassifications();
+            $this->initClassifications();
+            break;
+
+          case 'badges':
+            $this->initBadges();
+            break;
+
+          case 'favourites':
+            $this->initFavourites();
             break;
         }
 
