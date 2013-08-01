@@ -40,6 +40,9 @@ class DeleteCommand extends AbstractCommand {
       $couch = new Couch(Couch::DEFAULT_SERVER, $config->couchdb->user, $config->couchdb->password);
 
       $couch->deleteDb($config->couchdb->database);
+
+      $redis = $this->_di['redis'];
+      $redis->flushDB();
     }
   }
 
