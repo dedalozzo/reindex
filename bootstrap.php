@@ -4,7 +4,7 @@
 //! @brief Initializes the application.
 //! @details
 //! @author Filippo F. Fadda
-
+//! @todo: Use Google prettify to highlight the source code.
 
 use Phalcon\Config\Adapter\Ini as IniReader;
 use Phalcon\DI\FactoryDefault as DependencyInjector;
@@ -30,6 +30,7 @@ try {
   require __DIR__."/services/url.php";
   require __DIR__."/services/session.php";
   require __DIR__."/services/couchdb.php";
+  require __DIR__."/services/redis.php";
   require __DIR__."/services/mysql.php";
 
   // Retrieves the Router component.
@@ -89,8 +90,9 @@ try {
   echo $application->handle()->getContent(); */
 }
 catch (Exception $e) {
-  echo $e->getMessage();
+  echo $e;
 }
 
 $stop = microtime(true);
 $time = round($stop - $start, 3);
+echo $time;
