@@ -19,6 +19,7 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
 
 //! @brief Query a view and outputs the result.
 //! @nosubgrouping
+//! todo Fix a bug when read map and reduce from file.
 class QueryCommand extends AbstractCommand {
 
 
@@ -38,35 +39,99 @@ class QueryCommand extends AbstractCommand {
       "Used to retrieve just the view rows matching that set of keys. Rows are returned in the order of the specified
       keys. Combining this feature with --include-docs results in the so-called multi-document-fetch feature.");
 
+
+    // General options.
+    $this->addOption("key",
+      NULL,
+      InputOption::VALUE_REQUIRED,
+      "Returns only documents that match the specified key.");
+
+    $this->addOption("startkey",
+      NULL,
+      InputOption::VALUE_REQUIRED,
+      "Defines the first key to be included in the range.");
+
+    $this->addOption("endkey",
+      NULL,
+      InputOption::VALUE_REQUIRED,
+      "Defines the last key to be included in the range.");
+
+    $this->addOption("startkey-docid",
+      NULL,
+      InputOption::VALUE_REQUIRED,
+      "Sets the ID of the document with which to start the range.");
+
+    $this->addOption("endkey-docid",
+      NULL,
+      InputOption::VALUE_REQUIRED,
+      "Sets the ID of the document with which to end the range.");
+
+    $this->addOption("limit",
+      NULL,
+      InputOption::VALUE_REQUIRED,
+      "Limit the number of results.");
+
+    $this->addOption("group-results",
+      NULL,
+      InputOption::VALUE_NONE,
+      "Results should be grouped.");
+
+    $this->addOption("group-level",
+      NULL,
+      InputOption::VALUE_REQUIRED,
+      "Level at which documents should be grouped.");
+
+    $this->addOption("do-not-reduce",
+      NULL,
+      InputOption::VALUE_NONE,
+      "Even is a reduce function is defined for the view, doesn't call it.");
+
+    $this->addOption("include-docs",
+      NULL,
+      InputOption::VALUE_NONE,
+      "Includes documents in the output.");
+
+    $this->addOption("exclude-results",
+      NULL,
+      InputOption::VALUE_NONE,
+      "Don't get any data, but all meta-data for this View. The number of documents in this View for example.");
+
+    $this->addOption("exclude-endkey",
+      NULL,
+      InputOption::VALUE_NONE,
+      "Tells CouchDB to not include end key in the result.");
+
+    $this->addOption("reverse-order",
+      NULL,
+      InputOption::VALUE_NONE,
+      "Reverses order of results.");
+
+    $this->addOption("skip",
+      NULL,
+      InputOption::VALUE_REQUIRED,
+      "Skips the defined number of documents.");
+
+    $this->addOption("include-conflicts",
+      NULL,
+      InputOption::VALUE_NONE,
+      "Includes conflict documents.");
+
+
+    // Temporary view options.
     $this->addOption("map",
       NULL,
-      InputOption::VALUE_OPTIONAL,
+      InputOption::VALUE_REQUIRED,
       "Load map function from this file. To be used with _temp_view only, ignored otherwise.");
 
     $this->addOption("reduce",
       NULL,
-      InputOption::VALUE_OPTIONAL,
+      InputOption::VALUE_REQUIRED,
       "Load reduce function from this file. To be used with _temp_view only, ignored otherwise.");
 
     $this->addOption("language",
       NULL,
-      InputOption::VALUE_OPTIONAL,
+      InputOption::VALUE_REQUIRED,
       "The language used to implement the map and reduce functions. If no specified, PHP assumed");
-
-    $this->addOption("limit",
-      NULL,
-      InputOption::VALUE_OPTIONAL,
-      "Limit the number of results.");
-
-    $this->addOption("include-docs",
-      NULL,
-      InputOption::VALUE_OPTIONAL,
-      "Includes documents in the output.");
-
-    $this->addOption("do-not-reduce",
-      NULL,
-      InputOption::VALUE_OPTIONAL,
-      "Even is a reduce function is defined for the view, doesn't call it.");
   }
 
 
@@ -75,15 +140,63 @@ class QueryCommand extends AbstractCommand {
     $couch = $this->_di['couchdb'];
 
     $view = $input->getArgument('design-doc/view-name');
-    $keys = $input->getArgument('keys');
+
+    if ($input->getArgument('keys'))
+      $keys = $input->getArgument('keys');
+    else
+      $keys = NULL;
     
     // Sets the options.
-    $opts = new ViewQueryOpts();   
+    $opts = new ViewQueryOpts();
+
+    // Key.
+    if ($key = $input->getOption('key')) {
+      $opts->setKey($key);
+    }
 
     // Limit.
     $limit = (int)$input->getOption('limit');
     if ($limit > 0)
       $opts->setLimit($limit);
+
+    // Group results.
+    if ($input->getOption('group-results'))
+      $opts->groupResults();
+
+    // Sets group level.
+    $level = (int)$input->getOption('group-level');
+    if ($level > 0)
+      $opts->setGroupLevel($level);
+
+    // Do not reduce.
+    if ($input->getOption('do-not-reduce'))
+      $opts->doNotReduce();
+
+    // Includes docs.
+    if ($input->getOption('include-docs'))
+      $opts->includeDocs();
+
+    // Excludes results.
+    if ($input->getOption('exclude-results'))
+      $opts->excludeResults();
+
+    // Excludes endkey.
+    if ($input->getOption('exclude-endkey'))
+      $opts->excludeEndKey();
+
+    // Reverses order of results.
+    if ($input->getOption('reverse-order'))
+      $opts->reverseOrderOfResults();
+
+    // Skips the defined number of documents.
+    $skip = (int)$input->getOption('skip');
+    if ($skip > 0)
+      $opts->skipDocs($skip);
+
+    // Includes conflicts.
+    if ($input->getOption('include-conflicts'))
+      $opts->includeConflicts();
+
 
     // Map and reduce functions.
     if ($fileName = $input->getOption('map')) {
@@ -99,22 +212,18 @@ class QueryCommand extends AbstractCommand {
         $language = "php";
     }
 
-    // Includes docs.
-    if ((bool)$input->getOption('include-docs'))
-      $opts->includeDocs();
-
-    // Do not reduce.
-    if ((bool)$input->getOption('do-not-reduce'))
-      $opts->doNotReduce();
 
     if ($view == "_temp_view") {
-      echo $couch->queryTempView($map, $reduce, $keys, $opts, $language);
+      echo $couch->queryTempView($map, $reduce, $keys, $opts, $language)->getBody();
+    }
+    elseif ($view == "_all_docs") {
+      echo $couch->queryAllDocs($keys, $opts)->getBody();
     }
     else {
-      $names = implode('/', $view);
+      $names = explode('/', $view, 2);
 
       if (count($names) == 2)
-        echo $couch->queryView($names[0], $names[1], $keys, $opts);
+        echo $couch->queryView($names[0], $names[1], $keys, $opts)->getBody();
       else
         throw new \InvalidArgumentException("You have to specify design-doc/view-name");
     }
