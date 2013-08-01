@@ -10,16 +10,29 @@ namespace PitPress\Model\Blog;
 
 
 use PitPress\Model\ModeratedPost;
+use PitPress\Property;
 
 
 //! @brief This class represents a journal's article.
 //! @nosubgrouping
 class Article extends ModeratedPost {
+  use Property\Excerpt;
+  use Property\Body;
 
-  //! @name ModerationTrait
+  //! @name Alternative states an article may assume.
   //@{
   const DRAFT_STATE = "draft"; //!< The article can be saved as draft.
   //@}
+
+
+  public function getSection() {
+    return 'blog';
+  }
+
+
+  public function getHumanReadableType() {
+    return 'ARTICOLO';
+  }
 
 
   //! @brief Marks the item as draft.
@@ -77,48 +90,6 @@ class Article extends ModeratedPost {
 
   public function getPages() {
 
-  }
-
-
-  public function getExcerpt() {
-    return $this->meta['excerpt'];
-  }
-
-
-  public function issetExcerpt() {
-    return isset($this->meta['excerpt']);
-  }
-
-
-  public function setExcerpt($value) {
-    $this->meta["excerpt"] = $value;
-  }
-
-
-  public function unsetExcerpt() {
-    if ($this->isMetadataPresent('excerpt'))
-      unset($this->meta['excerpt']);
-  }
-
-
-  public function getBody() {
-    return $this->meta["body"];
-  }
-
-
-  public function issetBody() {
-    return isset($this->meta['body']);
-  }
-
-
-  public function setBody($value) {
-    $this->meta["body"] = $value;
-  }
-
-
-  public function unsetBody() {
-    if ($this->isMetadataPresent('body'))
-      unset($this->meta['body']);
   }
 
 }
