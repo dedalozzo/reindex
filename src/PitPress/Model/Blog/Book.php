@@ -14,6 +14,11 @@ namespace PitPress\Model\Blog;
 class Book extends Article {
 
 
+  public function getHumanReadableType() {
+    return 'LIBRO';
+  }
+
+
   public function getIsbn() {
     return $this->meta['isbn'];
   }
