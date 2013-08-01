@@ -22,4 +22,14 @@ class Link extends Post {
     return TRUE;
   }
 
+
+  public function getSection() {
+    return 'links';
+  }
+
+
+  public function getHumanReadableType() {
+    return 'LINK';
+  }
+
 }
