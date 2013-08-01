@@ -12,18 +12,43 @@ namespace PitPress\Model\Accessory;
 use ElephantOnCouch\Doc\Doc;
 
 
-//! @brief This class is used to keep trace of the user favourites.
-//! @details Every user can add a document to his favourites. So we need to know the favourites list, and we can do it
-//! using a view that emit as key the user id and as value the item id. We also need a way to show if a particular item
-//! has been added to the logged user. Another view will emit as key the user id and as value the item id. This is a
-//! classic many-to-many relationship.
+//! @brief This class is used to keep trace of the user votes.
 //! @nosubgrouping
 class Vote extends Doc {
 
-  public function __construct($itemId, $userId, $sign = "+") {
-    $this->meta["itemId"] = $itemId;
-    $this->meta["userId"] = $userId;
-    $this->meta["sign"] = $sign;
+  //! @brief Creates an instance of Vote class.
+  public static function create($postType, $postSection, $postId, $userId, $choice) {
+    $instance = new self();
+
+    $instance->meta["postType"] = $postType;
+    $instance->meta["postSection"] = $postSection;
+    $instance->meta["postId"] = $postId;
+    $instance->meta["userId"] = $userId;
+    $instance->setChoice($choice);
+
+    return $instance;
+  }
+
+
+  //! @brief Returns the user choice.
+  //! @return string
+  public function getChoice() {
+    return $this->meta['choice'];
+  }
+
+
+  //! @brief Changes the user vote and update timestamp.
+  //! @param[in] string $value The user vote.
+  public function setChoice($value) {
+    $this->meta['choice'] = $value;
+    $this->meta["timestamp"] = time();
+  }
+
+
+  //! @brief Returns the voting timestamp.
+  //! @return integer
+  public function getTimestamp() {
+    return $this->meta["timestamp"];
   }
 
 }
