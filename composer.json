@@ -3,7 +3,7 @@
     "description": "The platform of Programmazione.it.",
     "keywords": ["journal", "newspaper", "press"],
     "homepage": "http://pitpress.org",
-    "license": "Proprietary",
+    "license": "proprietary",
     "authors": [
         {
             "name": "Filippo Fadda",
