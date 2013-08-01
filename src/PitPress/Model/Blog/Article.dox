@@ -4,12 +4,12 @@
 namespace PitPress\Model\Blog;
 
 
-class Article  {
+class Article {
 
   //! @name Properties
   //@{
-  string $excerpt; //!< A short extract from the content.
-  string $body; //!< Content.
+  public int $excerpt; //!< A short extract from the body.
+  public int $body; //!< A general text field where store text.
   //@}
 
 }
