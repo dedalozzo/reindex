@@ -18,6 +18,7 @@ class User  {
   integer $sex; //!< Sex.
   string $birthday; //!< Date of birth.
   string $age; //!< Age, calculated from birthday.
+  string $about; //!< A few words about the user.
 
   // We don not use these constants, because every registered users must agree to the Terms of Services, Privacy Policy
   // and Cookie Policy. Here just to remember them.
