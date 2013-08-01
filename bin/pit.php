@@ -29,6 +29,7 @@ try {
   // Initializes the services. The order doesn't matter.
   require __DIR__."/../services/config.php";
   require __DIR__."/../services/couchdb.php";
+  require __DIR__."/../services/redis.php";
   require __DIR__."/../services/mysql.php";
 
   //Couch::useCurl();
