@@ -11,12 +11,4 @@ class Post {
   string $title; //!< Title.
   //@}
 
-
-  //! @brief The current user will get notifications about changes related to the current item.
-  public function subscribe(User $currentUser) {}
-
-
-  //! @brief The current user won't get notifications anymore.
-  public function unsubscribe(User $currentUser) {}
-
 }
