@@ -9,6 +9,10 @@
 namespace PitPress\Controller;
 
 
+use ElephantOnCouch\Couch;
+use ElephantOnCouch\Opt\ViewQueryOpts;
+
+
 //! @brief Controller of Blog actions.
 //! @nosubgrouping
 class BlogController extends BaseController {
@@ -18,7 +22,19 @@ class BlogController extends BaseController {
     parent::initialize();
   }
 
-  public function recentsAction() {
+  public function latestAction() {
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce();
+    $opts->reverseOrderOfResults();
+    $opts->setLimit(30);
+
+    $result = $this->couch->queryView("posts", "BY_type_ORDERBY_date", ['article, book, tutorial'], $opts)->getBodyAsArray();
+
+    $posts = [];
+    foreach ($result["rows"] as $row)
+      $posts[] = $this->couch->getDoc(Couch::STD_DOC_PATH, $row["id"], NULL);
+
+    $this->view->posts = $posts;
   }
 
 
