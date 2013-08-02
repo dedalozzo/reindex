@@ -290,7 +290,7 @@ class InitCommand extends AbstractCommand {
 
 
     // @params NONE
-    function allLatest() {
+    function classificationsAllLatest() {
       $map = "function(\$doc) use (\$emit) {
                 if (\$doc->type == 'classification')
                   \$emit(\$doc->timestamp, \$doc->tagId);
@@ -303,7 +303,7 @@ class InitCommand extends AbstractCommand {
       return $handler;
     }
 
-    $doc->addHandler(allLatest());
+    $doc->addHandler(classificationsAllLatest());
 
 
     // @params tagId

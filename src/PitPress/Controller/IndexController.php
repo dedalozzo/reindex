@@ -95,8 +95,11 @@ class IndexController extends BaseController {
     $result = $this->couch->queryView("posts", "allLatest", NULL, $opts)->getBodyAsArray();
 
     $posts = [];
-    foreach ($result["rows"] as $row)
-      $posts[] = $this->couch->getDoc(Couch::STD_DOC_PATH, $row["id"], NULL);
+    foreach ($result["rows"] as $row) {
+      $doc = $this->couch->getDoc(Couch::STD_DOC_PATH, $row["id"], NULL);
+      $doc->body = $this->markdown->render($doc->body);
+      $posts[] = $doc;
+    }
 
     $this->view->posts = $posts;
 

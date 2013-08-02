@@ -1,7 +1,7 @@
 <?php
 
-//! @file couchdb.php
-//! @brief Establishes a connection to CouchDB.
+//! @file redis.php
+//! @brief Establishes a connection to Redis.
 //! @details
 //! @author Filippo F. Fadda
 
