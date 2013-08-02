@@ -30,6 +30,7 @@ use ElephantOnCouch\Generator\UUID;
 //! @nosubgrouping
 //! @todo: Extract excerpt from body and store it.
 //! @todo: Download and save images as article attachments.
+//! @todo: Convert [center][/center] to Markdown.
 class ImportCommand extends AbstractCommand {
 
   const ARTICLE_DRAFT = 0;
@@ -349,7 +350,7 @@ class ImportCommand extends AbstractCommand {
 
 
       // Replaces BBCode urls.
-      $body = preg_replace_callback('%\[\s*url\s*=\s*("(?:[^"]*")|\A[^\']*\Z|(?:[^\'">\s]+))\s*(?:[^]\s]*)\]([\W\D\w\s]*?)\[/url\]%i',
+      $body = preg_replace_callback('%\[url\s*=\s*("(?:[^"]*")|\A[^\']*\Z|(?:[^\'">\s]+))\s*(?:[^]\s]*)\]([\W\D\w\s]*?)\[/url\]%i',
 
         function ($matches) use ($item) {
           if (isset($matches[1]) && isset($matches[2]))
@@ -363,7 +364,7 @@ class ImportCommand extends AbstractCommand {
 
 
       // Replaces BBCode images.
-      $body = preg_replace_callback('%\[\s*img\s*\]\s*("(?:[^"]*")|\A[^\']*\Z|(?:[^\'">\s]+))\s*(?:[^]\s]*)\[/img\]%i',
+      $body = preg_replace_callback('%\[img\s*\]\s*("(?:[^"]*")|\A[^\']*\Z|(?:[^\'">\s]+))\s*(?:[^]\s]*)\[/img\]%i',
 
         function ($matches) use ($item) {
           if (isset($matches[1]))
@@ -377,7 +378,7 @@ class ImportCommand extends AbstractCommand {
 
 
       // Replaces BBCode snippets.
-      $body = preg_replace_callback('%\[\s*code\s*=?(?P<language>\w*)\](?P<snippet>[\W\D\w\s]*?)\[/code\]%i',
+      $body = preg_replace_callback('%\[code\s*=?(?P<language>\w*)\](?P<snippet>[\W\D\w\s]*?)\[/code\]%i',
 
         function ($matches) use ($item) {
           if (isset($matches['snippet']))

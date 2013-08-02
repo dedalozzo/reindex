@@ -32,6 +32,7 @@ try {
   require __DIR__."/services/couchdb.php";
   require __DIR__."/services/redis.php";
   require __DIR__."/services/mysql.php";
+  require __DIR__."/services/markdown.php";
 
   // Retrieves the Router component.
   $router = $di['router'];
