@@ -225,7 +225,7 @@ class QueryCommand extends AbstractCommand {
       if (count($names) == 2)
         echo $couch->queryView($names[0], $names[1], $keys, $opts)->getBody();
       else
-        throw new \InvalidArgumentException("You have to specify design-doc/view-name");
+        throw new \InvalidArgumentException("You have to specify design-doc/view-name.");
     }
 
   }
