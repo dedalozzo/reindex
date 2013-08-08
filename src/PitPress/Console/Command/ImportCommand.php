@@ -23,6 +23,9 @@ use PitPress\Model\Accessory\Star;
 use PitPress\Model\Accessory\Classification;
 use PitPress\Model\Accessory\Subscription;
 
+use Converter\BBCodeConverter;
+use Converter\HTMLConverter;
+
 use ElephantOnCouch\Generator\UUID;
 
 
@@ -118,278 +121,13 @@ class ImportCommand extends AbstractCommand {
 
       $body = $item->body;
 
-
-      // Let's find all code inside the body. The code can be inside <pre></pre>, <code></code>, or [code][/code] if you
-      // are using BBCode markup language.
-      $pattern = '%(?P<openpre><pre>)(?P<contentpre>[\W\D\w\s]*?)(?P<closepre></pre>)|(?P<opencode><code>)(?P<contentcode>[\W\D\w\s]*?)(?P<closecode></code>)|(?P<openbbcode>\[code=?\w*\])(?P<contentbbcode>[\W\D\w\s]*?)(?P<closebbcode>\[/code\])%i';
-
-      if (preg_match_all($pattern, $body, $snippets)) {
-
-        $pattern = '%<pre>[\W\D\w\s]*?</pre>|<code>[\W\D\w\s]*?</code>|\[code=?\w*\][\W\D\w\s]*?\[/code\]%i';
-
-        // Replaces the code snippet with a special marker to be able to inject the code in place.
-        $body = preg_replace($pattern, '___SNIPPET___', $body);
-      }
-
-
-      // Replace links.
-      $body = preg_replace_callback('%(?i)<a[^>]+>(.+?)</a>%',
-
-        function ($matches) use ($item) {
-
-          // Extracts the url.
-          if (preg_match('/\s*(?i)href\s*=\s*("([^"]*")|\'[^\']*\'|([^\'">\s]+))/', $matches[0], $others) === 1) {
-            $href = strtolower(trim($others[1], '"'));
-
-            // Extracts the target.
-            if (preg_match('/\s*(?i)target\s*=\s*("([^"]*")|\'[^\']*\'|([^\'">\s]+))/', $matches[0], $others) === 1)
-              $target = strtolower(trim($others[1], '"'));
-            else
-              $target = "_self";
-          }
-          else
-            throw new \RuntimeException(sprintf("Article with idItem = %d have malformed links", $item->idItem));
-
-          return "[url=".$href." t=".$target."]".$matches[1]."[/url]";
-
-        },
-
-        $body
-      );
-
-
-      // Replace images.
-      $body = preg_replace_callback('/<img[^>]+>/i',
-
-        function ($matches) use ($item) {
-
-          // Extracts the src.
-          if (preg_match('/\s*(?i)src\s*=\s*("([^"]*")|\'[^\']*\'|([^\'">\s]+))/', $matches[0], $others) === 1)
-            $src = strtolower(trim($others[1], '"'));
-          else
-            throw new \RuntimeException(sprintf("Article with idItem = %d have malformed images", $item->idItem));
-
-          return "[img]".$src."[/img]";
-
-        },
-
-        $body
-      );
-
-
-      // Replace other tags.
-      $body = preg_replace_callback('%</?[a-z][a-z0-9]*[^<>]*>%i',
-
-        function ($matches) {
-          $tag = strtolower($matches[0]);
-
-          switch ($tag) {
-            case ($tag == '<strong>' || $tag == '<b>'):
-              return '[b]';
-              break;
-
-            case ($tag == '</strong>' || $tag == '</b>'):
-              return '[/b]';
-              break;
-
-            case ($tag == '<em>' || $tag == '<i>'):
-              return '[i]';
-              break;
-
-            case ($tag == '</em>' || $tag == '</i>'):
-              return '[/i]';
-              break;
-
-            case '<u>':
-              return '[u]';
-              break;
-
-            case '</u>':
-              return '[/u]';
-              break;
-
-            case ($tag == '<strike>' || $tag == '<del>'):
-              return '[s]';
-              break;
-
-            case ($tag == '</strike>' || $tag == '</del>'):
-              return '[/s]';
-              break;
-
-            case '<ul>':
-              return '[list]';
-              break;
-
-            case '</ul>':
-              return '[/list]';
-              break;
-
-            case '<ol>':
-              return '[list=1]';
-              break;
-
-            case '</ol>':
-              return '[/list]';
-              break;
-
-            case '<li>':
-              return '[*]';
-              break;
-
-            case '</li>':
-              return '';
-              break;
-
-            case '<center>':
-              return '[center]';
-              break;
-
-            case '</center>':
-              return '[/center]';
-              break;
-
-            default:
-              return $tag;
-          }
-        },
-
-        $body
-      );
-
-
-      // Now we strip the remaining HTML tags.
-      $body = strip_tags($body);
-
-
-      // Now we can restore the snippets, converting the HTML tags to BBCode tags.
-      $snippetsCount = count($snippets[0]);
-
-      for ($i = 0; $i < $snippetsCount; $i++) {
-        // We try to determine which tags the code is inside: <pre></pre>, <code></code>, [code][/code]
-        if (!empty($snippets['openpre'][$i]))
-          $snippet = "[code]".PHP_EOL.trim($snippets['contentpre'][$i]).PHP_EOL."[/code]";
-        elseif (!empty($snippets['opencode'][$i]))
-          $snippet = "[code]".PHP_EOL.trim($snippets['contentcode'][$i]).PHP_EOL."[/code]";
-        else
-          $snippet = $snippets['openbbcode'][$i].PHP_EOL.trim($snippets['contentbbcode'][$i]).PHP_EOL.$snippets['closebbcode'][$i];
-
-        $body = preg_replace('/___SNIPPET___/', PHP_EOL.trim($snippet).PHP_EOL, $body, 1);
-      }
-
+      // Converts from HTML to BBCode!
+      $converter = new HTMLConverter($body, $item->id);
+      $body = $converter->toBBCode();
 
       // Converts from BBCode to Markdown!
-
-      // Replaces BBCode bold.
-      $body = preg_replace_callback('%\[b\]([\W\D\w\s]*?)\[/b\]%i',
-
-        function ($matches) use ($item) {
-          return "**".$matches[1]."**";
-        },
-
-        $body
-      );
-
-      // Replaces BBCode italic.
-      $body = preg_replace_callback('%\[i\]([\W\D\w\s]*?)\[/i\]%i',
-
-        function ($matches) use ($item) {
-          return "*".$matches[1]."*";
-        },
-
-        $body
-      );
-
-
-      // Replaces BBCode underline. Unfortunately Markdown doesn't support underline, so we just revert to normal text.
-      $body = preg_replace_callback('%\[u\]([\W\D\w\s]*?)\[/u\]%i',
-
-        function ($matches) use ($item) {
-          return $matches[1];
-        },
-
-        $body
-      );
-
-
-      // Replaces BBCode strikethrough.
-      $body = preg_replace_callback('%\[s\]([\W\D\w\s]*?)\[/s\]%i',
-
-        function ($matches) use ($item) {
-          return "~~".$matches[1]."~~";
-        },
-
-        $body
-      );
-
-
-      // Replaces BBCode lists.
-      $body = preg_replace_callback('%\[list(?P<type>=1)?\](?P<items>[\W\D\w\s]*?)\[/list\]%i',
-
-        function ($matches) use ($item) {
-          $buffer = "";
-
-          if (preg_match_all('/(?:(?![[*\]]).)*/i', $matches['items'], $listItems)) {
-
-            if (isset($matches['type']) && $matches['type'] == '=1') { // ordered list
-              foreach ($listItems as $itemMatch)
-                $buffer .= '- '.trim($itemMatch[1]).PHP_EOL;
-            }
-            else { // unordered list
-              $counter = count($listItems);
-              for ($i = 0; $i < $counter; $i++)
-                $buffer .= (string)($i + 1).'. '.trim($listItems[$i][1]).PHP_EOL;
-            }
-
-          }
-
-          return $buffer;
-        },
-
-        $body
-      );
-
-
-      // Replaces BBCode urls.
-      $body = preg_replace_callback('%\[url\s*=\s*("(?:[^"]*")|\A[^\']*\Z|(?:[^\'">\s]+))\s*(?:[^]\s]*)\]([\W\D\w\s]*?)\[/url\]%i',
-
-        function ($matches) use ($item) {
-          if (isset($matches[1]) && isset($matches[2]))
-            return "[".$matches[2]."](".$matches[1].")";
-          else
-            throw new \RuntimeException(sprintf("Article with idItem = %d have malformed BBCode urls", $item->idItem));
-        },
-
-        $body
-      );
-
-
-      // Replaces BBCode images.
-      $body = preg_replace_callback('%\[img\s*\]\s*("(?:[^"]*")|\A[^\']*\Z|(?:[^\'">\s]+))\s*(?:[^]\s]*)\[/img\]%i',
-
-        function ($matches) use ($item) {
-          if (isset($matches[1]))
-            return "![]"."(".$matches[1].")";
-          else
-            throw new \RuntimeException(sprintf("Article with idItem = %d have malformed BBCode images", $item->idItem));
-        },
-
-        $body
-      );
-
-
-      // Replaces BBCode snippets.
-      $body = preg_replace_callback('%\[code\s*=?(?P<language>\w*)\](?P<snippet>[\W\D\w\s]*?)\[/code\]%i',
-
-        function ($matches) use ($item) {
-          if (isset($matches['snippet']))
-            return "```".$matches['language'].PHP_EOL.$matches['snippet']."```".PHP_EOL;
-          else
-            throw new \RuntimeException(sprintf("Article with idItem = %d have malformed BBCode snippet", $item->idItem));
-        },
-
-        $body
-      );
-
+      $converter = new BBCodeConverter($body, $item->id);
+      $body = $converter->toMarkdown();
 
       // This is the converted body.
       $article->body = utf8_encode($body);
@@ -447,7 +185,7 @@ class ImportCommand extends AbstractCommand {
       if (preg_match('/\\[attachments\\](.*?)\\[\/attachments\\]/s', $body, $matches) && !empty($matches[1]))
         $book->attachments = utf8_encode($matches[1]);
       if (preg_match('/\\[review\\](.*?)\\[\/review\\]/s', $body, $matches))
-        $book->body = utf8_encode($matches[1]);
+        $body = $matches[1];
       if (preg_match('/\\[positive\\](.*?)\\[\/positive\\]/s', $body, $matches))
         $book->positive = utf8_encode($matches[1]);
       if (preg_match('/\\[negative\\](.*?)\\[\/negative\\]/s', $body, $matches))
@@ -455,6 +193,14 @@ class ImportCommand extends AbstractCommand {
 
       if (preg_match('/\\[vendorLink\\](.*?)\\[\/vendorLink\\]/s', $body, $matches) && !empty($matches[1]))
         $book->link = utf8_encode($matches[1]);
+
+
+      // Converts from BBCode to Markdown!
+      $converter = new BBCodeConverter($body, $item->id);
+      $body = $converter->toMarkdown();
+
+      // This is the converted body.
+      $book->body = utf8_encode($body);
 
       $this->couch->saveDoc($book);
 
