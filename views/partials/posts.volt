@@ -14,7 +14,7 @@
               <li class="space"></li>
               <li>{{ post.getHumanReadableDate() }}, <b>{{ post.getHitsCount() }}</b> lettori</li>
             </ul>
-            <div class="item-body">{{ post.body }}</div>
+            <div class="item-body">{{ post.html }}</div>
             <ul class="list item-tags">
               {% set tags = post.getTags()["rows"] %}
               {% for tag in tags %}
