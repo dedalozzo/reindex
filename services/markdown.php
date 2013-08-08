@@ -6,10 +6,13 @@
 //! @author Filippo F. Fadda
 
 
+use PitPress\Render\SyntaxHighlighter;
+
+
 // Creates an instance of Redis client and return it.
 $di->setShared('markdown',
   function() use ($config) {
-    $render = new Sundown\Render\HTML(
+    $render = new SyntaxHighlighter(
         [
           'filter_html' => TRUE,
           'hard_wrap' => TRUE
