@@ -22,6 +22,7 @@ use Symfony\Component\Console\Application;
 class AbstractCommand extends Command implements InjectionAwareInterface {
 
   protected $_di;
+  protected $logger;
 
 
   //! @brief Overrides this method to set the Dependency Injector.
@@ -34,9 +35,9 @@ class AbstractCommand extends Command implements InjectionAwareInterface {
 
 
   //! @brief Sets the Dependency Injector.
-
   public function setDi($di) {
     $this->_di = $di;
+    $this->logger = $this->_di['logger'];
   }
 
 
