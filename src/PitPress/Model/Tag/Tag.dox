@@ -9,8 +9,9 @@ class Tag  {
   //! @name Properties
   //@{
   string $name; //!< The tag name
-  string $excerpt; //!< A short extract from the tag description.
-  string $body; //!< The full explanation of the tag.
+  public string $excerpt; //!< A short extract from the body.
+  public string $body; //!< A general text field where store text.
+  public string $html; //!< The body HTML version.
   //@}
 
 }
