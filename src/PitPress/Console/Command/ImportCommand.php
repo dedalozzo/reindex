@@ -54,6 +54,7 @@ class ImportCommand extends AbstractCommand {
   private $mysql;
   private $couch;
   private $redis;
+  private $markdown;
 
   private $input;
   private $output;
@@ -129,11 +130,25 @@ class ImportCommand extends AbstractCommand {
       $converter = new BBCodeConverter($body, $item->id);
       $body = $converter->toMarkdown();
 
-      // This is the converted body.
       $article->body = utf8_encode($body);
+      //$article->body = iconv('LATIN1', 'UTF-8', $body);
+      try {
+        $article->html = $this->markdown->render($article->body);
+      }
+      catch(\Exception $e) {
+        $this->logger->error(sprintf(" %d - %s", $item->idItem, $article->title));
+      }
+
+      $purged = $article->purge($article->html);
+      $article->excerpt = $article->truncate($purged);
 
       // We finally save the article.
-      $this->couch->saveDoc($article);
+      try {
+        $this->couch->saveDoc($article);
+      }
+      catch(\Exception $e) {
+        $this->logger->error(sprintf("Invalid JSON: %d - %s", $item->idItem, $article->title));
+      }
 
       // We update the article views.
       $this->redis->hSet($article->id, 'hits', $item->hitNum);
@@ -199,10 +214,25 @@ class ImportCommand extends AbstractCommand {
       $converter = new BBCodeConverter($body, $item->id);
       $body = $converter->toMarkdown();
 
-      // This is the converted body.
       $book->body = utf8_encode($body);
+      //$article->body = iconv('LATIN1', 'UTF-8', $body);
+      try {
+        $book->html = $this->markdown->render($book->body);
+      }
+      catch(\Exception $e) {
+        $this->logger->error(sprintf(" %d - %s", $item->idItem, $book->title));
+      }
 
-      $this->couch->saveDoc($book);
+      $purged = $book->purge($book->html);
+      $book->excerpt = $book->truncate($purged);
+
+      // We finally save the book.
+      try {
+        $this->couch->saveDoc($book);
+      }
+      catch(\Exception $e) {
+        $this->logger->error(sprintf("Invalid JSON: %d - %s", $item->idItem, $book->title));
+      }
 
       // We update the book views.
       $this->redis->hSet($book->id, 'hits', $item->hitNum);
@@ -425,6 +455,7 @@ class ImportCommand extends AbstractCommand {
     $this->mysql = $this->_di['mysql'];
     $this->couch = $this->_di['couchdb'];
     $this->redis = $this->_di['redis'];
+    $this->markdown = $this->_di['markdown'];
 
     $this->input = $input;
     $this->output = $output;
