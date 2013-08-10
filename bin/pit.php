@@ -9,8 +9,11 @@
 
 use PitPress\Console\Console as PitPressConsole;
 use PitPress\Console\Command;
+
 use Phalcon\Config\Adapter\Ini as IniReader;
+use Phalcon\Logger\Adapter\File as FileAdapter;
 use Phalcon\DI\FactoryDefault as DependencyInjector;
+
 use ElephantOnCouch\Couch;
 
 
@@ -23,11 +26,14 @@ try {
   // Reads the application's configuration.
   $config = new IniReader(__DIR__.'/../config.ini');
 
+  $logger = new FileAdapter("/tmp/pit.log");
+
   // The FactoryDefault Dependency Injector automatically registers the right services providing a full stack framework.
   $di = new DependencyInjector();
 
   // Initializes the services. The order doesn't matter.
   require __DIR__."/../services/config.php";
+  require __DIR__."/../services/logger.php";
   require __DIR__."/../services/couchdb.php";
   require __DIR__."/../services/redis.php";
   require __DIR__."/../services/mysql.php";
