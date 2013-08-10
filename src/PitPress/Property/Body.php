@@ -32,5 +32,26 @@ trait Body {
       unset($this->meta['body']);
   }
 
+
+  public function getHtml() {
+    return $this->meta["html"];
+  }
+
+
+  public function issetHtml() {
+    return isset($this->meta['html']);
+  }
+
+
+  public function setHtml($value) {
+    $this->meta["html"] = $value;
+  }
+
+
+  public function unsetHtml() {
+    if ($this->isMetadataPresent('html'))
+      unset($this->meta['html']);
+  }
+  
 }
 //! @endcond
