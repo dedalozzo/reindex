@@ -4,9 +4,10 @@
 //! @brief Initializes the application.
 //! @details
 //! @author Filippo F. Fadda
-//! @todo: Use Google prettify to highlight the source code.
+
 
 use Phalcon\Config\Adapter\Ini as IniReader;
+use Phalcon\Logger\Adapter\File as FileAdapter;
 use Phalcon\DI\FactoryDefault as DependencyInjector;
 
 
@@ -19,11 +20,15 @@ try {
   // Reads the application's configuration.
   $config = new IniReader(__DIR__.'/config.ini');
 
+  $logger = new FileAdapter("/tmp/pit-press.log");
+  $logger->begin();
+
   // The FactoryDefault Dependency Injector automatically registers the right services providing a full stack framework.
   $di = new DependencyInjector();
 
   // Initializes the services. The order doesn't matter.
   require __DIR__."/services/config.php";
+  require __DIR__."/services/logger.php";
   require __DIR__."/services/router.php";
   require __DIR__."/services/view.php";
   require __DIR__."/services/volt.php";
@@ -92,6 +97,9 @@ try {
 }
 catch (Exception $e) {
   echo $e;
+}
+finally {
+  $logger->commit();
 }
 
 $stop = microtime(true);
