@@ -71,13 +71,13 @@ class IndexController extends BaseController {
 
 
   public function initialize() {
-    \Phalcon\Tag::setTitle('Getting Help');
     parent::initialize();
   }
 
 
   public function indexAction() {
     $this->latestAction();
+    $this->view->title = self::TITLE;
   }
 
 
@@ -88,6 +88,8 @@ class IndexController extends BaseController {
 
 
   public function latestAction() {
+    $this->view->title = "Ultimi aggiornamenti - ".self::TITLE;
+
     // Posts.
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->reverseOrderOfResults();
@@ -97,7 +99,6 @@ class IndexController extends BaseController {
     $posts = [];
     foreach ($result["rows"] as $row) {
       $doc = $this->couch->getDoc(Couch::STD_DOC_PATH, $row["id"], NULL);
-      $doc->body = $this->markdown->render($doc->body);
       $posts[] = $doc;
     }
 
@@ -112,8 +113,10 @@ class IndexController extends BaseController {
 
 
   public function popularAction() {
+    $this->view->title = "Aggiornamenti popolari - ".self::TITLE;
+
     // Retrieves the post of the last 7 days.
-    $opts = new ViewQueryOpts();
+    /*$opts = new ViewQueryOpts();
     $opts->doNotReduce()->reverseOrderOfResults();
 
     $aWeekAgo = (string)strtotime("-1 week");
@@ -121,7 +124,7 @@ class IndexController extends BaseController {
 
     $result = $this->couch->queryView("index", "latest", $opts)->getBodyAsArray();
 
-    $posts = [];
+    $posts = [];*/
     /*foreach ($result["rows"] as $row)
       $this->redis->hGet($row->id)
 
@@ -129,6 +132,43 @@ class IndexController extends BaseController {
     $posts[] = $this->couch->getDoc(Couch::STD_DOC_PATH, $row["id"], NULL, $docOpts);
 
     $this->view->setVar("posts", $posts);*/
+
+
+    // Posts.
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->reverseOrderOfResults();
+    $opts->setLimit(30);
+    $posts = $this->couch->queryView("posts", "allLatest", NULL, $opts)->getBodyAsArray();
+
+    // Extracts the ids.
+    $keys = [];
+    foreach ($posts["rows"] as $row)
+      $keys[] = $row["id"];
+
+    // Stars.
+    $opts->reset();
+    $opts->doNotReduce();
+    $stars = $this->couch->queryView("stars", "perItem", $keys, $opts)->getBodyAsArray();
+
+
+    $items = [];
+    foreach ($keys as $key) {
+      $item = new \StdClass();
+      $item->id = $key;
+      $item->hits = $this->redis->hGet($item->id, 'hits');
+
+
+      $items[] = $item;
+    }
+
+
+    $this->view->items = $items;
+
+    // Stats.
+    $this->view->stat = new Stat();
+
+    // Recent tags.
+    $this->view->recentTags = $this->getRecentTags();
   }
 
 
