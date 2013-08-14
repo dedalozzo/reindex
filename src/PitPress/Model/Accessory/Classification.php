@@ -6,6 +6,7 @@
 //! @author Filippo F. Fadda
 
 
+//! @brief PitPress accessory classes namespace.
 namespace PitPress\Model\Accessory;
 
 
