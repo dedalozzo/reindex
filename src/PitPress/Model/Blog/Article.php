@@ -6,6 +6,7 @@
 //! @author Filippo F. Fadda
 
 
+//! @brief PitPress blog entries namespace.
 namespace PitPress\Model\Blog;
 
 
@@ -30,7 +31,7 @@ class Article extends ModeratedPost {
   }
 
 
-  public function getHumanReadableType() {
+  public function getPublishingType() {
     return 'ARTICOLO';
   }
 

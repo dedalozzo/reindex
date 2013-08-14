@@ -28,7 +28,7 @@ class Link extends Post {
   }
 
 
-  public function getHumanReadableType() {
+  public function getPublishingType() {
     return 'LINK';
   }
 

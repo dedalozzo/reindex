@@ -22,7 +22,7 @@ class Question extends Post {
   }
 
 
-  public function getHumanReadableType() {
+  public function getPublishingType() {
     return 'DOMANDA';
   }
 

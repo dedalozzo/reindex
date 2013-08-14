@@ -11,9 +11,9 @@ namespace PitPress\Model;
 
 use ElephantOnCouch\Couch;
 use ElephantOnCouch\Opt\ViewQueryOpts;
-use ElephantOnCouch\Helper\TimeHelper;
 
 use PitPress\Model\User\User;
+use PitPress\Helper\Time;
 
 
 //! @brief This class is used to represent a generic entry, a content created by a user.
@@ -55,10 +55,37 @@ abstract class Post extends VersionedItem {
   }
 
 
+  //! @brief Saves the post to the database.
+  public function save() {
+    $this->permalink = $this->getPermalink();
+    $this->prettyDate = $this->getPrettyDate();
+    $this->prettyTitle = $this->getPrettyTitle();
+    $this->prettyUrl = $this->getPrettyUrl();
+
+    parent::save();
+  }
+
+
   //! @brief Gets the item permanent link.
   //! @return string
   public function getPermalink() {
     return "/".$this->getSection()."/".$this->id;
+  }
+
+
+  public function getPrettyDate() {
+    return date("Y/m/d", $this->publishingDate);
+  }
+
+
+  public function getPrettyTitle() {
+    $title = preg_replace('/[^a-z0-9]/i',' ', $this->title);
+    return str_replace(" ", "-", $title);
+  }
+
+
+  public function getPrettyUrl() {
+    return $this->getPrettyDate()."/".$this->getSection()."/".$this->getPrettyTitle().".html";
   }
 
 
@@ -67,43 +94,16 @@ abstract class Post extends VersionedItem {
   abstract public function getSection();
 
 
-  //! @brief Gets the post type in a human readable form.
+  //! @brief Gets the publishing type.
   //! @return string
-  abstract public function getHumanReadableType();
+  abstract public function getPublishingType();
 
 
-  //! @brief Returns the publishing date in a human readable format.
+  //! @brief Returns a measure of the time passed since the publishing date. In case is passed more than a day, returns
+  //! a human readable date.
   //! @return string
-  public function getHumanReadableDate() {
-    $publishingDate = $this->getPublishingDate();
-
-    $today = date('Ymd');
-
-    // Today.
-    if ($today == date('Ymd', $publishingDate)) {
-      $time = TimeHelper::since($publishingDate);
-
-      if ($time['hours'] == 1)
-        return "un'ora fa";
-      elseif ($time['hours'] > 1)
-        return sprintf('$d ore fa', $time['hours']);
-      elseif ($time['minutes'] == 1)
-        return "un minuto fa";
-      elseif ($time['minutes'] > 1)
-        return sprintf('$d minuti fa', $time['minutes']);
-      elseif ($time['seconds'] == 1)
-        return "un secondo fa";
-      elseif ($time['seconds'] > 1)
-        return sprintf('$d secondi fa', $time['seconds']);
-    }
-    // Yesterday.
-    elseif (strtotime('-1 day', $today) == date('Ymd', $publishingDate)) {
-      return "ieri";
-    }
-    // In the past.
-    else {
-      return date('d-m-Y \a\l\l\e H:i', $publishingDate);
-    }
+  public function whenHasBeenPublished() {
+    return Time::when($this->publishingDate);
   }
 
 
@@ -214,9 +214,7 @@ abstract class Post extends VersionedItem {
   //@}
 
 
-  //! @name Properties Accessors
-  //@{
-
+  //! @cond HIDDEN_SYMBOLS
   public function getTitle() {
     return $this->meta['title'];
   }
@@ -236,7 +234,6 @@ abstract class Post extends VersionedItem {
     if ($this->isMetadataPresent('title'))
       unset($this->meta['title']);
   }
-
-  //! @}
+  //! @endcond
 
 }
