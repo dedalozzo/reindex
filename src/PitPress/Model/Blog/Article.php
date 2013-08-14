@@ -60,7 +60,7 @@ class Article extends ModeratedPost {
   }
 
 
-  //! @brief Returns <i>true</i> if the item has been pinned.
+  //! @brief Returns `true` if the item has been pinned.
   public function isPinned() {
     return $this->meta["pinned"];
   }
@@ -78,7 +78,7 @@ class Article extends ModeratedPost {
   }
 
 
-  //! @brief Returns <i>true</i> if any user can't post comments or answers.
+  //! @brief Returns `true` if any user can't post comments or answers.
   public function isClosed() {
     return $this->meta["closed"];
   }

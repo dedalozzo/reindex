@@ -171,7 +171,7 @@ abstract class Post extends VersionedItem {
   }
 
 
-  //! @brief Returns <i>true</i> if the user has voted else otherwise.
+  //! @brief Returns `true` if the user has voted else otherwise.
   //! @param[in] User $currentUser The current user logged in.
   //! @return boolean
   public function didUserVote(User $currentUser, &$voteId = NULL) {
@@ -206,7 +206,7 @@ abstract class Post extends VersionedItem {
 
   //! @brief Returns the thumbs state expressed by the current user in relation to the current post.
   //! @param[in] User $currentUser The current user logged in.
-  //! @return string|boolean Returns <i>false</i> in case the user never voted, '+' for thumbs up and '-' for thumbs down.
+  //! @return string|boolean Returns `false` in case the user never voted, '+' for thumbs up and '-' for thumbs down.
   public function getThumbsDirection(User $currentUser) {
     return $this->redis->hGet($currentUser->id, $this->id);
   }
