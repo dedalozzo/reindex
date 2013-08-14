@@ -156,8 +156,7 @@ abstract class VersionedItem extends Item {
   //! @}
 
 
-  //! @name Properties Accessors
-  //@{
+  //! @cond HIDDEN_SYMBOLS
 
   public function getOwnerId() {
     return $this->meta["ownerId"];
@@ -221,6 +220,6 @@ abstract class VersionedItem extends Item {
       unset($this->meta['publishingDate']);
   }
 
-  //! @}
+  //! @endcond
 
 }
