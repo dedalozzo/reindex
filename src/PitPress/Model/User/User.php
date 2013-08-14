@@ -63,7 +63,7 @@ class User extends Item {
   }
 
 
-  //! @brief Returns <i>true</i> if the user has been banned.
+  //! @brief Returns `true` if the user has been banned.
   public function isBanned() {
     return isset($this->meta['banned']);
   }

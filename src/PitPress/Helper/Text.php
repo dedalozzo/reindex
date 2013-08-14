@@ -17,7 +17,7 @@ class Text {
   //! @param[in] string $text The input string.
   //! @param[in] integer $length The number of characters at which the string will be wrapped, ex. 200 characters.
   //! @param[in] string $etc The characters you want append to the end of text.
-  //! @param[in] boolean $breakWords If <i>true</i> breaks the words to return the exact number of chars.
+  //! @param[in] boolean $breakWords If `true` breaks the words to return the exact number of chars.
   //! @param[in] boolean $middle Truncates the text but remove middle instead the end of the string.
   public static function truncate($text, $length = 200, $etc = ' ...', $charset='UTF-8', $breakWords = FALSE, $middle = FALSE) {
     if ($length == 0)

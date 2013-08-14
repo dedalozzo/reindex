@@ -25,7 +25,7 @@ abstract class VersionedItem extends Item {
   //! @name Starring Methods
   //@{
 
-  //! @brief Returns <i>true</i> if the current user starred this post.
+  //! @brief Returns `true` if the current user starred this post.
   //! @param[in] User $currentUser The current user logged in.
   //! @param[out] string $starId The star document identifier related to the current post.
   //! @return boolean
@@ -85,7 +85,7 @@ abstract class VersionedItem extends Item {
   //! @name Subscribing Methods
   // @{
 
-  //! @brief Returns <i>true</i> if the user has subscribed the current post.
+  //! @brief Returns `true` if the user has subscribed the current post.
   //! @param[in] User $currentUser The current user logged in.
   //! @return boolean
   public function isSubscribed(User $currentUser, &$subscriptionId = NULL) {
