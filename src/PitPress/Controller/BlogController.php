@@ -18,10 +18,12 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
 class BlogController extends BaseController {
 
   public function initialize() {
-    \Phalcon\Tag::setTitle('Getting Help');
+    \Phalcon\Tag::setTitle('Blog');
     parent::initialize();
   }
 
+
+  //! @brief Gets the latest blog entries.
   public function latestAction() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce();
@@ -38,26 +40,32 @@ class BlogController extends BaseController {
   }
 
 
+  //! @brief Gets the most popular weekly blog entries.
   public function popularsAction() {
   }
 
 
+  //! @brief Gets the last weekly blog entries based on my tags.
   public function basedOnMyTagsAction() {
   }
 
 
+  //! @brief Gets the most voted blog entries.
   public function mostVotedAction() {
   }
 
 
+  //! @brief Gets the most discussed blog entries.
   public function mostDiscussedAction() {
   }
 
 
+  //! @brief Gets my blog entries.
   public function writtenByMeAction() {
   }
 
 
+  //! @brief Gets the rss of the latest blog entries.
   public function rssAction() {
   }
 
