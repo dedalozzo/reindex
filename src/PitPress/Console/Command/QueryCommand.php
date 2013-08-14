@@ -145,7 +145,7 @@ class QueryCommand extends AbstractCommand {
       $keys = $input->getArgument('keys');
     else
       $keys = NULL;
-    
+
     // Sets the options.
     $opts = new ViewQueryOpts();
 
