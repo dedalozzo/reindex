@@ -22,6 +22,7 @@ use PitPress\Model\Aggregate;
 use PitPress\Model\Accessory\Star;
 use PitPress\Model\Accessory\Classification;
 use PitPress\Model\Accessory\Subscription;
+use PitPress\Helper\Text;
 
 use Converter\BBCodeConverter;
 use Converter\HTMLConverter;
@@ -139,8 +140,8 @@ class ImportCommand extends AbstractCommand {
         $this->logger->error(sprintf(" %d - %s", $item->idItem, $article->title));
       }
 
-      $purged = $article->purge($article->html);
-      $article->excerpt = $article->truncate($purged);
+      $purged = Text::purge($article->html);
+      $article->excerpt = TExt::truncate($purged);
 
       // We finally save the article.
       try {
@@ -223,8 +224,8 @@ class ImportCommand extends AbstractCommand {
         $this->logger->error(sprintf(" %d - %s", $item->idItem, $book->title));
       }
 
-      $purged = $book->purge($book->html);
-      $book->excerpt = $book->truncate($purged);
+      $purged = Text::purge($book->html);
+      $book->excerpt = Text::truncate($purged);
 
       // We finally save the book.
       try {
