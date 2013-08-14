@@ -29,7 +29,7 @@ class Aggregate extends ModeratedPost {
   }
 
 
-  public function getHumanReadableType() {
+  public function getPublishingType() {
     return 'AGGREGATO';
   }
 

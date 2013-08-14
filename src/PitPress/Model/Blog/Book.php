@@ -14,10 +14,20 @@ namespace PitPress\Model\Blog;
 class Book extends Article {
 
 
-  public function getHumanReadableType() {
+  public function getPublishingType() {
     return 'LIBRO';
   }
 
+
+  public function getCover() {
+  }
+
+
+  public function setCover($value) {
+  }
+
+
+  //! @cond HIDDEN_SYMBOLS
 
   public function getIsbn() {
     return $this->meta['isbn'];
@@ -228,12 +238,6 @@ class Book extends Article {
       unset($this->meta['link']);
   }
 
-
-  public function getCover() {
-  }
-
-
-  public function setCover($value) {
-  }
+  //! @endcond
 
 }
