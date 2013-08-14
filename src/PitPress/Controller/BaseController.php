@@ -17,8 +17,11 @@ use Phalcon\Mvc\Controller;
 //! @brief The base controller, a subclass of Phalcon controller.
 //! @nosubgrouping
 class BaseController extends Controller {
+  const TITLE = 'PROGRAMMAZIONE.IT';
+
   protected $couch;
 
+  //! @brief Initializes the controller.
   public function initialize() {
     $this->couch = $this->di['couchdb'];
 
