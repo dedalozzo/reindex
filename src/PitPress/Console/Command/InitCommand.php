@@ -331,6 +331,32 @@ class InitCommand extends AbstractCommand {
   }
 
 
+  private function initReputation() {
+    $doc = DesignDoc::create('stars');
+
+
+    // @params userId, [timestamp]
+    // @methods: User.getReputation()
+    function reputationPerUser() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'reputation')
+                  \$emit([\$doc->userId, \$doc->timestamp], \$doc->points);
+              };";
+
+      $handler = new ViewHandler("perUser");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnSum();
+
+      return $handler;
+    }
+
+    $doc->addHandler(reputationPerUser());
+
+
+    $this->couch->saveDoc($doc);
+  }
+
+
   private function initFavourites() {
     $doc = DesignDoc::create('favourites');
 
@@ -373,6 +399,31 @@ class InitCommand extends AbstractCommand {
   }
 
 
+  private function initUsers() {
+    $doc = DesignDoc::create('users');
+
+
+    // @params NONE
+    function allNames() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'user')
+                  \$emit(\$doc->_id, \$doc->displayName);
+              };";
+
+      $handler = new ViewHandler("all");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
+
+      return $handler;
+    }
+
+    $doc->addHandler(allNames());
+
+
+    $this->couch->saveDoc($doc);
+  }
+
+
   //! @brief Configures the command.
   protected function configure() {
     $this->setName("init");
@@ -381,7 +432,7 @@ class InitCommand extends AbstractCommand {
       InputArgument::IS_ARRAY | InputArgument::REQUIRED,
       "The documents containing the views you want create. Use 'all' if you want insert all the documents, 'users' if
       you want just init the users or separate multiple documents with a space. The available documents are: users,
-      articles, books, tags");
+      articles, books, tags, reputation.");
   }
 
 
@@ -430,6 +481,14 @@ class InitCommand extends AbstractCommand {
 
           case 'favourites':
             $this->initFavourites();
+            break;
+
+          case 'users':
+            $this->initUsers();
+            break;
+
+          case 'reputation':
+            $this->initReputation();
             break;
         }
 

@@ -14,23 +14,13 @@ use PitPress\Property;
 
 //! @brief This class represents an aggregate of posts.
 //! @nosubgrouping
-class Aggregate extends ModeratedPost {
-  use Property\Excerpt;
+abstract class Aggregate extends Post {
+  use Property\TExcerpt;
 
 
   public function __construct() {
     parent::__construct();
     $this->meta['posts'] = [];
-  }
-
-
-  public function getSection() {
-    return 'blog';
-  }
-
-
-  public function getPublishingType() {
-    return 'AGGREGATO';
   }
 
 

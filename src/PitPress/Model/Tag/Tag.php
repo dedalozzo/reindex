@@ -9,28 +9,30 @@
 namespace PitPress\Model\Tag;
 
 
+use PitPress\Model\Item;
 use PitPress\Model\User\User;
-use PitPress\Model\VersionedItem;
+use PitPress\Extension;
 
 
-//! @brief
+//! @brief A label used to categorize posts.
+//! @details Every post must be tagged with a maximun of five tags.
 //! @nosubgrouping
-class Tag extends VersionedItem {
+class Tag extends Item implements Extension\ICount, Extension\IStar {
+  use Extension\TCount, Extension\TStar;
 
-  //! @name ModerationTrait
-  //@{
-  const SUBMITTED_STATE = "submitted"; //!< The item has been submitted for publishing.
-  const PUBLISHED_STATE = "published"; //!< The item has been published.
-  const REJECTED_STATE = "rejected"; //!< The item has been rejected.
-  //@}
+  //! @name Ignoring Methods
+  // @{
 
-
+  //! @brief Adds the tag to the ignore list of the current user.
   public function ignore(User $currentUser) {
   }
 
 
+  //! @brief Removes the tag from the ignore list of the current user.
   public function unignore(User $currentUser) {
   }
+
+  //@}
 
 
   //! @brief Gets the item state.
@@ -43,6 +45,8 @@ class Tag extends VersionedItem {
 
   }
 
+
+  //! @cond HIDDEN_SYMBOLS
 
   public function getName() {
     return $this->meta['name'];
@@ -63,5 +67,7 @@ class Tag extends VersionedItem {
     if ($this->isMetadataPresent('name'))
       unset($this->meta['name']);
   }
+
+  //! @endcond
 
 }

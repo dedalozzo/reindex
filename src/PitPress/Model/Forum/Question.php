@@ -12,7 +12,7 @@ namespace PitPress\Model\Forum;
 use PitPress\Model\Post;
 
 
-//! @brief
+//! @brief A question asked by a user.
 //! @nosubgrouping
 class Question extends Post {
 
@@ -24,6 +24,12 @@ class Question extends Post {
 
   public function getPublishingType() {
     return 'DOMANDA';
+  }
+
+
+  //! @brief Gets the related answers.
+  public function getAnswers() {
+
   }
 
 }

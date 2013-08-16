@@ -1,7 +1,7 @@
 <?php
 
-//! @file Excerpt.php
-//! @brief This file contains the Excerpt trait.
+//! @file TExcerpt.php
+//! @brief This file contains the TExcerpt trait.
 //! @details
 //! @author Filippo F. Fadda
 
@@ -10,7 +10,7 @@ namespace PitPress\Property;
 
 
 //! @cond HIDDEN_SYMBOLS
-trait Excerpt {
+trait TExcerpt {
 
 
   public function getExcerpt() {

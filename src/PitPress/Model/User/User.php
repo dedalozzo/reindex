@@ -9,17 +9,42 @@
 namespace PitPress\Model\User;
 
 
-use PitPress\Model\Item;
+use ElephantOnCouch\Opt\ViewQueryOpts;
+
+use PitPress\Model\Storable;
+use PitPress\Extension;
 
 
 //! @brief This class is used to represent a registered user.
 //! @nosubgrouping
-class User extends Item {
+class User extends Storable implements Extension\ICount {
+  use Extension\TCount;
 
 
   //! @brief Last time the user has logged in.
   public function getLastVisit($value) {
     $this->meta['lastVisit'] = $value;
+  }
+
+
+  //! @brief Returns the user's reputation.
+  //! @return integer
+  public function getReputation() {
+    $opts = new ViewQueryOpts();
+    $opts->setKey([$this->id]);
+
+    $result = $this->couch->queryView("reputation", "perUser", NULL, $opts)->getBodyAsArray();
+
+    if (!empty($result['rows'])) {
+      $reputation =  $result['rows'][0]['value'];
+
+      if ($reputation > 1)
+        return $reputation;
+      else
+        return 1;
+    }
+    else
+      return 1;
   }
 
 
@@ -71,8 +96,7 @@ class User extends Item {
   //@}
 
 
-  //! @name Properties Accessors
-  //@{
+  //! @cond HIDDEN_SYMBOLS
 
   public function getAge() {
 
@@ -213,6 +237,6 @@ class User extends Item {
     $this->meta['ipAddress'] = $value;
   }
 
-  //! @}
+  //! @endcond
 
 }
