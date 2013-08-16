@@ -9,65 +9,96 @@
 namespace PitPress\Model;
 
 
-use ElephantOnCouch\Doc\Doc;
-
-use Phalcon\DI;
+use ElephantOnCouch\Opt\ViewQueryOpts;
 
 
-//! @brief This class is used to represent an abstract item.
+//! @brief A generic content created by a user.
 //! @nosubgrouping
-abstract class Item extends Doc {
+abstract class Item extends Storable {
   protected $di; // Stores the default Dependency Injector.
   protected $couch; // Stores the ElephantOnCouch client instance.
   protected $redis; // Stores the Redis client instance.
 
 
-  //! @brief Constructor.
-  public function __construct() {
-    $this->di = DI::getDefault();
-    $this->couch = $this->di['couchdb'];
-    $this->redis = $this->di['redis'];
-  }
+  public function getOwnerDisplayName() {
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->setLimit(1)->setKey($this->ownerId);
 
+    $result = $this->couch->queryView("users", "allNames", NULL, $opts)->getBodyAsArray();
 
-  //! @name Hits Counting Methods
-  // @{
-
-  //! @brief Returns the times the item has been viewed.
-  public function getHitsCount() {
-    if (isset($this->rev))
-      return $this->redis->hGet($this->id, 'hits');
+    if (!empty($result['rows']))
+      return $result['rows'][0]['value'];
+    elseif (isset($this->creator))
+      return $this->creator;
     else
-      return 0;
+      return "anonimo";
   }
 
 
-  //! @brief Increments the times the item has been viewed.
-  public function incHits() {
-    // We can increment the views of a document that has been already saved.
-    if (isset($this->rev))
-      $this->redis->hIncrBy($this->id, 'hits', 1);
-  }
+  //! @cond HIDDEN_SYMBOLS
 
-  //@}
-
-
-  //! @brief Returns the creation timestamp.
-  public function getTimestamp() {
-    return $this->meta['timestamp'];
+  public function getOwnerId() {
+    return $this->meta["ownerId"];
   }
 
 
-  //! @brief Returns information about the last update.
-  public function getLastUpdateInfo() {
-
+  public function issetOwnerId() {
+    return isset($this->meta['ownerId']);
   }
 
 
-  //! @brief Saves the item to the database.
-  public function save() {
-    $this->meta['lastUpdate'] = time();
-    $this->couch->saveDoc($this);
+  public function setOwnerId($value) {
+    $this->meta["ownerId"] = $value;
   }
+
+
+  public function unsetOwnerId() {
+    if ($this->isMetadataPresent('ownerId'))
+      unset($this->meta['ownerId']);
+  }
+
+
+  public function getCreator() {
+    return $this->meta['creator'];
+  }
+
+
+  public function issetCreator() {
+    return isset($this->meta['creator']);
+  }
+
+
+  public function setCreator($value) {
+    $this->meta['creator'] = $value;
+  }
+
+
+  public function unsetCreator() {
+    if ($this->isMetadataPresent('creator'))
+      unset($this->meta['creator']);
+  }
+
+
+  public function getPublishingDate() {
+    return $this->meta['publishingDate'];
+  }
+
+
+  public function issetPublishingDate() {
+    return isset($this->meta['publishingDate']);
+  }
+
+
+  public function setPublishingDate($value) {
+    $this->meta['publishingDate'] = $value;
+  }
+
+
+  public function unsetPublishingDate() {
+    if ($this->isMetadataPresent('publishingDate'))
+      unset($this->meta['publishingDate']);
+  }
+
+  //! @endcond
 
 }

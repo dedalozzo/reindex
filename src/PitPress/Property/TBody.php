@@ -1,7 +1,7 @@
 <?php
 
-//! @file Body.php
-//! @brief This file contains the Body trait.
+//! @file TBody.php
+//! @brief This file contains the TBody trait.
 //! @details
 //! @author Filippo F. Fadda
 
@@ -10,7 +10,7 @@ namespace PitPress\Property;
 
 
 //! @cond HIDDEN_SYMBOLS
-trait Body {
+trait TBody {
 
   public function getBody() {
     return $this->meta["body"];

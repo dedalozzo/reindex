@@ -18,7 +18,7 @@ use PitPress\Model\Blog\Article;
 use PitPress\Model\Blog\Book;
 use PitPress\Model\Tag\Tag;
 use PitPress\Model\User\User;
-use PitPress\Model\Aggregate;
+use PitPress\Model\Blog\Tutorial;
 use PitPress\Model\Accessory\Star;
 use PitPress\Model\Accessory\Classification;
 use PitPress\Model\Accessory\Subscription;
@@ -32,8 +32,8 @@ use ElephantOnCouch\Generator\UUID;
 
 //! @brief Imports into CouchDB the data from Programmazione.it v6.4 MySQL database.
 //! @nosubgrouping
-//! @todo: Extract excerpt from body and store it.
 //! @todo: Download and save images as article attachments.
+//! @todo: Save attachments.
 //! @todo: Convert [center][/center] to Markdown.
 class ImportCommand extends AbstractCommand {
 
@@ -102,7 +102,7 @@ class ImportCommand extends AbstractCommand {
     $this->output->writeln("Importing articles...");
 
     // select idItem, title from Item where stereotype = 2 and  date < DATE('2005-12-07 12:12') order by date;
-    $sql = "SELECT id, idItem, title, body, UNIX_TIMESTAMP(date) AS unixTime, hitNum, replyNum, stereotype, locked, contributorName, correlationCode, idMember FROM Item WHERE (stereotype = ".self::ARTICLE.") ORDER BY date ASC";
+    $sql = "SELECT I.id AS id, M.id AS userId, contributorName, I.title, body, UNIX_TIMESTAMP(date) AS unixTime, hitNum, downloadNum, locked FROM Item I LEFT OUTER JOIN Member M USING (idMember) WHERE (stereotype = ".self::ARTICLE.") ORDER BY date DESC";
     //$sql = "SELECT idItem, title, body, date, hitNum, replyNum, stereotype, locked, contributorName, correlationCode, idMember FROM Item WHERE (stereotype = ".self::ARTICLE.") AND idItem = 30806";
 
     $sql .= $this->limit;
@@ -119,7 +119,11 @@ class ImportCommand extends AbstractCommand {
       $article->id = $item->id;
       $article->publishingDate = (int)$item->unixTime;
       $article->title = utf8_encode($item->title);
-      $article->creator = utf8_encode($item->contributorName);
+
+      if (!is_null($item->memberId))
+        $article->userId = $item->memberId;
+      elseif (!empty($item->contributorName))
+        $article->creator = $item->contributorName;
 
       $body = $item->body;
 
@@ -154,6 +158,10 @@ class ImportCommand extends AbstractCommand {
       // We update the article views.
       $this->redis->hSet($article->id, 'hits', $item->hitNum);
 
+      // We update the article downloads.
+      if ($item->downloadNum > 0)
+        $this->redis->hSet($article->id, 'downloads', $item->downloadNum);
+
       $progress->advance();
     }
 
@@ -167,7 +175,7 @@ class ImportCommand extends AbstractCommand {
   private function importBooks() {
     $this->output->writeln("Importing books...");
 
-    $sql = "SELECT id, idItem, title, body, UNIX_TIMESTAMP(date) AS unixTime, hitNum, replyNum, stereotype, locked, contributorName, idMember FROM Item WHERE (stereotype = ".self::BOOK.") ORDER BY date DESC";
+    $sql = "SELECT I.id AS id, M.id AS userId, contributorName, I.title, body, UNIX_TIMESTAMP(date) AS unixTime, hitNum, locked FROM Item I LEFT OUTER JOIN Member M USING (idMember) WHERE (stereotype = ".self::BOOK.") ORDER BY date DESC";
     $sql .= $this->limit;
 
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
@@ -182,7 +190,11 @@ class ImportCommand extends AbstractCommand {
       $book->id = $item->id;
       $book->publishingDate = (int)$item->unixTime;
       $book->title = utf8_encode($item->title);
-      $book->creator = utf8_encode($item->contributorName);
+
+      if (!is_null($item->memberId))
+        $book->userId = $item->memberId;
+      elseif (!empty($item->contributorName))
+        $book->creator = $item->contributorName;
 
       $body = $item->body;
 
@@ -343,9 +355,9 @@ class ImportCommand extends AbstractCommand {
   }
 
 
-  //! @brief Imports aggregates.
-  private function importAggregates() {
-    $this->output->writeln("Importing aggregates...");
+  //! @brief Imports tutorials.
+  private function importTutorials() {
+    $this->output->writeln("Importing tutorials...");
 
     $sql = "SELECT correlationCode, title, UNIX_TIMESTAMP(date) AS unixTime, contributorName, idMember FROM Item WHERE (stereotype = ".self::ARTICLE.") GROUP BY correlationCode HAVING COUNT(correlationCode) > 1 ORDER BY date ASC";
     $sql .= $this->limit;
@@ -357,12 +369,12 @@ class ImportCommand extends AbstractCommand {
     $progress->start($this->output, $rows);
 
     while ($item = mysqli_fetch_object($result)) {
-      $aggregate = new Aggregate();
+      $tutorial = new Tutorial();
 
-      $aggregate->id = UUID::generate(UUID::UUID_RANDOM, UUID::FMT_STRING);
-      $aggregate->publishingDate = (int)$item->unixTime;
-      $aggregate->title = utf8_encode(rtrim($item->title, '()/123456789 \t\n\r\0\x0B'));
-      $aggregate->creator = utf8_encode($item->contributorName);
+      $tutorial->id = UUID::generate(UUID::UUID_RANDOM, UUID::FMT_STRING);
+      $tutorial->publishingDate = (int)$item->unixTime;
+      $tutorial->title = utf8_encode(rtrim($item->title, '()/123456789 \t\n\r\0\x0B'));
+      $tutorial->creator = utf8_encode($item->contributorName);
 
 
       $sql = "SELECT id, UNIX_TIMESTAMP(date) AS unixTime, hitNum FROM Item WHERE correlationCode = '".$item->correlationCode."' ORDER BY date ASC";
@@ -371,15 +383,15 @@ class ImportCommand extends AbstractCommand {
 
       $i = 0;
       while ($article = mysqli_fetch_object($related)) {
-        $aggregate->addPost($article->id, $i);
+        $tutorial->addPost($article->id, $i);
 
-        // We update the total aggregate views.
-        $this->redis->hIncrBy($aggregate->id, 'hits', $article->hitNum);
+        // We update the total tutorial views.
+        $this->redis->hIncrBy($tutorial->id, 'hits', $article->hitNum);
 
         $i++;
       }
 
-      $this->couch->saveDoc($aggregate);
+      $this->couch->saveDoc($tutorial);
 
       $progress->advance();
     }
@@ -430,7 +442,7 @@ class ImportCommand extends AbstractCommand {
     $this->importTags();
     $this->importClassifications();
     $this->importFavourites();
-    $this->importAggregates();
+    $this->importTutorials();
     $this->importSubscriptions();
   }
 
@@ -442,12 +454,12 @@ class ImportCommand extends AbstractCommand {
     $this->addArgument("entities",
         InputArgument::IS_ARRAY | InputArgument::REQUIRED,
         "The entities you want import. Use 'all' if you want import all the entities, 'users' if you want just import the
-        users or separate multiple entities with a space. The available entities are: users, articles, books, tags.");
+        users or separate multiple entities with a space. The available entities are: users, articles, books, tags,
+        classifications, favourites, tutorials, subscriptions.");
     $this->addOption("limit",
         NULL,
         InputOption::VALUE_OPTIONAL,
-        "Limit the imported articles. This option is applied only when 'articles' argument is provided, alone or as a
-        part of the array, else is ignored.");
+        "Limit the imported records.");
   }
 
 
@@ -500,8 +512,8 @@ class ImportCommand extends AbstractCommand {
             $this->importFavourites();
             break;
 
-          case 'aggregates':
-            $this->importAggregates();
+          case 'tutorials':
+            $this->importTutorials();
             break;
 
           case 'subscriptions':

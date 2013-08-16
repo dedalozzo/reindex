@@ -12,14 +12,15 @@ namespace PitPress\Model;
 use ElephantOnCouch\Couch;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
-use PitPress\Model\User\User;
+use PitPress\Extension;
 use PitPress\Helper\Time;
 
 
 //! @brief This class is used to represent a generic entry, a content created by a user.
 //! @details Every post is versioned into the database, has tags and also a owner, who created the entry.
 //! @nosubgrouping
-abstract class Post extends VersionedItem {
+abstract class Post extends Item implements Extension\ICount, Extension\IStar, Extension\IVote, Extension\ISubscribe {
+  use Extension\TCount, Extension\TStar, Extension\TVote, Extension\TSubscribe;
 
 
   //! @brief Constructor.
@@ -27,31 +28,6 @@ abstract class Post extends VersionedItem {
     parent::__construct();
     $this->meta['supertype'] = 'post';
     $this->meta['section'] = $this->getSection();
-  }
-
-
-  private function vote(User $currentUser, $choice) {
-    $voted = $this->didUserVote($currentUser, $voteId);
-
-    if ($voted) {
-      // Gets the vote.
-      $doc = $this->couch->getDoc(Couch::STD_DOC_PATH, $voteId);
-
-      // Calculates difference in seconds.
-      $seconds = floor(time() / $doc->getTimestamp());
-
-      // The user has 5 minutes to change his vote.
-      if ($seconds < 300) {
-        $doc->setChoice($choice);
-        $this->couch-saveDoc($doc);
-      }
-      else
-        throw new \RuntimeException("Trascorsi 5 minuti non è più possibile rettificare il proprio voto.");
-    }
-    else {
-      $doc = Accessory\Vote::create($this->postType, $this->postSection, $this->id, $currentUser->id, $choice);
-      $this->couch->saveDoc($doc);
-    }
   }
 
 
@@ -66,7 +42,7 @@ abstract class Post extends VersionedItem {
   }
 
 
-  //! @brief Gets the item permanent link.
+  //! @brief Gets the resource permanent link.
   //! @return string
   public function getPermalink() {
     return "/".$this->getSection()."/".$this->id;
@@ -113,24 +89,6 @@ abstract class Post extends VersionedItem {
   }
 
 
-  //! @brief Gets the associated tags list.
-  public function getTags() {
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setKey($this->id);
-
-    $result = $this->couch->queryView("classifications", "perPost", NULL, $opts)->getBodyAsArray();
-
-    $keys = [];
-    foreach ($result['rows'] as $classification)
-      $keys[] = $classification['value'];
-
-    $opts->reset();
-    $opts->doNotReduce();
-
-    return $this->couch->queryView("tags", "all", $keys, $opts)->getBodyAsArray();
-  }
-
-
   //! @name Tagging Methods
   // @{
 
@@ -151,70 +109,29 @@ abstract class Post extends VersionedItem {
 
   }
 
-  //@}
 
-
-  //! @name Voting Methods
-  // @{
-
-  //! @brief Likes an post.
-  //! @param[in] User $currentUser The current user logged in.
-  public function voteUp(User $currentUser) {
-    $this->vote($currentUser, '+');
-  }
-
-
-  //! @brief Unlikes a post.
-  //! @param[in] User $currentUser The current user logged in.
-  public function voteDown(User $currentUser) {
-    $this->vote($currentUser, '-');
-  }
-
-
-  //! @brief Returns `true` if the user has voted else otherwise.
-  //! @param[in] User $currentUser The current user logged in.
-  //! @return boolean
-  public function didUserVote(User $currentUser, &$voteId = NULL) {
+  //! @brief Gets the associated tags list.
+  public function getTags() {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $currentUser->id]);
+    $opts->doNotReduce()->setKey($this->id);
 
-    $result = $this->couch->queryView("votes", "perPost", NULL, $opts)->getBodyAsArray();
+    $result = $this->couch->queryView("classifications", "perPost", NULL, $opts)->getBodyAsArray();
 
-    if (empty($result['rows']))
-      return FALSE;
-    else {
-      $voteId = $result['rows'][0]['id'];
-      return TRUE;
-    }
-  }
+    $keys = [];
+    foreach ($result['rows'] as $classification)
+      $keys[] = $classification['value'];
 
+    $opts->reset();
+    $opts->doNotReduce();
 
-  //! @brief Returns the arithmetic sum of each each vote.
-  //! @return integer
-  public function getVotesCount() {
-    $opts = new ViewQueryOpts();
-    $opts->setKey([$this->id]);
-
-    $result = $this->couch->queryView("votes", "perPost", NULL, $opts)->getBodyAsArray();
-
-    if (empty($result['rows']))
-      return 0;
-    else
-      return $result['rows'][0]['value'];
-  }
-
-
-  //! @brief Returns the thumbs state expressed by the current user in relation to the current post.
-  //! @param[in] User $currentUser The current user logged in.
-  //! @return string|boolean Returns `false` in case the user never voted, '+' for thumbs up and '-' for thumbs down.
-  public function getThumbsDirection(User $currentUser) {
-    return $this->redis->hGet($currentUser->id, $this->id);
+    return $this->couch->queryView("tags", "all", $keys, $opts)->getBodyAsArray();
   }
 
   //@}
 
 
   //! @cond HIDDEN_SYMBOLS
+
   public function getTitle() {
     return $this->meta['title'];
   }
@@ -234,6 +151,7 @@ abstract class Post extends VersionedItem {
     if ($this->isMetadataPresent('title'))
       unset($this->meta['title']);
   }
+
   //! @endcond
 
 }

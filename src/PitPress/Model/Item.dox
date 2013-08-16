@@ -1,0 +1,16 @@
+<?php
+
+
+namespace PitPress\Model;
+
+
+class Item {
+
+  //! @name Properties
+  //@{
+  public string $creator; //!< The creator display name. Used only for compatibility reason.
+  public string $owner; //!< The item owner.
+  public string $publishingDate; //!< The publishing date.
+  //@}
+
+}

@@ -9,12 +9,12 @@
 namespace PitPress\Model\Forum;
 
 
-use PitPress\Model\VersionedItem;
+use PitPress\Model\Item;
 
 
 //! @brief
 //! @nosubgrouping
-class Answer extends VersionedItem {
+class Answer extends Item {
 
   //! @brief Marks the item as duplicate of another item.
   public function markAsDuplicate() {

@@ -9,7 +9,7 @@
 namespace PitPress\Model\Blog;
 
 
-//! @brief dfsfsfs
+//! @brief This class represents a book review.
 //! @nosubgrouping
 class Book extends Article {
 
