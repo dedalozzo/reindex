@@ -20,19 +20,19 @@ interface ISubscribe {
   // @{
 
   //! @brief Returns `true` if the user has subscribed the current post.
-  //! @param[in] User $currentUser The current user logged in.
+  //! @param[in] User $user The current user logged in.
   //! @return boolean
-  public function isSubscribed(User $currentUser, &$subscriptionId = NULL);
+  public function isSubscribed(User $user, &$subscriptionId = NULL);
 
 
   //! @brief The current user will get notifications about changes related to the current item.
-  //! @param[in] User $currentUser The current user logged in.
-  public function subscribe(User $currentUser);
+  //! @param[in] User $user The current user logged in.
+  public function subscribe(User $user);
 
 
   //! @brief The current user won't get notifications anymore.
-  //! @param[in] User $currentUser The current user logged in.
-  public function unsubscribe(User $currentUser);
+  //! @param[in] User $user The current user logged in.
+  public function unsubscribe(User $user);
 
 
   //! @brief Returns the number of users have been subscribed the item.

@@ -24,12 +24,12 @@ class Tag extends Item implements Extension\ICount, Extension\IStar {
   // @{
 
   //! @brief Adds the tag to the ignore list of the current user.
-  public function ignore(User $currentUser) {
+  public function ignore(User $user) {
   }
 
 
   //! @brief Removes the tag from the ignore list of the current user.
-  public function unignore(User $currentUser) {
+  public function unignore(User $user) {
   }
 
   //@}

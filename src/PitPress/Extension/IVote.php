@@ -20,19 +20,19 @@ interface IVote {
   // @{
 
   //! @brief Likes an post.
-  //! @param[in] User $currentUser The current user logged in.
-  public function voteUp(User $currentUser);
+  //! @param[in] User $user The current user logged in.
+  public function voteUp(User $user);
 
 
   //! @brief Unlikes a post.
-  //! @param[in] User $currentUser The current user logged in.
-  public function voteDown(User $currentUser);
+  //! @param[in] User $user The current user logged in.
+  public function voteDown(User $user);
 
 
   //! @brief Returns `true` if the user has voted else otherwise.
-  //! @param[in] User $currentUser The current user logged in.
+  //! @param[in] User $user The current user logged in.
   //! @return boolean
-  public function didUserVote(User $currentUser, &$voteId = NULL);
+  public function didUserVote(User $user, &$voteId = NULL);
 
 
   //! @brief Returns the arithmetic sum of each each vote.
@@ -41,9 +41,9 @@ interface IVote {
 
 
   //! @brief Returns the thumbs state expressed by the current user in relation to the current post.
-  //! @param[in] User $currentUser The current user logged in.
+  //! @param[in] User $user The current user logged in.
   //! @return string|boolean Returns `false` in case the user never voted, '+' for thumbs up and '-' for thumbs down.
-  public function getThumbsDirection(User $currentUser);
+  public function getThumbsDirection(User $user);
 
   //@}
 

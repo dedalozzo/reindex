@@ -20,9 +20,9 @@ use PitPress\Model\User\User;
 trait TStar {
 
   //! @copydoc IStar
-  public function isStarred(User $currentUser, &$starId = NULL) {
+  public function isStarred(User $user, &$starId = NULL) {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $currentUser->id]);
+    $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $user->id]);
 
     $result = $this->couch->queryView("stars", "perItem", NULL, $opts)->getBodyAsArray();
 
@@ -36,17 +36,17 @@ trait TStar {
 
 
   //! @copydoc IStar
-  public function star(User $currentUser) {
-    if (!$this->isStarred($currentUser)) {
-      $doc = Star::create($this->id, $currentUser->id);
+  public function star(User $user) {
+    if (!$this->isStarred($user)) {
+      $doc = Star::create($this->id, $user->id);
       $this->couch->saveDoc($doc);
     }
   }
 
 
   //! @copydoc IStar
-  public function unstar(User $currentUser) {
-    if ($this->isStarred($currentUser, $starId)) {
+  public function unstar(User $user) {
+    if ($this->isStarred($user, $starId)) {
       $doc = $this->couch->getDoc(Couch::STD_DOC_PATH, $starId);
       $doc->delete();
       $this->couch->saveDoc($doc);

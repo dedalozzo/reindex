@@ -102,7 +102,7 @@ class ImportCommand extends AbstractCommand {
     $this->output->writeln("Importing articles...");
 
     // select idItem, title from Item where stereotype = 2 and  date < DATE('2005-12-07 12:12') order by date;
-    $sql = "SELECT I.id AS id, M.id AS userId, contributorName, I.title, body, UNIX_TIMESTAMP(date) AS unixTime, hitNum, downloadNum, locked FROM Item I LEFT OUTER JOIN Member M USING (idMember) WHERE (stereotype = ".self::ARTICLE.") ORDER BY date DESC";
+    $sql = "SELECT idItem, I.id AS id, M.id AS userId, contributorName, I.title, body, UNIX_TIMESTAMP(date) AS unixTime, hitNum, downloadNum, locked FROM Item I LEFT OUTER JOIN Member M USING (idMember) WHERE (stereotype = ".self::ARTICLE.") ORDER BY date DESC";
     //$sql = "SELECT idItem, title, body, date, hitNum, replyNum, stereotype, locked, contributorName, correlationCode, idMember FROM Item WHERE (stereotype = ".self::ARTICLE.") AND idItem = 30806";
 
     $sql .= $this->limit;
@@ -120,23 +120,21 @@ class ImportCommand extends AbstractCommand {
       $article->publishingDate = (int)$item->unixTime;
       $article->title = utf8_encode($item->title);
 
-      if (!is_null($item->memberId))
-        $article->userId = $item->memberId;
+      if (!is_null($item->userId))
+        $article->userId = $item->userId;
       elseif (!empty($item->contributorName))
-        $article->creator = $item->contributorName;
+        $article->username = utf8_encode($item->contributorName);
 
-      $body = $item->body;
+      $article->body = iconv('LATIN1', 'UTF-8', $item->body);
 
       // Converts from HTML to BBCode!
-      $converter = new HTMLConverter($body, $item->id);
-      $body = $converter->toBBCode();
+      $converter = new HTMLConverter($article->body, $item->id);
+      $article->body = $converter->toBBCode();
 
       // Converts from BBCode to Markdown!
-      $converter = new BBCodeConverter($body, $item->id);
-      $body = $converter->toMarkdown();
+      $converter = new BBCodeConverter($article->body, $item->id);
+      $article->body = $converter->toMarkdown();
 
-      $article->body = utf8_encode($body);
-      //$article->body = iconv('LATIN1', 'UTF-8', $body);
       try {
         $article->html = $this->markdown->render($article->body);
       }
@@ -145,13 +143,14 @@ class ImportCommand extends AbstractCommand {
       }
 
       $purged = Text::purge($article->html);
-      $article->excerpt = TExt::truncate($purged);
+      $article->excerpt = Text::truncate($purged);
 
       // We finally save the article.
       try {
         $this->couch->saveDoc($article);
       }
       catch(\Exception $e) {
+        $this->logger->error($e);
         $this->logger->error(sprintf("Invalid JSON: %d - %s", $item->idItem, $article->title));
       }
 
@@ -175,7 +174,7 @@ class ImportCommand extends AbstractCommand {
   private function importBooks() {
     $this->output->writeln("Importing books...");
 
-    $sql = "SELECT I.id AS id, M.id AS userId, contributorName, I.title, body, UNIX_TIMESTAMP(date) AS unixTime, hitNum, locked FROM Item I LEFT OUTER JOIN Member M USING (idMember) WHERE (stereotype = ".self::BOOK.") ORDER BY date DESC";
+    $sql = "SELECT idItem, I.id AS id, M.id AS userId, contributorName, I.title, body, UNIX_TIMESTAMP(date) AS unixTime, hitNum, locked FROM Item I LEFT OUTER JOIN Member M USING (idMember) WHERE (stereotype = ".self::BOOK.") ORDER BY date DESC";
     $sql .= $this->limit;
 
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
@@ -191,44 +190,42 @@ class ImportCommand extends AbstractCommand {
       $book->publishingDate = (int)$item->unixTime;
       $book->title = utf8_encode($item->title);
 
-      if (!is_null($item->memberId))
-        $book->userId = $item->memberId;
+      if (!is_null($item->userId))
+        $book->userId = $item->userId;
       elseif (!empty($item->contributorName))
-        $book->creator = $item->contributorName;
+        $book->username = utf8_encode($item->contributorName);
 
-      $body = $item->body;
+      $book->body = iconv('LATIN1', 'UTF-8', $item->body);
 
-      if (preg_match('/\\[isbn\\](.*?)\\[\/isbn\\]/s', $body, $matches))
+      if (preg_match('/\\[isbn\\](.*?)\\[\/isbn\\]/su', $book->body, $matches))
         $book->isbn = utf8_encode($matches[1]);
-      if (preg_match('/\\[authors\\](.*?)\\[\/authors\\]/s', $body, $matches))
+      if (preg_match('/\\[authors\\](.*?)\\[\/authors\\]/su', $book->body, $matches))
         $book->authors = utf8_encode($matches[1]);
-      if (preg_match('/\\[publisher\\](.*?)\\[\/publisher\\]/s', $body, $matches))
+      if (preg_match('/\\[publisher\\](.*?)\\[\/publisher\\]/su', $book->body, $matches))
         $book->publisher = utf8_encode($matches[1]);
-      if (preg_match('/\\[language\\](.*?)\\[\/language\\]/s', $body, $matches))
+      if (preg_match('/\\[language\\](.*?)\\[\/language\\]/su', $book->body, $matches))
         $book->language = utf8_encode($matches[1]);
-      if (preg_match('/\\[year\\](.*?)\\[\/year\\]/s', $body, $matches))
+      if (preg_match('/\\[year\\](.*?)\\[\/year\\]/s', $book->body, $matches))
         $book->year = $matches[1];
-      if (preg_match('/\\[pages\\](.*?)\\[\/pages\\]/s', $body, $matches))
+      if (preg_match('/\\[pages\\](.*?)\\[\/pages\\]/s', $book->body, $matches))
         $book->pages = $matches[1];
-      if (preg_match('/\\[attachments\\](.*?)\\[\/attachments\\]/s', $body, $matches) && !empty($matches[1]))
+      if (preg_match('/\\[attachments\\](.*?)\\[\/attachments\\]/su', $book->body, $matches) && !empty($matches[1]))
         $book->attachments = utf8_encode($matches[1]);
-      if (preg_match('/\\[review\\](.*?)\\[\/review\\]/s', $body, $matches))
-        $body = $matches[1];
-      if (preg_match('/\\[positive\\](.*?)\\[\/positive\\]/s', $body, $matches))
+      if (preg_match('/\\[review\\](.*?)\\[\/review\\]/su', $book->body, $matches))
+        $review = $matches[1];
+      if (preg_match('/\\[positive\\](.*?)\\[\/positive\\]/su', $book->body, $matches))
         $book->positive = utf8_encode($matches[1]);
-      if (preg_match('/\\[negative\\](.*?)\\[\/negative\\]/s', $body, $matches))
+      if (preg_match('/\\[negative\\](.*?)\\[\/negative\\]/su', $book->body, $matches))
         $book->negative = utf8_encode($matches[1]);
 
-      if (preg_match('/\\[vendorLink\\](.*?)\\[\/vendorLink\\]/s', $body, $matches) && !empty($matches[1]))
+      if (preg_match('/\\[vendorLink\\](.*?)\\[\/vendorLink\\]/su', $book->body, $matches) && !empty($matches[1]))
         $book->link = utf8_encode($matches[1]);
 
 
       // Converts from BBCode to Markdown!
-      $converter = new BBCodeConverter($body, $item->id);
-      $body = $converter->toMarkdown();
+      $converter = new BBCodeConverter($review, $item->id);
+      $book->body = $converter->toMarkdown();
 
-      $book->body = utf8_encode($body);
-      //$article->body = iconv('LATIN1', 'UTF-8', $body);
       try {
         $book->html = $this->markdown->render($book->body);
       }
@@ -359,7 +356,7 @@ class ImportCommand extends AbstractCommand {
   private function importTutorials() {
     $this->output->writeln("Importing tutorials...");
 
-    $sql = "SELECT correlationCode, title, UNIX_TIMESTAMP(date) AS unixTime, contributorName, idMember FROM Item WHERE (stereotype = ".self::ARTICLE.") GROUP BY correlationCode HAVING COUNT(correlationCode) > 1 ORDER BY date ASC";
+    $sql = "SELECT correlationCode, title, UNIX_TIMESTAMP(date) AS unixTime, contributorName, id AS userId FROM Item WHERE (stereotype = ".self::ARTICLE.") GROUP BY correlationCode HAVING COUNT(correlationCode) > 1 ORDER BY date ASC";
     $sql .= $this->limit;
 
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
@@ -374,8 +371,11 @@ class ImportCommand extends AbstractCommand {
       $tutorial->id = UUID::generate(UUID::UUID_RANDOM, UUID::FMT_STRING);
       $tutorial->publishingDate = (int)$item->unixTime;
       $tutorial->title = utf8_encode(rtrim($item->title, '()/123456789 \t\n\r\0\x0B'));
-      $tutorial->creator = utf8_encode($item->contributorName);
 
+      if (!is_null($item->userId))
+        $tutorial->userId = $item->userId;
+      elseif (!empty($item->contributorName))
+        $tutorial->username = $item->contributorName;
 
       $sql = "SELECT id, UNIX_TIMESTAMP(date) AS unixTime, hitNum FROM Item WHERE correlationCode = '".$item->correlationCode."' ORDER BY date ASC";
 
