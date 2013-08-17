@@ -13,7 +13,6 @@ namespace PitPress\Model\Blog;
 use PitPress\Model\Post;
 use PitPress\Extension;
 use PitPress\Property;
-use PitPress\Enum\PostState;
 
 
 //! @brief This class represents a blog article.

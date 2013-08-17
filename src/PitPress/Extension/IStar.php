@@ -20,20 +20,20 @@ interface IStar {
   //@{
 
   //! @brief Returns `true` if the current user starred this post.
-  //! @param[in] User $currentUser The current user logged in.
+  //! @param[in] User $user The current user logged in.
   //! @param[out] string $starId The star document identifier related to the current post.
   //! @return boolean
-  public function isStarred(User $currentUser, &$starId = NULL);
+  public function isStarred(User $user, &$starId = NULL);
 
 
   //! @brief Adds the item to the favourites list of the current user.
-  //! @param[in] User $currentUser The current user logged in.
-  public function star(User $currentUser);
+  //! @param[in] User $user The current user logged in.
+  public function star(User $user);
 
 
   //! @brief Removes the item from the favourites list of the current user.
-  //! @param[in] User $currentUser The current user logged in.
-  public function unstar(User $currentUser);
+  //! @param[in] User $user The current user logged in.
+  public function unstar(User $user);
 
 
   //! @brief Returns the number of times the item has been starred.

@@ -20,9 +20,9 @@ use PitPress\Model\User\User;
 trait TSubscribe {
 
   //! @copydoc ISubscribe
-  public function isSubscribed(User $currentUser, &$subscriptionId = NULL) {
+  public function isSubscribed(User $user, &$subscriptionId = NULL) {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $currentUser->id]);
+    $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $user->id]);
 
     $result = $this->couch->queryView("subscriptions", "perItem", NULL, $opts)->getBodyAsArray();
 
@@ -36,18 +36,18 @@ trait TSubscribe {
 
 
 //! @copydoc ISubscribe
-  public function subscribe(User $currentUser) {
+  public function subscribe(User $user) {
 
-    if (!$this->isSubscribed($currentUser)) {
-      $doc = Subscription::create($this->id, $currentUser->id);
+    if (!$this->isSubscribed($user)) {
+      $doc = Subscription::create($this->id, $user->id);
       $this->couch->saveDoc($doc);
     }
   }
 
 
   //! @copydoc ISubscribe
-  public function unsubscribe(User $currentUser) {
-    if ($this->isSubscribed($currentUser, $subscriptionId)) {
+  public function unsubscribe(User $user) {
+    if ($this->isSubscribed($user, $subscriptionId)) {
       $doc = $this->couch->getDoc(Couch::STD_DOC_PATH, $subscriptionId);
       $doc->delete();
       $this->couch->saveDoc($doc);

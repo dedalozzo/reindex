@@ -332,7 +332,7 @@ class InitCommand extends AbstractCommand {
 
 
   private function initReputation() {
-    $doc = DesignDoc::create('stars');
+    $doc = DesignDoc::create('reputation');
 
 
     // @params userId, [timestamp]

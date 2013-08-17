@@ -19,8 +19,8 @@ use PitPress\Model\User\User;
 //! @brief Implements the IVote interface.
 trait TVote {
 
-  private function vote(User $currentUser, $choice) {
-    $voted = $this->didUserVote($currentUser, $voteId);
+  private function vote(User $user, $choice) {
+    $voted = $this->didUserVote($user, $voteId);
 
     if ($voted) {
       // Gets the vote.
@@ -38,29 +38,29 @@ trait TVote {
         throw new \RuntimeException("Trascorsi 5 minuti non è più possibile rettificare il proprio voto.");
     }
     else {
-      $vote = Vote::create($this->postType, $this->postSection, $this->id, $currentUser->id, $choice);
+      $vote = Vote::create($this->postType, $this->postSection, $this->id, $user->id, $choice);
       $this->couch->saveDoc($vote);
     }
   }
 
 
   //! @copydoc IVote
-  public function voteUp(User $currentUser) {
-    $this->vote($currentUser, '+');
+  public function voteUp(User $user) {
+    $this->vote($user, '+');
   }
 
 
 
   //! @copydoc IVote
-  public function voteDown(User $currentUser) {
-    $this->vote($currentUser, '-');
+  public function voteDown(User $user) {
+    $this->vote($user, '-');
   }
 
 
   //! @copydoc IVote
-  public function didUserVote(User $currentUser, &$voteId = NULL) {
+  public function didUserVote(User $user, &$voteId = NULL) {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $currentUser->id]);
+    $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $user->id]);
 
     $result = $this->couch->queryView("votes", "perPost", NULL, $opts)->getBodyAsArray();
 
@@ -88,8 +88,8 @@ trait TVote {
 
 
   //! @copydoc IVote
-  public function getThumbsDirection(User $currentUser) {
-    return $this->redis->hGet($currentUser->id, $this->id);
+  public function getThumbsDirection(User $user) {
+    return $this->redis->hGet($user->id, $this->id);
   }
 
 }

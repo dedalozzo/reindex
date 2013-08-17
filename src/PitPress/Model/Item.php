@@ -22,14 +22,14 @@ abstract class Item extends Storable {
 
   public function getOwnerDisplayName() {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey($this->ownerId);
+    $opts->doNotReduce()->setLimit(1)->setKey($this->userId);
 
     $result = $this->couch->queryView("users", "allNames", NULL, $opts)->getBodyAsArray();
 
     if (!empty($result['rows']))
       return $result['rows'][0]['value'];
-    elseif (isset($this->creator))
-      return $this->creator;
+    elseif (isset($this->username))
+      return $this->username;
     else
       return "anonimo";
   }
@@ -37,45 +37,45 @@ abstract class Item extends Storable {
 
   //! @cond HIDDEN_SYMBOLS
 
-  public function getOwnerId() {
-    return $this->meta["ownerId"];
+  public function getUserId() {
+    return $this->meta["userId"];
   }
 
 
-  public function issetOwnerId() {
-    return isset($this->meta['ownerId']);
+  public function issetUserId() {
+    return isset($this->meta['userId']);
   }
 
 
-  public function setOwnerId($value) {
-    $this->meta["ownerId"] = $value;
+  public function setUserId($value) {
+    $this->meta["userId"] = $value;
   }
 
 
-  public function unsetOwnerId() {
-    if ($this->isMetadataPresent('ownerId'))
-      unset($this->meta['ownerId']);
+  public function unsetUserId() {
+    if ($this->isMetadataPresent('userId'))
+      unset($this->meta['userId']);
   }
 
 
-  public function getCreator() {
-    return $this->meta['creator'];
+  public function getUsername() {
+    return $this->meta['username'];
   }
 
 
-  public function issetCreator() {
-    return isset($this->meta['creator']);
+  public function issetUsername() {
+    return isset($this->meta['username']);
   }
 
 
-  public function setCreator($value) {
-    $this->meta['creator'] = $value;
+  public function setUsername($value) {
+    $this->meta['username'] = $value;
   }
 
 
-  public function unsetCreator() {
-    if ($this->isMetadataPresent('creator'))
-      unset($this->meta['creator']);
+  public function unsetUsername() {
+    if ($this->isMetadataPresent('username'))
+      unset($this->meta['username']);
   }
 
 
