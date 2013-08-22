@@ -23,6 +23,16 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
 class QueryCommand extends AbstractCommand {
 
 
+  //! @brief Casts the argument to the right format.
+  //! @param[in] $arg The command line argument.
+  private function castArg($arg) {
+    if (preg_match('/\A[\'"]([^\'"]+)[\'"]\z/i', $arg, $matches))
+      return $matches[1];
+    else
+      return $arg + 0;
+  }
+
+
   //! @brief Configures the command.
   protected function configure() {
     $this->setName("query");
@@ -141,8 +151,13 @@ class QueryCommand extends AbstractCommand {
 
     $view = $input->getArgument('design-doc/view-name');
 
-    if ($input->getArgument('keys'))
-      $keys = $input->getArgument('keys');
+    if ($input->getArgument('keys')) {
+      $args = $input->getArgument('keys');
+
+      $keys = [];
+      foreach ($args as $key)
+        $keys[] = $this->castArg($key);
+    }
     else
       $keys = NULL;
 
@@ -150,9 +165,8 @@ class QueryCommand extends AbstractCommand {
     $opts = new ViewQueryOpts();
 
     // Key.
-    if ($key = $input->getOption('key')) {
-      $opts->setKey($key);
-    }
+    if ($key = $input->getOption('key'))
+      $opts->setKey($this->castArg($key));
 
     // Limit.
     $limit = (int)$input->getOption('limit');
@@ -211,7 +225,6 @@ class QueryCommand extends AbstractCommand {
       if (empty($language))
         $language = "php";
     }
-
 
     if ($view == "_temp_view") {
       echo $couch->queryTempView($map, $reduce, $keys, $opts, $language)->getBody();
