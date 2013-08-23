@@ -25,6 +25,16 @@ class AbstractCommand extends Command implements InjectionAwareInterface {
   protected $logger;
 
 
+  //! @brief Casts the argument to the right format.
+  //! @param[in] $arg The command line argument.
+  protected function castArg($arg) {
+    if (preg_match('/\A[\'"]([^\'"]+)[\'"]\z/i', $arg, $matches))
+      return $matches[1];
+    else
+      return $arg + 0;
+  }
+
+
   //! @brief Overrides this method to set the Dependency Injector.
   public function setApplication(Application $application = null) {
     parent::setApplication($application);
