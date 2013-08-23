@@ -62,7 +62,7 @@ trait TVote {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $user->id]);
 
-    $result = $this->couch->queryView("votes", "perPost", NULL, $opts)->getBodyAsArray();
+    $result = $this->couch->queryView("votes", "perPost", NULL, $opts);
 
     if (empty($result['rows']))
       return FALSE;
@@ -78,7 +78,7 @@ trait TVote {
     $opts = new ViewQueryOpts();
     $opts->setKey([$this->id]);
 
-    $result = $this->couch->queryView("votes", "perPost", NULL, $opts)->getBodyAsArray();
+    $result = $this->couch->queryView("votes", "perPost", NULL, $opts);
 
     if (empty($result['rows']))
       return 0;

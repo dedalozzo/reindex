@@ -30,7 +30,7 @@ class BlogController extends BaseController {
     $opts->reverseOrderOfResults();
     $opts->setLimit(30);
 
-    $result = $this->couch->queryView("posts", "BY_type_ORDERBY_date", ['article, book, tutorial'], $opts)->getBodyAsArray();
+    $result = $this->couch->queryView("posts", "BY_type_ORDERBY_date", ['article, book, tutorial'], $opts);
 
     $posts = [];
     foreach ($result["rows"] as $row)

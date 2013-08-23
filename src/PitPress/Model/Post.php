@@ -115,7 +115,7 @@ abstract class Post extends Item implements Extension\ICount, Extension\IStar, E
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setKey($this->id);
 
-    $result = $this->couch->queryView("classifications", "perPost", NULL, $opts)->getBodyAsArray();
+    $result = $this->couch->queryView("classifications", "perPost", NULL, $opts);
 
     $keys = [];
     foreach ($result['rows'] as $classification)
@@ -124,7 +124,7 @@ abstract class Post extends Item implements Extension\ICount, Extension\IStar, E
     $opts->reset();
     $opts->doNotReduce();
 
-    return $this->couch->queryView("tags", "all", $keys, $opts)->getBodyAsArray();
+    return $this->couch->queryView("tags", "all", $keys, $opts);
   }
 
   //@}
