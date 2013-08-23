@@ -23,16 +23,6 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
 class QueryCommand extends AbstractCommand {
 
 
-  //! @brief Casts the argument to the right format.
-  //! @param[in] $arg The command line argument.
-  private function castArg($arg) {
-    if (preg_match('/\A[\'"]([^\'"]+)[\'"]\z/i', $arg, $matches))
-      return $matches[1];
-    else
-      return $arg + 0;
-  }
-
-
   //! @brief Configures the command.
   protected function configure() {
     $this->setName("query");
@@ -126,6 +116,11 @@ class QueryCommand extends AbstractCommand {
       InputOption::VALUE_NONE,
       "Includes conflict documents.");
 
+    $this->addOption("include-missing-keys",
+      NULL,
+      InputOption::VALUE_NONE,
+      "Includes all the rows, even if a match for a key is not found..");
+
 
     // Temporary view options.
     $this->addOption("map",
@@ -211,6 +206,10 @@ class QueryCommand extends AbstractCommand {
     if ($input->getOption('include-conflicts'))
       $opts->includeConflicts();
 
+    // Includes missing keys.
+    if ($input->getOption('include-missing-keys'))
+      $opts->includeMissingKeys();
+
 
     // Map and reduce functions.
     if ($fileName = $input->getOption('map')) {
@@ -227,16 +226,16 @@ class QueryCommand extends AbstractCommand {
     }
 
     if ($view == "_temp_view") {
-      echo $couch->queryTempView($map, $reduce, $keys, $opts, $language)->getBody();
+      print_r($couch->queryTempView($map, $reduce, $keys, $opts, $language));
     }
     elseif ($view == "_all_docs") {
-      echo $couch->queryAllDocs($keys, $opts)->getBody();
+      print_r($couch->queryAllDocs($keys, $opts));
     }
     else {
       $names = explode('/', $view, 2);
 
       if (count($names) == 2)
-        echo $couch->queryView($names[0], $names[1], $keys, $opts)->getBody();
+        print_r($couch->queryView($names[0], $names[1], $keys, $opts));
       else
         throw new \InvalidArgumentException("You have to specify design-doc/view-name.");
     }
