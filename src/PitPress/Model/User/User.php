@@ -33,7 +33,7 @@ class User extends Storable implements Extension\ICount {
     $opts = new ViewQueryOpts();
     $opts->setKey([$this->id]);
 
-    $result = $this->couch->queryView("reputation", "perUser", NULL, $opts)->getBodyAsArray();
+    $result = $this->couch->queryView("reputation", "perUser", NULL, $opts);
 
     if (!empty($result['rows'])) {
       $reputation =  $result['rows'][0]['value'];

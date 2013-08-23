@@ -24,7 +24,7 @@ abstract class Item extends Storable {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(1)->setKey($this->userId);
 
-    $result = $this->couch->queryView("users", "allNames", NULL, $opts)->getBodyAsArray();
+    $result = $this->couch->queryView("users", "allNames", NULL, $opts);
 
     if (!empty($result['rows']))
       return $result['rows'][0]['value'];

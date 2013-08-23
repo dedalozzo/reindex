@@ -23,7 +23,7 @@ class IndexController extends BaseController {
   protected function getRecentTags() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(60);
-    $result = $this->couch->queryView("classifications", "allLatest", NULL, $opts)->getBodyAsArray();
+    $result = $this->couch->queryView("classifications", "allLatest", NULL, $opts);
 
     $keys = [];
     foreach ($result['rows'] as $classification)
@@ -35,7 +35,7 @@ class IndexController extends BaseController {
 
     $opts->reset();
     $opts->groupResults();
-    $postsPerTag = $this->couch->queryView("classifications", "perTag", $keys, $opts)->getBodyAsArray();
+    $postsPerTag = $this->couch->queryView("classifications", "perTag", $keys, $opts);
 
     $recentTags = [];
     for ($i = 0; $i < 60; $i++)
@@ -48,7 +48,7 @@ class IndexController extends BaseController {
   protected function getRecentArticles() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(30);
-    $result = $this->couch->queryView("articles", "allLatest", NULL, $opts)->getBodyAsArray();
+    $result = $this->couch->queryView("articles", "allLatest", NULL, $opts);
 
     $keys = [];
     foreach ($result['rows'] as $classification)
@@ -56,11 +56,11 @@ class IndexController extends BaseController {
 
     $opts->reset();
     $opts->doNotReduce();
-    $tags = $this->couch->queryView("tags", "all", $keys, $opts)->getBodyAsArray();
+    $tags = $this->couch->queryView("tags", "all", $keys, $opts);
 
     $opts->reset();
     $opts->groupResults();
-    $postsPerTag = $this->couch->queryView("classifications", "perTag", $keys, $opts)->getBodyAsArray();
+    $postsPerTag = $this->couch->queryView("classifications", "perTag", $keys, $opts);
 
     $recentTags = [];
     for ($i = 0; $i < 60; $i++)
@@ -94,7 +94,7 @@ class IndexController extends BaseController {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->reverseOrderOfResults();
     $opts->setLimit(30);
-    $result = $this->couch->queryView("posts", "allLatest", NULL, $opts)->getBodyAsArray();
+    $result = $this->couch->queryView("posts", "allLatest", NULL, $opts);
 
     $posts = [];
     foreach ($result["rows"] as $row) {
@@ -122,7 +122,7 @@ class IndexController extends BaseController {
     $aWeekAgo = (string)strtotime("-1 week");
     $opts->setStartKey($aWeekAgo);
 
-    $result = $this->couch->queryView("index", "latest", $opts)->getBodyAsArray();
+    $result = $this->couch->queryView("index", "latest", $opts);
 
     $posts = [];*/
     /*foreach ($result["rows"] as $row)
@@ -138,7 +138,7 @@ class IndexController extends BaseController {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->reverseOrderOfResults();
     $opts->setLimit(30);
-    $posts = $this->couch->queryView("posts", "allLatest", NULL, $opts)->getBodyAsArray();
+    $posts = $this->couch->queryView("posts", "allLatest", NULL, $opts);
 
     // Extracts the ids.
     $keys = [];
@@ -148,7 +148,7 @@ class IndexController extends BaseController {
     // Stars.
     $opts->reset();
     $opts->doNotReduce();
-    $stars = $this->couch->queryView("stars", "perItem", $keys, $opts)->getBodyAsArray();
+    $stars = $this->couch->queryView("stars", "perItem", $keys, $opts);
 
 
     $items = [];
@@ -182,7 +182,7 @@ class IndexController extends BaseController {
     $opts->doNotReduce()->reverseOrderOfResults();
     $opts->setLimit(30);
 
-    $result = $this->couch->queryView("votes", "allMostVoted", NULL, $opts)->getBodyAsArray();
+    $result = $this->couch->queryView("votes", "allMostVoted", NULL, $opts);
 
     $posts = [];
     foreach ($result["rows"] as $row)
