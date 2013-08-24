@@ -60,6 +60,7 @@ try {
   $console->add(new Command\InitCommand());
   $console->add(new Command\InstallCommand());
   $console->add(new Command\QueryCommand());
+  $console->add(new Command\StatusCommand());
 
   $console->run();
 }
