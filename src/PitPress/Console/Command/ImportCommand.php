@@ -120,10 +120,18 @@ class ImportCommand extends AbstractCommand {
       $article->publishingDate = (int)$item->unixTime;
       $article->title = utf8_encode($item->title);
 
-      if (!is_null($item->userId))
+      if (!is_null($item->userId)) {
         $article->userId = $item->userId;
-      elseif (!empty($item->contributorName))
+        $article->username = NULL;
+      }
+      elseif (!empty($item->contributorName)) {
+        $article->userId = NULL;
         $article->username = utf8_encode($item->contributorName);
+      }
+      else {
+        $article->userId = NULL;
+        $article->username = NULL;
+      }
 
       $article->body = iconv('LATIN1', 'UTF-8', $item->body);
 
@@ -147,7 +155,8 @@ class ImportCommand extends AbstractCommand {
 
       // We finally save the article.
       try {
-        $this->couch->saveDoc($article);
+        //$this->couch->saveDoc($article);
+        $article->save();
       }
       catch(\Exception $e) {
         $this->logger->error($e);
@@ -190,10 +199,18 @@ class ImportCommand extends AbstractCommand {
       $book->publishingDate = (int)$item->unixTime;
       $book->title = utf8_encode($item->title);
 
-      if (!is_null($item->userId))
+      if (!is_null($item->userId)) {
         $book->userId = $item->userId;
-      elseif (!empty($item->contributorName))
+        $book->username = NULL;
+      }
+      elseif (!empty($item->contributorName)) {
+        $book->userId = NULL;
         $book->username = utf8_encode($item->contributorName);
+      }
+      else {
+        $book->userId = NULL;
+        $book->username = NULL;
+      }
 
       $book->body = iconv('LATIN1', 'UTF-8', $item->body);
 
@@ -238,7 +255,8 @@ class ImportCommand extends AbstractCommand {
 
       // We finally save the book.
       try {
-        $this->couch->saveDoc($book);
+        //$this->couch->saveDoc($book);
+        $book->save();
       }
       catch(\Exception $e) {
         $this->logger->error(sprintf("Invalid JSON: %d - %s", $item->idItem, $book->title));
