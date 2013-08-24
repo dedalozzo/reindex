@@ -18,8 +18,8 @@ $di->setShared('volt',
       [
         'compiledPath' => __DIR__.$config->application->cacheDir.'volt/',
         'compiledExtension' => '.compiled',
-        'compiledSeparator' => '_'
-        //'compileAlways' => TRUE
+        'compiledSeparator' => '_',
+        'compileAlways' => TRUE
       ]
     );
 
