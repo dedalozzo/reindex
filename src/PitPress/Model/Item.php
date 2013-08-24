@@ -15,12 +15,9 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
 //! @brief A generic content created by a user.
 //! @nosubgrouping
 abstract class Item extends Storable {
-  protected $di; // Stores the default Dependency Injector.
-  protected $couch; // Stores the ElephantOnCouch client instance.
-  protected $redis; // Stores the Redis client instance.
 
 
-  public function getOwnerDisplayName() {
+  public function getOwner() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(1)->setKey($this->userId);
 
