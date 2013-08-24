@@ -57,9 +57,6 @@ class ImportCommand extends AbstractCommand {
   private $redis;
   private $markdown;
 
-  private $input;
-  private $output;
-
 
   //! @brief Imports users.
   private function importUsers() {
@@ -487,9 +484,6 @@ class ImportCommand extends AbstractCommand {
     $this->couch = $this->_di['couchdb'];
     $this->redis = $this->_di['redis'];
     $this->markdown = $this->_di['markdown'];
-
-    $this->input = $input;
-    $this->output = $output;
 
     $entities = $input->getArgument('entities');
     $limit = (int)$input->getOption('limit');
