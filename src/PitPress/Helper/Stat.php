@@ -29,12 +29,12 @@ class Stat {
 
   //! @brief Gets the total number of updates.
   public function getUpdatesCount() {
-    $result = $this->couch->queryView("posts", "allLatest");
+    $rows = $this->couch->queryView("posts", "latest")['rows'];
 
-    if (empty($result['rows']))
+    if (empty($rows))
       return 0;
     else
-      return number_format($result['rows'][0]['value'], 0, ",", ".");
+      return number_format($rows[0]['value'], 0, ",", ".");
   }
 
 
