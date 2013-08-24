@@ -23,20 +23,15 @@ abstract class Post extends Item implements Extension\ICount, Extension\IStar, E
   use Extension\TCount, Extension\TStar, Extension\TVote, Extension\TSubscribe;
 
 
-  //! @brief Constructor.
-  public function __construct() {
-    parent::__construct();
-    $this->meta['supertype'] = 'post';
-    $this->meta['section'] = $this->getSection();
-  }
-
-
-  //! @brief Saves the post to the database.
   public function save() {
-    $this->permalink = $this->getPermalink();
-    $this->prettyDate = $this->getPrettyDate();
-    $this->prettyTitle = $this->getPrettyTitle();
-    $this->prettyUrl = $this->getPrettyUrl();
+    $this->meta['supertype'] = 'post';
+    $this->meta['publishingType'] = $this->getPublishingType();
+    $this->meta['url'] = $this->getUrl();
+
+    // Used to group by year, month and day.
+    $this->meta['year'] = date("Y", $this->publishingDate);
+    $this->meta['month'] = date("m", $this->publishingDate);
+    $this->meta['day'] = date("d", $this->publishingDate);
 
     parent::save();
   }
@@ -49,19 +44,12 @@ abstract class Post extends Item implements Extension\ICount, Extension\IStar, E
   }
 
 
-  public function getPrettyDate() {
-    return date("Y/m/d", $this->publishingDate);
-  }
-
-
-  public function getPrettyTitle() {
-    $title = preg_replace('/[^a-z0-9]/i',' ', $this->title);
-    return str_replace(" ", "-", $title);
-  }
-
-
-  public function getPrettyUrl() {
-    return $this->getPrettyDate()."/".$this->getSection()."/".$this->getPrettyTitle().".html";
+  //! @brief Gets the post URL.
+  //! @return string
+  public function getUrl() {
+    $title = preg_replace('/[^a-z0-9]/i', ' ', $this->title);
+    $title = str_replace(" ", "-", $title);
+    return "/".$this->getSection()."/".date("Y/m/d", $this->publishingDate)."/".$this->title.".html";
   }
 
 
@@ -115,16 +103,16 @@ abstract class Post extends Item implements Extension\ICount, Extension\IStar, E
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setKey($this->id);
 
-    $result = $this->couch->queryView("classifications", "perPost", NULL, $opts);
+    $classifications = $this->couch->queryView("classifications", "perPost", NULL, $opts)['rows'];
 
     $keys = [];
-    foreach ($result['rows'] as $classification)
+    foreach ($classifications as $classification)
       $keys[] = $classification['value'];
 
     $opts->reset();
     $opts->doNotReduce();
 
-    return $this->couch->queryView("tags", "all", $keys, $opts);
+    return $this->couch->queryView("tags", "all", $keys, $opts)['rows']; // Tags.
   }
 
   //@}
