@@ -1,22 +1,22 @@
-        {% for post in posts %}
+        {% for entry in entries %}
         <div class="item">
           <div class="item-tools">
-            <a href="#"><i class="icon-arrow-up icon-large"></i></a>{{ post.getScore() }}<a href="#"><i class="icon-arrow-down icon-large"></i></a>
-            <a href="#"><i class="icon-star-empty icon-large"></i></a>{{ post.getStarsCount() }}
+            <a href="#"><i class="icon-arrow-up icon-large"></i></a>{{ entry.score }}<a href="#"><i class="icon-arrow-down icon-large"></i></a>
+            <a href="#"><i class="icon-star-empty icon-large"></i></a>{{ entry.starsCount }}
           </div>
           <div class="item-section">
-            <a href="#">{{ post.getPublishingType() }}</a>
+            <a href="#">{{ entry.publishingType }}</a>
           </div>
           <div class="item-container">
-            <a class="item-title" href="#">{{ post.title }}</a><br />
+            <a class="item-title" href="#">{{ entry.title }}</a><br />
             <ul class="list item-info">
-              <li><img class="gravatar" src="http://www.gravatar.com/avatar/b6799a3261ca303c0b39f991fd9250b4.png" />&nbsp;<a href="#">post.getDisplayName()</a><span><b>2345</b></span><span><i class="icon-certificate gold"></i> 12</span><span><i class="icon-certificate silver"></i> 10</span><span><i class="icon-certificate bronze"></i> 10</span></li>
+              <li><img class="gravatar" src="http://www.gravatar.com/avatar/b6799a3261ca303c0b39f991fd9250b4.png" />&nbsp;<a href="#">{{ entry.displayName }}</a><span><b>2345</b></span><span><i class="icon-certificate gold"></i> 12</span><span><i class="icon-certificate silver"></i> 10</span><span><i class="icon-certificate bronze"></i> 10</span></li>
               <li class="space"></li>
-              <li>{{ post.whenHasBeenPublished() }}, <b>{{ post.getHitsCount() }}</b> lettori</li>
+              <li>{{ entry.whenHasBeenPublished }}, <b>{{ entry.hitsCount }}</b> lettori</li>
             </ul>
-            <div class="item-body">{{ post.excerpt }}</div>
+            <div class="item-body">{{ entry.excerpt }}</div>
             <ul class="list item-tags">
-              {% set tags = post.getTags()["rows"] %}
+              {% set tags = entry.tags %}
               {% for tag in tags %}
               <li><a class="tag" href="/tag/">{{ tag['value'] }}</a></li>
               {% endfor  %}
