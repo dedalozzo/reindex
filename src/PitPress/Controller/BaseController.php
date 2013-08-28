@@ -16,14 +16,17 @@ use Phalcon\Mvc\Controller;
 
 //! @brief The base controller, a subclass of Phalcon controller.
 //! @nosubgrouping
-class BaseController extends Controller {
+abstract class BaseController extends Controller {
   const TITLE = 'PROGRAMMAZIONE.IT';
 
   protected $couch;
+  protected $redis;
+
 
   //! @brief Initializes the controller.
   public function initialize() {
     $this->couch = $this->di['couchdb'];
+    $this->redis = $this->di['redis'];
 
     Tag::prependTitle('P.it | ');
   }
