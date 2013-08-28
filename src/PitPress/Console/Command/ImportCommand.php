@@ -66,7 +66,7 @@ class ImportCommand extends AbstractCommand {
     $this->output->writeln("Importing users...");
 
     //$sql = "SELECT idMember, name AS firstName, surname AS lastName, nickName AS displayName, email, password, sex, birthDate AS birthday, ipAddress, confirmHash AS confirmationHash, confirmed AS authenticated, regDate AS creationDate, lastUpdate, avatarData, avatarType, realNamePcy FROM Member";
-    $sql = "SELECT idMember, name AS firstName, surname AS lastName, nickName AS displayName, email, password, sex, UNIX_TIMESTAMP(birthDate) AS birthday, ipAddress, confirmHash AS confirmationHash, confirmed AS authenticated, UNIX_TIMESTAMP(regDate) AS creationDate, lastUpdate, realNamePcy FROM Member";
+    $sql = "SELECT id, name AS firstName, surname AS lastName, nickName AS displayName, email, password, sex, UNIX_TIMESTAMP(birthDate) AS birthday, ipAddress, confirmHash AS confirmationHash, confirmed AS authenticated, UNIX_TIMESTAMP(regDate) AS creationDate, lastUpdate, realNamePcy FROM Member";
     $sql .= $this->limit;
 
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
@@ -78,6 +78,7 @@ class ImportCommand extends AbstractCommand {
     while ($item = mysqli_fetch_object($result)) {
       $user = new User();
 
+      $user->id = $item->id;
       $user->firstName = utf8_encode($item->firstName);
       $user->lastName = utf8_encode($item->lastName);
       $user->displayName = utf8_encode($item->displayName);
@@ -120,7 +121,7 @@ class ImportCommand extends AbstractCommand {
       $article->publishingDate = (int)$item->unixTime;
       $article->title = utf8_encode($item->title);
 
-      if (!is_null($item->userId)) {
+      if (isset($item->userId)) {
         $article->userId = $item->userId;
         $article->username = NULL;
       }
