@@ -14,6 +14,7 @@ namespace PitPress\Route;
 //! @nosubgrouping
 class IndexGroup extends \Phalcon\Mvc\Router\Group {
 
+
   public function initialize() {
     // Sets the default controller for the following routes.
     $this->setPaths(
@@ -23,11 +24,21 @@ class IndexGroup extends \Phalcon\Mvc\Router\Group {
       ]);
 
     $this->addGet('/', ['action' => 'index']);
-    $this->addGet('/popolari', ['action' => 'popular']);
-    $this->addGet('/recenti', ['action' => 'latest']);
-    $this->addGet('/in-base-ai-miei-tag', ['action' => 'basedOnMyTags']);
-    $this->addGet('/piu-votati', ['action' => 'mostVoted']);
-    $this->addGet('/piu-discussi', ['action' => 'mostDiscussed']);
+    $this->addGet('/nuovi', ['action' => 'newest']);
+
+    $this->addGet('/popolari/oggi', ['action' => 'todayPopular']);
+    $this->addGet('/popolari/settimana', ['action' => 'weeklyPopular']);
+    $this->addGet('/popolari/mese', ['action' => 'monthlyPopular']);
+    $this->addGet('/popolari/anno', ['action' => 'yearlyPopular']);
+    $this->addGet('/popolari/tutti', ['action' => 'everPopular']);
+
+    $this->addGet('/attivi/oggi', ['action' => 'todayActive']);
+    $this->addGet('/attivi/settimana', ['action' => 'weeklyActive']);
+    $this->addGet('/attivi/mese', ['action' => 'monthlyActive']);
+    $this->addGet('/attivi/anno', ['action' => 'yearlyActive']);
+    $this->addGet('/attivi/tutti', ['action' => 'everActive']);
+
     $this->addGet('/rss', ['action' => 'rss']);
   }
+
 }
