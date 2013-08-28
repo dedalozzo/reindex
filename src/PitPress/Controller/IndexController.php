@@ -13,70 +13,16 @@ use ElephantOnCouch\Couch;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Helper\Stat;
+use PitPress\Helper\Time;
 
 
 //! @brief Controller of Index actions.
 //! @nosubgrouping
-class IndexController extends BaseController {
-
-
-  protected function getRecentTags() {
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(60);
-    $result = $this->couch->queryView("classifications", "allLatest", NULL, $opts);
-
-    $keys = [];
-    foreach ($result['rows'] as $classification)
-      $keys[] = $classification['value'];
-
-    $opts->reset();
-    $opts->doNotReduce();
-    $tags = $this->couch->queryView("tags", "all", $keys, $opts)->getBodyAsArray();
-
-    $opts->reset();
-    $opts->groupResults();
-    $postsPerTag = $this->couch->queryView("classifications", "perTag", $keys, $opts);
-
-    $recentTags = [];
-    for ($i = 0; $i < 60; $i++)
-      $recentTags[] = [$tags['rows'][$i]['value'], $postsPerTag['rows'][$i]['value']];
-
-    return $recentTags;
-  }
-
-
-  protected function getRecentArticles() {
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(30);
-    $result = $this->couch->queryView("articles", "allLatest", NULL, $opts);
-
-    $keys = [];
-    foreach ($result['rows'] as $classification)
-      $keys[] = $classification['value'];
-
-    $opts->reset();
-    $opts->doNotReduce();
-    $tags = $this->couch->queryView("tags", "all", $keys, $opts);
-
-    $opts->reset();
-    $opts->groupResults();
-    $postsPerTag = $this->couch->queryView("classifications", "perTag", $keys, $opts);
-
-    $recentTags = [];
-    for ($i = 0; $i < 60; $i++)
-      $recentTags[] = [$tags['rows'][$i]['value'], $postsPerTag['rows'][$i]['value']];
-
-    return $recentTags;
-  }
-
-
-  public function initialize() {
-    parent::initialize();
-  }
+class IndexController extends ListController {
 
 
   public function indexAction() {
-    $this->latestAction();
+    $this->newestAction();
     $this->view->title = self::TITLE;
   }
 
@@ -87,22 +33,17 @@ class IndexController extends BaseController {
   }
 
 
-  public function latestAction() {
+  public function newestAction() {
     $this->view->title = "Ultimi aggiornamenti - ".self::TITLE;
 
-    // Posts.
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->reverseOrderOfResults();
     $opts->setLimit(30);
-    $result = $this->couch->queryView("posts", "allLatest", NULL, $opts);
+    $rows = $this->couch->queryView("posts", "latest", NULL, $opts)['rows'];
 
-    $posts = [];
-    foreach ($result["rows"] as $row) {
-      $doc = $this->couch->getDoc(Couch::STD_DOC_PATH, $row["id"], NULL);
-      $posts[] = $doc;
-    }
-
-    $this->view->posts = $posts;
+    // Entries.
+    $keys = array_column($rows, 'id');
+    $this->view->entries = $this->getEntries($keys);
 
     // Stats.
     $this->view->stat = new Stat();
@@ -112,7 +53,7 @@ class IndexController extends BaseController {
   }
 
 
-  public function popularAction() {
+  public function dailyPopularAction() {
     $this->view->title = "Aggiornamenti popolari - ".self::TITLE;
 
     // Retrieves the post of the last 7 days.
@@ -134,71 +75,54 @@ class IndexController extends BaseController {
     $this->view->setVar("posts", $posts);*/
 
 
+    // PREVIOUS VERSION, BEFORE INCLUDE MISSING ROWS
+    /*
     // Posts.
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->reverseOrderOfResults();
     $opts->setLimit(30);
-    $posts = $this->couch->queryView("posts", "allLatest", NULL, $opts);
-
-    // Extracts the ids.
-    $keys = [];
-    foreach ($posts["rows"] as $row)
-      $keys[] = $row["id"];
-
-    // Stars.
-    $opts->reset();
-    $opts->doNotReduce();
-    $stars = $this->couch->queryView("stars", "perItem", $keys, $opts);
-
-
-    $items = [];
-    foreach ($keys as $key) {
-      $item = new \StdClass();
-      $item->id = $key;
-      $item->hits = $this->redis->hGet($item->id, 'hits');
-
-
-      $items[] = $item;
-    }
-
-
-    $this->view->items = $items;
-
-    // Stats.
-    $this->view->stat = new Stat();
-
-    // Recent tags.
-    $this->view->recentTags = $this->getRecentTags();
-  }
-
-
-  public function basedOnMyTagsAction() {
-  }
-
-
-  public function mostVotedAction() {
-    // Posts.
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->reverseOrderOfResults();
-    $opts->setLimit(30);
-
-    $result = $this->couch->queryView("votes", "allMostVoted", NULL, $opts);
+    $result = $this->couch->queryView("posts", "allLatest", NULL, $opts);
 
     $posts = [];
-    foreach ($result["rows"] as $row)
-      $posts[] = $this->couch->getDoc(Couch::STD_DOC_PATH, $row["id"], NULL);
-
-    $this->view->posts = $posts;
-
-    // Stats.
-    $this->view->stat = new Stat();
-
-    // Recent tags.
-    $this->view->recentTags = $this->getRecentTags();
+    foreach ($result["rows"] as $row) {
+      $doc = $this->couch->getDoc(Couch::STD_DOC_PATH, $row["id"], NULL);
+      $posts[] = $doc;
+    }
+    */
   }
 
 
-  public function mostDiscussedAction() {
+  public function weeklyPopularAction() {
+  }
+
+
+  public function monthlyPopularAction() {
+  }
+
+
+  public function yearlyPopularAction() {
+    
+  }
+  
+  
+  public function everPopularAction() {    
+  }
+
+
+  public function weeklyActiveAction() {
+  }
+
+
+  public function monthlyActiveAction() {
+  }
+
+
+  public function yearlyActiveAction() {
+
+  }
+
+
+  public function everActiveAction() {
   }
 
 
