@@ -24,6 +24,7 @@ class Vote extends Doc {
     $instance->meta["postSection"] = $postSection;
     $instance->meta["postId"] = $postId;
     $instance->meta["userId"] = $userId;
+    $instance->meta["recorded"] = FALSE;
     $instance->setChoice($choice);
 
     return $instance;
