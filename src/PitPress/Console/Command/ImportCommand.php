@@ -102,10 +102,7 @@ class ImportCommand extends AbstractCommand {
   private function importArticles() {
     $this->output->writeln("Importing articles...");
 
-    // select idItem, title from Item where stereotype = 2 and  date < DATE('2005-12-07 12:12') order by date;
     $sql = "SELECT idItem, I.id AS id, M.id AS userId, contributorName, I.title, body, UNIX_TIMESTAMP(date) AS unixTime, hitNum, downloadNum, locked FROM Item I LEFT OUTER JOIN Member M USING (idMember) WHERE (stereotype = ".self::ARTICLE.") ORDER BY date DESC";
-    //$sql = "SELECT idItem, title, body, date, hitNum, replyNum, stereotype, locked, contributorName, correlationCode, idMember FROM Item WHERE (stereotype = ".self::ARTICLE.") AND idItem = 30806";
-
     $sql .= $this->limit;
 
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
