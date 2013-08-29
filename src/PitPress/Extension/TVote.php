@@ -62,7 +62,7 @@ trait TVote {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $user->id]);
 
-    $result = $this->couch->queryView("votes", "perPost", NULL, $opts);
+    $result = $this->couch->queryView("votes", "perPostAndUser", NULL, $opts);
 
     if (empty($result['rows']))
       return FALSE;
@@ -76,7 +76,7 @@ trait TVote {
   //! @copydoc IVote
   public function getScore() {
     $opts = new ViewQueryOpts();
-    $opts->setKey([$this->id]);
+    $opts->setKey($this->id);
 
     $result = $this->couch->queryView("votes", "perPost", NULL, $opts);
 
