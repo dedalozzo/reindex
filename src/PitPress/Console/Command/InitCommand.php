@@ -138,69 +138,6 @@ class InitCommand extends AbstractCommand {
     $doc->addHandler(latestPostsPerSection());
 
 
-    // @params: NONE
-    function mostVotedPosts() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'vote') {
-                  if (\$doc->choice == '+')
-                    \$emit(\$doc->postId, 1);
-                  elseif (\$doc->choice == '-')
-                    \$emit(\$doc->postId, -1);
-                }
-              };";
-
-      $handler = new ViewHandler("mostVoted");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnSum(); // Used to count the votes.
-
-      return $handler;
-    }
-
-    $doc->addHandler(mostVotedPosts());
-
-
-    // @params: type, [postId]
-    function mostVotedPostsPerType() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'vote') {
-                  if (\$doc->choice == '+')
-                    \$emit([\$doc->postType, \$doc->postId], 1);
-                  elseif (\$doc->choice == '-')
-                    \$emit([\$doc->postType, \$doc->postId], -1);
-                }
-              };";
-
-      $handler = new ViewHandler("mostVotedPerType");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnSum(); // Used to count the votes.
-
-      return $handler;
-    }
-
-    $doc->addHandler(mostVotedPostsPerType());
-
-
-    // @params: section, [postId]
-    function mostVotedPostsPerSection() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'vote') {
-                  if (\$doc->choice == '+')
-                    \$emit([\$doc->section, \$doc->postId], 1);
-                  elseif (\$doc->choice == '-')
-                    \$emit([\$doc->section, \$doc->postId], -1);
-                }
-              };";
-
-      $handler = new ViewHandler("mostVotedPerSection");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnSum(); // Used to count the votes.
-
-      return $handler;
-    }
-
-    $doc->addHandler(mostVotedPostsPerSection());
-
-
     $this->couch->saveDoc($doc);
   }
 
@@ -234,15 +171,14 @@ class InitCommand extends AbstractCommand {
     $doc = DesignDoc::create('votes');
 
 
-    // @params: postId, [userId]
-    // @methods: Post.isVoted(), Post.getVotesCount()
+    // @params: [postId]
     function votesPerPost() {
       $map = "function(\$doc) use (\$emit) {
                 if (\$doc->type == 'vote') {
                   if (\$doc->choice == '+')
-                    \$emit([\$doc->postId, \$doc->userId], 1);
+                    \$emit(\$doc->postId, 1);
                   elseif (\$doc->choice == '-')
-                    \$emit([\$doc->postId, \$doc->userId], -1);
+                    \$emit(\$doc->postId, -1);
                 }
               };";
 
@@ -254,6 +190,69 @@ class InitCommand extends AbstractCommand {
     }
 
     $doc->addHandler(votesPerPost());
+
+
+    // @params: postId, userId
+    function votesPerPostAndUser() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'vote') {
+                  if (\$doc->choice == '+')
+                    \$emit([\$doc->postId, \$doc->userId], 1);
+                  elseif (\$doc->choice == '-')
+                    \$emit([\$doc->postId, \$doc->userId], -1);
+                }
+              };";
+
+      $handler = new ViewHandler("perPostAndUser");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnSum(); // Used to count the votes.
+
+      return $handler;
+    }
+
+    $doc->addHandler(votesPerPostAndUser());
+
+
+    // @params: type, postId
+    function votesPerType() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'vote') {
+                  if (\$doc->choice == '+')
+                    \$emit([\$doc->postType, \$doc->postId], 1);
+                  elseif (\$doc->choice == '-')
+                    \$emit([\$doc->postType, \$doc->postId], -1);
+                }
+              };";
+
+      $handler = new ViewHandler("perType");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnSum(); // Used to count the votes.
+
+      return $handler;
+    }
+
+    $doc->addHandler(votesPerType());
+
+
+    // @params: section, postId
+    function votesPerSection() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'vote') {
+                  if (\$doc->choice == '+')
+                    \$emit([\$doc->section, \$doc->postId], 1);
+                  elseif (\$doc->choice == '-')
+                    \$emit([\$doc->section, \$doc->postId], -1);
+                }
+              };";
+
+      $handler = new ViewHandler("perSection");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnSum(); // Used to count the votes.
+
+      return $handler;
+    }
+
+    $doc->addHandler(votesPerSection());
 
 
     $this->couch->saveDoc($doc);
