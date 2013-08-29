@@ -51,12 +51,6 @@ abstract class ListController extends BaseController {
     $opts->doNotReduce()->includeMissingKeys();
     $posts = $this->couch->queryView("posts", "all", $keys, $opts)['rows'];
 
-    // Users.
-    $opts->reset();
-    $opts->doNotReduce()->includeMissingKeys();
-    $keys = array_column(array_column($posts, 'value'), 'userId');
-    $users = $this->couch->queryView("users", "allNames", $keys, $opts)['rows'];
-
     // Stars.
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
@@ -66,6 +60,12 @@ abstract class ListController extends BaseController {
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
     $scores = $this->couch->queryView("votes", "perPost", $keys, $opts)['rows'];
+
+    // Users.
+    $opts->reset();
+    $opts->doNotReduce()->includeMissingKeys();
+    $keys = array_column(array_column($posts, 'value'), 'userId');
+    $users = $this->couch->queryView("users", "allNames", $keys, $opts)['rows'];
 
     $entries = [];
     $postCount = count($posts);
@@ -89,8 +89,8 @@ abstract class ListController extends BaseController {
         $entry->displayName = "anonimo";
 
       $entry->hitsCount = $this->redis->hGet($entry->id, 'hits');
-      $entry->starsCount = is_null($stars[$entry->id]['value']) ? 0 : $stars[$entry->id]['value'];
-      $entry->score = is_null($scores[$entry->id]['value']) ? 0 : $scores[$entry->id]['value'];
+      $entry->starsCount = is_null($stars[$i]['value']) ? 0 : $stars[$i]['value'];
+      $entry->score = is_null($scores[$i]['value']) ? 0 : $scores[$i]['value'];
 
       // Tags.
       $opts->reset();
