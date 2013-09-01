@@ -19,7 +19,7 @@ use PitPress\Model\User\User;
 //! @brief Implements the IVote interface.
 trait TVote {
 
-  private function vote(User $user, $choice) {
+  private function vote(User $user, $value) {
     $voted = $this->didUserVote($user, $voteId);
 
     if ($voted) {
@@ -30,15 +30,15 @@ trait TVote {
       $seconds = floor(time() / $vote->getTimestamp());
 
       // The user has 5 minutes to change his vote.
-      if ($seconds < 300) {
-        $vote->setChoice($choice);
+      if ($seconds < 300 && !$vote->hasBeenRecorded()) {
+        $vote->setValue($value);
         $this->couch-saveDoc($vote);
       }
       else
         throw new \RuntimeException("Trascorsi 5 minuti non è più possibile rettificare il proprio voto.");
     }
     else {
-      $vote = Vote::create($this->postType, $this->postSection, $this->id, $user->id, $choice);
+      $vote = Vote::create($this->postType, $this->postSection, $this->id, $user->id, $value);
       $this->couch->saveDoc($vote);
     }
   }
@@ -46,14 +46,14 @@ trait TVote {
 
   //! @copydoc IVote
   public function voteUp(User $user) {
-    $this->vote($user, '+');
+    $this->vote($user, 1);
   }
 
 
 
   //! @copydoc IVote
   public function voteDown(User $user) {
-    $this->vote($user, '-');
+    $this->vote($user, -1);
   }
 
 
