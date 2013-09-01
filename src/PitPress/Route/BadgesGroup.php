@@ -9,9 +9,12 @@
 namespace PitPress\Route;
 
 
-//! @brief
+use Phalcon\Mvc\Router\Group;
+
+
+//! @brief Group of badges' routes.
 //! @nosubgrouping
-class BadgesGroup extends \Phalcon\Mvc\Router\Group {
+class BadgesGroup extends Group {
 
   public function initialize() {
     // Sets the default controller for the following routes.

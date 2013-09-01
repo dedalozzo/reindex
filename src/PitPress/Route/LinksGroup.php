@@ -9,9 +9,13 @@
 namespace PitPress\Route;
 
 
-//! @brief
+use Phalcon\Mvc\Router\Group;
+
+
+//! @brief Group of links' routes.
 //! @nosubgrouping
-class LinksGroup extends \Phalcon\Mvc\Router\Group {
+class LinksGroup extends Group {
+
 
   public function initialize() {
     // Sets the default controller for the following routes.
@@ -33,4 +37,5 @@ class LinksGroup extends \Phalcon\Mvc\Router\Group {
     $this->addGet('/segnalati-da-me', ['action' => 'postedByMe']);
     $this->addGet('/rss', ['action' => 'rss']);
   }
+
 }

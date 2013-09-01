@@ -9,9 +9,13 @@
 namespace PitPress\Route;
 
 
-//! @brief
+use Phalcon\Mvc\Router\Group;
+
+
+//! @brief Group of forum routes.
 //! @nosubgrouping
-class ForumGroup extends \Phalcon\Mvc\Router\Group {
+class ForumGroup extends Group {
+
 
   public function initialize() {
     // Sets the default controller for the following routes.
@@ -35,4 +39,5 @@ class ForumGroup extends \Phalcon\Mvc\Router\Group {
     $this->addGet('/a-cui-risposi', ['action' => 'answeredByMe']);
     $this->addGet('/rss', ['action' => 'rss']);
   }
+
 }

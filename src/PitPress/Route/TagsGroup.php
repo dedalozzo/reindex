@@ -9,9 +9,13 @@
 namespace PitPress\Route;
 
 
-//! @brief
+use Phalcon\Mvc\Router\Group;
+
+
+//! @brief Group of tags' routes.
 //! @nosubgrouping
-class TagsGroup extends \Phalcon\Mvc\Router\Group {
+class TagsGroup extends Group {
+
 
   public function initialize() {
     // Sets the default controller for the following routes.
@@ -29,4 +33,5 @@ class TagsGroup extends \Phalcon\Mvc\Router\Group {
     $this->addGet('/per-nome', ['action' => 'byName']);
     $this->addGet('/recenti', ['action' => 'recents']);
   }
+
 }

@@ -9,9 +9,13 @@
 namespace PitPress\Route;
 
 
-//! @brief
+use Phalcon\Mvc\Router\Group;
+
+
+//! @brief Group of users' routes.
 //! @nosubgrouping
-class UsersGroup extends \Phalcon\Mvc\Router\Group {
+class UsersGroup extends Group {
+
 
   public function initialize() {
     // Sets the default controller for the following routes.
@@ -33,4 +37,5 @@ class UsersGroup extends \Phalcon\Mvc\Router\Group {
     $this->addGet('/editori', ['action' => 'editors']);
     $this->addGet('/moderatori', ['action' => 'moderators']);
   }
+
 }
