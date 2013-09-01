@@ -25,6 +25,7 @@ abstract class Post extends Item implements Extension\ICount, Extension\IStar, E
 
   public function save() {
     $this->meta['supertype'] = 'post';
+    $this->meta['section'] = $this->getSection();
     $this->meta['publishingType'] = $this->getPublishingType();
     $this->meta['url'] = $this->getUrl();
 
