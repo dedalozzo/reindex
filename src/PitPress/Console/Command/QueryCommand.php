@@ -37,24 +37,28 @@ class QueryCommand extends AbstractCommand {
     $this->addArgument("keys",
       InputArgument::IS_ARRAY | InputArgument::OPTIONAL,
       "Used to retrieve just the view rows matching that set of keys. Rows are returned in the order of the specified
-      keys. Combining this feature with --include-docs results in the so-called multi-document-fetch feature.");
+      keys. Combining this feature with --include-docs results in the so-called multi-document-fetch feature.
+      In case yours keys are string, they must be quoted with double quotes and escaped, like \\\"firstkey\\\", \\\"secondkey\\\".");
 
 
     // General options.
     $this->addOption("key",
       NULL,
       InputOption::VALUE_REQUIRED,
-      "Returns only documents that match the specified key.");
+      "Returns only documents that match the specified key.
+      In case the key is a string, it must be quoted with double quotes and escaped, like --key=\\\"mykey\\\".");
 
     $this->addOption("startkey",
       NULL,
       InputOption::VALUE_REQUIRED,
-      "Defines the first key to be included in the range.");
+      "Defines the first key to be included in the range.
+      In case the key is a string, it must be quoted with double quotes and escaped, like --startkey=\\\"mykey\\\".");
 
     $this->addOption("endkey",
       NULL,
       InputOption::VALUE_REQUIRED,
-      "Defines the last key to be included in the range.");
+      "Defines the last key to be included in the range.
+      In case the key is a string, it must be quoted with double quotes and escaped, like --endkey=\\\"mykey\\\".");
 
     $this->addOption("startkey-docid",
       NULL,
@@ -173,11 +177,11 @@ class QueryCommand extends AbstractCommand {
 
     // Start doc id.
     if ($docId = $input->getOption('startkey-docid'))
-      $opts->setStartDocId($this->castArg($docId));
+      $opts->setStartDocId($docId);
 
     // End doc id.
     if ($docId = $input->getOption('endkey-docid'))
-      $opts->setEndDocId($this->castArg($docId));
+      $opts->setEndDocId($docId);
 
     // Limit.
     $limit = (int)$input->getOption('limit');
