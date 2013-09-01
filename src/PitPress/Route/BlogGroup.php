@@ -9,9 +9,13 @@
 namespace PitPress\Route;
 
 
-//! @brief
+use Phalcon\Mvc\Router\Group;
+
+
+//! @brief Group of blog routes.
 //! @nosubgrouping
-class BlogGroup extends \Phalcon\Mvc\Router\Group {
+class BlogGroup extends Group {
+
 
   public function initialize() {
     // Sets the default controller for the following routes.
@@ -21,24 +25,24 @@ class BlogGroup extends \Phalcon\Mvc\Router\Group {
         'controller' => 'blog'
       ]);
 
-    // All the routes start with /pubblicazioni.
-    $this->setPrefix('/pubblicazioni');
+    // All the routes start with /blog.
+    $this->setPrefix('/blog');
 
-    $this->addGet('/', ['action' => 'recents']);
-    $this->addGet('/popolari', ['action' => 'populars']);
-    $this->addGet('/recenti', ['action' => 'recents']);
-    $this->addGet('/in-base-ai-miei-tag', ['action' => 'basedOnMyTags']);
-    $this->addGet('/piu-votate', ['action' => 'mostVoted']);
-    $this->addGet('/piu-discusse', ['action' => 'mostDiscussed']);
+    $this->addGet('/nuovi', ['action' => 'newest']);
 
-    $this->addGet('/per-tipo', ['action' => 'all']);
-    $this->addGet('/per-tipo/tutte', ['action' => 'all']);
-    $this->addGet('/per-tipo/articoli', ['action' => 'articles']);
-    $this->addGet('/per-tipo/guide', ['action' => 'tutorials']);
-    $this->addGet('/per-tipo/libri', ['action' => 'books']);
-    $this->addGet('/per-tipo/sondaggi', ['action' => 'polls']);
+    $this->addGet('/popolari', ['action' => 'weeklyPopular']);
+    $this->addGet('/popolari/settimana', ['action' => 'weeklyPopular']);
+    $this->addGet('/popolari/mese', ['action' => 'monthlyPopular']);
+    $this->addGet('/popolari/trimestre', ['action' => 'quarterlyPopular']);
+    $this->addGet('/popolari/anno', ['action' => 'yearlyPopular']);
 
-    $this->addGet('/mie', ['action' => 'writtenByMe']);
+    $this->addGet('/aggiornati', ['action' => 'updated']);
+    $this->addGet('/interessanti', ['action' => 'interesting']);
+
+    $this->addGet('/articoli', ['action' => 'articles']);
+    $this->addGet('/libri', ['action' => 'books']);
+    $this->addGet('/tutorial', ['action' => 'tutorials']);
+
     $this->addGet('/rss', ['action' => 'rss']);
   }
 

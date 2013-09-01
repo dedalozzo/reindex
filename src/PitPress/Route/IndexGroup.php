@@ -10,9 +10,12 @@
 namespace PitPress\Route;
 
 
-//! @brief
+use Phalcon\Mvc\Router\Group;
+
+
+//! @brief Group of index routes.
 //! @nosubgrouping
-class IndexGroup extends \Phalcon\Mvc\Router\Group {
+class IndexGroup extends Group {
 
 
   public function initialize() {
@@ -26,17 +29,17 @@ class IndexGroup extends \Phalcon\Mvc\Router\Group {
     $this->addGet('/', ['action' => 'index']);
     $this->addGet('/nuovi', ['action' => 'newest']);
 
+    $this->addGet('/popolari', ['action' => 'todayPopular']);
     $this->addGet('/popolari/oggi', ['action' => 'todayPopular']);
+    $this->addGet('/popolari/ieri', ['action' => 'yesterdayPopular']);
     $this->addGet('/popolari/settimana', ['action' => 'weeklyPopular']);
     $this->addGet('/popolari/mese', ['action' => 'monthlyPopular']);
+    $this->addGet('/popolari/trimestre', ['action' => 'quarterlyPopular']);
     $this->addGet('/popolari/anno', ['action' => 'yearlyPopular']);
-    $this->addGet('/popolari/tutti', ['action' => 'everPopular']);
+    $this->addGet('/popolari/sempre', ['action' => 'everPopular']);
 
-    $this->addGet('/attivi/oggi', ['action' => 'todayActive']);
-    $this->addGet('/attivi/settimana', ['action' => 'weeklyActive']);
-    $this->addGet('/attivi/mese', ['action' => 'monthlyActive']);
-    $this->addGet('/attivi/anno', ['action' => 'yearlyActive']);
-    $this->addGet('/attivi/tutti', ['action' => 'everActive']);
+    $this->addGet('/attivi', ['action' => 'active']);
+    $this->addGet('/interessanti', ['action' => 'interesting']);
 
     $this->addGet('/rss', ['action' => 'rss']);
   }
