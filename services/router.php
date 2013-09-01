@@ -8,6 +8,8 @@
 
 use Phalcon\Mvc\Router;
 
+use PitPress\Route;
+
 
 // Creates a router instance and return it.
 $di->setShared('router',
@@ -17,13 +19,13 @@ $di->setShared('router',
     //$router->setDefaultController("index");
     //$router->setDefaultAction("recents");
 
-    $router->mount(new PitPress\Route\IndexGroup());
-    $router->mount(new PitPress\Route\LinksGroup());
-    $router->mount(new PitPress\Route\ForumGroup());
-    $router->mount(new PitPress\Route\BlogGroup());
-    $router->mount(new PitPress\Route\UsersGroup());
-    $router->mount(new PitPress\Route\TagsGroup());
-    $router->mount(new PitPress\Route\BadgesGroup());
+    $router->mount(new Route\IndexGroup());
+    $router->mount(new Route\BlogGroup());
+    $router->mount(new Route\ForumGroup());
+    $router->mount(new Route\LinksGroup());
+    $router->mount(new Route\TagsGroup());
+    $router->mount(new Route\BadgesGroup());
+    $router->mount(new Route\UsersGroup());
 
     return $router;
   }
