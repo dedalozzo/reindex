@@ -17,7 +17,7 @@ use ElephantOnCouch\Doc\Doc;
 class Vote extends Doc {
 
   //! @brief Creates an instance of Vote class.
-  public static function create($postType, $postSection, $postId, $userId, $choice) {
+  public static function create($postType, $postSection, $postId, $userId, $value) {
     $instance = new self();
 
     $instance->meta["postType"] = $postType;
@@ -25,31 +25,47 @@ class Vote extends Doc {
     $instance->meta["postId"] = $postId;
     $instance->meta["userId"] = $userId;
     $instance->meta["recorded"] = FALSE;
-    $instance->setChoice($choice);
+    $instance->setValue($value);
 
     return $instance;
   }
 
 
-  //! @brief Returns the user choice.
-  //! @return string
-  public function getChoice() {
-    return $this->meta['choice'];
+  public function getPostId() {
+    return $this->meta["postId"];
   }
 
 
-  //! @brief Changes the user vote and update timestamp.
-  //! @param[in] string $value The user vote.
-  public function setChoice($value) {
-    $this->meta['choice'] = $value;
+  public function getPostSection() {
+    return $this->meta["section"];
+  }
+
+
+  public function getUserId() {
+    return $this->meta["userid"];
+  }
+
+
+  public function getValue() {
+    return $this->meta["value"];
+  }
+
+
+  public function setValue($value) {
+    $this->meta["value"] = $value;
     $this->meta["timestamp"] = time();
   }
 
 
-  //! @brief Returns the voting timestamp.
-  //! @return integer
   public function getTimestamp() {
     return $this->meta["timestamp"];
+  }
+
+
+  //! @brief Returns `true`if the vote has been recorded by the PitPress daemon.
+  //! @return boolean
+  public function hasBeenRecorded() {
+    return $this->meta["recorded"];
   }
 
 }
