@@ -11,7 +11,6 @@ namespace PitPress\Console\Command;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use ElephantOnCouch\Doc\DesignDoc;
@@ -31,6 +30,7 @@ class InitCommand extends AbstractCommand {
     $this->initPosts();
     $this->initTags();
     $this->initVotes();
+    $this->initScores();
     $this->initStars();
     $this->initSubscriptions();
     $this->initClassifications();
@@ -70,40 +70,6 @@ class InitCommand extends AbstractCommand {
     $doc->addHandler(allPosts());
 
 
-    // @params: NONE
-    function latestPosts() {
-      $map = "function(\$doc) use (\$emit) {
-                if (isset(\$doc->supertype) and \$doc->supertype == 'post')
-                  \$emit(\$doc->publishingDate);
-              };";
-
-      $handler = new ViewHandler("latest");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
-
-      return $handler;
-    }
-
-    $doc->addHandler(latestPosts());
-
-
-    // @params: NONE
-    function postsPerDate() {
-      $map = "function(\$doc) use (\$emit) {
-                if (isset(\$doc->supertype) and \$doc->supertype == 'post')
-                  \$emit([\$doc->year, \$doc->month, \$doc->day]);
-              };";
-
-      $handler = new ViewHandler("perDate");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
-
-      return $handler;
-    }
-
-    $doc->addHandler(postsPerDate());
-
-
     // @params: type
     function latestPostsPerType() {
       $map = "function(\$doc) use (\$emit) {
@@ -137,6 +103,39 @@ class InitCommand extends AbstractCommand {
 
     $doc->addHandler(latestPostsPerSection());
 
+
+    // @params: NONE
+    function latestPosts() {
+      $map = "function(\$doc) use (\$emit) {
+                if (isset(\$doc->supertype) and \$doc->supertype == 'post')
+                  \$emit(\$doc->publishingDate);
+              };";
+
+      $handler = new ViewHandler("latest");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
+
+      return $handler;
+    }
+
+    $doc->addHandler(latestPosts());
+
+
+    // @params: NONE
+    function postsPerDate() {
+      $map = "function(\$doc) use (\$emit) {
+                if (isset(\$doc->supertype) and \$doc->supertype == 'post')
+                  \$emit([\$doc->year, \$doc->month, \$doc->day]);
+              };";
+
+      $handler = new ViewHandler("perDate");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
+
+      return $handler;
+    }
+
+    $doc->addHandler(postsPerDate());
 
     $this->couch->saveDoc($doc);
   }
@@ -174,12 +173,8 @@ class InitCommand extends AbstractCommand {
     // @params: [postId]
     function votesPerPost() {
       $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'vote') {
-                  if (\$doc->choice == '+')
-                    \$emit(\$doc->postId, 1);
-                  elseif (\$doc->choice == '-')
-                    \$emit(\$doc->postId, -1);
-                }
+                if (\$doc->type == 'vote')
+                  \$emit(\$doc->postId, \$doc->value);
               };";
 
       $handler = new ViewHandler("perPost");
@@ -195,12 +190,8 @@ class InitCommand extends AbstractCommand {
     // @params: postId, userId
     function votesPerPostAndUser() {
       $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'vote') {
-                  if (\$doc->choice == '+')
-                    \$emit([\$doc->postId, \$doc->userId], 1);
-                  elseif (\$doc->choice == '-')
-                    \$emit([\$doc->postId, \$doc->userId], -1);
-                }
+                if (\$doc->type == 'vote')
+                  \$emit([\$doc->postId, \$doc->userId], \$doc->value);
               };";
 
       $handler = new ViewHandler("perPostAndUser");
@@ -216,12 +207,8 @@ class InitCommand extends AbstractCommand {
     // @params: type, postId
     function votesPerType() {
       $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'vote') {
-                  if (\$doc->choice == '+')
-                    \$emit([\$doc->postType, \$doc->postId], 1);
-                  elseif (\$doc->choice == '-')
-                    \$emit([\$doc->postType, \$doc->postId], -1);
-                }
+                if (\$doc->type == 'vote')
+                  \$emit([\$doc->postType, \$doc->postId], \$doc->value);
               };";
 
       $handler = new ViewHandler("perType");
@@ -237,12 +224,8 @@ class InitCommand extends AbstractCommand {
     // @params: section, postId
     function votesPerSection() {
       $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'vote') {
-                  if (\$doc->choice == '+')
-                    \$emit([\$doc->section, \$doc->postId], 1);
-                  elseif (\$doc->choice == '-')
-                    \$emit([\$doc->section, \$doc->postId], -1);
-                }
+                if (\$doc->type == 'vote')
+                  \$emit([\$doc->section, \$doc->postId], \$doc->value);
               };";
 
       $handler = new ViewHandler("perSection");
@@ -253,6 +236,46 @@ class InitCommand extends AbstractCommand {
     }
 
     $doc->addHandler(votesPerSection());
+
+
+    // @params: timestamp
+    function votesNotRecorded() {
+      $map = "function(\$doc) use (\$emit) {
+                if ((\$doc->type == 'vote') && (!\$doc->recorded))
+                  \$emit(\$doc->timestamp, \$doc);
+              };";
+
+      $handler = new ViewHandler("notRecorded");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(votesNotRecorded());
+
+
+    $this->couch->saveDoc($doc);
+  }
+
+
+  private function initScores() {
+    $doc = DesignDoc::create('scores');
+
+
+    // @params postId
+    function scoresPerPost() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'score')
+                  \$emit(\$doc->postId, \$doc);
+              };";
+
+      $handler = new ViewHandler("perPost");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(scoresPerPost());
 
 
     $this->couch->saveDoc($doc);
@@ -504,6 +527,10 @@ class InitCommand extends AbstractCommand {
 
           case 'votes':
             $this->initVotes();
+            break;
+
+          case 'scores':
+            $this->initScores();
             break;
 
           case 'stars':
