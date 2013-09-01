@@ -151,7 +151,7 @@ class QueryCommand extends AbstractCommand {
 
       $keys = [];
       foreach ($args as $key)
-        $keys[] = $this->castArg($key);
+        $keys[] = $this->castArg($key, FALSE);
     }
     else
       $keys = NULL;
@@ -161,7 +161,23 @@ class QueryCommand extends AbstractCommand {
 
     // Key.
     if ($key = $input->getOption('key'))
-      $opts->setKey($this->castArg($key));
+      $opts->setKey($this->castArg($key), FALSE);
+
+    // Start key.
+    if ($startkey = $input->getOption('startkey'))
+      $opts->setStartKey($this->castArg($startkey), FALSE);
+
+    // End key.
+    if ($endkey = $input->getOption('endkey'))
+      $opts->setEndKey($this->castArg($endkey), FALSE);
+
+    // Start doc id.
+    if ($docId = $input->getOption('startkey-docid'))
+      $opts->setStartDocId($this->castArg($docId));
+
+    // End doc id.
+    if ($docId = $input->getOption('endkey-docid'))
+      $opts->setEndDocId($this->castArg($docId));
 
     // Limit.
     $limit = (int)$input->getOption('limit');
