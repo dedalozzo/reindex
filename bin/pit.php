@@ -20,24 +20,27 @@ use ElephantOnCouch\Couch;
 $start = microtime(true);
 
 try {
+  $root = realpath(__DIR__."/../");
+
   // Initializes the Composer autoloading system. (Note: We don't use the Phalcon loader.)
-  require __DIR__."/../vendor/autoload.php";
+  require $root."/vendor/autoload.php";
 
   // Reads the application's configuration.
-  $config = new IniReader(__DIR__.'/../config.ini');
+  $config = new IniReader($root.'/config.ini');
 
-  $logger = new FileAdapter("/tmp/pit.log");
+  $logger = new FileAdapter($root."/log/pit.log");
+  //$logger->begin();
 
   // The FactoryDefault Dependency Injector automatically registers the right services providing a full stack framework.
   $di = new DependencyInjector();
 
   // Initializes the services. The order doesn't matter.
-  require __DIR__."/../services/config.php";
-  require __DIR__."/../services/logger.php";
-  require __DIR__."/../services/couchdb.php";
-  require __DIR__."/../services/redis.php";
-  require __DIR__."/../services/mysql.php";
-  require __DIR__."/../services/markdown.php";
+  require $root."/services/config.php";
+  require $root."/services/logger.php";
+  require $root."/services/couchdb.php";
+  require $root."/services/redis.php";
+  require $root."/services/mysql.php";
+  require $root."/services/markdown.php";
 
   //Couch::useCurl();
 
@@ -67,4 +70,7 @@ try {
 }
 catch (Exception $e) {
   echo $e;
+}
+finally {
+  //$logger->commit();
 }
