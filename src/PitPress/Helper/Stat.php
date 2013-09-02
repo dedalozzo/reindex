@@ -11,26 +11,23 @@ namespace PitPress\Helper;
 
 use Phalcon\DI;
 
+use ElephantOnCouch\Opt\ViewQueryOpts;
+
 
 //! @brief Provides methods to generate statistics.
 class Stat {
   protected $di; // Stores the default Dependency Injector.
   protected $couch; // Stores the ElephantOnCouch client instance.
-  protected $redis; // Stores the Redis client instance.
 
 
   //! @brief Constructor.
   public function __construct() {
     $this->di = DI::getDefault();
     $this->couch = $this->di['couchdb'];
-    $this->redis = $this->di['redis'];
   }
 
 
-  //! @brief Gets the total number of updates.
-  public function getUpdatesCount() {
-    $rows = $this->couch->queryView("posts", "latest")['rows'];
-
+  private function formatNumber($rows) {
     if (empty($rows))
       return 0;
     else
@@ -38,33 +35,55 @@ class Stat {
   }
 
 
+  //! @brief Gets the total number of updates.
+  public function getUpdatesCount() {
+    $rows = $this->couch->queryView("posts", "latest")['rows'];
+    return $this->formatNumber($rows);
+  }
+
+
   //! @brief Gets the total number of blog entries.
   public function getBlogEntriesCount() {
-
+    $opts = new ViewQueryOpts();
+    $opts->setStartKey(['blog'])->setEndKey(['blog', new \stdClass()]);
+    $rows = $this->couch->queryView('posts', 'latestPerSection', NULL, $opts)['rows'];
+    return $this->formatNumber($rows);
   }
 
 
   //! @brief Gets the total number of articles.
   public function getArticlesCount() {
-
+    $opts = new ViewQueryOpts();
+    $opts->setStartKey(['article'])->setEndKey(['article', new \stdClass()]);
+    $rows = $this->couch->queryView('posts', 'latestPerType', NULL, $opts)['rows'];
+    return $this->formatNumber($rows);
   }
 
 
   //! @brief Gets the total number of books.
   public function getBooksCount() {
-
+    $opts = new ViewQueryOpts();
+    $opts->setStartKey(['book'])->setEndKey(['book', new \stdClass()]);
+    $rows = $this->couch->queryView('posts', $viewName, NULL, $opts)['rows'];
+    return $this->formatNumber($rows);
   }
 
 
   //! @brief Gets the total number of links.
   public function getLinksCount() {
-
+    $opts = new ViewQueryOpts();
+    $opts->setStartKey(['link'])->setEndKey(['link', new \stdClass()]);
+    $rows = $this->couch->queryView('posts', $viewName, NULL, $opts)['rows'];
+    return $this->formatNumber($rows);
   }
 
 
   //! @brief Gets the total number of questions.
   public function getQuestionsCount() {
-
+    $opts = new ViewQueryOpts();
+    $opts->setStartKey(['question'])->setEndKey(['question', new \stdClass()]);
+    $rows = $this->couch->queryView('posts', $viewName, NULL, $opts)['rows'];
+    return $this->formatNumber($rows);
   }
 
 } 
