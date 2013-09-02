@@ -64,7 +64,7 @@ class Stat {
   public function getBooksCount() {
     $opts = new ViewQueryOpts();
     $opts->setStartKey(['book'])->setEndKey(['book', new \stdClass()]);
-    $rows = $this->couch->queryView('posts', $viewName, NULL, $opts)['rows'];
+    $rows = $this->couch->queryView('posts', 'latestPerType', NULL, $opts)['rows'];
     return $this->formatNumber($rows);
   }
 
@@ -73,7 +73,7 @@ class Stat {
   public function getLinksCount() {
     $opts = new ViewQueryOpts();
     $opts->setStartKey(['link'])->setEndKey(['link', new \stdClass()]);
-    $rows = $this->couch->queryView('posts', $viewName, NULL, $opts)['rows'];
+    $rows = $this->couch->queryView('posts', 'latestPerType', NULL, $opts)['rows'];
     return $this->formatNumber($rows);
   }
 
@@ -82,7 +82,7 @@ class Stat {
   public function getQuestionsCount() {
     $opts = new ViewQueryOpts();
     $opts->setStartKey(['question'])->setEndKey(['question', new \stdClass()]);
-    $rows = $this->couch->queryView('posts', $viewName, NULL, $opts)['rows'];
+    $rows = $this->couch->queryView('posts', 'latestPerType', NULL, $opts)['rows'];
     return $this->formatNumber($rows);
   }
 
