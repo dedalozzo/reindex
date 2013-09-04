@@ -28,13 +28,19 @@ class LinksGroup extends Group {
     // All the routes start with /links.
     $this->setPrefix('/links');
 
-    $this->addGet('/links', ['action' => 'recents']);
-    $this->addGet('/popolari', ['action' => 'populars']);
-    $this->addGet('/recenti', ['action' => 'recents']);
-    $this->addGet('/in-base-ai-miei-tag', ['action' => 'basedOnMyTags']);
-    $this->addGet('/piu-votati', ['action' => 'mostVoted']);
-    $this->addGet('/piu-discussi', ['action' => 'mostDiscussed']);
-    $this->addGet('/segnalati-da-me', ['action' => 'postedByMe']);
+    $this->addGet('/', ['action' => 'newest']);
+    $this->addGet('/nuovi/', ['action' => 'newest']);
+    $this->addGet('/popolari/', ['action' => 'todayPopular']);
+        $this->addGet('/popolari/oggi/', ['action' => 'todayPopular']);
+        $this->addGet('/popolari/ieri/', ['action' => 'yesterdayPopular']);
+        $this->addGet('/popolari/settimana/', ['action' => 'weeklyPopular']);
+        $this->addGet('/popolari/mese/', ['action' => 'monthlyPopular']);
+        $this->addGet('/popolari/trimestre/', ['action' => 'quarterlyPopular']);
+        $this->addGet('/popolari/anno/', ['action' => 'yearlyPopular']);
+        $this->addGet('/popolari/sempre/', ['action' => 'everPopular']);
+    $this->addGet('/attivi/', ['action' => 'active']);
+    $this->addGet('/interessanti/', ['action' => 'interesting']);
+
     $this->addGet('/rss', ['action' => 'rss']);
   }
 

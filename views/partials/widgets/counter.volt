@@ -1,0 +1,1 @@
+<div id="counter"><div>{{ stat.getUpdatesCount() }}</div> AGGIORNAMENTI</div>

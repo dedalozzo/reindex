@@ -11,10 +11,10 @@ use Phalcon\Mvc\View;
 
 // Creates an instance of View component and return it.
 $di->setShared('view',
-  function() use ($config) {
+  function() use ($root, $config) {
     $view = new View();
 
-    $view->setViewsDir(__DIR__.$config->application->viewsDir);
+    $view->setViewsDir($root.$config->application->viewsDir);
 
     $view->registerEngines(['.volt' => 'volt']);
 

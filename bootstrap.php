@@ -13,7 +13,11 @@ use Phalcon\DI\FactoryDefault as DependencyInjector;
 
 $start = microtime(true);
 
-try {
+//try {
+
+$debug = new Phalcon\Debug();
+$debug->listen();
+
   $root = __DIR__;
 
   // Initializes the Composer autoloading system. (Note: We don't use the Phalcon loader.)
@@ -96,13 +100,13 @@ try {
 
   // Handles the request.
   echo $application->handle()->getContent(); */
-}
-catch (Exception $e) {
+//}
+/*catch (Exception $e) {
   echo $e;
 }
 finally {
   $logger->commit();
-}
+}*/
 
 $stop = microtime(true);
 $time = round($stop - $start, 3);

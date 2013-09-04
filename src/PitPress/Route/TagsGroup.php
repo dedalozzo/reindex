@@ -28,10 +28,11 @@ class TagsGroup extends Group {
     // All the routes start with /tags.
     $this->setPrefix('/tags');
 
-    $this->addGet('/tags', ['action' => 'populars']);
-    $this->addGet('/popolari', ['action' => 'populars']);
-    $this->addGet('/per-nome', ['action' => 'byName']);
-    $this->addGet('/recenti', ['action' => 'recents']);
+    $this->addGet('/', ['action' => 'popular']);
+    $this->addGet('/popolari/', ['action' => 'popular']);
+    $this->addGet('/per-nome/', ['action' => 'byName']);
+    $this->addGet('/nuovi/', ['action' => 'newest']);
+    $this->addGet('/sinonimi/', ['action' => 'synonyms']);
   }
 
 }

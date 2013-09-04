@@ -27,15 +27,17 @@ class BadgesGroup extends Group {
     // All the routes start with /tags.
     $this->setPrefix('/badges');
 
-    $this->addGet('/badges', ['action' => 'all']);
-    $this->addGet('/oro', ['action' => 'gold']);
-    $this->addGet('/argento', ['action' => 'silver']);
-    $this->addGet('/bronzo', ['action' => 'bronze']);
-
-    $this->addGet('/per-tag', ['action' => 'allByTag']);
-    $this->addGet('/per-tag/tutti', ['action' => 'allByTag']);
-    $this->addGet('/per-tag/oro', ['action' => 'GoldByTag']);
-    $this->addGet('/per-tag/argento', ['action' => 'silverByTag']);
-    $this->addGet('/per-tag/bronzo', ['action' => 'bronzeByTag']);
+    $this->addGet('/', ['action' => 'all']);
+    $this->addGet('/tutti/', ['action' => 'all']);
+    $this->addGet('/ottenuti/', ['action' => 'achieve']);
+    $this->addGet('/non-ottenuti/', ['action' => 'notAchieve']);
+    $this->addGet('/oro/', ['action' => 'gold']);
+    $this->addGet('/argento/', ['action' => 'silver']);
+    $this->addGet('/bronzo/', ['action' => 'bronze']);
+    $this->addGet('/per-tag/', ['action' => 'allByTag']);
+        $this->addGet('/per-tag/tutti/', ['action' => 'allByTag']);
+        $this->addGet('/per-tag/oro/', ['action' => 'goldByTag']);
+        $this->addGet('/per-tag/argento/', ['action' => 'silverByTag']);
+        $this->addGet('/per-tag/bronzo/', ['action' => 'bronzeByTag']);
   }
 }
