@@ -9,10 +9,12 @@
 namespace PitPress\Controller;
 
 
-use ElephantOnCouch\Couch;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Helper\Time;
+use PitPress\Helper\Stat;
+
+use Phalcon\Mvc\View;
 
 
 //! @brief Ancestor controller for any controller displaying posts.
@@ -40,6 +42,44 @@ abstract class ListController extends BaseController {
       $recentTags[] = [$tags[$i]['value'], $postsPerTag[$i]['value']];
 
     return $recentTags;
+  }
+
+
+  //! @brief Gets the latest posts per type.
+  protected function getLatestPostsPerType($viewName, $type, $count = 20) {
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->setLimit($count)->reverseOrderOfResults()->setStartKey([$type, new \stdClass()])->setEndKey([$type]);
+    $rows = $this->couch->queryView('posts', $viewName, NULL, $opts)['rows'];
+
+    // Entries.
+    $keys = array_column($rows, 'id');
+
+    // Posts.
+    $opts->reset();
+    $opts->doNotReduce()->includeMissingKeys();
+    $posts = $this->couch->queryView("posts", "all", $keys, $opts)['rows'];
+
+    // Scores.
+    $opts->reset();
+    $opts->includeMissingKeys()->groupResults();
+    $scores = $this->couch->queryView("votes", "perPost", $keys, $opts)['rows'];
+
+    $entries = [];
+    $postCount = count($posts);
+    for ($i = 0; $i < $postCount - 1; $i++) {
+      $entry = new \stdClass();
+      $entry->id = $posts[$i]['id'];
+
+      $properties = &$posts[$i]['value'];
+      $entry->title = $properties['title'];
+      $entry->url = $properties['url'];
+      $entry->whenHasBeenPublished = Time::when($properties['publishingDate']);
+      $entry->score = is_null($scores[$i]['value']) ? 0 : $scores[$i]['value'];
+
+      $entries[] = $entry;
+    }
+
+    return $entries;
   }
 
 
@@ -97,18 +137,50 @@ abstract class ListController extends BaseController {
       $opts->doNotReduce()->setKey($entry->id);
       $classifications = $this->couch->queryView("classifications", "perPost", NULL, $opts)['rows'];
 
-      $keys = [];
-      foreach ($classifications as $classification)
-        $keys[] = $classification['value'];
-
       $opts->reset();
       $opts->doNotReduce();
+      $keys = array_column($classifications, 'value');
       $entry->tags = &$this->couch->queryView("tags", "all", $keys, $opts)['rows'];
 
       $entries[] = $entry;
     }
 
     return $entries;
+  }
+
+
+  //! @brief Initizializes the action.
+  /*protected function initAction($title, $index, $path = '', $subMenu = NULL, $subIndex = NULL) {
+    $this->view->setVar('title', $title);
+    $this->view->setVar('actionIndex', $index);
+    $this->view->setVar('actionPath', $path);
+    $this->view->setVar('subMenu', $subMenu);
+    $this->view->setVar('subIndex', $subIndex);
+  }*/
+
+
+  public function initialize() {
+    parent::initialize();
+
+    $this->view->setVar('controllerLabel', static::$controllerLabel);
+
+    $this->view->setVar('actionMenu', static::$actionMenu);
+
+    // Stats.
+    $this->view->setVar('stat', new Stat());
+
+    // Recent tags.
+    $this->view->setVar('recentTags', $this->getRecentTags());
+
+    $this->view->setVar('articles', $this->getLatestPostsPerType('latestPerType', 'article'));
+    $this->view->setVar('books', $this->getLatestPostsPerType('latestPerType', 'book'));
+    $this->view->setVar('tutorials', $this->getLatestPostsPerType('latestPerType', 'tutorial'));
+  }
+
+
+  public function notFoundAction() {
+    $this->response->setHeader(404 , 'Not Found');
+    $this->view->pick('404/404');
   }
 
 } 

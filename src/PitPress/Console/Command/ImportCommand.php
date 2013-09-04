@@ -35,6 +35,10 @@ use ElephantOnCouch\Generator\UUID;
 //! @todo: Download and save images as article attachments.
 //! @todo: Save attachments.
 //! @todo: Convert [center][/center] to Markdown.
+//! @todo: Import comments.
+//! @todo: Convert quotes.
+//! @todo: Import questions.
+//! @todo: Import answers.
 class ImportCommand extends AbstractCommand {
 
   const ARTICLE_DRAFT = 0;
@@ -167,6 +171,72 @@ class ImportCommand extends AbstractCommand {
       // We update the article downloads.
       if ($item->downloadNum > 0)
         $this->redis->hSet($article->id, 'downloads', $item->downloadNum);
+
+      $progress->advance();
+    }
+
+    mysqli_free_result($result);
+
+    $progress->finish();
+  }
+
+
+  //! @brief Imports tutorials.
+  private function importTutorials() {
+    $this->output->writeln("Importing tutorials...");
+
+    $sql = "SELECT correlationCode, title, UNIX_TIMESTAMP(date) AS unixTime, contributorName, id AS userId FROM Item WHERE (stereotype = ".self::ARTICLE.") GROUP BY correlationCode HAVING COUNT(correlationCode) > 1 ORDER BY date ASC";
+    $sql .= $this->limit;
+
+    $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
+
+    $rows = mysqli_num_rows($result);
+    $progress = $this->getApplication()->getHelperSet()->get('progress');
+    $progress->start($this->output, $rows);
+
+    while ($item = mysqli_fetch_object($result)) {
+      $tutorial = new Tutorial();
+
+      $tutorial->id = UUID::generate(UUID::UUID_RANDOM, UUID::FMT_STRING);
+      $tutorial->publishingDate = (int)$item->unixTime;
+      $tutorial->title = utf8_encode(rtrim($item->title, '()/123456789 \t\n\r\0\x0B'));
+
+      if (isset($item->userId)) {
+        $tutorial->userId = $item->userId;
+        $tutorial->username = NULL;
+      }
+      elseif (!empty($item->contributorName)) {
+        $tutorial->userId = NULL;
+        $tutorial->username = utf8_encode($item->contributorName);
+      }
+      else {
+        $tutorial->userId = NULL;
+        $tutorial->username = NULL;
+      }
+
+      $sql = "SELECT id, UNIX_TIMESTAMP(date) AS unixTime, hitNum FROM Item WHERE correlationCode = '".$item->correlationCode."' ORDER BY date ASC";
+
+      $related = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
+
+      $i = 0;
+      while ($article = mysqli_fetch_object($related)) {
+        $tutorial->addPost($article->id, $i);
+
+        // We update the total tutorial views.
+        $this->redis->hIncrBy($tutorial->id, 'hits', $article->hitNum);
+
+        $i++;
+      }
+
+      // We finally save the tutorial.
+      try {
+        //$this->couch->saveDoc($article);
+        $tutorial->save();
+      }
+      catch(\Exception $e) {
+        $this->logger->error($e);
+        $this->logger->error(sprintf("Invalid JSON: %d - %s", $item->idItem, $tutorial->title));
+      }
 
       $progress->advance();
     }
@@ -368,56 +438,6 @@ class ImportCommand extends AbstractCommand {
   }
 
 
-  //! @brief Imports tutorials.
-  private function importTutorials() {
-    $this->output->writeln("Importing tutorials...");
-
-    $sql = "SELECT correlationCode, title, UNIX_TIMESTAMP(date) AS unixTime, contributorName, id AS userId FROM Item WHERE (stereotype = ".self::ARTICLE.") GROUP BY correlationCode HAVING COUNT(correlationCode) > 1 ORDER BY date ASC";
-    $sql .= $this->limit;
-
-    $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
-
-    $rows = mysqli_num_rows($result);
-    $progress = $this->getApplication()->getHelperSet()->get('progress');
-    $progress->start($this->output, $rows);
-
-    while ($item = mysqli_fetch_object($result)) {
-      $tutorial = new Tutorial();
-
-      $tutorial->id = UUID::generate(UUID::UUID_RANDOM, UUID::FMT_STRING);
-      $tutorial->publishingDate = (int)$item->unixTime;
-      $tutorial->title = utf8_encode(rtrim($item->title, '()/123456789 \t\n\r\0\x0B'));
-
-      if (!is_null($item->userId))
-        $tutorial->userId = $item->userId;
-      elseif (!empty($item->contributorName))
-        $tutorial->username = $item->contributorName;
-
-      $sql = "SELECT id, UNIX_TIMESTAMP(date) AS unixTime, hitNum FROM Item WHERE correlationCode = '".$item->correlationCode."' ORDER BY date ASC";
-
-      $related = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
-
-      $i = 0;
-      while ($article = mysqli_fetch_object($related)) {
-        $tutorial->addPost($article->id, $i);
-
-        // We update the total tutorial views.
-        $this->redis->hIncrBy($tutorial->id, 'hits', $article->hitNum);
-
-        $i++;
-      }
-
-      $this->couch->saveDoc($tutorial);
-
-      $progress->advance();
-    }
-
-    mysqli_free_result($result);
-
-    $progress->finish();
-  }
-
-
   //! @brief Imports subscriptions.
   private function importSubscriptions() {
     $this->output->writeln("Importing subscriptions...");
@@ -450,6 +470,12 @@ class ImportCommand extends AbstractCommand {
   }
 
 
+  //! @brief Imports comments.
+  private function importComments() {
+    // TODO
+  }
+
+
   //! @brief Import all entities.
   private function importAll() {
     $this->importUsers();
@@ -460,6 +486,7 @@ class ImportCommand extends AbstractCommand {
     $this->importFavourites();
     $this->importTutorials();
     $this->importSubscriptions();
+    $this->importComments();
   }
 
 
@@ -534,6 +561,10 @@ class ImportCommand extends AbstractCommand {
 
           case 'subscriptions':
             $this->importSubscriptions();
+            break;
+
+          case 'comments':
+            $this->importComments();
             break;
         }
 

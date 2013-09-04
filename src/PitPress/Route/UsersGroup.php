@@ -26,16 +26,41 @@ class UsersGroup extends Group {
       ]);
 
     // All the routes start with /utenti.
-    $this->setPrefix('/utenti');
+    //$this->setPrefix('/utenti');
 
-    $this->addGet('/', ['action' => 'reputation']);
-    $this->addGet('/reputazione', ['action' => 'reputation']);
-    $this->addGet('/nuovi', ['action' => 'recents']);
-    $this->addGet('/votanti', ['action' => 'votants']);
-    $this->addGet('/segnalatori', ['action' => 'contributors']);
-    $this->addGet('/autori', ['action' => 'authors']);
-    $this->addGet('/editori', ['action' => 'editors']);
-    $this->addGet('/moderatori', ['action' => 'moderators']);
+    $this->addGet('/reputazione/', ['action' => 'weeklyReputation']);
+        $this->addGet('/reputazione/settimana/', ['action' => 'weeklyReputation']);
+        $this->addGet('/reputazione/mese/', ['action' => 'monthlyReputation']);
+        $this->addGet('/reputazione/trimestre/', ['action' => 'quarterlyReputation']);
+        $this->addGet('/reputazione/anno/', ['action' => 'yearlyReputation']);
+        $this->addGet('/reputazione/sempre/', ['action' => 'everReputation']);
+    $this->addGet('/utenti/', ['action' => 'newest']);
+    $this->addGet('/votanti/', ['action' => 'weeklyVoters']);
+        $this->addGet('/votanti/settimana/', ['action' => 'weeklyVoters']);
+        $this->addGet('/votanti/mese/', ['action' => 'monthlyVoters']);
+        $this->addGet('/votanti/trimestre/', ['action' => 'quarterlyVoters']);
+        $this->addGet('/votanti/anno/', ['action' => 'yearlyVoters']);
+        $this->addGet('/votanti/sempre/', ['action' => 'everVoters']);
+    $this->addGet('/editori/', ['action' => 'weeklyEditors']);
+        $this->addGet('/editori/settimana/', ['action' => 'weeklyEditors']);
+        $this->addGet('/editori/mese/', ['action' => 'monthlyEditors']);
+        $this->addGet('/editori/trimestre/', ['action' => 'quarterlyEditors']);
+        $this->addGet('/editori/anno/', ['action' => 'yearlyEditors']);
+        $this->addGet('/editori/sempre/', ['action' => 'everEditors']);
+    $this->addGet('/reporters/', ['action' => 'weeklyReporters']);
+        $this->addGet('/reporters/settimana/', ['action' => 'weeklyReporters']);
+        $this->addGet('/reporters/mese/', ['action' => 'monthlyReporters']);
+        $this->addGet('/reporters/trimestre/', ['action' => 'quarterlyReporters']);
+        $this->addGet('/reporters/anno/', ['action' => 'yearlyReporters']);
+        $this->addGet('/reporters/sempre/', ['action' => 'everReporters']);
+    $this->addGet('/bloggers/', ['action' => 'weeklyBloggers']);
+        $this->addGet('/bloggers/settimana/', ['action' => 'weeklyBloggers']);
+        $this->addGet('/bloggers/mese/', ['action' => 'monthlyBloggers']);
+        $this->addGet('/bloggers/trimestre/', ['action' => 'quarterlyBloggers']);
+        $this->addGet('/bloggers/anno/', ['action' => 'yearlyBloggers']);
+        $this->addGet('/bloggers/sempre/', ['action' => 'everBloggers']);
+    $this->addGet('/moderatori/', ['action' => 'moderators']);
+    $this->addGet('/privilegi/', ['action' => 'privileges']);
   }
 
 }

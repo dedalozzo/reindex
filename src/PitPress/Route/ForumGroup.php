@@ -28,15 +28,23 @@ class ForumGroup extends Group {
     // All the routes start with /domande.
     $this->setPrefix('/domande');
 
-    $this->addGet('/', ['action' => 'noAnswer']);
-    $this->addGet('/recenti', ['action' => 'recents']);
-    $this->addGet('/senza-risposta', ['action' => 'noAnswer']);
-    $this->addGet('/poste-da-me', ['action' => 'madeByMe']);
-    $this->addGet('/rivolte-a-me', ['action' => 'askedToMe']);
-    $this->addGet('/aperte', ['action' => 'opened']);
-    $this->addGet('/attive', ['action' => 'active']);
-    $this->addGet('/piu-votate', ['action' => 'mostVoted']);
-    $this->addGet('/a-cui-risposi', ['action' => 'answeredByMe']);
+    $this->addGet('/', ['action' => 'newest']);
+    $this->addGet('/nuove/', ['action' => 'newest']);
+    $this->addGet('/importanti/', ['action' => 'important']);
+    $this->addGet('/popolari/', ['action' => 'weeklyPopular']);
+        $this->addGet('/popolari/settimana/', ['action' => 'weeklyPopular']);
+        $this->addGet('/popolari/mese/', ['action' => 'monthlyPopular']);
+        $this->addGet('/popolari/trimestre/', ['action' => 'quarterlyPopular']);
+        $this->addGet('/popolari/anno/', ['action' => 'yearlyPopular']);
+        $this->addGet('/popolari/sempre/', ['action' => 'everPopular']);
+    $this->addGet('/aggiornate/', ['action' => 'updated']);
+    $this->addGet('/interessanti/', ['action' => 'interesting']);
+    $this->addGet('/aperte/', ['action' => 'stillOpenForMe']);
+        $this->addGet('/aperte/rivolte-a-me/', ['action' => 'stillOpenForMe']);
+        $this->addGet('/aperte/nuove/', ['action' => 'stillOpenNewest']);
+        $this->addGet('/aperte/popolari/', ['action' => 'stillOpenPopular']);
+        $this->addGet('/aperte/nessuna-risposta/', ['action' => 'stillOpenNoAnswer']);
+
     $this->addGet('/rss', ['action' => 'rss']);
   }
 

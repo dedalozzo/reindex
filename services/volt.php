@@ -11,12 +11,12 @@ use Phalcon\Mvc\View\Engine\Volt;
 
 // Creates an instance of Volt template engine and return it.
 $di->setShared('volt',
-  function($view, $di) use ($config) {
+  function($view, $di) use ($root, $config) {
     $volt = new Volt($view, $di);
 
     $volt->setOptions(
       [
-        'compiledPath' => __DIR__.$config->application->cacheDir.'volt/',
+        'compiledPath' => $root.$config->application->cacheDir.'volt/',
         'compiledExtension' => '.compiled',
         'compiledSeparator' => '_',
         'compileAlways' => TRUE
