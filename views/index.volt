@@ -35,7 +35,7 @@
 
     <div id="content">
 
-      {% include "partials/navigation/nav-main.volt" %}
+      {% include "partials/navigation/main-menu.volt" %}
 
       {{ content() }}
     </div> <!-- /content -->

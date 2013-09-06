@@ -11,39 +11,22 @@ namespace PitPress\Controller;
 
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
+use PitPress\Helper\Time;
+
 
 //! @brief Controller of Links actions.
 //! @nosubgrouping
 class LinksController extends ListController {
 
-  protected static $controllerPath = '/links/';
-  protected static $controllerIndex = 3;
-  protected static $controllerLabel = 'LINKS';
+  protected static $sectionLabel = 'LINKS';
 
   // Stores the main menu definition.
-  protected static $actionMenu = [
-    ['link' => 'interessanti/', 'name' => 'INTERESSANTI'],
-    ['link' => 'attivi/', 'name' => 'ATTIVI'],
-    ['link' => 'popolari/', 'name' => 'POPOLARI'],
-    ['link' => 'nuovi/', 'name' => 'NUOVI']
+  protected static $sectionMenu = [
+    ['name' => 'interesting', 'link' => 'interessanti/', 'label' => 'INTERESSANTI', 'title' => 'Links interessanti'],
+    ['name' => 'updated', 'link' => 'aggiornati/', 'label' => 'AGGIORNATI', 'title' => 'Links aggiornati di recente'],
+    ['name' => 'popular', 'link' => 'popolari/', 'label' => 'POPOLARI', 'title' => 'Links popolati'],
+    ['name' => 'newest', 'link' => 'nuovi/', 'label' => 'NUOVI', 'title' => 'Links interessanti']
   ];
-
-  // Stores the popular sub-menu definition.
-  protected static $periodSubMenu = [
-    ['link' => 'sempre/', 'name' => 'SEMPRE'],
-    ['link' => 'anno/', 'name' => 'ANNO'],
-    ['link' => 'trimestre/', 'name' => 'TRIMESTRE'],
-    ['link' => 'mese/', 'name' => 'MESE'],
-    ['link' => 'settimana/', 'name' => 'SETTIMANA'],
-    ['link' => 'ieri/', 'name' => 'IERI'],
-    ['link' => 'oggi/', 'name' => 'OGGI']
-  ];
-
-
-  //! Displays the index.
-  public function indexAction() {
-    $this->newestAction();
-  }
 
 
   //! @brief Displays the latest links.
@@ -57,84 +40,27 @@ class LinksController extends ListController {
 
     // Entries.
     $keys = array_column($rows, 'id');
-    $this->view->entries = $this->getEntries($keys);
+    $this->view->setVar('entries', $this->getEntries($keys));
   }
 
 
-  //! @brief Displays the most popular links of today.
-  public function todayPopularAction() {
-    $this->view->sectionIndex = 2;
-    $this->view->subMenu = self::$periodSubMenu;
-    $this->view->subIndex = 6;
-    $this->view->title = "Links popolari";
-  }
+  //! @brief Displays the most popular links.
+  public function popularAction() {
+    if (empty($period))
+      $period = 'settimana';
 
-
-  //! @brief Displays the most popular links of yesterday.
-  public function yesterdayPopularAction() {
-    $this->view->sectionIndex = 2;
-    $this->view->subMenu = self::$periodSubMenu;
-    $this->view->subIndex = 5;
-    $this->view->title = "Links popolari";
-  }
-
-
-  //! @brief Displays the most popular weekly links.
-  public function weeklyPopularAction() {
-    $this->view->sectionIndex = 2;
-    $this->view->subMenu = self::$periodSubMenu;
-    $this->view->subIndex = 4;
-    $this->view->title = "Links popolari";
-  }
-
-
-  //! @brief Displays the most popular monthly links.
-  public function monthlyPopularAction() {
-    $this->view->sectionIndex = 2;
-    $this->view->subMenu = self::$periodSubMenu;
-    $this->view->subIndex = 3;
-    $this->view->title = "Links popolari";
-  }
-
-
-  //! @brief Displays the most popular quarterly links.
-  public function quarterlyPopularAction() {
-    $this->view->sectionIndex = 2;
-    $this->view->subMenu = self::$periodSubMenu;
-    $this->view->subIndex = 2;
-    $this->view->title = "Links popolari";
-  }
-
-
-  //! @brief Displays the most popular yearly links.
-  public function yearlyPopularAction() {
-    $this->view->sectionIndex = 2;
-    $this->view->subMenu = self::$periodSubMenu;
-    $this->view->subIndex = 1;
-    $this->view->title = "Links popolari";
-  }
-
-
-  //! @brief Displays the most popular ever links.
-  public function everPopularAction() {
-    $this->view->sectionIndex = 2;
-    $this->view->subMenu = self::$periodSubMenu;
-    $this->view->subIndex = 0;
-    $this->view->title = "Links popolari";
+    $this->view->setVar('subsectionMenu', Time::periods());
+    $this->view->setVar('subsectionIndex', Time::periodIndex($period));
   }
 
 
   //! @brief Displays the last updated entries.
   public function updatedAction() {
-    $this->view->sectionIndex = 1;
-    $this->view->title = "Links aggiornati di recente";
   }
 
 
   //! @brief Displays the latest links based on my tags.
   public function interestingAction() {
-    $this->view->sectionIndex = 0;
-    $this->view->title = "Links interessanti";
   }
 
 

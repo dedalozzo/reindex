@@ -26,13 +26,13 @@ class IndexGroup extends Group {
         'controller' => 'index'
       ]);
 
-    $this->addGet('/', ['action' => 'index']);
+    $this->addGet('/', ['action' => 'popular']);
     $this->addGet('/nuovi/', ['action' => 'newest']);
-    $this->addGet('/popolari/', ['action' => 'popular']);
-    $this->addGet('/attivi/', ['action' => 'active']);
+    $this->addGet('/popolari/{period}', ['action' => 'popular']);
+    $this->addGet('/attivi/', ['action' => 'updated']);
     $this->addGet('/interessanti/', ['action' => 'interesting']);
 
-    $this->addGet('/rss', ['action' => 'rss']);
+    //$this->addGet('/rss', ['action' => 'rss']);
   }
 
 }

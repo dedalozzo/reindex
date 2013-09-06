@@ -30,17 +30,12 @@ class BlogGroup extends Group {
 
     $this->addGet('/', ['action' => 'newest']);
     $this->addGet('/nuovi/', ['action' => 'newest']);
-    $this->addGet('/popolari/', ['action' => 'weeklyPopular']);
-        $this->addGet('/popolari/settimana/', ['action' => 'weeklyPopular']);
-        $this->addGet('/popolari/mese/', ['action' => 'monthlyPopular']);
-        $this->addGet('/popolari/trimestre/', ['action' => 'quarterlyPopular']);
-        $this->addGet('/popolari/anno/', ['action' => 'yearlyPopular']);
-        $this->addGet('/popolari/sempre/', ['action' => 'everPopular']);
+    $this->addGet('/popolari/{period}', ['action' => 'popular']);
     $this->addGet('/aggiornati/', ['action' => 'updated']);
     $this->addGet('/interessanti/', ['action' => 'interesting']);
-    $this->addGet('/articoli/', ['action' => 'articles']);
-    $this->addGet('/guide/', ['action' => 'tutorials']);
-    $this->addGet('/libri/', ['action' => 'books']);
+    $this->addGet('/articoli/{period}', ['action' => 'articles']);
+    $this->addGet('/guide/{period}', ['action' => 'tutorials']);
+    $this->addGet('/libri/{period}', ['action' => 'books']);
 
     $this->addGet('/rss', ['action' => 'rss']);
   }

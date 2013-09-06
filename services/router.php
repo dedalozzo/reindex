@@ -19,13 +19,20 @@ $di->setShared('router',
     //$router->setDefaultController("index");
     //$router->setDefaultAction("recents");
 
+    $router->add('/',
+      [
+        'controller' => 'index',
+        'action' => 'index'
+      ]
+    );
+
     $router->mount(new Route\IndexGroup());
-    /*$router->mount(new Route\BlogGroup());
+    $router->mount(new Route\BlogGroup());
     $router->mount(new Route\ForumGroup());
     $router->mount(new Route\LinksGroup());
     $router->mount(new Route\TagsGroup());
     $router->mount(new Route\BadgesGroup());
-    $router->mount(new Route\UsersGroup());*/
+    $router->mount(new Route\UsersGroup());
 
     return $router;
   }
