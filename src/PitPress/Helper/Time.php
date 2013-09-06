@@ -15,6 +15,9 @@ use ElephantOnCouch\Helper\TimeHelper;
 //! This class extends the ElephantOnCouch TimeHelper, adding new methods.
 class Time extends TimeHelper {
 
+  private static $periods = ['sempre', 'anno', 'trimestre', 'mese', 'settimana', 'ieri', 'oggi'];
+
+
   //! @brief Returns a measure of the time passed since timestamp. In case is passed more than a day, returns a human
   //! readable date.
   //! @param[in] string $timestamp A timestamp in seconds.
@@ -47,6 +50,22 @@ class Time extends TimeHelper {
     else {
       return date('d/m/Y H:i', $timestamp);
     }
+  }
+
+
+  //! @brief Returns an array of periods.
+  //! @param[in] integer $count The number of periods from left to right.
+  //! @return array
+  public static function periods($number = NULL) {
+    return array_slice(self::$periods, 0, $number, TRUE);
+  }
+
+
+  //! @brief Given a period as string, returns the position in periods array.
+  //! @param[in] string $period A period of time.
+  //! @return integer
+  public static function periodIndex($period) {
+    return array_flip(self::$periods)[$period];
   }
 
 } 
