@@ -11,45 +11,35 @@ namespace PitPress\Controller;
 
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
+use PitPress\Helper\Time;
+
 
 //! @brief Controller of Index actions.
 //! @nosubgrouping
 class IndexController extends ListController {
 
-  protected static $controllerPath = '/';
-  protected static $controllerIndex = 0;
-  protected static $controllerLabel = 'AGGIORNAMENTI';
+  protected static $sectionLabel = 'AGGIORNAMENTI';
 
   // Stores the main menu definition.
-  protected static $actionMenu = [
-    ['link' => 'interessanti/', 'name' => 'INTERESSANTI'],
-    ['link' => 'attivi/', 'name' => 'ATTIVI'],
-    ['link' => 'popolari/', 'name' => 'POPOLARI'],
-    ['link' => 'nuovi/', 'name' => 'NUOVI']
-  ];
-
-  // Stores the popular sub-menu definition.
-  protected static $periodSubMenu = [
-    ['link' => 'sempre/', 'name' => 'SEMPRE'],
-    ['link' => 'anno/', 'name' => 'ANNO'],
-    ['link' => 'trimestre/', 'name' => 'TRIMESTRE'],
-    ['link' => 'mese/', 'name' => 'MESE'],
-    ['link' => 'settimana/', 'name' => 'SETTIMANA'],
-    ['link' => 'ieri/', 'name' => 'IERI'],
-    ['link' => 'oggi/', 'name' => 'OGGI']
+  protected static $sectionMenu = [
+    ['name' => 'interesting', 'link' => 'interessanti/', 'label' => 'INTERESSANTI', 'title' => 'Aggiornamenti interessanti'],
+    ['name' => 'updated', 'link' => 'attivi/', 'label' => 'ATTIVI', 'title' => 'Contributi modificati'],
+    ['name' => 'popular', 'link' => 'popolari/', 'label' => 'POPOLARI', 'title' => 'Aggiornamenti popolari'],
+    ['name' => 'newest', 'link' => 'nuovi/', 'label' => 'NUOVI', 'title' => 'Ultimi aggiornamenti']
   ];
 
 
-  //! Displays the index.
-  public function indexAction() {
-    $this->newestAction();
+  public function initialize() {
+    parent::initialize();
+
+    $this->view->setVar('articles', $this->getLatestPostsPerType('latestPerType', 'article'));
+    $this->view->setVar('books', $this->getLatestPostsPerType('latestPerType', 'book'));
+    $this->view->setVar('tutorials', $this->getLatestPostsPerType('latestPerType', 'tutorial'));
   }
 
 
   //! @brief Displays the latest updates.
   public function newestAction() {
-    //$this->initAction('Ultimi aggiornamenti', 3);
-
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->reverseOrderOfResults();
     $opts->setLimit(30);
@@ -61,30 +51,32 @@ class IndexController extends ListController {
   }
 
 
-  //! @brief Displays the most popular updates of today.
-  public function popularAction() {
-    $this->initAction('Aggiornamenti popolari', 2, '', self::$periodSubMenu, 6);
+  //! @brief Displays the most popular updates for the provided period.
+  public function popularAction($period) {
+    if (empty($period))
+      $period = 'oggi';
 
-    $opts = new ViewQueryOpts();
+    $this->view->setVar('subsectionMenu', Time::periods());
+    $this->view->setVar('subsectionIndex', Time::periodIndex($period));
+
+    /*$opts = new ViewQueryOpts();
     $opts->doNotReduce()->reverseOrderOfResults();
     $opts->setLimit(30);
     $rows = $this->couch->queryView("posts", "dailyPopular", NULL, $opts)['rows'];
 
     // Entries.
     $keys = array_column($rows, 'id');
-    $this->view->entries = $this->getEntries($keys);
+    $this->view->entries = $this->getEntries($keys);*/
   }
 
 
   //! @brief Displays the last updated entries.
   public function updatedAction() {
-    //$this->initAction('Contributi modificati', 1);
   }
 
 
   //! @brief Displays the latest updates based on my tags.
   public function interestingAction() {
-    //$this->initAction('Aggiornamenti interessanti', 1);
   }
 
 

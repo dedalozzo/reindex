@@ -14,18 +14,16 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
 
 //! @brief Controller of Tags actions.
 //! @nosubgrouping
-class TagsController extends BaseController {
+class TagsController extends ListController {
 
-  protected static $controllerPath = '/tags/';
-  protected static $controllerIndex = 4;
-  protected static $controllerLabel = 'TAGS';
+  protected static $sectionLabel = 'TAGS';
 
   // Stores the main menu definition.
-  protected static $actionMenu = [
-    ['link' => 'sinonimi/', 'name' => 'SINONIMI'],
-    ['link' => 'nuovi/', 'name' => 'NUOVI'],
-    ['link' => 'per-nome/', 'name' => 'PER NOME'],
-    ['link' => 'popolari/', 'name' => 'POPOLARI']
+  protected static $sectionMenu = [
+    ['name' => 'synonyms', 'link' => 'sinonimi/', 'label' => 'SINONIMI', 'title' => 'Sinonimi'],
+    ['name' => 'newest', 'link' => 'nuovi/', 'label' => 'NUOVI', 'title' => 'Nuovi tags'],
+    ['name' => 'byName', 'link' => 'per-nome/', 'label' => 'PER NOME', 'title' => 'Tags in ordine alfabetico'],
+    ['name' => 'popular', 'link' => 'popolari/', 'label' => 'POPOLARI', 'title' => 'Tags popolari']
   ];
 
 
@@ -37,23 +35,16 @@ class TagsController extends BaseController {
   
   //! @brief Displays the most popular tags.
   public function popularAction() {
-    $this->view->sectionIndex = 3;
-    $this->view->title = "Tags popolari";
   }
 
 
   //! @brief Displays the tags sorted by name.
   public function byNameAction() {
-    $this->view->sectionIndex = 2;
-    $this->view->title = "Tags in ordine alfabetico";
   }
 
 
   //! @brief Displays the newest tags.
   public function newestAction() {
-    $this->view->sectionIndex = 1;
-    $this->view->title = "Nuovi tags";
-
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->reverseOrderOfResults();
     $opts->setLimit(30);
@@ -61,14 +52,12 @@ class TagsController extends BaseController {
 
     // Entries.
     $keys = array_column($rows, 'id');
-    $this->view->entries = $this->getEntries($keys);
+    $this->view->setVar('entries', $this->getEntries($keys));
   }
 
 
   //! @brief Displays the synonyms.
   public function synonymsAction() {
-    $this->view->sectionIndex = 0;
-    $this->view->title = "Sinonimi";
   }
 
 

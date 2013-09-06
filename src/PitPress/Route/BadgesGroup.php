@@ -24,7 +24,7 @@ class BadgesGroup extends Group {
         'controller' => 'badges'
       ]);
 
-    // All the routes start with /tags.
+    // All the routes start with /badges.
     $this->setPrefix('/badges');
 
     $this->addGet('/', ['action' => 'all']);
@@ -34,10 +34,6 @@ class BadgesGroup extends Group {
     $this->addGet('/oro/', ['action' => 'gold']);
     $this->addGet('/argento/', ['action' => 'silver']);
     $this->addGet('/bronzo/', ['action' => 'bronze']);
-    $this->addGet('/per-tag/', ['action' => 'allByTag']);
-        $this->addGet('/per-tag/tutti/', ['action' => 'allByTag']);
-        $this->addGet('/per-tag/oro/', ['action' => 'goldByTag']);
-        $this->addGet('/per-tag/argento/', ['action' => 'silverByTag']);
-        $this->addGet('/per-tag/bronzo/', ['action' => 'bronzeByTag']);
+    $this->addGet('/per-tag/{type}', ['action' => 'byTag']);
   }
 }

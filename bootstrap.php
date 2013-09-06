@@ -45,6 +45,8 @@ $debug->listen();
   require $root."/services/mysql.php";
   require $root."/services/markdown.php";
 
+
+/*
   // Retrieves the Router component.
   $router = $di['router'];
 
@@ -91,15 +93,15 @@ $debug->listen();
   // Prints the response.
   echo $response->getContent();
 
-
+*/
   // Creates the application object.
-  /*$application = new Phalcon\Mvc\Application();
+  $application = new Phalcon\Mvc\Application();
 
   // Sets the dependency injector component.
   $application->setDI($di);
 
   // Handles the request.
-  echo $application->handle()->getContent(); */
+  echo $application->handle()->getContent();
 //}
 /*catch (Exception $e) {
   echo $e;

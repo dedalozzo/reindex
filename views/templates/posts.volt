@@ -1,6 +1,6 @@
-{% include "partials/navigation/nav-section.volt" %}
+{% include "partials/navigation/section-menu.volt" %}
 
-{% include "partials/navigation/nav-submenu.volt" %}
+{% include "partials/navigation/subsection-menu.volt" %}
 
 <div class="column-left">
 

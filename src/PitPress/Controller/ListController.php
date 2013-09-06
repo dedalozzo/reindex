@@ -149,32 +149,17 @@ abstract class ListController extends BaseController {
   }
 
 
-  //! @brief Initizializes the action.
-  /*protected function initAction($title, $index, $path = '', $subMenu = NULL, $subIndex = NULL) {
-    $this->view->setVar('title', $title);
-    $this->view->setVar('actionIndex', $index);
-    $this->view->setVar('actionPath', $path);
-    $this->view->setVar('subMenu', $subMenu);
-    $this->view->setVar('subIndex', $subIndex);
-  }*/
-
-
   public function initialize() {
     parent::initialize();
 
-    $this->view->setVar('controllerLabel', static::$controllerLabel);
-
-    $this->view->setVar('actionMenu', static::$actionMenu);
+    $this->view->setVar('sectionLabel', static::$sectionLabel);
+    $this->view->setVar('sectionMenu', static::$sectionMenu);
 
     // Stats.
     $this->view->setVar('stat', new Stat());
 
     // Recent tags.
     $this->view->setVar('recentTags', $this->getRecentTags());
-
-    $this->view->setVar('articles', $this->getLatestPostsPerType('latestPerType', 'article'));
-    $this->view->setVar('books', $this->getLatestPostsPerType('latestPerType', 'book'));
-    $this->view->setVar('tutorials', $this->getLatestPostsPerType('latestPerType', 'tutorial'));
   }
 
 
