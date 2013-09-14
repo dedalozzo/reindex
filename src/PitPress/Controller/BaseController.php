@@ -19,21 +19,27 @@ abstract class BaseController extends Controller {
   protected $couch;
   protected $redis;
 
+  protected $serverName;
+  protected $baseUri;
+  protected $controllerName;
+  protected $actionName;
+
+
   // Stores the main menu definition.
   protected static $mainMenu = [
-    ['name' => 'index', 'link' => '/', 'label' => 'P.IT', 'icon' => 'home'],
-    ['name' => 'blog', 'link' => '/blog/', 'label' => 'BLOG', 'icon' => 'code'],
-    ['name' => 'forum', 'link' => '/domande/', 'label' => 'FORUM', 'icon' => 'question'],
-    ['name' => 'links', 'link' => '/links/', 'label' => 'LINKS', 'icon' => 'link'],
-    ['name' => 'tags', 'link' => '/tags/', 'label' => 'TAGS', 'icon' => 'tags'],
-    ['name' => 'badges', 'link' => '/badges/', 'label' => 'BADGES', 'icon' => 'certificate'],
-    ['name' => 'users', 'link' => '/utenti/', 'label' => 'UTENTI', 'icon' => 'group']
+    ['name' => 'index', 'path' => '', 'label' => 'P.IT', 'icon' => 'home'],
+    ['name' => 'blog', 'path' => 'blog.', 'label' => 'BLOG', 'icon' => 'code'],
+    ['name' => 'forum', 'path' => 'forum.', 'label' => 'FORUM', 'icon' => 'question'],
+    ['name' => 'links', 'path' => 'links.', 'label' => 'LINKS', 'icon' => 'link'],
+    ['name' => 'tags', 'path' => 'tags.', 'label' => 'TAGS', 'icon' => 'tags'],
+    ['name' => 'badges', 'path' => 'badges.', 'label' => 'BADGES', 'icon' => 'certificate'],
+    ['name' => 'users', 'path' => 'utenti.', 'label' => 'UTENTI', 'icon' => 'group']
   ];
 
 
   // Returns an associative array of paths indexed by controller name.
   protected static function getPaths($menu) {
-    return array_column($menu, 'link', 'name');
+    return array_column($menu, 'path', 'name');
   }
 
 
@@ -42,17 +48,25 @@ abstract class BaseController extends Controller {
     $this->couch = $this->di['couchdb'];
     $this->redis = $this->di['redis'];
 
+    $this->serverName = $this->di['config']['application']['serverName'];
+    $this->baseUri = "http://".$this->serverName;
+    $this->controllerName = $this->dispatcher->getControllerName();
+
     // The main menu is present in every page.
     $this->view->setVar('mainMenu', self::$mainMenu);
 
-    $this->view->setVar('controllerName', $this->dispatcher->getControllerName());
-    $this->view->setVar('controllerPath', self::getPaths(self::$mainMenu)[$this->dispatcher->getControllerName()]);
+    $this->view->setVar('serverName', $this->serverName);
+    $this->view->setVar('baseUri', $this->baseUri);
+    $this->view->setVar('controllerName', $this->controllerName);
+    $this->view->setVar('controllerPath', 'http://'.self::getPaths(self::$mainMenu)[$this->controllerName].$this->serverName);
   }
 
 
   public function afterExecuteRoute() {
-    $this->view->setVar('actionName', $this->dispatcher->getActionName());
-    $this->view->setVar('actionPath', self::getPaths(static::$sectionMenu)[$this->dispatcher->getActionName()]);
+    $this->actionName = $this->dispatcher->getActionName();
+
+    $this->view->setVar('actionName', $this->actionName);
+    $this->view->setVar('actionPath', self::getPaths(static::$sectionMenu)[$this->actionName]);
   }
 
 }

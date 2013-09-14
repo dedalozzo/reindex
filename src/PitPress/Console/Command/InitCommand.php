@@ -52,7 +52,8 @@ class InitCommand extends AbstractCommand {
                   \$emit(\$doc->_id, [
                      'title' => \$doc->title,
                      'excerpt' => \$doc->excerpt,
-                     'url' => \$doc->url,
+                     'slug' => \$doc->slug,
+                     'section' => \$doc->section,
                      'publishingType' => \$doc->publishingType,
                      'publishingDate' => \$doc->publishingDate,
                      'userId' => \$doc->userId,
@@ -68,6 +69,22 @@ class InitCommand extends AbstractCommand {
     }
 
     $doc->addHandler(allPosts());
+
+
+    // @params: section, year, month, day, slug
+    function postsByUrl() {
+      $map = "function(\$doc) use (\$emit) {
+                if (isset(\$doc->supertype) and \$doc->supertype == 'post')
+                  \$emit([\$doc->section, \$doc->year, \$doc->month, \$doc->day, \$doc->slug]);
+              };";
+
+      $handler = new ViewHandler("byUrl");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(postsByUrl());
 
 
     // @params: type
@@ -136,6 +153,7 @@ class InitCommand extends AbstractCommand {
     }
 
     $doc->addHandler(postsPerDate());
+
 
     $this->couch->saveDoc($doc);
   }
@@ -473,7 +491,7 @@ class InitCommand extends AbstractCommand {
     function allUserNames() {
       $map = "function(\$doc) use (\$emit) {
                 if (\$doc->type == 'user')
-                  \$emit(\$doc->_id, \$doc->displayName);
+                  \$emit(\$doc->_id, [\$doc->displayName, \$doc->email]);
               };";
 
       $handler = new ViewHandler("allNames");

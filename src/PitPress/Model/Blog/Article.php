@@ -33,11 +33,6 @@ class Article extends Post implements Extension\IModerate {
   }
 
 
-  public function getComments() {
-
-  }
-
-
   public function getPages() {
 
   }

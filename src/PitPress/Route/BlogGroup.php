@@ -25,19 +25,23 @@ class BlogGroup extends Group {
         'controller' => 'blog'
       ]);
 
-    // All the routes start with /blog.
-    $this->setPrefix('/blog');
+    $this->setHostName('blog.programmazione.me');
 
     $this->addGet('/', ['action' => 'newest']);
-    $this->addGet('/nuovi/', ['action' => 'newest']);
-    $this->addGet('/popolari/{period}', ['action' => 'popular']);
-    $this->addGet('/aggiornati/', ['action' => 'updated']);
-    $this->addGet('/interessanti/', ['action' => 'interesting']);
+    $this->addGet('/{year}/{month}/{day}/{slug}', ['action' => 'show']);
     $this->addGet('/articoli/{period}', ['action' => 'articles']);
     $this->addGet('/guide/{period}', ['action' => 'tutorials']);
     $this->addGet('/libri/{period}', ['action' => 'books']);
 
-    $this->addGet('/rss', ['action' => 'rss']);
+    // All the following routes start with /pubblicazioni.
+    $this->setPrefix('/pubblicazioni');
+
+    $this->addGet('/nuove/', ['action' => 'newest']);
+    $this->addGet('/popolari/{period}', ['action' => 'popular']);
+    $this->addGet('/aggiornate/', ['action' => 'updated']);
+    $this->addGet('/interessanti/', ['action' => 'interesting']);
+
+    //$this->addGet('/rss', ['action' => 'rss']);
   }
 
 }

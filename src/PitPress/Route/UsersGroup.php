@@ -25,8 +25,7 @@ class UsersGroup extends Group {
         'controller' => 'users'
       ]);
 
-    // All the routes start with /utenti.
-    $this->setPrefix('/utenti');
+    $this->setHostName('utenti.programmazione.me');
 
     $this->addGet('/', ['action' => 'reputation']);
     $this->addGet('/reputazione/{period}', ['action' => 'reputation']);

@@ -19,6 +19,7 @@ use PitPress\Model\Blog\Book;
 use PitPress\Model\Tag\Tag;
 use PitPress\Model\User\User;
 use PitPress\Model\Blog\Tutorial;
+use PitPress\Model\Replay;
 use PitPress\Model\Accessory\Star;
 use PitPress\Model\Accessory\Classification;
 use PitPress\Model\Accessory\Subscription;
@@ -35,7 +36,6 @@ use ElephantOnCouch\Generator\UUID;
 //! @todo: Download and save images as article attachments.
 //! @todo: Save attachments.
 //! @todo: Convert [center][/center] to Markdown.
-//! @todo: Import comments.
 //! @todo: Convert quotes.
 //! @todo: Import questions.
 //! @todo: Import answers.
@@ -120,7 +120,7 @@ class ImportCommand extends AbstractCommand {
 
       $article->id = $item->id;
       $article->publishingDate = (int)$item->unixTime;
-      $article->title = utf8_encode($item->title);
+      $article->title = iconv('LATIN1', 'UTF-8', $item->title);
 
       if (isset($item->userId)) {
         $article->userId = $item->userId;
@@ -265,7 +265,7 @@ class ImportCommand extends AbstractCommand {
 
       $book->id = $item->id;
       $book->publishingDate = (int)$item->unixTime;
-      $book->title = utf8_encode($item->title);
+      $book->title = iconv('LATIN1', 'UTF-8', $item->title);
 
       if (!is_null($item->userId)) {
         $book->userId = $item->userId;
@@ -472,7 +472,58 @@ class ImportCommand extends AbstractCommand {
 
   //! @brief Imports comments.
   private function importComments() {
-    // TODO
+    $this->output->writeln("Importing comments...");
+
+    $sql = "SELECT C.idComment AS id, I.id AS postId, M.id AS userId, UNIX_TIMESTAMP(C.date) AS unixTime, C.body FROM Comment C, Item I, Member M WHERE C.idItem = I.idItem AND C.idMember = M.idMember ORDER BY C.date DESC";
+    $sql .= $this->limit;
+
+    $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
+
+    $rows = mysqli_num_rows($result);
+    $progress = $this->getApplication()->getHelperSet()->get('progress');
+    $progress->start($this->output, $rows);
+
+    while ($item = mysqli_fetch_object($result)) {
+      $comment = new Replay();
+
+      $comment->id = UUID::generate(UUID::UUID_RANDOM, UUID::FMT_STRING);
+      $comment->publishingDate = (int)$item->unixTime;
+      $comment->postId = $item->postId;
+      $comment->userId = $item->userId;
+
+      $comment->body = iconv('LATIN1', 'UTF-8', $item->body);
+
+      // Converts from HTML to BBCode!
+      $converter = new HTMLConverter($comment->body, $item->id);
+      $comment->body = $converter->toBBCode();
+
+      // Converts from BBCode to Markdown!
+      $converter = new BBCodeConverter($comment->body, $item->id);
+      $comment->body = $converter->toMarkdown();
+
+      try {
+        $comment->html = $this->markdown->render($comment->body);
+      }
+      catch(\Exception $e) {
+        $this->logger->error(sprintf(" %d - %s", $item->id, $comment->title));
+      }
+
+      // We finally save the comment.
+      try {
+        //$this->couch->saveDoc($article);
+        $comment->save();
+      }
+      catch(\Exception $e) {
+        $this->logger->error($e);
+        $this->logger->error(sprintf("Invalid JSON: %d", $item->id));
+      }
+
+      $progress->advance();
+    }
+
+    mysqli_free_result($result);
+
+    $progress->finish();
   }
 
 

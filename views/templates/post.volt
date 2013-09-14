@@ -1,4 +1,6 @@
-{% extends "templates/list.volt" %}
+{% block columnLeft %}
+
+{% endblock %}
 
 {% block columnRight %}
   <div class="banner"><a href="#"><img src="/img/300x250.gif" /></a></div>

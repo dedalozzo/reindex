@@ -17,13 +17,13 @@ class BadgesController extends ListController {
 
   // Stores the main menu definition.
   protected static $sectionMenu = [
-    ['name' => 'byTag', 'link' => 'per-tag/', 'label' => 'PER TAG', 'title' => 'Tutti i badges per tag'],
-    ['name' => 'bronze', 'link' => 'bronzo/', 'label' => 'BRONZO', 'title' => 'Badges di bronzo'],
-    ['name' => 'silver', 'link' => 'argento/', 'label' => 'ARGENTO', 'title' => "Badges d'argento"],
-    ['name' => 'gold', 'link' => 'oro/', 'label' => 'ORO', 'title' => "Badges d'oro"],
-    ['name' => 'notAchieve', 'link' => 'non-ottenuti/', 'label' => 'NON OTTENUTI', 'title' => 'Badges mancanti'],
-    ['name' => 'achieve', 'link' => 'ottenuti/', 'label' => 'OTTENUTI', 'title' => 'I miei badges'],
-    ['name' => 'all', 'link' => 'tutti/', 'label' => 'TUTTI', 'title' => 'Tutti i badges']
+    ['name' => 'byTag', 'path' => '/per-tag/', 'label' => 'PER TAG', 'title' => 'Tutti i badges per tag'],
+    ['name' => 'bronze', 'path' => '/bronzo/', 'label' => 'BRONZO', 'title' => 'Badges di bronzo'],
+    ['name' => 'silver', 'path' => '/argento/', 'label' => 'ARGENTO', 'title' => "Badges d'argento"],
+    ['name' => 'gold', 'path' => '/oro/', 'label' => 'ORO', 'title' => "Badges d'oro"],
+    ['name' => 'notAchieve', 'path' => '/non-ottenuti/', 'label' => 'NON OTTENUTI', 'title' => 'Badges mancanti'],
+    ['name' => 'achieve', 'path' => '/ottenuti/', 'label' => 'OTTENUTI', 'title' => 'I miei badges'],
+    ['name' => 'all', 'path' => '/tutti/', 'label' => 'TUTTI', 'title' => 'Tutti i badges']
   ];
 
   // Stores the typology sub-menu definition.

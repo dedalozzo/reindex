@@ -9,12 +9,12 @@
 namespace PitPress\Model\Forum;
 
 
-use PitPress\Model\Item;
+use PitPress\Model\Replay;
 
 
 //! @brief
 //! @nosubgrouping
-class Answer extends Item {
+class Answer extends Replay {
 
   //! @brief Marks the item as duplicate of another item.
   public function markAsDuplicate() {

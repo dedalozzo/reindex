@@ -24,8 +24,7 @@ class BadgesGroup extends Group {
         'controller' => 'badges'
       ]);
 
-    // All the routes start with /badges.
-    $this->setPrefix('/badges');
+    $this->setHostName('badges.programmazione.me');
 
     $this->addGet('/', ['action' => 'all']);
     $this->addGet('/tutti/', ['action' => 'all']);

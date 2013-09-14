@@ -22,12 +22,12 @@ class ForumController extends ListController {
 
   // Stores the main menu definition.
   protected static $sectionMenu = [
-    ['name' => 'open', 'link' => 'aperte/', 'label' => 'SENZA RISPOSTA', 'title' => 'Domande senza risposta'],
-    ['name' => 'interesting', 'link' => 'interessanti/', 'label' => 'INTERESSANTI', 'title' => 'Domande interessanti'],
-    ['name' => 'updated', 'link' => 'aggiornate/', 'label' => 'AGGIORNATE', 'title' => 'Domande aggiornate di recente'],
-    ['name' => 'popular', 'link' => 'popolari/', 'label' => 'POPOLARI', 'title' => 'Domande popolari'],
-    ['name' => 'newest', 'link' => 'nuove/', 'label' => 'NUOVE', 'title' => 'Nuove domande'],
-    ['name' => 'important', 'link' => 'importanti/', 'label' => 'IMPORTANTI', 'title' => 'Domande con un premio attivo']
+    ['name' => 'open', 'path' => '/domande/aperte/', 'label' => 'SENZA RISPOSTA', 'title' => 'Domande senza risposta'],
+    ['name' => 'interesting', 'path' => '/domande/interessanti/', 'label' => 'INTERESSANTI', 'title' => 'Domande interessanti'],
+    ['name' => 'updated', 'path' => '/domande/aggiornate/', 'label' => 'AGGIORNATE', 'title' => 'Domande aggiornate di recente'],
+    ['name' => 'popular', 'path' => '/domande/popolari/', 'label' => 'POPOLARI', 'title' => 'Domande popolari'],
+    ['name' => 'newest', 'path' => '/domande/nuove/', 'label' => 'NUOVE', 'title' => 'Nuove domande'],
+    ['name' => 'important', 'path' => '/domande/importanti/', 'label' => 'IMPORTANTI', 'title' => 'Domande con un premio attivo']
   ];
 
   // Stores the still open answer sub-menu definition.
@@ -54,9 +54,9 @@ class ForumController extends ListController {
   //! @brief Displays the most popular questions.
   public function popularAction($period) {
     if (empty($period))
-      $period = 'oggi';
+      $period = 'settimana';
 
-    $this->view->setVar('subsectionMenu', Time::periods());
+    $this->view->setVar('subsectionMenu', Time::periods(5));
     $this->view->setVar('subsectionIndex', Time::periodIndex($period));
   }
 

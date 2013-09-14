@@ -25,10 +25,13 @@ class ForumGroup extends Group {
         'controller' => 'forum'
       ]);
 
-    // All the routes start with /domande.
-    $this->setPrefix('/domande');
+    $this->setHostName('forum.programmazione.me');
 
     $this->addGet('/', ['action' => 'important']);
+
+    // All the following routes start with /domande.
+    $this->setPrefix('/domande');
+
     $this->addGet('/nuove/', ['action' => 'newest']);
     $this->addGet('/importanti/', ['action' => 'important']);
     $this->addGet('/popolari/{period}', ['action' => 'popular']);

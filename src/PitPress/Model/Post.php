@@ -11,9 +11,9 @@ namespace PitPress\Model;
 
 use ElephantOnCouch\Couch;
 use ElephantOnCouch\Opt\ViewQueryOpts;
+use ElephantOnCouch\Helper\ArrayHelper;
 
 use PitPress\Extension;
-use PitPress\Helper\Time;
 
 
 //! @brief This class is used to represent a generic entry, a content created by a user.
@@ -27,7 +27,7 @@ abstract class Post extends Item implements Extension\ICount, Extension\IStar, E
     $this->meta['supertype'] = 'post';
     $this->meta['section'] = $this->getSection();
     $this->meta['publishingType'] = $this->getPublishingType();
-    $this->meta['url'] = $this->getUrl();
+    $this->meta['slug'] = $this->getSlug();
 
     // Used to group by year, month and day.
     $this->meta['year'] = date("Y", $this->publishingDate);
@@ -38,19 +38,26 @@ abstract class Post extends Item implements Extension\ICount, Extension\IStar, E
   }
 
 
+  public function getSlug() {
+    $title = preg_replace('~[^\\pL\d]+~u', '-', $this->title);
+    $title = trim($title, '-');
+    $title = iconv('utf-8', 'ASCII//TRANSLIT', $title);
+    $title = strtolower($title);
+    return preg_replace('~[^-\w]+~', '', $title);
+  }
+
+
   //! @brief Gets the resource permanent link.
   //! @return string
   public function getPermalink() {
-    return "/".$this->getSection()."/".$this->id;
+    return "/".$this->id;
   }
 
 
   //! @brief Gets the post URL.
   //! @return string
   public function getUrl() {
-    $title = preg_replace('/[^a-z0-9]/i', ' ', $this->title);
-    $title = str_replace(" ", "-", $title);
-    return "/".$this->getSection()."/".date("Y/m/d", $this->publishingDate)."/".$this->title.".html";
+    return "/".date("Y/m/d", $this->publishingDate)."/".$this->getSlug();
   }
 
 
@@ -64,11 +71,22 @@ abstract class Post extends Item implements Extension\ICount, Extension\IStar, E
   abstract public function getPublishingType();
 
 
-  //! @brief Returns a measure of the time passed since the publishing date. In case is passed more than a day, returns
-  //! a human readable date.
-  //! @return string
-  public function whenHasBeenPublished() {
-    return Time::when($this->publishingDate);
+  //! @name Replaying Methods
+  // @{
+
+
+  //! @brief Get the post replays, answers, in case of a question, else comments
+  public function getReplays() {
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->setKey($this->id)->setLimit(20);
+    $rows = $this->couch->queryView("replays", "all", NULL, $opts)['rows'];
+
+/*    foreach ($rows as $row) {
+      $replay = new Replay();
+      $array = ArrayHelper::fromJson($scores[$i], TRUE)['doc'];
+      $score->assignArray($array);
+      $replays[] = $score;
+    } */
   }
 
 
@@ -76,6 +94,8 @@ abstract class Post extends Item implements Extension\ICount, Extension\IStar, E
   public function getReplaysCount() {
 
   }
+
+  //@}
 
 
   //! @name Tagging Methods

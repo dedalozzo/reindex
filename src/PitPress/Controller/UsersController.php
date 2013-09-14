@@ -21,14 +21,14 @@ class UsersController extends ListController {
 
   // Stores the main menu definition.
   protected static $sectionMenu = [
-    ['name' => 'privileges', 'link' => 'privilegi/', 'label' => 'PRIVILEGI', 'title' => 'Privilegi'],
-    ['name' => 'moderators', 'link' => 'moderatori/', 'label' => 'MODERATORI', 'title' => 'Moderatori'],
-    ['name' => 'bloggers', 'link' => 'bloggers/', 'label' => 'BLOGGERS', 'title' => 'Bloggers'],
-    ['name' => 'reporters', 'link' => 'reporters/', 'label' => 'REPORTERS', 'title' => 'Reporters'],
-    ['name' => 'editors', 'link' => 'editori/', 'label' => 'EDITORI', 'title' => 'Editori'],
-    ['name' => 'voters', 'link' => 'votanti/', 'label' => 'VOTANTI', 'title' => 'Votanti'],
-    ['name' => 'newest', 'link' => 'nuovi/', 'label' => 'NUOVI', 'title' => 'Nuovi utenti'],
-    ['name' => 'reputation', 'link' => 'reputazione/', 'label' => 'REPUTAZIONE', 'title' => 'Reputazione utenti']
+    ['name' => 'privileges', 'path' => '/privilegi/', 'label' => 'PRIVILEGI', 'title' => 'Privilegi'],
+    ['name' => 'moderators', 'path' => '/moderatori/', 'label' => 'MODERATORI', 'title' => 'Moderatori'],
+    ['name' => 'bloggers', 'path' => '/bloggers/', 'label' => 'BLOGGERS', 'title' => 'Bloggers'],
+    ['name' => 'reporters', 'path' => '/reporters/', 'label' => 'REPORTERS', 'title' => 'Reporters'],
+    ['name' => 'editors', 'path' => '/editori/', 'label' => 'EDITORI', 'title' => 'Editori'],
+    ['name' => 'voters', 'path' => '/votanti/', 'label' => 'VOTANTI', 'title' => 'Votanti'],
+    ['name' => 'newest', 'path' => '/nuovi/', 'label' => 'NUOVI', 'title' => 'Nuovi utenti'],
+    ['name' => 'reputation', 'path' => '/reputazione/', 'label' => 'REPUTAZIONE', 'title' => 'Reputazione utenti']
   ];
 
 

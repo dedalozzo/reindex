@@ -85,6 +85,9 @@ abstract class ListController extends BaseController {
 
   //! @brief Given a set of keys, retrieves entries.
   protected function getEntries($keys) {
+    if (empty($keys))
+      return [];
+
     $opts = new ViewQueryOpts();
 
     // Posts.
@@ -116,17 +119,22 @@ abstract class ListController extends BaseController {
       $properties = &$posts[$i]['value'];
       $entry->title = $properties['title'];
       $entry->excerpt = $properties['excerpt'];
-      $entry->url = $properties['url'];
+      $entry->url = "http://".$properties['section'].".".$this->serverName.date('/Y/m/d/', $properties['publishingDate']).$properties['slug'];
       $entry->publishingType = $properties['publishingType'];
       $entry->whenHasBeenPublished = Time::when($properties['publishingDate']);
       $entry->userId = $properties['userId'];
 
-      if (isset($entry->userId))
-        $entry->displayName = $users[$i]['value'];
+      if (isset($entry->userId)) {
+        $entry->displayName = $users[$i]['value'][0];
+        $entry->gravatar = 'http://gravatar.com/avatar/'.md5(strtolower($users[$i]['value'][1])).'?d=identicon';
+      }
       elseif (isset($properties['username']))
         $entry->displayName = $properties['username'];
       else
         $entry->displayName = "anonimo";
+
+      if (is_null($entry->gravatar))
+        $entry->gravatar = 'http://gravatar.com/avatar/?d=identicon';
 
       $entry->hitsCount = $this->redis->hGet($entry->id, 'hits');
       $entry->starsCount = is_null($stars[$i]['value']) ? 0 : $stars[$i]['value'];
@@ -149,6 +157,12 @@ abstract class ListController extends BaseController {
   }
 
 
+  // Returns an associative array of tiles indexed by action name.
+  protected static function getTitles($menu) {
+    return array_column($menu, 'title', 'name');
+  }
+
+
   public function initialize() {
     parent::initialize();
 
@@ -160,6 +174,13 @@ abstract class ListController extends BaseController {
 
     // Recent tags.
     $this->view->setVar('recentTags', $this->getRecentTags());
+  }
+
+
+  public function afterExecuteRoute() {
+    parent::afterExecuteRoute();
+
+    $this->view->setVar('title', self::getTitles(static::$sectionMenu)[$this->actionName]);
   }
 
 

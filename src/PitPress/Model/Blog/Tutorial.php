@@ -18,7 +18,7 @@ class Tutorial extends Aggregate {
 
 
   public function getPublishingType() {
-    return 'TUTORIAL';
+    return 'GUIDA';
   }
 
 

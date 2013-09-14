@@ -11,20 +11,36 @@ namespace PitPress\Model;
 
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
+use PitPress\Helper\Time;
+
 
 //! @brief A generic content created by a user.
 //! @nosubgrouping
 abstract class Item extends Storable {
 
 
-  public function getOwner() {
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey($this->userId);
+  public function save() {
+    // Put your code here.
 
-    $result = $this->couch->queryView("users", "allNames", NULL, $opts);
+    parent::save();
+  }
 
-    if (!empty($result['rows']))
-      return $result['rows'][0]['value'];
+
+  //! @brief Returns a measure of the time passed since the publishing date. In case is passed more than a day, returns
+  //! a human readable date.
+  //! @return string
+  public function whenHasBeenPublished() {
+    return Time::when($this->publishingDate);
+  }
+
+
+  //! @brief Returns the author name.
+  public function getDisplayName() {
+    if (isset($this->userId)) {
+      $opts = new ViewQueryOpts();
+      $opts->doNotReduce()->setKey($this->userId);
+      return $this->couch->queryView("users", "allNames", NULL, $opts)['rows'][0]['value'];
+    }
     elseif (isset($this->username))
       return $this->username;
     else

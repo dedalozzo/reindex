@@ -22,10 +22,10 @@ class IndexController extends ListController {
 
   // Stores the main menu definition.
   protected static $sectionMenu = [
-    ['name' => 'interesting', 'link' => 'interessanti/', 'label' => 'INTERESSANTI', 'title' => 'Aggiornamenti interessanti'],
-    ['name' => 'updated', 'link' => 'attivi/', 'label' => 'ATTIVI', 'title' => 'Contributi modificati'],
-    ['name' => 'popular', 'link' => 'popolari/', 'label' => 'POPOLARI', 'title' => 'Aggiornamenti popolari'],
-    ['name' => 'newest', 'link' => 'nuovi/', 'label' => 'NUOVI', 'title' => 'Ultimi aggiornamenti']
+    ['name' => 'interesting', 'path' => '/aggiornamenti/interessanti/', 'label' => 'INTERESSANTI', 'title' => 'Aggiornamenti interessanti'],
+    ['name' => 'updated', 'path' => '/aggiornamenti/attivi/', 'label' => 'ATTIVI', 'title' => 'Contributi modificati'],
+    ['name' => 'popular', 'path' => '/aggiornamenti/popolari/', 'label' => 'POPOLARI', 'title' => 'Aggiornamenti popolari'],
+    ['name' => 'newest', 'path' => '/aggiornamenti/nuovi/', 'label' => 'NUOVI', 'title' => 'Ultimi aggiornamenti']
   ];
 
 
@@ -52,12 +52,13 @@ class IndexController extends ListController {
 
 
   //! @brief Displays the most popular updates for the provided period.
-  public function popularAction($period) {
+  public function popularAction($period = '24-ore') {
     if (empty($period))
-      $period = 'oggi';
+      $period = '24-ore';
 
     $this->view->setVar('subsectionMenu', Time::periods());
     $this->view->setVar('subsectionIndex', Time::periodIndex($period));
+
 
     /*$opts = new ViewQueryOpts();
     $opts->doNotReduce()->reverseOrderOfResults();

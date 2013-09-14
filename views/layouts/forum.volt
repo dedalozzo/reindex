@@ -1,1 +1,1 @@
-{% extends "templates/posts.volt" %}
+{% extends "templates/list.volt" %}

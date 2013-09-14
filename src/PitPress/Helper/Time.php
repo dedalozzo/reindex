@@ -15,7 +15,7 @@ use ElephantOnCouch\Helper\TimeHelper;
 //! This class extends the ElephantOnCouch TimeHelper, adding new methods.
 class Time extends TimeHelper {
 
-  private static $periods = ['sempre', 'anno', 'trimestre', 'mese', 'settimana', 'ieri', 'oggi'];
+  private static $periods = ['sempre', 'anno', 'trimestre', 'mese', 'settimana', '24-ore'];
 
 
   //! @brief Returns a measure of the time passed since timestamp. In case is passed more than a day, returns a human
@@ -39,17 +39,15 @@ class Time extends TimeHelper {
         return sprintf('$d minuti fa', $time['minutes']);
       elseif ($time['seconds'] == 1)
         return "un secondo fa";
-      elseif ($time['seconds'] > 1)
+      else // $time['seconds'] > 1
         return sprintf('$d secondi fa', $time['seconds']);
     }
     // Yesterday.
-    elseif (strtotime('-1 day', $today) == date('Ymd', $timestamp)) {
+    elseif (strtotime('-1 day', $today) == date('Ymd', $timestamp))
       return "ieri";
-    }
     // In the past.
-    else {
+    else
       return date('d/m/Y H:i', $timestamp);
-    }
   }
 
 
@@ -68,4 +66,32 @@ class Time extends TimeHelper {
     return array_flip(self::$periods)[$period];
   }
 
-} 
+
+  //! @brief Given a period as string, returns a timestamp since now in the past.
+  //! @param[in] string $period A period of time.
+  //! @return integer
+  public static function timestamp($period) {
+    switch ($period) {
+      case '24-ore':
+        $timestamp = strtotime('-1 day');
+        break;
+      case 'settimana':
+        $timestamp = strtotime('-1 week');
+        break;
+      case 'mese':
+        $timestamp = strtotime('-1 month');
+        break;
+      case 'trimestre':
+        $timestamp = strtotime('-3 month');
+        break;
+      case 'anno':
+        $timestamp = strtotime('-1 year');
+        break;
+      default:
+        $timestamp = new \stdClass();
+    }
+
+    return $timestamp;
+  }
+
+}
