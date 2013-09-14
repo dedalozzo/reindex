@@ -9,9 +9,12 @@
 namespace PitPress\Controller;
 
 
+use ElephantOnCouch\Couch;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Helper\Time;
+
+use Phalcon\Mvc\View;
 
 
 //! @brief Controller of Blog actions.
@@ -22,14 +25,50 @@ class BlogController extends ListController {
 
   // Stores the main menu definition.
   protected static $sectionMenu = [
-    ['name' => 'books', 'link' => 'libri/', 'label' => 'LIBRI', 'title' => 'Libri'],
-    ['name' => 'tutorials', 'link' => 'guide/', 'label' => 'GUIDE', 'title' => 'Guide'],
-    ['name' => 'articles', 'link' => 'articoli/', 'label' => 'ARTICOLI', 'title' => 'Articoli'],
-    ['name' => 'interesting', 'link' => 'interessanti/', 'label' => 'INTERESSANTI', 'title' => 'Pubblicazioni interessanti'],
-    ['name' => 'updated', 'link' => 'aggiornati/', 'label' => 'AGGIORNATE', 'title' => 'Pubblicazioni modificate di recente'],
-    ['name' => 'popular', 'link' => 'popolari/', 'label' => 'POPOLARI', 'title' => 'Pubblicazioni popolari'],
-    ['name' => 'newest', 'link' => 'nuovi/', 'label' => 'NUOVE', 'title' => 'Ultime pubblicazioni']
+    ['name' => 'books', 'path' => '/libri/', 'label' => 'LIBRI', 'title' => 'Libri'],
+    ['name' => 'tutorials', 'path' => '/guide/', 'label' => 'GUIDE', 'title' => 'Guide'],
+    ['name' => 'articles', 'path' => '/articoli/', 'label' => 'ARTICOLI', 'title' => 'Articoli'],
+    ['name' => 'interesting', 'path' => '/pubblicazioni/interessanti/', 'label' => 'INTERESSANTI', 'title' => 'Pubblicazioni interessanti'],
+    ['name' => 'updated', 'path' => '/pubblicazioni/aggiornate/', 'label' => 'AGGIORNATE', 'title' => 'Pubblicazioni modificate di recente'],
+    ['name' => 'popular', 'path' => '/pubblicazioni/popolari/', 'label' => 'POPOLARI', 'title' => 'Pubblicazioni popolari'],
+    ['name' => 'newest', 'path' => '/pubblicazioni/nuove/', 'label' => 'NUOVE', 'title' => 'Ultime pubblicazioni']
   ];
+
+
+  private function latestPerType($type, $period) {
+    $opts = new ViewQueryOpts();
+
+    if ($period != 'sempre')
+      $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey([$type, time()])->setEndKey([$type, Time::timestamp($period)]);
+    else
+      $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey([$type, new \stdClass()])->setEndKey([$type]);
+
+    $rows = $this->couch->queryView("posts", "latestPerType", NULL, $opts)['rows'];
+
+    // Entries.
+    $keys = array_column($rows, 'id');
+    $this->view->entries = $this->getEntries($keys);
+  }
+
+
+  public function showAction($year, $month, $day, $slug) {
+    $opts = new ViewQueryOpts();
+    $opts->setKey(['blog', $year, $month, $day, $slug])->setLimit(1);
+    $rows = $this->couch->queryView("posts", "byUrl", NULL, $opts)['rows'];
+
+    if (empty($rows))
+      $this->dispatcher->forward(
+        [
+          'controller' => 'error',
+          'action' => 'show404'
+        ]);
+
+    $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $rows[0]['id']);
+    $doc->incHits();
+    $this->view->setVar('doc', $doc);
+
+    $this->view->disableLevel(View::LEVEL_LAYOUT);
+  }
 
 
   //! @brief Displays the latest blog entries.
@@ -71,26 +110,32 @@ class BlogController extends ListController {
 
     $this->view->setVar('subsectionMenu', Time::periods(5));
     $this->view->setVar('subsectionIndex', Time::periodIndex($period));
+
+    $this->latestPerType('article', $period);
   }
 
 
   //! @brief Displays the latest tutorials.
   public function tutorialsAction($period) {
     if (empty($period))
-      $period = 'settimana';
+      $period = 'trimestre';
 
-    $this->view->setVar('subsectionMenu', Time::periods(5));
+    $this->view->setVar('subsectionMenu', Time::periods(3));
     $this->view->setVar('subsectionIndex', Time::periodIndex($period));
+
+    $this->latestPerType('tutorial', $period);
   }
 
 
   //! @brief Displays the latest books.
   public function booksAction($period) {
     if (empty($period))
-      $period = 'settimana';
+      $period = 'mese';
 
-    $this->view->setVar('subsectionMenu', Time::periods(5));
+    $this->view->setVar('subsectionMenu', Time::periods(4));
     $this->view->setVar('subsectionIndex', Time::periodIndex($period));
+
+    $this->latestPerType('book', $period);
   }
 
 

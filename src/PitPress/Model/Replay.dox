@@ -1,0 +1,14 @@
+<?php
+
+
+namespace PitPress\Model;
+
+
+class Replay {
+
+  //! @name Properties
+  //@{
+  public string $postId; //!< The post id the replay is related.
+  //@}
+
+}

@@ -25,8 +25,7 @@ class TagsGroup extends Group {
         'controller' => 'tags'
       ]);
 
-    // All the routes start with /tags.
-    $this->setPrefix('/tags');
+    $this->setHostName('tags.programmazione.me');
 
     $this->addGet('/', ['action' => 'popular']);
     $this->addGet('/popolari/', ['action' => 'popular']);

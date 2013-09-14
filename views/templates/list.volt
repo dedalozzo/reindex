@@ -3,6 +3,11 @@
 {% include "partials/navigation/subsection-menu.volt" %}
 
 <div class="column-left">
+{% block columnLeft %}
+
+  {% if entries is empty %}
+    <div>Siamo spiacenti, la ricerca non ha prodotto alcun risultato.</div>
+  {% endif %}
 
   {% for entry in entries %}
     <div class="item">
@@ -14,9 +19,9 @@
         <a href="#">{{ entry.publishingType }}</a>
       </div>
       <div class="item-container">
-        <a class="item-title" href="#">{{ entry.title }}</a><br />
+        <a class="item-title" href="{{ entry.url }}">{{ entry.title }}</a><br />
         <ul class="list item-info">
-          <li><img class="gravatar" src="http://www.gravatar.com/avatar/b6799a3261ca303c0b39f991fd9250b4.png" />&nbsp;<a href="#">{{ entry.displayName }}</a><span><b>2345</b></span><span><i class="icon-certificate gold"></i> 12</span><span><i class="icon-certificate silver"></i> 10</span><span><i class="icon-certificate bronze"></i> 10</span></li>
+          <li><img class="gravatar" src="{{ entry.gravatar }}" />&nbsp;<a href="#">{{ entry.displayName }}</a><span><b>2345</b></span><span><i class="icon-certificate gold"></i> 12</span><span><i class="icon-certificate silver"></i> 10</span><span><i class="icon-certificate bronze"></i> 10</span></li>
           <li class="space"></li>
           <li>{{ entry.whenHasBeenPublished }}, <b>{{ entry.hitsCount }}</b> lettori</li>
         </ul>
@@ -36,6 +41,7 @@
 
   {% endfor %}
 
+{% endblock %}
 </div> <!-- /column-left -->
 
 <div class="column-right">

@@ -27,6 +27,10 @@ class IndexGroup extends Group {
       ]);
 
     $this->addGet('/', ['action' => 'popular']);
+
+    // All the following routes start with /aggiornamenti.
+    $this->setPrefix('/aggiornamenti');
+
     $this->addGet('/nuovi/', ['action' => 'newest']);
     $this->addGet('/popolari/{period}', ['action' => 'popular']);
     $this->addGet('/attivi/', ['action' => 'updated']);

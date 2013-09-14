@@ -35,10 +35,10 @@ $debug->listen();
   // Initializes the services. The order doesn't matter.
   require $root."/services/config.php";
   require $root."/services/logger.php";
+  require $root."/services/dispatcher.php";
   require $root."/services/router.php";
   require $root."/services/view.php";
   require $root."/services/volt.php";
-  require $root."/services/url.php";
   require $root."/services/session.php";
   require $root."/services/couchdb.php";
   require $root."/services/redis.php";

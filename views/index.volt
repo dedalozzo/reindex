@@ -10,9 +10,9 @@
   <meta name="author" content="">
 
   <!-- Bootstrap -->
-  <link rel="stylesheet" href="/pit-bootstrap/css/bootstrap.css" rel="text/css" />
+  <link rel="stylesheet" href="{{ baseUri }}/pit-bootstrap/css/bootstrap.css" rel="text/css" />
 
-  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="{{ baseUri }}/favicon.ico" type="image/x-icon" />
 
   <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
   <!--[if lt IE 9]>

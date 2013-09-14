@@ -25,8 +25,7 @@ class LinksGroup extends Group {
         'controller' => 'links'
       ]);
 
-    // All the routes start with /links.
-    $this->setPrefix('/links');
+    $this->setHostName('links.programmazione.me');
 
     $this->addGet('/', ['action' => 'popular']);
     $this->addGet('/nuovi/', ['action' => 'newest']);

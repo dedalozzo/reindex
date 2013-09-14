@@ -1,7 +1,7 @@
 <?php
 
-//! @file Comment.php
-//! @brief This file contains the Comment class.
+//! @file Replayphp
+//! @brief This file contains the Replay class.
 //! @details
 //! @author Filippo F. Fadda
 
@@ -9,9 +9,10 @@
 namespace PitPress\Model\Forum;
 
 
-use PitPress\Model\Item;
+use PitPress\Model\Replay as AbstractComment;
 
 
-class Comment extends Item {
-
+class Comment extends AbstractComment {
 }
+
+

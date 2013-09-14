@@ -1,1 +1,1 @@
-{% extends "layouts/index.volt" %}
+{% extends "templates/list.volt" %}

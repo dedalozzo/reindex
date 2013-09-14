@@ -22,10 +22,10 @@ class LinksController extends ListController {
 
   // Stores the main menu definition.
   protected static $sectionMenu = [
-    ['name' => 'interesting', 'link' => 'interessanti/', 'label' => 'INTERESSANTI', 'title' => 'Links interessanti'],
-    ['name' => 'updated', 'link' => 'aggiornati/', 'label' => 'AGGIORNATI', 'title' => 'Links aggiornati di recente'],
-    ['name' => 'popular', 'link' => 'popolari/', 'label' => 'POPOLARI', 'title' => 'Links popolati'],
-    ['name' => 'newest', 'link' => 'nuovi/', 'label' => 'NUOVI', 'title' => 'Links interessanti']
+    ['name' => 'interesting', 'path' => '/interessanti/', 'label' => 'INTERESSANTI', 'title' => 'Links interessanti'],
+    ['name' => 'updated', 'path' => '/aggiornati/', 'label' => 'AGGIORNATI', 'title' => 'Links aggiornati di recente'],
+    ['name' => 'popular', 'path' => '/popolari/', 'label' => 'POPOLARI', 'title' => 'Links popolati'],
+    ['name' => 'newest', 'path' => '/nuovi/', 'label' => 'NUOVI', 'title' => 'Links interessanti']
   ];
 
 
@@ -45,11 +45,11 @@ class LinksController extends ListController {
 
 
   //! @brief Displays the most popular links.
-  public function popularAction() {
+  public function popularAction($period) {
     if (empty($period))
       $period = 'settimana';
 
-    $this->view->setVar('subsectionMenu', Time::periods());
+    $this->view->setVar('subsectionMenu', Time::periods(5));
     $this->view->setVar('subsectionIndex', Time::periodIndex($period));
   }
 

@@ -159,7 +159,7 @@ class User extends Storable implements Extension\ICount {
 
 
   public function setEmail($value) {
-    $this->meta['email'] = $value;
+    $this->meta['email'] = strtolower($value);
   }
 
 

@@ -24,7 +24,7 @@ class GenerateCommand extends AbstractCommand {
   const ARTICLE = 2;
   const BOOK = 11;
 
-  private $limit = 50;
+  private $limit = 40;
 
   private $mysql;
   private $couch;
@@ -57,7 +57,7 @@ class GenerateCommand extends AbstractCommand {
 
         while ($row = mysqli_fetch_array($cursor)) {
           $userId = $row[0];
-          $value = rand(0, 100) > 5 ? 1 : -1;
+          $value = rand(0, 100) > 7 ? 1 : -1;
           $postType = ($item->stereotype == self::ARTICLE) ? 'article' : 'book';
 
           $vote = Vote::create($postType, 'blog', $item->id, $userId, $value);
