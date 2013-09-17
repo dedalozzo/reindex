@@ -18,6 +18,13 @@ class Replay extends Item implements Extension\IVote, Extension\IVersion {
   use Property\TBody;
 
 
+  public function save() {
+    $this->meta['supertype'] = 'replay';
+
+    parent::save();
+  }
+
+
   //! @cond HIDDEN_SYMBOLS
 
   public function getPostId() {
