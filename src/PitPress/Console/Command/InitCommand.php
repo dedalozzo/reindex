@@ -508,6 +508,48 @@ class InitCommand extends AbstractCommand {
   }
 
 
+  private function initReplays() {
+    $doc = DesignDoc::create('replays');
+
+
+    // @params: postId
+    function latestReplaysPerPost() {
+      $map = "function(\$doc) use (\$emit) {
+                if (isset(\$doc->supertype) and \$doc->supertype == 'replay')
+                  \$emit([\$doc->postId, \$doc->publishingDate]);
+              };";
+
+      $handler = new ViewHandler("latestPerPost");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
+
+      return $handler;
+    }
+
+    $doc->addHandler(latestReplaysPerPost());
+
+
+    // @params: postId
+    function lastUpdatedReplaysPerPost() {
+      $map = "function(\$doc) use (\$emit) {
+                if (isset(\$doc->supertype) and \$doc->supertype == 'replay')
+                  \$emit([\$doc->postId, \$doc->lastUpdate]);
+              };";
+
+      $handler = new ViewHandler("lastUpdatedPerPost");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
+
+      return $handler;
+    }
+
+    $doc->addHandler(lastUpdatedReplaysPerPost());
+
+
+    $this->couch->saveDoc($doc);
+  }
+
+
   //! @brief Configures the command.
   protected function configure() {
     $this->setName("init");
@@ -577,6 +619,10 @@ class InitCommand extends AbstractCommand {
 
           case 'reputation':
             $this->initReputation();
+            break;
+
+          case 'replays':
+            $this->initReplays();
             break;
         }
 
