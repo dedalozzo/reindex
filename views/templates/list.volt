@@ -20,20 +20,21 @@
       </div>
       <div class="item-container">
         <a class="item-title" href="{{ entry.url }}">{{ entry.title }}</a><br />
-        <ul class="list item-info">
-          <li><img class="gravatar" src="{{ entry.gravatar }}" />&nbsp;<a href="#">{{ entry.displayName }}</a><span><b>2345</b></span><span><i class="icon-certificate gold"></i> 12</span><span><i class="icon-certificate silver"></i> 10</span><span><i class="icon-certificate bronze"></i> 10</span></li>
-          <li class="space"></li>
-          <li>{{ entry.whenHasBeenPublished }}, <b>{{ entry.hitsCount }}</b> lettori</li>
-        </ul>
         <div class="item-body">{{ entry.excerpt }}</div>
         <ul class="list item-tags">
           {% set tags = entry.tags %}
           {% for tag in tags %}
             <li><a class="tag" href="/tag/">{{ tag['value'] }}</a></li>
           {% endfor  %}
-          <li class="space"></li>
-          <li class="icon"><a class="link" href="#">12 commenti</a></li>
         </ul>
+        <div class="item-info">
+          <div>{{ entry.whenHasBeenPublished }}, <b>{{ entry.hitsCount }}</b> lettori</div>
+          <img class="gravatar" src="{{ entry.gravatar }}&s=32" />
+          <div>
+            <a href="#">{{ entry.displayName }}</a><br>
+            <span><b>2345</b></span><span><i class="icon-certificate gold"></i> 12</span><span><i class="icon-certificate silver"></i> 10</span><span><i class="icon-certificate bronze"></i> 10</span>
+          </div>
+        </div>
       </div>
     </div>
 
