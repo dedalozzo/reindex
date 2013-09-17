@@ -66,6 +66,7 @@ class BlogController extends ListController {
     $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $rows[0]['id']);
     $doc->incHits();
     $this->view->setVar('doc', $doc);
+    $this->view->setVar('replays', $doc->getReplays());
 
     $this->view->disableLevel(View::LEVEL_LAYOUT);
   }
