@@ -38,6 +38,8 @@ abstract class Post extends Item implements Extension\ICount, Extension\IStar, E
   }
 
 
+  //! @brief Gets the post slug.
+  //! @return string
   public function getSlug() {
     $title = preg_replace('~[^\\pL\d]+~u', '-', $this->title);
     $title = trim($title, '-');
@@ -78,15 +80,17 @@ abstract class Post extends Item implements Extension\ICount, Extension\IStar, E
   //! @brief Get the post replays, answers, in case of a question, else comments
   public function getReplays() {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setKey($this->id)->setLimit(20);
-    $rows = $this->couch->queryView("replays", "all", NULL, $opts)['rows'];
+    $opts->doNotReduce()->setLimit(20)->reverseOrderOfResults()->setStartKey([$this->id, new \stdClass()])->setEndKey([$this->id])->includeDocs();
+    $rows = $this->couch->queryView("replays", "latestPerPost", NULL, $opts)['rows'];
 
-/*    foreach ($rows as $row) {
+    $replays = [];
+    foreach ($rows as $row) {
       $replay = new Replay();
-      $array = ArrayHelper::fromJson($scores[$i], TRUE)['doc'];
-      $score->assignArray($array);
-      $replays[] = $score;
-    } */
+      $replay->assignArray($row['doc']);
+      $replays[] = $replay;
+    }
+
+    return $replays;
   }
 
 
