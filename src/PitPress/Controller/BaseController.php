@@ -69,4 +69,10 @@ abstract class BaseController extends Controller {
     $this->view->setVar('actionPath', self::getPaths(static::$sectionMenu)[$this->actionName]);
   }
 
+
+  public function notFoundAction() {
+    $this->response->setHeader(404 , 'Not Found');
+    $this->view->pick('404/404');
+  }
+
 }
