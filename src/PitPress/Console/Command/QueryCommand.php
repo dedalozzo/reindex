@@ -52,7 +52,11 @@ class QueryCommand extends AbstractCommand {
       NULL,
       InputOption::VALUE_REQUIRED,
       "Defines the first key to be included in the range.
-      In case the key is a string, it must be quoted with double quotes and escaped, like --startkey=\\\"mykey\\\".");
+      In case the key is a string, it must be quoted with double quotes and escaped, like --startkey=\\\"mykey\\\".
+      To provide a complex key, instead, you must use --startkey=[\\\"book\\\",{}]. The {} symbol is a wildcard used in
+      JavaScript to create an empty object.
+      Don't put a space between the values of your complex key, because the console will consider them like new arguments.
+      Unfortunately, there is known bug that don't let you write something like --startkey=[\\\"my book\\\",{}].");
 
     $this->addOption("endkey",
       NULL,
@@ -123,7 +127,7 @@ class QueryCommand extends AbstractCommand {
     $this->addOption("include-missing-keys",
       NULL,
       InputOption::VALUE_NONE,
-      "Includes all the rows, even if a match for a key is not found..");
+      "Includes all the rows, even if a match for a key is not found.");
 
 
     // Temporary view options.
@@ -140,11 +144,12 @@ class QueryCommand extends AbstractCommand {
     $this->addOption("language",
       NULL,
       InputOption::VALUE_REQUIRED,
-      "The language used to implement the map and reduce functions. If no specified, PHP assumed");
+      "The language used to implement the map and reduce functions. If no specified, PHP assumed.");
   }
 
 
   //! @brief Executes the command.
+  //! @bug https://github.com/dedalozzo/pit-press/issues/1
   protected function execute(InputInterface $input, OutputInterface $output) {
     $couch = $this->_di['couchdb'];
 
@@ -152,6 +157,8 @@ class QueryCommand extends AbstractCommand {
 
     if ($input->getArgument('keys')) {
       $args = $input->getArgument('keys');
+
+      echo PHP_EOL.$args.PHP_EOL;
 
       $keys = [];
       foreach ($args as $key)
