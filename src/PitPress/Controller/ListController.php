@@ -19,7 +19,7 @@ use Phalcon\Mvc\View;
 
 //! @brief Ancestor controller for any controller displaying posts.
 //! @nosubgrouping
-abstract class ListController extends BaseController {
+abstract class ListController extends SectionController {
 
 
   //! @brief Gets a list of tags recently updated.
@@ -114,32 +114,10 @@ abstract class ListController extends BaseController {
   }
 
 
-  // Returns an associative array of titles indexed by action name.
-  protected static function getTitles() {
-    return array_column(static::$sectionMenu, 'title', 'name');
-  }
-
-
-  public function initialize() {
-    parent::initialize();
-  }
-
-
   public function afterExecuteRoute() {
     parent::afterExecuteRoute();
-
-    $this->view->setVar('title', self::getTitles()[$this->actionName]);
-
-    $this->view->setVar('sectionLabel', static::$sectionLabel);
-    $this->view->setVar('sectionMenu', static::$sectionMenu);
 
     $this->view->setVar('recentTags', $this->getRecentTags());
   }
 
-
-  public function notFoundAction() {
-    $this->response->setHeader(404 , 'Not Found');
-    $this->view->pick('404/404');
-  }
-
-} 
+}
