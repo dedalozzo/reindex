@@ -17,7 +17,7 @@ use PitPress\Helper\Stat;
 
 //! @brief Controller of Tags actions.
 //! @nosubgrouping
-class TagsController extends ListController {
+class TagsController extends SectionController {
 
   protected static $sectionLabel = 'TAGS';
 
