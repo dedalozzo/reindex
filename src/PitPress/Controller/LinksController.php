@@ -12,6 +12,7 @@ namespace PitPress\Controller;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Helper\Time;
+use PitPress\Helper\Stat;
 
 
 //! @brief Controller of Links actions.
@@ -29,18 +30,26 @@ class LinksController extends ListController {
   ];
 
 
-  //! @brief Displays the latest links.
+  public function afterExecuteRoute() {
+    parent::afterExecuteRoute();
+
+    $stat = new Stat();
+    $this->view->setVar('entriesCount', $stat->getLinksCount());
+  }
+
+
+  //! @brief Displays the newest links.
   public function newestAction() {
     $this->view->sectionIndex = 3;
     $this->view->title = "Nuovi links";
 
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey(['link', new \stdClass()])->setEndKey(['link']);
-    $rows = $this->couch->queryView("posts", "latestPerType", NULL, $opts)['rows'];
+    $rows = $this->couch->queryView("posts", "newestPerType", NULL, $opts)['rows'];
 
     // Entries.
     $keys = array_column($rows, 'id');
-    $this->view->setVar('entries', $this->getEntries($keys));
+    $this->view->setVar('entries', $this->fillEntries($keys));
   }
 
 
@@ -59,7 +68,7 @@ class LinksController extends ListController {
   }
 
 
-  //! @brief Displays the latest links based on my tags.
+  //! @brief Displays the newest links based on my tags.
   public function interestingAction() {
   }
 

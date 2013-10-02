@@ -12,6 +12,7 @@ namespace PitPress\Controller;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Helper\Time;
+use PitPress\Helper\Stat;
 
 
 //! @brief Controller of Forum actions.
@@ -34,20 +35,28 @@ class ForumController extends ListController {
   protected static $stillOpenSubMenu = ['nessuna-risposta', 'popolari', 'nuove', 'rivolte-a-me'];
 
 
-  //! @brief Displays the latest questions having a bounty.
+  public function afterExecuteRoute() {
+    parent::afterExecuteRoute();
+
+    $stat = new Stat();
+    $this->view->setVar('entriesCount', $stat->getQuestionsCount());
+  }
+
+
+  //! @brief Displays the newest questions having a bounty.
   public function importantAction() {
   }
 
 
-  //! @brief Displays the latest questions.
+  //! @brief Displays the newest questions.
   public function newestAction() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey(['question', new \stdClass()])->setEndKey(['question']);
-    $rows = $this->couch->queryView("posts", "latestPerType", NULL, $opts)['rows'];
+    $rows = $this->couch->queryView("posts", "newestPerType", NULL, $opts)['rows'];
 
     // Entries.
     $keys = array_column($rows, 'id');
-    $this->view->entries = $this->getEntries($keys);
+    $this->view->entries = $this->fillEntries($keys);
   }
 
 
@@ -66,7 +75,7 @@ class ForumController extends ListController {
   }
 
 
-  //! @brief Displays the latest questions based on user's tags.
+  //! @brief Displays the newest questions based on user's tags.
   public function interestingAction() {
   }
 

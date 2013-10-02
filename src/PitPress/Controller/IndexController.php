@@ -12,6 +12,7 @@ namespace PitPress\Controller;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Helper\Time;
+use PitPress\Helper\Stat;
 
 
 //! @brief Controller of Index actions.
@@ -29,25 +30,63 @@ class IndexController extends ListController {
   ];
 
 
-  public function initialize() {
-    parent::initialize();
-
-    $this->view->setVar('articles', $this->getLatestPostsPerType('latestPerType', 'article'));
-    $this->view->setVar('books', $this->getLatestPostsPerType('latestPerType', 'book'));
-    $this->view->setVar('tutorials', $this->getLatestPostsPerType('latestPerType', 'tutorial'));
-  }
-
-
-  //! @brief Displays the latest updates.
-  public function newestAction() {
+  //! @brief Gets the newest posts per type.
+  protected function getNewestPostsPerType($viewName, $type, $count = 20) {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->reverseOrderOfResults();
-    $opts->setLimit(30);
-    $rows = $this->couch->queryView("posts", "latest", NULL, $opts)['rows'];
+    $opts->doNotReduce()->setLimit($count)->reverseOrderOfResults()->setStartKey([$type, new \stdClass()])->setEndKey([$type]);
+    $rows = $this->couch->queryView('posts', $viewName, NULL, $opts)['rows'];
 
     // Entries.
     $keys = array_column($rows, 'id');
-    $this->view->entries = $this->getEntries($keys);
+
+    // Posts.
+    $opts->reset();
+    $opts->doNotReduce()->includeMissingKeys();
+    $posts = $this->couch->queryView("posts", "all", $keys, $opts)['rows'];
+
+    // Scores.
+    $opts->reset();
+    $opts->includeMissingKeys()->groupResults();
+    $scores = $this->couch->queryView("votes", "perPost", $keys, $opts)['rows'];
+
+    $entries = [];
+    $postCount = count($posts);
+    for ($i = 0; $i < $postCount - 1; $i++) {
+      $entry = new \stdClass();
+      $entry->id = $posts[$i]['id'];
+
+      $properties = &$posts[$i]['value'];
+      $entry->title = $properties['title'];
+      $entry->url = $properties['url'];
+      $entry->whenHasBeenPublished = Time::when($properties['publishingDate']);
+      $entry->score = is_null($scores[$i]['value']) ? 0 : $scores[$i]['value'];
+
+      $entries[] = $entry;
+    }
+
+    return $entries;
+  }
+
+
+  public function afterExecuteRoute() {
+    parent::afterExecuteRoute();
+
+    $this->view->setVar('articles', $this->getNewestPostsPerType('newestPerType', 'article'));
+    $this->view->setVar('books', $this->getNewestPostsPerType('newestPerType', 'book'));
+    $this->view->setVar('tutorials', $this->getNewestPostsPerType('newestPerType', 'tutorial'));
+
+    $stat = new Stat();
+    $this->view->setVar('entriesCount', $stat->getUpdatesCount());
+  }
+
+
+  //! @brief Displays the newest updates.
+  public function newestAction() {
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->reverseOrderOfResults()->setLimit(30);
+    $rows = $this->couch->queryView("posts", "newest", NULL, $opts)['rows'];
+
+    $this->view->setVar('entries', $this->getEntries(array_column($rows, 'id')));
   }
 
 
@@ -76,7 +115,7 @@ class IndexController extends ListController {
   }
 
 
-  //! @brief Displays the latest updates based on my tags.
+  //! @brief Displays the newest updates based on my tags.
   public function interestingAction() {
   }
 

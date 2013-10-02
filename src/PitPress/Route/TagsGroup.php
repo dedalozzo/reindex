@@ -27,7 +27,7 @@ class TagsGroup extends Group {
 
     $this->setHostName('tags.programmazione.me');
 
-    $this->addGet('/', ['action' => 'popular']);
+    $this->addGet('/', ['action' => 'newest']);
     $this->addGet('/popolari/', ['action' => 'popular']);
     $this->addGet('/per-nome/', ['action' => 'byName']);
     $this->addGet('/nuovi/', ['action' => 'newest']);

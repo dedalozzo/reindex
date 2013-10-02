@@ -14,6 +14,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use ElephantOnCouch\Generator\UUID;
+
 
 //! @brief Restores Programmazione.it v6.4 MySQL database.
 //! @nosubgrouping
@@ -30,6 +32,12 @@ class RestoreCommand  extends AbstractCommand {
   //! @brief Executes the command.
   protected function execute(InputInterface $input, OutputInterface $output) {
     $mysql = $this->_di['mysql'];
+
+    // Deletes the 'Redazione' member and removes every references from the Item table.
+    $sql = "DELETE FROM Member WHERE idMember = 1";
+    mysqli_real_query($mysql, $sql) or die(mysqli_error($mysql));
+    $sql = "UPDATE Item SET idMember = NULL WHERE idMember = 1";
+    mysqli_real_query($mysql, $sql) or die(mysqli_error($mysql));
 
     // Alters Member.
     $sql = "DROP INDEX id_index ON Member";

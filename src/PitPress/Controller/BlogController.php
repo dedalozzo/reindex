@@ -13,12 +13,14 @@ use ElephantOnCouch\Couch;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Helper\Time;
+use PitPress\Helper\Stat;
 
 use Phalcon\Mvc\View;
 
 
 //! @brief Controller of Blog actions.
 //! @nosubgrouping
+//! @bug
 class BlogController extends ListController {
 
   protected static $sectionLabel = 'PUBBLICAZIONI';
@@ -35,7 +37,7 @@ class BlogController extends ListController {
   ];
 
 
-  private function latestPerType($type, $period) {
+  private function newestPerType($type, $period) {
     $opts = new ViewQueryOpts();
 
     if ($period != 'sempre')
@@ -43,11 +45,9 @@ class BlogController extends ListController {
     else
       $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey([$type, new \stdClass()])->setEndKey([$type]);
 
-    $rows = $this->couch->queryView("posts", "latestPerType", NULL, $opts)['rows'];
+    $rows = $this->couch->queryView("posts", "newestPerType", NULL, $opts)['rows'];
 
-    // Entries.
-    $keys = array_column($rows, 'id');
-    $this->view->entries = $this->getEntries($keys);
+    $this->view->setVar('entries', $this->getEntries(array_column($rows, 'id')));
   }
 
 
@@ -72,15 +72,17 @@ class BlogController extends ListController {
   }
 
 
-  //! @brief Displays the latest blog entries.
+  //! @brief Displays the newest blog entries.
   public function newestAction() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey(['blog', new \stdClass()])->setEndKey(['blog']);
-    $rows = $this->couch->queryView("posts", "latestPerSection", NULL, $opts)['rows'];
+    //$opts->doNotReduce()->setLimit(30)->setStartKey(['blog', new \stdClass()])->setEndKey(['blog']);
+    $rows = $this->couch->queryView("posts", "newestPerSection", NULL, $opts)['rows'];
 
-    // Entries.
-    $keys = array_column($rows, 'id');
-    $this->view->entries = $this->getEntries($keys);
+    $this->view->setVar('entries', $this->getEntries(array_column($rows, 'id')));
+
+    $stat = new Stat();
+    $this->view->setVar('entriesCount', $stat->getBlogEntriesCount());
   }
 
 
@@ -91,56 +93,78 @@ class BlogController extends ListController {
 
     $this->view->setVar('subsectionMenu', Time::periods(5));
     $this->view->setVar('subsectionIndex', Time::periodIndex($period));
+
+    //$this->view->setVar('entries', $this->getEntries(array_column($rows, 'id')));
+
+    $stat = new Stat();
+    $this->view->setVar('entriesCount', $stat->getBlogEntriesCount());
   }
 
 
   //! @brief Displays the last updated blog entries.
   public function updatedAction() {
+    //$this->view->setVar('entries', $this->getEntries(array_column($rows, 'id')));
+
+    $stat = new Stat();
+    $this->view->setVar('entriesCount', $stat->getBlogEntriesCount());
   }
 
 
-  //! @brief Displays the latest blog entries based on my tags.
+  //! @brief Displays the newest blog entries based on my tags.
   public function interestingAction() {
+    //$this->view->setVar('entries', $this->getEntries(array_column($rows, 'id')));
+
+    $stat = new Stat();
+    $this->view->setVar('entriesCount', $stat->getBlogEntriesCount());
   }
 
 
-  //! @brief Displays the latest articles.
+  //! @brief Displays the newest articles.
   public function articlesAction($period) {
     if (empty($period))
-      $period = 'settimana';
-
-    $this->view->setVar('subsectionMenu', Time::periods(5));
-    $this->view->setVar('subsectionIndex', Time::periodIndex($period));
-
-    $this->latestPerType('article', $period);
-  }
-
-
-  //! @brief Displays the latest tutorials.
-  public function tutorialsAction($period) {
-    if (empty($period))
       $period = 'trimestre';
-
-    $this->view->setVar('subsectionMenu', Time::periods(3));
-    $this->view->setVar('subsectionIndex', Time::periodIndex($period));
-
-    $this->latestPerType('tutorial', $period);
-  }
-
-
-  //! @brief Displays the latest books.
-  public function booksAction($period) {
-    if (empty($period))
-      $period = 'mese';
 
     $this->view->setVar('subsectionMenu', Time::periods(4));
     $this->view->setVar('subsectionIndex', Time::periodIndex($period));
 
-    $this->latestPerType('book', $period);
+    $this->newestPerType('article', $period);
+
+    $stat = new Stat();
+    $this->view->setVar('entriesCount', $stat->getArticlesCount());
   }
 
 
-  //! @brief Displays the rss of the latest blog entries.
+  //! @brief Displays the newest tutorials.
+  public function tutorialsAction($period) {
+    if (empty($period))
+      $period = 'sempre';
+
+    $this->view->setVar('subsectionMenu', Time::periods(3));
+    $this->view->setVar('subsectionIndex', Time::periodIndex($period));
+
+    $this->newestPerType('tutorial', $period);
+
+    $stat = new Stat();
+    $this->view->setVar('entriesCount', $stat->getTutorialsCount());
+  }
+
+
+  //! @brief Displays the newest books.
+  public function booksAction($period) {
+    if (empty($period))
+      $period = 'trimestre';
+
+    $this->view->setVar('subsectionMenu', Time::periods(4));
+    $this->view->setVar('subsectionIndex', Time::periodIndex($period));
+
+    $this->newestPerType('book', $period);
+
+    $stat = new Stat();
+    $this->view->setVar('entriesCount', $stat->getBooksCount());
+  }
+
+
+  //! @brief Displays the rss of the newest blog entries.
   public function rssAction() {
   }
 

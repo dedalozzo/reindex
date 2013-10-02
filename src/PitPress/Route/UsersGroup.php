@@ -30,6 +30,7 @@ class UsersGroup extends Group {
     $this->addGet('/', ['action' => 'reputation']);
     $this->addGet('/reputazione/{period}', ['action' => 'reputation']);
     $this->addGet('/nuovi/', ['action' => 'newest']);
+    $this->addGet('/per-nome/', ['action' => 'byName']);
     $this->addGet('/votanti/{period}', ['action' => 'voters']);
     $this->addGet('/editori/{period}', ['action' => 'editors']);
     $this->addGet('/reporters/{period}', ['action' => 'reporters']);

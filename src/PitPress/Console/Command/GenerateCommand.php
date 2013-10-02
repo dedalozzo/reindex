@@ -24,7 +24,7 @@ class GenerateCommand extends AbstractCommand {
   const ARTICLE = 2;
   const BOOK = 11;
 
-  private $limit = 40;
+  private $limit = 50;
 
   private $mysql;
   private $couch;

@@ -1,1 +1,1 @@
-<div id="counter"><div>{{ stat.getUpdatesCount() }}</div> AGGIORNAMENTI</div>
+<div id="counter"><div>{{ entriesCount }}</div> {{ sectionLabel }}</div>

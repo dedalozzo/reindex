@@ -15,8 +15,10 @@ class User  {
   string $email; //!< E-mail.
   string $password; //!< Password chosen by the user.
 
+  integer creationDate; //!< Registration date.
+
   integer $sex; //!< Sex.
-  string $birthday; //!< Date of birth.
+  integer $birthday; //!< Date of birth.
   string $age; //!< Age, calculated from birthday.
   string $about; //!< A few words about the user.
 

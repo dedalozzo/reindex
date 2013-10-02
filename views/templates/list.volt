@@ -5,20 +5,16 @@
 <div class="column-left">
 {% block columnLeft %}
 
-  {% if entries is empty %}
-    <div>Siamo spiacenti, la ricerca non ha prodotto alcun risultato.</div>
-  {% endif %}
-
   {% for entry in entries %}
     <div class="item">
       <div class="item-tools">
         <a href="#"><i class="icon-arrow-up icon-large"></i></a>{{ entry.score }}<a href="#"><i class="icon-arrow-down icon-large"></i></a>
-        <a href="#"><i class="icon-star-empty icon-large"></i></a>{{ entry.starsCount }}
+        <a href="#"><i class="icon-comments icon-large"></i></a>{{ entry.replaysCount }}
       </div>
       <div class="item-section">
         <a href="#">{{ entry.publishingType }}</a>
       </div>
-      <div class="item-container">
+      <div class="item-container shift">
         <a class="item-title" href="{{ entry.url }}">{{ entry.title }}</a><br />
         <div class="item-body">{{ entry.excerpt }}</div>
         <ul class="list item-tags">
@@ -27,12 +23,12 @@
             <li><a class="tag" href="/tag/">{{ tag['value'] }}</a></li>
           {% endfor  %}
         </ul>
-        <div class="item-info">
+        <div class="item-info pull-right">
           <div>{{ entry.whenHasBeenPublished }}, <b>{{ entry.hitsCount }}</b> lettori</div>
           <img class="gravatar" src="{{ entry.gravatar }}&s=32" />
           <div>
-            <a href="#">{{ entry.displayName }}</a><br>
-            <span><b>2345</b></span><span><i class="icon-certificate gold"></i> 12</span><span><i class="icon-certificate silver"></i> 10</span><span><i class="icon-certificate bronze"></i> 10</span>
+            <a href="#">{{ entry.displayName }}</a>
+            <div class="reputation"><b>2345</b><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 10<i class="icon-certificate bronze"></i> 10</div>
           </div>
         </div>
       </div>
@@ -40,6 +36,8 @@
 
     <hr>
 
+  {% elsefor %}
+    <div>Siamo spiacenti, la ricerca non ha prodotto alcun risultato.</div>
   {% endfor %}
 
 {% endblock %}
@@ -51,10 +49,6 @@
   <div class="banner"><a href="#"><img src="/img/300x250.gif" /></a></div>
 
   {% include "partials/widgets/counter.volt" %}
-
-  {% include "partials/widgets/updates.volt" %}
-
-  <div class="banner"><a href="#"><img src="/img/300x250cro.jpeg" /></a></div>
 
   {% include "partials/widgets/tags.volt" %}
 

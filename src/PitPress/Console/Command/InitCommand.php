@@ -38,6 +38,7 @@ class InitCommand extends AbstractCommand {
     $this->initBadges();
     $this->initFavorites();
     $this->initUsers();
+    $this->initReplays();
   }
 
 
@@ -88,54 +89,54 @@ class InitCommand extends AbstractCommand {
 
 
     // @params: type
-    function latestPostsPerType() {
+    function newestPostsPerType() {
       $map = "function(\$doc) use (\$emit) {
                 if (isset(\$doc->supertype) and \$doc->supertype == 'post')
                   \$emit([\$doc->type, \$doc->publishingDate]);
               };";
 
-      $handler = new ViewHandler("latestPerType");
+      $handler = new ViewHandler("newestPerType");
       $handler->mapFn = $map;
       $handler->useBuiltInReduceFnCount(); // Used to count the posts.
 
       return $handler;
     }
 
-    $doc->addHandler(latestPostsPerType());
+    $doc->addHandler(newestPostsPerType());
 
 
     // @params: section
-    function latestPostsPerSection() {
+    function newestPostsPerSection() {
       $map = "function(\$doc) use (\$emit) {
                 if (isset(\$doc->section))
                   \$emit([\$doc->section, \$doc->publishingDate]);
               };";
 
-      $handler = new ViewHandler("latestPerSection");
+      $handler = new ViewHandler("newestPerSection");
       $handler->mapFn = $map;
       $handler->useBuiltInReduceFnCount(); // Used to count the posts.
 
       return $handler;
     }
 
-    $doc->addHandler(latestPostsPerSection());
+    $doc->addHandler(newestPostsPerSection());
 
 
     // @params: NONE
-    function latestPosts() {
+    function newestPosts() {
       $map = "function(\$doc) use (\$emit) {
                 if (isset(\$doc->supertype) and \$doc->supertype == 'post')
                   \$emit(\$doc->publishingDate);
               };";
 
-      $handler = new ViewHandler("latest");
+      $handler = new ViewHandler("newest");
       $handler->mapFn = $map;
       $handler->useBuiltInReduceFnCount(); // Used to count the posts.
 
       return $handler;
     }
 
-    $doc->addHandler(latestPosts());
+    $doc->addHandler(newestPosts());
 
 
     // @params: NONE
@@ -163,11 +164,10 @@ class InitCommand extends AbstractCommand {
     $doc = DesignDoc::create('tags');
 
 
-    // @params NONE
     function allTags() {
       $map = "function(\$doc) use (\$emit) {
                 if (\$doc->type == 'tag')
-                  \$emit(\$doc->_id, \$doc->name);
+                  \$emit(\$doc->_id, [\$doc->name, \$doc->excerpt, \$doc->publishingDate]);
               };";
 
       $handler = new ViewHandler("all");
@@ -178,6 +178,51 @@ class InitCommand extends AbstractCommand {
     }
 
     $doc->addHandler(allTags());
+
+
+    function allNames() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'tag')
+                  \$emit(\$doc->_id, \$doc->name);
+              };";
+
+      $handler = new ViewHandler("allNames");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(allNames());
+
+
+    function newestTags() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'tag')
+                  \$emit(\$doc->publishingDate);
+              };";
+
+      $handler = new ViewHandler("newest");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(newestTags());
+
+
+    function tagsByName() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'tag')
+                  \$emit(\$doc->name);
+              };";
+
+      $handler = new ViewHandler("byName");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(tagsByName());
 
 
     $this->couch->saveDoc($doc);
@@ -220,6 +265,23 @@ class InitCommand extends AbstractCommand {
     }
 
     $doc->addHandler(votesPerPostAndUser());
+
+
+    // @params: [userId]
+    function votesPerUser() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'vote')
+                  \$emit(\$doc->userId);
+              };";
+
+      $handler = new ViewHandler("perUser");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
+
+      return $handler;
+    }
+
+    $doc->addHandler(votesPerUser());
 
 
     // @params: type, postId
@@ -374,20 +436,20 @@ class InitCommand extends AbstractCommand {
 
 
     // @params NONE
-    function latestClassifications() {
+    function newestClassifications() {
       $map = "function(\$doc) use (\$emit) {
                 if (\$doc->type == 'classification')
                   \$emit(\$doc->timestamp, \$doc->tagId);
               };";
 
-      $handler = new ViewHandler("latest");
+      $handler = new ViewHandler("newest");
       $handler->mapFn = $map;
       $handler->useBuiltInReduceFnCount();
 
       return $handler;
     }
 
-    $doc->addHandler(latestClassifications());
+    $doc->addHandler(newestClassifications());
 
 
     // @params tagId
@@ -488,6 +550,23 @@ class InitCommand extends AbstractCommand {
 
 
     // @params: [userId]
+    function allUsers() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'user')
+                  \$emit(\$doc->_id, [\$doc->displayName, \$doc->email, \$doc->creationDate]);
+              };";
+
+      $handler = new ViewHandler("all");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
+
+      return $handler;
+    }
+
+    $doc->addHandler(allUsers());
+
+
+    // @params: [userId]
     function allUserNames() {
       $map = "function(\$doc) use (\$emit) {
                 if (\$doc->type == 'user')
@@ -496,12 +575,41 @@ class InitCommand extends AbstractCommand {
 
       $handler = new ViewHandler("allNames");
       $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount();
 
       return $handler;
     }
 
     $doc->addHandler(allUserNames());
+
+
+    function newestUsers() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'user')
+                  \$emit(\$doc->creationDate);
+              };";
+
+      $handler = new ViewHandler("newest");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(newestUsers());
+
+
+    function usersByDisplayName() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'user')
+                  \$emit(\$doc->displayName);
+              };";
+
+      $handler = new ViewHandler("byDisplayName");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(usersByDisplayName());
 
 
     $this->couch->saveDoc($doc);
@@ -512,21 +620,38 @@ class InitCommand extends AbstractCommand {
     $doc = DesignDoc::create('replays');
 
 
-    // @params: postId
-    function latestReplaysPerPost() {
+    // @params postId
+    function replaysPerPost() {
       $map = "function(\$doc) use (\$emit) {
                 if (isset(\$doc->supertype) and \$doc->supertype == 'replay')
-                  \$emit([\$doc->postId, \$doc->publishingDate]);
+                  \$emit(\$doc->postId);
               };";
 
-      $handler = new ViewHandler("latestPerPost");
+      $handler = new ViewHandler("perPost");
       $handler->mapFn = $map;
       $handler->useBuiltInReduceFnCount();
 
       return $handler;
     }
 
-    $doc->addHandler(latestReplaysPerPost());
+    $doc->addHandler(replaysPerPost());
+
+
+    // @params: postId
+    function newestReplaysPerPost() {
+      $map = "function(\$doc) use (\$emit) {
+                if (isset(\$doc->supertype) and \$doc->supertype == 'replay')
+                  \$emit([\$doc->postId, \$doc->publishingDate]);
+              };";
+
+      $handler = new ViewHandler("newestPerPost");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
+
+      return $handler;
+    }
+
+    $doc->addHandler(newestReplaysPerPost());
 
 
     // @params: postId

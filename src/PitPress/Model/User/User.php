@@ -21,6 +21,14 @@ class User extends Storable implements Extension\ICount {
   use Extension\TCount;
 
 
+  //! @brief Given a e-mail, returns the gravatar URL for the corresponding user.
+  //! @param[in] string $email The user e-mail.
+  //! @return string
+  public static function getGravatar($email) {
+    return 'http://gravatar.com/avatar/'.md5(strtolower($email)).'?d=identicon';
+  }
+
+
   //! @brief Last time the user has logged in.
   public function getLastVisit($value) {
     $this->meta['lastVisit'] = $value;
@@ -236,6 +244,28 @@ class User extends Storable implements Extension\ICount {
   public function setIPAddress($value) {
     $this->meta['ipAddress'] = $value;
   }
+
+
+  public function getCreationDate() {
+    return $this->meta['creationDate'];
+  }
+
+
+  public function issetCreationDate() {
+    return isset($this->meta['creationDate']);
+  }
+
+
+  public function setCreationDate($value) {
+    $this->meta['creationDate'] = $value;
+  }
+
+
+  public function unsetCreationDate() {
+    if ($this->isMetadataPresent('creationDate'))
+      unset($this->meta['creationDate']);
+  }
+
 
   //! @endcond
 
