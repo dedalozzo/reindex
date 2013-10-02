@@ -36,29 +36,19 @@ abstract class Item extends Storable {
 
   //! @brief Returns the author name.
   public function getDisplayName() {
-    if (isset($this->userId)) {
-      $opts = new ViewQueryOpts();
-      $opts->doNotReduce()->setKey($this->userId);
-      return $this->couch->queryView("users", "allNames", NULL, $opts)['rows'][0]['value'][0];
-    }
-    elseif (isset($this->username))
-      return $this->username;
-    else
-      return "anonimo";
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->setKey($this->userId);
+    return $this->couch->queryView("users", "allNames", NULL, $opts)['rows'][0]['value'][0];
   }
 
 
   //! @brief Builds the gravatar uri.
   //! @return string
   public function getGravatar() {
-    if (isset($this->userId)) {
-      $opts = new ViewQueryOpts();
-      $opts->doNotReduce()->setKey($this->userId);
-      $email = $this->couch->queryView("users", "allNames", NULL, $opts)['rows'][0]['value'][1];
-      return 'http://gravatar.com/avatar/'.md5(strtolower($email)).'?d=identicon';
-    }
-    else
-      return 'http://gravatar.com/avatar/?d=identicon';
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->setKey($this->userId);
+    $email = $this->couch->queryView("users", "allNames", NULL, $opts)['rows'][0]['value'][1];
+    return 'http://gravatar.com/avatar/'.md5(strtolower($email)).'?d=identicon';
   }
 
 

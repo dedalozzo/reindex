@@ -33,6 +33,12 @@ class PrepareCommand extends AbstractCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     $mysql = $this->_di['mysql'];
 
+    // Creates a new 'Redazione' user and assigns to every item and tag where idMember is null.
+    $sql = "INSERT INTO Member (idMember, nickName, email, password, regDate) VALUES (1, 'Redazione', 'redazione@programmazione.it', MD5('chid0rmen0npigliap3sci'), NOW())";
+    mysqli_real_query($mysql, $sql) or die(mysqli_error($mysql));
+    $sql = "UPDATE Item SET idMember = 1 WHERE idMember IS NULL";
+    mysqli_real_query($mysql, $sql) or die(mysqli_error($mysql));
+
     // Alters Member.
     $sql = "ALTER TABLE Member ADD id VARCHAR(255)";
     $result = mysqli_real_query($mysql, $sql) or die(mysqli_error($mysql));
@@ -50,7 +56,6 @@ class PrepareCommand extends AbstractCommand {
     }
 
     mysqli_free_result($result);
-
 
     // Alters Item.
     $sql = "ALTER TABLE Item ADD id VARCHAR(255)";

@@ -22,7 +22,7 @@ class Time extends TimeHelper {
   //! readable date.
   //! @param[in] string $timestamp A timestamp in seconds.
   //! @return string
-  public static function when($timestamp) {
+  public static function when($timestamp, $showtime = TRUE) {
     $today = date('Ymd');
 
     // Today.
@@ -47,7 +47,7 @@ class Time extends TimeHelper {
       return "ieri";
     // In the past.
     else
-      return date('d/m/Y H:i', $timestamp);
+      return $showtime ? date('d/m/Y H:i', $timestamp) : date('d/m/Y', $timestamp);
   }
 
 

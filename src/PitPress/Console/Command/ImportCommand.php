@@ -88,8 +88,9 @@ class ImportCommand extends AbstractCommand {
       $user->displayName = utf8_encode($item->displayName);
       $user->email = utf8_encode($item->email);
       $user->password = utf8_encode($item->password);
-      $user->birthday = utf8_encode($item->birthday);
+      $user->birthday = (int)$item->birthday;
       $user->ipAddress = utf8_encode($item->ipAddress);
+      $user->creationDate = (int)$item->creationDate;
 
       $this->couch->saveDoc($user);
 
@@ -346,6 +347,11 @@ class ImportCommand extends AbstractCommand {
   private function importTags() {
     $this->output->writeln("Importing tags...");
 
+    $sql = "SELECT id FROM Member WHERE idMember = 1";
+    $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
+    $userId = mysqli_fetch_array($result)['id'];
+    mysqli_free_result($result);
+
     $sql = "SELECT id, idCategory, name, UNIX_TIMESTAMP(lastUpdate) AS unixTime, passed FROM Category";
     $sql .= $this->limit;
 
@@ -361,6 +367,7 @@ class ImportCommand extends AbstractCommand {
       $tag->id = $item->id;
       $tag->publishingDate = (int)$item->unixTime;
       $tag->name = utf8_encode(strtolower(str_replace(" ", "-", $item->name)));
+      $tag->userId = $userId;
 
       $this->couch->saveDoc($tag);
 

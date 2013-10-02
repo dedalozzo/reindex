@@ -12,7 +12,7 @@ namespace PitPress\Controller;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Helper\Time;
-use PitPress\Helper\Stat;
+use PitPress\Model\User\User;
 
 use Phalcon\Mvc\View;
 
@@ -24,17 +24,18 @@ abstract class ListController extends BaseController {
 
   //! @brief Gets a list of tags recently updated.
   protected function getRecentTags() {
+    // todo Change this part, getting the classification of the last week, grouped by tagId.
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(60);
-    $classifications = $this->couch->queryView("classifications", "latest", NULL, $opts)['rows'];
+    // todo Change newest with newest.
+    $classifications = $this->couch->queryView("classifications", "newest", NULL, $opts)['rows'];
     $keys = array_column($classifications, 'value');
 
     $opts->reset();
-    $opts->doNotReduce();
-    $tags = $this->couch->queryView("tags", "all", $keys, $opts)['rows'];
+    $tags = $this->couch->queryView("tags", "allNames", $keys, $opts)['rows'];
 
     $opts->reset();
-    $opts->groupResults();
+    $opts->includeMissingKeys()->groupResults();
     $postsPerTag = $this->couch->queryView("classifications", "perTag", $keys, $opts)['rows'];
 
     $recentTags = [];
@@ -42,44 +43,6 @@ abstract class ListController extends BaseController {
       $recentTags[] = [$tags[$i]['value'], $postsPerTag[$i]['value']];
 
     return $recentTags;
-  }
-
-
-  //! @brief Gets the latest posts per type.
-  protected function getLatestPostsPerType($viewName, $type, $count = 20) {
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit($count)->reverseOrderOfResults()->setStartKey([$type, new \stdClass()])->setEndKey([$type]);
-    $rows = $this->couch->queryView('posts', $viewName, NULL, $opts)['rows'];
-
-    // Entries.
-    $keys = array_column($rows, 'id');
-
-    // Posts.
-    $opts->reset();
-    $opts->doNotReduce()->includeMissingKeys();
-    $posts = $this->couch->queryView("posts", "all", $keys, $opts)['rows'];
-
-    // Scores.
-    $opts->reset();
-    $opts->includeMissingKeys()->groupResults();
-    $scores = $this->couch->queryView("votes", "perPost", $keys, $opts)['rows'];
-
-    $entries = [];
-    $postCount = count($posts);
-    for ($i = 0; $i < $postCount - 1; $i++) {
-      $entry = new \stdClass();
-      $entry->id = $posts[$i]['id'];
-
-      $properties = &$posts[$i]['value'];
-      $entry->title = $properties['title'];
-      $entry->url = $properties['url'];
-      $entry->whenHasBeenPublished = Time::when($properties['publishingDate']);
-      $entry->score = is_null($scores[$i]['value']) ? 0 : $scores[$i]['value'];
-
-      $entries[] = $entry;
-    }
-
-    return $entries;
   }
 
 
@@ -91,28 +54,29 @@ abstract class ListController extends BaseController {
     $opts = new ViewQueryOpts();
 
     // Posts.
-    $opts->doNotReduce()->includeMissingKeys();
-    $posts = $this->couch->queryView("posts", "all", $keys, $opts)['rows'];
-
-    // Stars.
-    $opts->reset();
-    $opts->includeMissingKeys()->groupResults();
-    $stars = $this->couch->queryView("stars", "perItem", $keys, $opts)['rows'];
+    $opts->doNotReduce();
+    $result = $this->couch->queryView("posts", "all", $keys, $opts);
+    $posts = $result['rows'];
 
     // Scores.
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
     $scores = $this->couch->queryView("votes", "perPost", $keys, $opts)['rows'];
 
+    // Replays.
+    $opts->reset();
+    $opts->includeMissingKeys()->groupResults();
+    $replays = $this->couch->queryView("replays", "perPost", $keys, $opts)['rows'];
+
     // Users.
+    $keys = array_column(array_column($posts, 'value'), 'userId');
     $opts->reset();
     $opts->doNotReduce()->includeMissingKeys();
-    $keys = array_column(array_column($posts, 'value'), 'userId');
     $users = $this->couch->queryView("users", "allNames", $keys, $opts)['rows'];
 
     $entries = [];
     $postCount = count($posts);
-    for ($i = 0; $i < $postCount - 1; $i++) {
+    for ($i = 0; $i < $postCount; $i++) {
       $entry = new \stdClass();
       $entry->id = $posts[$i]['id'];
 
@@ -123,32 +87,25 @@ abstract class ListController extends BaseController {
       $entry->publishingType = $properties['publishingType'];
       $entry->whenHasBeenPublished = Time::when($properties['publishingDate']);
       $entry->userId = $properties['userId'];
-
-      if (isset($entry->userId)) {
-        $entry->displayName = $users[$i]['value'][0];
-        $entry->gravatar = 'http://gravatar.com/avatar/'.md5(strtolower($users[$i]['value'][1])).'?d=identicon';
-      }
-      elseif (isset($properties['username']))
-        $entry->displayName = $properties['username'];
-      else
-        $entry->displayName = "anonimo";
-
-      if (is_null($entry->gravatar))
-        $entry->gravatar = 'http://gravatar.com/avatar/?d=identicon';
-
+      $entry->displayName = $users[$i]['value'][0];
+      $entry->gravatar = User::getGravatar($users[$i]['value'][1]);
       $entry->hitsCount = $this->redis->hGet($entry->id, 'hits');
-      $entry->starsCount = is_null($stars[$i]['value']) ? 0 : $stars[$i]['value'];
       $entry->score = is_null($scores[$i]['value']) ? 0 : $scores[$i]['value'];
+      $entry->replaysCount = is_null($replays[$i]['value']) ? 0 : $replays[$i]['value'];
 
       // Tags.
       $opts->reset();
       $opts->doNotReduce()->setKey($entry->id);
       $classifications = $this->couch->queryView("classifications", "perPost", NULL, $opts)['rows'];
 
-      $opts->reset();
-      $opts->doNotReduce();
-      $keys = array_column($classifications, 'value');
-      $entry->tags = &$this->couch->queryView("tags", "all", $keys, $opts)['rows'];
+      if (!empty($classifications)) {
+        $keys = array_column($classifications, 'value');
+        $opts->reset();
+        $opts->doNotReduce();
+        $entry->tags = &$this->couch->queryView("tags", "allNames", $keys, $opts)['rows'];
+      }
+      else
+        $entry->tags = [];
 
       $entries[] = $entry;
     }
@@ -157,30 +114,26 @@ abstract class ListController extends BaseController {
   }
 
 
-  // Returns an associative array of tiles indexed by action name.
-  protected static function getTitles($menu) {
-    return array_column($menu, 'title', 'name');
+  // Returns an associative array of titles indexed by action name.
+  protected static function getTitles() {
+    return array_column(static::$sectionMenu, 'title', 'name');
   }
 
 
   public function initialize() {
     parent::initialize();
-
-    $this->view->setVar('sectionLabel', static::$sectionLabel);
-    $this->view->setVar('sectionMenu', static::$sectionMenu);
-
-    // Stats.
-    $this->view->setVar('stat', new Stat());
-
-    // Recent tags.
-    $this->view->setVar('recentTags', $this->getRecentTags());
   }
 
 
   public function afterExecuteRoute() {
     parent::afterExecuteRoute();
 
-    $this->view->setVar('title', self::getTitles(static::$sectionMenu)[$this->actionName]);
+    $this->view->setVar('title', self::getTitles()[$this->actionName]);
+
+    $this->view->setVar('sectionLabel', static::$sectionLabel);
+    $this->view->setVar('sectionMenu', static::$sectionMenu);
+
+    $this->view->setVar('recentTags', $this->getRecentTags());
   }
 
 

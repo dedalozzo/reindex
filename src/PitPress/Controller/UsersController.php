@@ -11,6 +11,7 @@ namespace PitPress\Controller;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Helper\Time;
+use PitPress\Model\User\User;
 
 
 //! @brief Controller of Users actions.
@@ -27,9 +28,44 @@ class UsersController extends ListController {
     ['name' => 'reporters', 'path' => '/reporters/', 'label' => 'REPORTERS', 'title' => 'Reporters'],
     ['name' => 'editors', 'path' => '/editori/', 'label' => 'EDITORI', 'title' => 'Editori'],
     ['name' => 'voters', 'path' => '/votanti/', 'label' => 'VOTANTI', 'title' => 'Votanti'],
+    ['name' => 'byName', 'path' => '/per-nome/', 'label' => 'PER NOME', 'title' => 'Utenti in ordine alfabetico'],
     ['name' => 'newest', 'path' => '/nuovi/', 'label' => 'NUOVI', 'title' => 'Nuovi utenti'],
     ['name' => 'reputation', 'path' => '/reputazione/', 'label' => 'REPUTAZIONE', 'title' => 'Reputazione utenti']
   ];
+
+
+  protected function fillEntries($keys) {
+    if (empty($keys))
+      return [];
+
+    $opts = new ViewQueryOpts();
+
+    // Gets the tags properties.
+    $opts->doNotReduce();
+    $result = $this->couch->queryView("users", "all", $keys, $opts);
+
+    $this->view->setVar('usersCount', $result['total_rows']);
+    $users = $result['rows'];
+
+    // Retrieves the users reputation.
+    //$opts->reset();
+    //$opts->groupResults()->includeMissingKeys();
+    //$reputations = $this->couch->queryView("reputation", "perUser", $keys, $opts)['rows'];
+
+    $entries = [];
+    $usersCount = count($users);
+    for ($i = 0; $i < $usersCount; $i++) {
+      $entry = new \stdClass();
+      $entry->id = $users[$i]['id'];
+      $entry->displayName = $users[$i]['value'][0];
+      $entry->gravatar = User::getGravatar($users[$i]['value'][1]);
+      $entry->when = Time::when($users[$i]['value'][2], false);
+
+      $entries[] = $entry;
+    }
+
+    return $entries;
+  }
 
 
   //! @brief Displays the users with the highest reputation.
@@ -44,6 +80,25 @@ class UsersController extends ListController {
 
   //! @brief Displays the newest users.
   public function newestAction() {
+    $opts = new ViewQueryOpts();
+    $opts->reverseOrderOfResults()->setLimit(40);
+    $users = $this->couch->queryView("users", "newest", NULL, $opts)['rows'];
+    $keys = array_column($users, 'id');
+
+    // Entries.
+    $this->view->setVar('entries', $this->fillEntries($keys));
+  }
+
+
+  //! @brief Displays the users in alfabetic order.
+  public function byNameAction() {
+    $opts = new ViewQueryOpts();
+    $opts->setLimit(40);
+    $users = $this->couch->queryView("users", "byDisplayName", NULL, $opts)['rows'];
+    $keys = array_column($users, 'id');
+
+    // Entries.
+    $this->view->setVar('entries', $this->fillEntries($keys));
   }
 
 

@@ -137,7 +137,7 @@ abstract class Post extends Item implements Extension\ICount, Extension\IStar, E
     $opts->reset();
     $opts->doNotReduce();
 
-    return $this->couch->queryView("tags", "all", $keys, $opts)['rows']; // Tags.
+    return $this->couch->queryView("tags", "allNames", $keys, $opts)['rows']; // Tags.
   }
 
   //@}
