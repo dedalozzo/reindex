@@ -16,7 +16,7 @@ use PitPress\Model\User\User;
 
 //! @brief Controller of Users actions.
 //! @nosubgrouping
-class UsersController extends ListController {
+class UsersController extends SectionController {
 
   protected static $sectionLabel = 'UTENTI';
 
@@ -34,7 +34,7 @@ class UsersController extends ListController {
   ];
 
 
-  protected function fillEntries($keys) {
+  protected function getEntries($keys) {
     if (empty($keys))
       return [];
 
@@ -83,22 +83,18 @@ class UsersController extends ListController {
     $opts = new ViewQueryOpts();
     $opts->reverseOrderOfResults()->setLimit(40);
     $users = $this->couch->queryView("users", "newest", NULL, $opts)['rows'];
-    $keys = array_column($users, 'id');
 
-    // Entries.
-    $this->view->setVar('entries', $this->fillEntries($keys));
+    $this->view->setVar('entries', $this->getEntries(array_column($users, 'id')));
   }
 
 
-  //! @brief Displays the users in alfabetic order.
+  //! @brief Displays the users in alphabetic order.
   public function byNameAction() {
     $opts = new ViewQueryOpts();
     $opts->setLimit(40);
     $users = $this->couch->queryView("users", "byDisplayName", NULL, $opts)['rows'];
-    $keys = array_column($users, 'id');
 
-    // Entries.
-    $this->view->setVar('entries', $this->fillEntries($keys));
+    $this->view->setVar('entries', $this->getEntries(array_column($users, 'id')));
   }
 
 
