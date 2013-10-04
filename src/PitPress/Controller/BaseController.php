@@ -16,6 +16,8 @@ use Phalcon\Mvc\Controller;
 //! @brief The base controller, a subclass of Phalcon controller.
 //! @nosubgrouping
 abstract class BaseController extends Controller {
+  const VERSION = '7.0';
+
   protected $couch;
   protected $redis;
 
@@ -23,7 +25,6 @@ abstract class BaseController extends Controller {
   protected $baseUri;
   protected $controllerName;
   protected $actionName;
-
 
   // Stores the main menu definition.
   protected static $mainMenu = [
@@ -55,6 +56,8 @@ abstract class BaseController extends Controller {
     // The main menu is present in every page.
     $this->view->setVar('mainMenu', self::$mainMenu);
 
+    $this->view->setVar('year', date('Y'));
+    $this->view->setVar('version', self::VERSION);
     $this->view->setVar('serverName', $this->serverName);
     $this->view->setVar('baseUri', $this->baseUri);
     $this->view->setVar('controllerName', $this->controllerName);
