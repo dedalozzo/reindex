@@ -3,7 +3,7 @@
 <!-- Copyright (c) 2000-2013 3F sas All rights reserved. -->
 <!-- Version 7.0 -->
 <head>
-  <title>{{ title }} - Programmazione.it</title>
+  <title>{{ title }} - {{ serverName|capitalize }}</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="">
@@ -38,7 +38,10 @@
       {% include "partials/navigation/main-menu.volt" %}
 
       {{ content() }}
+
     </div> <!-- /content -->
+
+    {% include "partials/navigation/footer.volt" %}
 
   </div> <!-- /scrollable -->
 
