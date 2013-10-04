@@ -112,4 +112,4 @@ finally {
 
 $stop = microtime(true);
 $time = round($stop - $start, 3);
-echo $time;
+//echo $time;
