@@ -81,7 +81,7 @@ abstract class Post extends Item implements Extension\ICount, Extension\IStar, E
   public function getReplays() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(20)->reverseOrderOfResults()->setStartKey([$this->id, new \stdClass()])->setEndKey([$this->id])->includeDocs();
-    $rows = $this->couch->queryView("replays", "latestPerPost", NULL, $opts)['rows'];
+    $rows = $this->couch->queryView("replays", "newestPerPost", NULL, $opts)['rows'];
 
     $replays = [];
     foreach ($rows as $row) {
