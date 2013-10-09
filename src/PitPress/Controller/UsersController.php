@@ -68,6 +68,16 @@ class UsersController extends SectionController {
   }
 
 
+  public function showAction($id) {
+    if (empty($id))
+      $this->dispatcher->forward(
+        [
+          'controller' => 'users',
+          'action' => 'reputation'
+        ]);
+  }
+
+
   //! @brief Displays the users with the highest reputation.
   public function reputationAction($period) {
     if (empty($period))
