@@ -83,13 +83,13 @@ class ImportCommand extends AbstractCommand {
       $user = new User();
 
       $user->id = $item->id;
-      $user->firstName = utf8_encode($item->firstName);
-      $user->lastName = utf8_encode($item->lastName);
-      $user->displayName = utf8_encode($item->displayName);
-      $user->email = utf8_encode($item->email);
-      $user->password = utf8_encode($item->password);
+      $user->firstName = iconv('LATIN1', 'UTF-8', $item->firstName);
+      $user->lastName = iconv('LATIN1', 'UTF-8', $item->lastName);
+      $user->displayName = iconv('LATIN1', 'UTF-8', $item->displayName);
+      $user->email = iconv('LATIN1', 'UTF-8', $item->email);
+      $user->password = iconv('LATIN1', 'UTF-8', $item->password);
       $user->birthday = (int)$item->birthday;
-      $user->ipAddress = utf8_encode($item->ipAddress);
+      $user->ipAddress = iconv('LATIN1', 'UTF-8', $item->ipAddress);
       $user->creationDate = (int)$item->creationDate;
 
       $this->couch->saveDoc($user);
@@ -129,7 +129,7 @@ class ImportCommand extends AbstractCommand {
       }
       elseif (!empty($item->contributorName)) {
         $article->userId = NULL;
-        $article->username = utf8_encode($item->contributorName);
+        $article->username = iconv('LATIN1', 'UTF-8', $item->contributorName);
       }
       else {
         $article->userId = NULL;
@@ -200,7 +200,7 @@ class ImportCommand extends AbstractCommand {
 
       $tutorial->id = UUID::generate(UUID::UUID_RANDOM, UUID::FMT_STRING);
       $tutorial->publishingDate = (int)$item->unixTime;
-      $tutorial->title = utf8_encode(rtrim($item->title, '()/123456789 \t\n\r\0\x0B'));
+      $tutorial->title = iconv('LATIN1', 'UTF-8', rtrim($item->title, '()/123456789 \t\n\r\0\x0B'));
 
       if (isset($item->userId)) {
         $tutorial->userId = $item->userId;
@@ -208,7 +208,7 @@ class ImportCommand extends AbstractCommand {
       }
       elseif (!empty($item->contributorName)) {
         $tutorial->userId = NULL;
-        $tutorial->username = utf8_encode($item->contributorName);
+        $tutorial->username = iconv('LATIN1', 'UTF-8', $item->contributorName);
       }
       else {
         $tutorial->userId = NULL;
@@ -274,7 +274,7 @@ class ImportCommand extends AbstractCommand {
       }
       elseif (!empty($item->contributorName)) {
         $book->userId = NULL;
-        $book->username = utf8_encode($item->contributorName);
+        $book->username = iconv('LATIN1', 'UTF-8', $item->contributorName);
       }
       else {
         $book->userId = NULL;
@@ -284,28 +284,28 @@ class ImportCommand extends AbstractCommand {
       $book->body = iconv('LATIN1', 'UTF-8', $item->body);
 
       if (preg_match('/\\[isbn\\](.*?)\\[\/isbn\\]/su', $book->body, $matches))
-        $book->isbn = utf8_encode($matches[1]);
+        $book->isbn = iconv('LATIN1', 'UTF-8', $matches[1]);
       if (preg_match('/\\[authors\\](.*?)\\[\/authors\\]/su', $book->body, $matches))
-        $book->authors = utf8_encode($matches[1]);
+        $book->authors = iconv('LATIN1', 'UTF-8', $matches[1]);
       if (preg_match('/\\[publisher\\](.*?)\\[\/publisher\\]/su', $book->body, $matches))
-        $book->publisher = utf8_encode($matches[1]);
+        $book->publisher = iconv('LATIN1', 'UTF-8', $matches[1]);
       if (preg_match('/\\[language\\](.*?)\\[\/language\\]/su', $book->body, $matches))
-        $book->language = utf8_encode($matches[1]);
+        $book->language = iconv('LATIN1', 'UTF-8', $matches[1]);
       if (preg_match('/\\[year\\](.*?)\\[\/year\\]/s', $book->body, $matches))
         $book->year = $matches[1];
       if (preg_match('/\\[pages\\](.*?)\\[\/pages\\]/s', $book->body, $matches))
         $book->pages = $matches[1];
       if (preg_match('/\\[attachments\\](.*?)\\[\/attachments\\]/su', $book->body, $matches) && !empty($matches[1]))
-        $book->attachments = utf8_encode($matches[1]);
+        $book->attachments = iconv('LATIN1', 'UTF-8', $matches[1]);
       if (preg_match('/\\[review\\](.*?)\\[\/review\\]/su', $book->body, $matches))
         $review = $matches[1];
       if (preg_match('/\\[positive\\](.*?)\\[\/positive\\]/su', $book->body, $matches))
-        $book->positive = utf8_encode($matches[1]);
+        $positive = iconv('LATIN1', 'UTF-8', $matches[1]);
       if (preg_match('/\\[negative\\](.*?)\\[\/negative\\]/su', $book->body, $matches))
-        $book->negative = utf8_encode($matches[1]);
+        $negative = iconv('LATIN1', 'UTF-8', $matches[1]);
 
       if (preg_match('/\\[vendorLink\\](.*?)\\[\/vendorLink\\]/su', $book->body, $matches) && !empty($matches[1]))
-        $book->link = utf8_encode($matches[1]);
+        $book->link = iconv('LATIN1', 'UTF-8', $matches[1]);
 
 
       // Converts from BBCode to Markdown!
@@ -321,6 +321,12 @@ class ImportCommand extends AbstractCommand {
 
       $purged = Text::purge($book->html);
       $book->excerpt = Text::truncate($purged);
+
+      $converter = new BBCodeConverter($positive, $item->id);
+      $book->positive = $converter->toMarkdown();
+
+      $converter = new BBCodeConverter($negative, $item->id);
+      $book->negative = $converter->toMarkdown();
 
       // We finally save the book.
       try {
@@ -366,7 +372,7 @@ class ImportCommand extends AbstractCommand {
 
       $tag->id = $item->id;
       $tag->publishingDate = (int)$item->unixTime;
-      $tag->name = utf8_encode(strtolower(str_replace(" ", "-", $item->name)));
+      $tag->name = iconv('LATIN1', 'UTF-8', strtolower(str_replace(" ", "-", $item->name)));
       $tag->userId = $userId;
 
       $this->couch->saveDoc($tag);
