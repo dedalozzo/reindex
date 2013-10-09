@@ -4,8 +4,10 @@
 
 <div class="column-left">
 {% block columnLeft %}
+  {% set usersBaseUrl = 'http://utenti.'~serverName~'/' %}
 
   {% for entry in entries %}
+    {% set userUrl = usersBaseUrl~entry.userId %}
     <div class="item">
       <div class="item-tools">
         <a href="#"><i class="icon-arrow-up icon-large"></i></a>{{ entry.score }}<a href="#"><i class="icon-arrow-down icon-large"></i></a>
@@ -25,9 +27,9 @@
         </ul>
         <div class="item-info pull-right">
           <div>{{ entry.whenHasBeenPublished }}, <b>{{ entry.hitsCount }}</b> lettori</div>
-          <img class="gravatar" src="{{ entry.gravatar }}&s=32" />
+          <a href="{{ userUrl }}"><img class="gravatar" src="{{ entry.gravatar }}&s=32" /></a>
           <div>
-            <a href="#">{{ entry.displayName }}</a>
+            <a href="{{ userUrl }}">{{ entry.displayName }}</a>
             <div class="reputation"><b>2345</b><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 10<i class="icon-certificate bronze"></i> 10</div>
           </div>
         </div>
