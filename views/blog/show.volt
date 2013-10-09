@@ -1,6 +1,8 @@
 <div id="title">/*&nbsp;<a href="">{{ doc.title }}</a>&nbsp;*/</div>
 
 <div class="column-left">
+  {% set usersBaseUrl = 'http://utenti.'~serverName~'/' %}
+  {% set userUrl = usersBaseUrl~doc.userId %}
 
   <ul class="list toolbar no-border">
     <li class="toolgroup">
@@ -35,8 +37,29 @@
 
   <div class="item">
     <div class="item-container">
+      {% if doc.type == 'book' %}
+      <div class="item-meta">
+        <img class="" src="http://programmazione.it/picture.php?idItem=48456&amp;id=52558c0458cae" alt="Copertina" />
+        <span>ISBN: </span>{{ doc.isbn }}<br>
+        <span>Autori: </span>{{ doc.authors }}<br>
+        <span>Editore: </span>{{ doc.publisher }}<br>
+        <span>Lingua: </span>{{ doc.language }}<br>
+        <span>Anno: </span>{{ doc.year }}<br>
+        <span>Pagine: </span>{{ doc.pages }}<br>
+        <span>Allegati: </span>{{ doc.attachments is empty ? 'nessuno' : doc.attachments }}
+        <div class="clear"></div>
+      </div>
+      {% endif %}
       <div class="item-body">
         {{ doc.html }}
+        {% if doc.type == 'book' %}
+        <div class="positive">
+          {{ doc.positive }}
+        </div>
+        <div class="negative">
+          {{ doc.negative }}
+        </div>
+        {% endif %}
       </div>
       <ul class="list item-tags">
         {% set tags = doc.getTags() %}
@@ -46,9 +69,9 @@
       </ul>
       <div class="item-info pull-right">
         <div>{{ doc.whenHasBeenPublished() }}, <b>{{ doc.getHitsCount() }}</b> lettori</div>
-        <img class="gravatar" src="{{ doc.getGravatar() }}&s=32" />
+        <a href="{{ userUrl }}"><img class="gravatar" src="{{ doc.getGravatar() }}&s=32" /></a>
         <div>
-          <a href="#">{{ doc.getDisplayName() }}</a>
+          <a href="{{ userUrl }}">{{ doc.getDisplayName() }}</a>
           <div class="reputation"><b>2345</b><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 10<i class="icon-certificate bronze"></i> 10</div>
         </div>
       </div>
@@ -62,6 +85,7 @@
   </ul>
 
   {% for replay in replays %}
+  {% set userUrl = usersBaseUrl~replay.userId %}
   <ul class="list toolbar">
     <li class="tool"><a href="#"><i class="icon-ok"></i></a></li>
     <li class="toolgroup">
@@ -91,13 +115,10 @@
       </div>
       <div class="item-info pull-right">
         <div>{{ replay.whenHasBeenPublished() }}</div>
-        <img class="gravatar" src="{{ replay.getGravatar() }}&s=32" />
+        <a href="{{ userUrl }}"><img class="gravatar" src="{{ replay.getGravatar() }}&s=32" /></a>
         <div>
-          <a href="#">{{ replay.getDisplayName() }}</a><br>
-          <div>
-            <a href="#">{{ entry.displayName }}</a><br>
-            <div class="reputation"><b>2345</b><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 10<i class="icon-certificate bronze"></i> 10</div>
-          </div>
+          <a href="{{ userUrl }}">{{ replay.getDisplayName() }}</a><br>
+          <div class="reputation"><b>2345</b><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 10<i class="icon-certificate bronze"></i> 10</div>
         </div>
       </div>
     </div>
