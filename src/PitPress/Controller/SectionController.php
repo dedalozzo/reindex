@@ -19,7 +19,7 @@ abstract class SectionController extends BaseController {
   abstract protected function getEntries($keys);
 
 
-  // Returns an associative array of titles indexed by action name.
+  //! @brief Returns an associative array of titles indexed by action name.
   protected static function getTitles() {
     return array_column(static::$sectionMenu, 'title', 'name');
   }
