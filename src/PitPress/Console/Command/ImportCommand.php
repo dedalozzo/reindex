@@ -540,7 +540,7 @@ class ImportCommand extends AbstractCommand {
   }
 
 
-  //! @brief Import all entities.
+  //! @brief Imports all entities.
   private function importAll() {
     $this->importUsers();
     $this->importArticles();
