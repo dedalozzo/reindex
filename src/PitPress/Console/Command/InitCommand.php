@@ -148,7 +148,6 @@ class InitCommand extends AbstractCommand {
 
       $handler = new ViewHandler("perDate");
       $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
 
       return $handler;
     }
@@ -327,6 +326,7 @@ class InitCommand extends AbstractCommand {
 
       $handler = new ViewHandler("notRecorded");
       $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
 
       return $handler;
     }
@@ -356,6 +356,38 @@ class InitCommand extends AbstractCommand {
     }
 
     $doc->addHandler(scoresPerPost());
+
+
+    // @params: type
+    function scoresPerType() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'score')
+                  \$emit([\$doc->postType, \$doc->points], \$doc->postId);
+              };";
+
+      $handler = new ViewHandler("perType");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(scoresPerType());
+
+
+    // @params: section
+    function scoresPerSection() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'score')
+                  \$emit([\$doc->postSection, \$doc->points], \$doc->postId);
+              };";
+
+      $handler = new ViewHandler("perSection");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(scoresPerSection());
 
 
     $this->couch->saveDoc($doc);
