@@ -40,16 +40,14 @@ class LinksController extends ListController {
 
   //! @brief Displays the newest links.
   public function newestAction() {
-    $this->view->sectionIndex = 3;
-    $this->view->title = "Nuovi links";
-
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey(['link', new \stdClass()])->setEndKey(['link']);
-    $rows = $this->couch->queryView("posts", "newestPerType", NULL, $opts)['rows'];
+    $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey(['links', new \stdClass()])->setEndKey(['links']);
+    $rows = $this->couch->queryView("posts", "newestPerSection", NULL, $opts)['rows'];
 
-    // Entries.
-    $keys = array_column($rows, 'id');
-    $this->view->setVar('entries', $this->fillEntries($keys));
+    $this->view->setVar('entries', $this->getEntries(array_column($rows, 'id')));
+
+    $stat = new Stat();
+    $this->view->setVar('entriesCount', $stat->getLinksCount());
   }
 
 
