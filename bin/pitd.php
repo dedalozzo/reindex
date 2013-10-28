@@ -60,8 +60,8 @@ try {
   // Dispatches the request.
   $dispatcher->dispatch();
 
-  echo "Task Name: ".$dispatcher->getTaskName().PHP_EOL;
-  echo "Action Name: ".$dispatcher->getActionName().PHP_EOL;
+  //echo "Task Name: ".$dispatcher->getTaskName().PHP_EOL;
+  //echo "Action Name: ".$dispatcher->getActionName().PHP_EOL;
 }
 catch (Exception $e) {
   echo $e;
