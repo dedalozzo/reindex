@@ -51,12 +51,13 @@ class ForumController extends ListController {
   //! @brief Displays the newest questions.
   public function newestAction() {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey(['question', new \stdClass()])->setEndKey(['question']);
-    $rows = $this->couch->queryView("posts", "newestPerType", NULL, $opts)['rows'];
+    $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey(['forum', new \stdClass()])->setEndKey(['forum']);
+    $rows = $this->couch->queryView("posts", "newestPerSection", NULL, $opts)['rows'];
 
-    // Entries.
-    $keys = array_column($rows, 'id');
-    $this->view->entries = $this->fillEntries($keys);
+    $this->view->setVar('entries', $this->getEntries(array_column($rows, 'id')));
+
+    $stat = new Stat();
+    $this->view->setVar('entriesCount', $stat->getQuestionsCount());
   }
 
 
