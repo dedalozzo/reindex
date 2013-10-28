@@ -114,6 +114,17 @@ abstract class ListController extends SectionController {
   }
 
 
+  // we start at startkey (or the first row greater than it) and continue to endkey (or the last key less than it) and then stop
+  protected function popularEver($section) {
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey([$section, time(), new \stdClass()])->setEndKey([$section, 0, 0]);
+
+    $rows = $this->couch->queryView('scores', 'perSection', NULL, $opts)['rows'];
+
+    $this->view->setVar('entries', $this->getEntries(array_column($rows, 'value')));
+  }
+
+
   public function afterExecuteRoute() {
     parent::afterExecuteRoute();
 
