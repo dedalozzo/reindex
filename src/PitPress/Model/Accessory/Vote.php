@@ -68,4 +68,10 @@ class Vote extends Doc {
     return $this->meta["recorded"];
   }
 
+
+  //! @brief Marks the vote has recorded.
+  public function markAsRecorded() {
+    $this->meta["recorded"] = TRUE;
+  }
+
 }
