@@ -95,18 +95,13 @@ class IndexController extends ListController {
     if (empty($period))
       $period = '24-ore';
 
-    $this->view->setVar('subsectionMenu', Time::periods());
+    $this->view->setVar('subsectionMenu', Time::periods(5));
     $this->view->setVar('subsectionIndex', Time::periodIndex($period));
 
+    $this->popularEver(new \stdClass(), $period);
 
-    /*$opts = new ViewQueryOpts();
-    $opts->doNotReduce()->reverseOrderOfResults();
-    $opts->setLimit(30);
-    $rows = $this->couch->queryView("posts", "dailyPopular", NULL, $opts)['rows'];
-
-    // Entries.
-    $keys = array_column($rows, 'id');
-    $this->view->entries = $this->getEntries($keys);*/
+    $stat = new Stat();
+    $this->view->setVar('entriesCount', $stat->getBlogEntriesCount());
   }
 
 

@@ -37,7 +37,7 @@ class BlogController extends ListController {
   ];
 
 
-  private function newestPerType($type, $period) {
+  private function newestInPeriod($type, $period) {
     $opts = new ViewQueryOpts();
 
     if ($period != 'sempre')
@@ -45,7 +45,7 @@ class BlogController extends ListController {
     else
       $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey([$type, new \stdClass()])->setEndKey([$type]);
 
-    $rows = $this->couch->queryView("posts", "newestPerType", NULL, $opts)['rows'];
+    $rows = $this->couch->queryView('posts', 'newestPerType', NULL, $opts)['rows'];
 
     $this->view->setVar('entries', $this->getEntries(array_column($rows, 'id')));
   }
@@ -76,7 +76,6 @@ class BlogController extends ListController {
   public function newestAction() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey(['blog', new \stdClass()])->setEndKey(['blog']);
-    //$opts->doNotReduce()->setLimit(30)->setStartKey(['blog', new \stdClass()])->setEndKey(['blog']);
     $rows = $this->couch->queryView("posts", "newestPerSection", NULL, $opts)['rows'];
 
     $this->view->setVar('entries', $this->getEntries(array_column($rows, 'id')));
@@ -94,7 +93,7 @@ class BlogController extends ListController {
     $this->view->setVar('subsectionMenu', Time::periods(5));
     $this->view->setVar('subsectionIndex', Time::periodIndex($period));
 
-    //$this->view->setVar('entries', $this->getEntries(array_column($rows, 'id')));
+    $this->popularEver('blog');
 
     $stat = new Stat();
     $this->view->setVar('entriesCount', $stat->getBlogEntriesCount());
@@ -127,7 +126,7 @@ class BlogController extends ListController {
     $this->view->setVar('subsectionMenu', Time::periods(4));
     $this->view->setVar('subsectionIndex', Time::periodIndex($period));
 
-    $this->newestPerType('article', $period);
+    $this->newestInPeriod('article', $period);
 
     $stat = new Stat();
     $this->view->setVar('entriesCount', $stat->getArticlesCount());
@@ -142,7 +141,7 @@ class BlogController extends ListController {
     $this->view->setVar('subsectionMenu', Time::periods(3));
     $this->view->setVar('subsectionIndex', Time::periodIndex($period));
 
-    $this->newestPerType('tutorial', $period);
+    $this->newestInPeriod('tutorial', $period);
 
     $stat = new Stat();
     $this->view->setVar('entriesCount', $stat->getTutorialsCount());
@@ -157,7 +156,7 @@ class BlogController extends ListController {
     $this->view->setVar('subsectionMenu', Time::periods(4));
     $this->view->setVar('subsectionIndex', Time::periodIndex($period));
 
-    $this->newestPerType('book', $period);
+    $this->newestInPeriod('book', $period);
 
     $stat = new Stat();
     $this->view->setVar('entriesCount', $stat->getBooksCount());

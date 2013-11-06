@@ -87,7 +87,7 @@
   {% for replay in replays %}
   {% set userUrl = usersBaseUrl~replay.userId %}
   <ul class="list toolbar">
-    <li class="tool"><a href="#"><i class="icon-ok"></i></a></li>
+    <li class="tool large"><a href="#"><i class="icon-ok largest"></i></a></li>
     <li class="toolgroup">
       <a href="#"><i class="icon-arrow-up"></i></a>
       <span>{{ replay.getScore() }}</span>

@@ -12,6 +12,7 @@ namespace PitPress\Model;
 use ElephantOnCouch\Doc\Doc;
 
 use Phalcon\DI;
+use Phalcon\Events\EventsAwareInterface;
 
 
 //! @brief This class is used to represent a storable object.
