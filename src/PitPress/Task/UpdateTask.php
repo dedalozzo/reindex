@@ -37,12 +37,12 @@ class UpdateTask extends Task {
 
   //! @brief Updates the score.
   public function scoreAction() {
-    $endKey = time() - 600; // Ten minutes ago.
+    //$endKey = time() - 600; // Ten minutes ago.
     $hook = new UpdateScoreHook(); // The chunk hook.
     $hook->setDi($this->getDI());
 
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->includeDocs()->setEndKey($endKey);
+    $opts->doNotReduce()->includeDocs();//->setEndKey($endKey);
     $this->couch->queryView("votes", "notRecorded", NULL, $opts, $hook);
   }
 
