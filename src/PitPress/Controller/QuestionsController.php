@@ -1,7 +1,7 @@
 <?php
 
-//! @file ForumController.php
-//! @brief Controller of Forum actions.
+//! @file QuestionsController.php
+//! @brief This file contains the QuestionsController class.
 //! @details
 //! @author Filippo F. Fadda
 
@@ -15,20 +15,20 @@ use PitPress\Helper\Time;
 use PitPress\Helper\Stat;
 
 
-//! @brief Controller of Forum actions.
+//! @brief Controller of Questions actions.
 //! @nosubgrouping
-class ForumController extends ListController {
+class QuestionsController extends ListController {
 
   protected static $sectionLabel = 'DOMANDE';
 
   // Stores the main menu definition.
   protected static $sectionMenu = [
-    ['name' => 'open', 'path' => '/domande/aperte/', 'label' => 'SENZA RISPOSTA', 'title' => 'Domande senza risposta'],
-    ['name' => 'interesting', 'path' => '/domande/interessanti/', 'label' => 'INTERESSANTI', 'title' => 'Domande interessanti'],
-    ['name' => 'updated', 'path' => '/domande/aggiornate/', 'label' => 'AGGIORNATE', 'title' => 'Domande aggiornate di recente'],
-    ['name' => 'popular', 'path' => '/domande/popolari/', 'label' => 'POPOLARI', 'title' => 'Domande popolari'],
-    ['name' => 'newest', 'path' => '/domande/nuove/', 'label' => 'NUOVE', 'title' => 'Nuove domande'],
-    ['name' => 'important', 'path' => '/domande/importanti/', 'label' => 'IMPORTANTI', 'title' => 'Domande con un premio attivo']
+    ['name' => 'open', 'path' => '/aperte/', 'label' => 'SENZA RISPOSTA', 'title' => 'Domande senza risposta'],
+    ['name' => 'interesting', 'path' => '/interessanti/', 'label' => 'INTERESSANTI', 'title' => 'Domande interessanti'],
+    ['name' => 'updated', 'path' => '/aggiornate/', 'label' => 'AGGIORNATE', 'title' => 'Domande aggiornate di recente'],
+    ['name' => 'popular', 'path' => '/popolari/', 'label' => 'POPOLARI', 'title' => 'Domande popolari'],
+    ['name' => 'newest', 'path' => '/nuove/', 'label' => 'NUOVE', 'title' => 'Nuove domande'],
+    ['name' => 'important', 'path' => '/importanti/', 'label' => 'IMPORTANTI', 'title' => 'Domande con un premio attivo']
   ];
 
   // Stores the still open answer sub-menu definition.
