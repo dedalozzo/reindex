@@ -1,7 +1,7 @@
 <?php
 
-//! @file ForumGroup.php
-//! @brief Group of Forum routes.
+//! @file QuestionsGroup.php
+//! @brief Group of Questions routes.
 //! @details
 //! @author Filippo F. Fadda
 
@@ -12,9 +12,9 @@ namespace PitPress\Route;
 use Phalcon\Mvc\Router\Group;
 
 
-//! @brief Group of forum routes.
+//! @brief Group of questions routes.
 //! @nosubgrouping
-class ForumGroup extends Group {
+class QuestionsGroup extends Group {
 
 
   public function initialize() {
@@ -22,16 +22,12 @@ class ForumGroup extends Group {
     $this->setPaths(
       [
         'namespace' => 'PitPress\Controller',
-        'controller' => 'forum'
+        'controller' => 'questions'
       ]);
 
-    $this->setHostName('forum.programmazione.me');
+    $this->setHostName('domande.programmazione.me');
 
     $this->addGet('/', ['action' => 'important']);
-
-    // All the following routes start with /domande.
-    $this->setPrefix('/domande');
-
     $this->addGet('/nuove/', ['action' => 'newest']);
     $this->addGet('/importanti/', ['action' => 'important']);
     $this->addGet('/popolari/{period}', ['action' => 'popular']);
