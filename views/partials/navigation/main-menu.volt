@@ -7,12 +7,12 @@
   <li class="icon"><a href="http://twitter.com/prg_it"><i class="icon-twitter icon-large"></i></a></li>
   <li class="icon"><a href="http://facebook.com/programmazione.it"><i class="icon-facebook icon-large"></i></a></li>
   <li class="icon"><a href="#"><i class="icon-google-plus icon-large"></i></a></li>
-  {% elseif controllerName == 'blog' %}
-  <li><a class="btn orange" href="#"><i class="icon-code"></i>&nbsp;SCRIVI SUL BLOG</a></li>
-  {% elseif controllerName == 'forum' %}
-  <li><a class="btn orange" href="#"><i class="icon-question"></i>&nbsp;FAI UNA DOMANDA</a></li>
+  {% elseif controllerName == 'questions' %}
+  <li><a class="btn orange" href="#"><i class="icon-question"></i> FAI UNA DOMANDA</a></li>
   {% elseif controllerName == 'links' %}
   <li><a class="btn orange" href="#"><i class="icon-link"></i> AGGIUNGI UN LINK</a></li>
+  {% elseif controllerName == 'blog' %}
+    <li><a class="btn orange" href="#"><i class="icon-code"></i> SCRIVI SUL BLOG</a></li>
   {% elseif controllerName == 'users' %}
     <li><a class="btn orange" href="#"><i class="icon-user"></i> REGISTRATI</a></li>
   {% endif %}
