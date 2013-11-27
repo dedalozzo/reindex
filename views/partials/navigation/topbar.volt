@@ -20,7 +20,11 @@
     <li><a href="{{ baseUri }}/chi-siamo">Chi siamo</a></li>
     <li><a href="{{ baseUri }}/aiuto">Aiuto</a></li>
     <li class="space"></li>
-    <li><a href="#"><img class="gravatar" src="http://gravatar.com/avatar/6e8f028adc23ca57bf0e730c4c7f7ae8?d=identicon&s=20" />&nbsp;dedalo</a></li>
+    <li><a href="#" data-toggle="modal" data-target="#myModal">Accedi</a></li>
+    <li><a href="#" data-toggle="modal" data-target="#myModal">Registrati</a></li>
+    <!-- <li><a href="#"><img class="gravatar" src="http://gravatar.com/avatar/6e8f028adc23ca57bf0e730c4c7f7ae8?d=identicon&s=20" />&nbsp;dedalo</a></li> -->
+    <!-- Button trigger modal -->
+
   </ul>
 </div>
 
