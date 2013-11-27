@@ -80,6 +80,11 @@ class IndexController extends ListController {
   }
 
 
+  //! @brief User sign in.
+  public function signInAction() {
+  }
+
+
   //! @brief Displays the newest updates.
   public function newestAction() {
     $opts = new ViewQueryOpts();
