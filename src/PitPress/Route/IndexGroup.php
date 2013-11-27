@@ -27,6 +27,7 @@ class IndexGroup extends Group {
       ]);
 
     $this->addGet('/', ['action' => 'popular']);
+    $this->addGet('/accedi/', ['action' => 'signIn']);
 
     // All the following routes start with /aggiornamenti.
     $this->setPrefix('/aggiornamenti');
