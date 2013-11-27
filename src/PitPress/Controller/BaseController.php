@@ -29,9 +29,9 @@ abstract class BaseController extends Controller {
   // Stores the main menu definition.
   protected static $mainMenu = [
     ['name' => 'index', 'path' => '', 'label' => 'P.IT', 'icon' => 'home'],
-    ['name' => 'blog', 'path' => 'blog.', 'label' => 'BLOG', 'icon' => 'code'],
-    ['name' => 'forum', 'path' => 'forum.', 'label' => 'FORUM', 'icon' => 'question'],
+    ['name' => 'questions', 'path' => 'domande.', 'label' => 'DOMANDE', 'icon' => 'question'],
     ['name' => 'links', 'path' => 'links.', 'label' => 'LINKS', 'icon' => 'link'],
+    ['name' => 'blog', 'path' => 'blog.', 'label' => 'BLOG', 'icon' => 'code'],
     ['name' => 'tags', 'path' => 'tags.', 'label' => 'TAGS', 'icon' => 'tags'],
     ['name' => 'badges', 'path' => 'badges.', 'label' => 'BADGES', 'icon' => 'certificate'],
     ['name' => 'users', 'path' => 'utenti.', 'label' => 'UTENTI', 'icon' => 'group']
