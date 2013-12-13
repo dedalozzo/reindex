@@ -26,6 +26,9 @@ $debug->listen();
   // Reads the application's configuration.
   $config = new IniReader($root.'/config.ini');
 
+  // Reads the Opauth's configuration.
+  require $root."/opauth.php";
+
   $logger = new FileAdapter($root."/log/pit-press.log");
   $logger->begin();
 
