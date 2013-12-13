@@ -27,6 +27,7 @@ $di->setShared('router',
     );
 
     $router->mount(new Route\IndexGroup());
+    $router->mount(new Route\AuthGroup());
     $router->mount(new Route\BlogGroup());
     $router->mount(new Route\QuestionsGroup());
     $router->mount(new Route\LinksGroup());
