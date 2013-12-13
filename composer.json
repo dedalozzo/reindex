@@ -18,12 +18,7 @@
         "3f/pygmentize": "dev-master",
         "3f/converter": "dev-master",
         "symfony/console": "2.4.*@dev",
-        "opauth/opauth": "*",
-        "opauth/facebook": "*",
-        "opauth/google": "*",
-        "opauth/twitter": "*",
-        "opauth/linkedin": "*",
-        "opauth/github": "*"
+        "lusitanian/oauth": "~0.2"
     },
     "autoload": {
         "psr-0": {"PitPress": "src/"}
