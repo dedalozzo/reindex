@@ -44,6 +44,7 @@ $debug->listen();
   require $root."/services/redis.php";
   require $root."/services/mysql.php";
   require $root."/services/markdown.php";
+  require $root."/services/crypt.php";
 
 
 /*
