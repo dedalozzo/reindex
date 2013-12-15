@@ -24,6 +24,7 @@
           {% for tag in tags %}
             <li><a class="tag" href="/tag/">{{ tag['value'] }}</a></li>
           {% endfor  %}
+            <li class="space"></li>
         </ul>
         <div class="item-info pull-right">
           <div>{{ entry.whenHasBeenPublished }}, <b>{{ entry.hitsCount }}</b> lettori</div>
