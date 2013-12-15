@@ -31,7 +31,8 @@ class AuthGroup extends Group {
 
     //$this->addGet('/login/{provider}', ['action' => 'login']);
     //$this->addGet('/{provider}', ['action' => 'authenticate']);
-    
+
+    $this->addGet('/', ['action' => 'login']);
     $this->addGet('/facebook/{params}', ['action' => 'facebook']);
     $this->addGet('/google/{params}', ['action' => 'google']);
     $this->addGet('/linkedin/{params}', ['action' => 'linkedin']);
