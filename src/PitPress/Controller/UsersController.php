@@ -13,6 +13,8 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
 use PitPress\Helper\Time;
 use PitPress\Model\User\User;
 
+use Phalcon\Mvc\View;
+
 
 //! @brief Controller of Users actions.
 //! @nosubgrouping
@@ -65,6 +67,26 @@ class UsersController extends SectionController {
     }
 
     return $entries;
+  }
+
+
+  public function signInAction() {
+    $this->view->disableLevel(View::LEVEL_LAYOUT);
+  }
+
+
+  public function signUpAction() {
+    $this->view->disableLevel(View::LEVEL_LAYOUT);
+  }
+
+
+  public function resetPasswordAction() {
+    $this->view->disableLevel(View::LEVEL_LAYOUT);
+  }
+
+
+  public function sendActivationEmailAction() {
+    $this->view->disableLevel(View::LEVEL_LAYOUT);
   }
 
 
