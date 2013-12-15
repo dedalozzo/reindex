@@ -33,6 +33,8 @@ abstract class SectionController extends BaseController {
   public function afterExecuteRoute() {
     parent::afterExecuteRoute();
 
+    $this->view->setVar('actionPath', self::getPaths(static::$sectionMenu)[$this->actionName]);
+
     $this->view->setVar('title', self::getTitles()[$this->actionName]);
 
     $this->view->setVar('sectionLabel', static::$sectionLabel);

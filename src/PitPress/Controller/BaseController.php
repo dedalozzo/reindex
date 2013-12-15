@@ -69,7 +69,6 @@ abstract class BaseController extends Controller {
     $this->actionName = $this->dispatcher->getActionName();
 
     $this->view->setVar('actionName', $this->actionName);
-    $this->view->setVar('actionPath', self::getPaths(static::$sectionMenu)[$this->actionName]);
   }
 
 
