@@ -13,7 +13,5 @@
   <li><a class="btn orange" href="#"><i class="icon-link"></i> AGGIUNGI UN LINK</a></li>
   {% elseif controllerName == 'blog' %}
     <li><a class="btn orange" href="#"><i class="icon-code"></i> SCRIVI SUL BLOG</a></li>
-  {% elseif controllerName == 'users' %}
-    <li><a class="btn orange" href="#"><i class="icon-user"></i> REGISTRATI</a></li>
   {% endif %}
 </ul>
