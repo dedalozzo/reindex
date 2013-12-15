@@ -114,4 +114,14 @@ class IndexController extends ListController {
   public function interestingAction() {
   }
 
+
+  public function aboutAction() {
+
+  }
+
+
+  public function helpAction() {
+
+  }
+
 }
