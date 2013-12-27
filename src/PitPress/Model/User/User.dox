@@ -14,12 +14,12 @@ class User  {
 
   string $email; //!< E-mail.
   string $password; //!< Password chosen by the user.
+  string $confirmationHash //!< String hash sent via e-mail to the user to confirm that his e-mail is real.
 
-  integer creationDate; //!< Registration date.
+  integer $creationDate; //!< Registration date.
 
   integer $sex; //!< Sex.
   integer $birthday; //!< Date of birth.
-  string $age; //!< Age, calculated from birthday.
   string $about; //!< A few words about the user.
 
   // We don not use these constants, because every registered users must agree to the Terms of Services, Privacy Policy
