@@ -46,8 +46,9 @@ $debug->listen();
   require $root."/services/markdown.php";
   require $root."/services/crypt.php";
 
+  /*
+  USE THE FOLLOWING CODE FOR DEBUG PURPOSE ONLY
 
-/*
   // Retrieves the Router component.
   $router = $di['router'];
 
@@ -93,8 +94,8 @@ $debug->listen();
 
   // Prints the response.
   echo $response->getContent();
+  */
 
-*/
   // Creates the application object.
   $application = new Phalcon\Mvc\Application();
 
