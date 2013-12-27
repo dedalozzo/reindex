@@ -26,6 +26,8 @@ class IndexGroup extends Group {
         'controller' => 'index'
       ]);
 
+    $this->setHostName('programmazione.me');
+
     $this->addGet('/', ['action' => 'popular']);
 
     $this->addGet('/tour/', ['action' => 'about']);
