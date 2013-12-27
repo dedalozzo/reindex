@@ -70,26 +70,6 @@ class UsersController extends SectionController {
   }
 
 
-  public function signInAction() {
-    $this->view->disableLevel(View::LEVEL_LAYOUT);
-  }
-
-
-  public function signUpAction() {
-    $this->view->disableLevel(View::LEVEL_LAYOUT);
-  }
-
-
-  public function resetPasswordAction() {
-    $this->view->disableLevel(View::LEVEL_LAYOUT);
-  }
-
-
-  public function sendActivationEmailAction() {
-    $this->view->disableLevel(View::LEVEL_LAYOUT);
-  }
-
-
   public function showAction($id) {
     if (empty($id))
       $this->dispatcher->forward(
