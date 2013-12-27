@@ -26,13 +26,18 @@ class AuthGroup extends Group {
         'controller' => 'auth'
       ]);
 
+    $this->setHostName('programmazione.me');
+
+    $this->addGet('/registrati/', ['action' => 'signUp']);
+    $this->addGet('/resetta-password/', ['action' => 'resetPassword']);
+    $this->addGet('/invia-email-attivazione/', ['action' => 'sendActivationEmail']);
+    $this->addGet('/attiva/', ['action' => 'activate']);
+    $this->addGet('/disconnetti/', ['action' => 'signOut']);
+
     // All the following routes start with /login.
-    $this->setPrefix('/login');
+    $this->setPrefix('/accedi');
 
-    //$this->addGet('/login/{provider}', ['action' => 'login']);
-    //$this->addGet('/{provider}', ['action' => 'authenticate']);
-
-    $this->addGet('/', ['action' => 'login']);
+    $this->addGet('/', ['action' => 'signIn']);
     $this->addGet('/facebook/{params}', ['action' => 'facebook']);
     $this->addGet('/google/{params}', ['action' => 'google']);
     $this->addGet('/linkedin/{params}', ['action' => 'linkedin']);
