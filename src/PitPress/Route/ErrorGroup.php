@@ -25,6 +25,8 @@ class ErrorGroup extends Group {
         'controller' => 'error'
       ]);
 
+    $this->setHostName('programmazione.me');
+
     $this->addGet('/404/', ['action' => 'show404']);
   }
 
