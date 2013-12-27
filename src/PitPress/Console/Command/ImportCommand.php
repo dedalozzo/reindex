@@ -70,7 +70,7 @@ class ImportCommand extends AbstractCommand {
     $this->output->writeln("Importing users...");
 
     //$sql = "SELECT idMember, name AS firstName, surname AS lastName, nickName AS displayName, email, password, sex, birthDate AS birthday, ipAddress, confirmHash AS confirmationHash, confirmed AS authenticated, regDate AS creationDate, lastUpdate, avatarData, avatarType, realNamePcy FROM Member";
-    $sql = "SELECT id, name AS firstName, surname AS lastName, nickName AS displayName, email, password, sex, UNIX_TIMESTAMP(birthDate) AS birthday, ipAddress, confirmHash AS confirmationHash, confirmed AS authenticated, UNIX_TIMESTAMP(regDate) AS creationDate, lastUpdate, realNamePcy FROM Member";
+    $sql = "SELECT id, name AS firstName, surname AS lastName, nickName AS displayName, email, password, sex, UNIX_TIMESTAMP(birthDate) AS birthday, ipAddress, confirmHash AS confirmationHash, confirmed, UNIX_TIMESTAMP(regDate) AS creationDate, lastUpdate, realNamePcy FROM Member";
     $sql .= $this->limit;
 
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
@@ -91,6 +91,10 @@ class ImportCommand extends AbstractCommand {
       $user->birthday = (int)$item->birthday;
       $user->ipAddress = iconv('LATIN1', 'UTF-8', $item->ipAddress);
       $user->creationDate = (int)$item->creationDate;
+      $user->confirmationHash = iconv('LATIN1', 'UTF-8', $item->confirmationHash);
+
+      if ($item->confirmed === 1)
+        $user->confirm();
 
       $this->couch->saveDoc($user);
 
