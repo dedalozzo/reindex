@@ -8,3 +8,4 @@ pit query reputation/perUser &
 pit query favorites/lastAdded --limit=1 
 pit query users/allNames &
 pit query replays/newestPerPost &
+pit query scores/perSection &
