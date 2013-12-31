@@ -34,10 +34,6 @@ class AuthController extends BaseController {
 
   //! @brief Sign in with a PitPress account.
   public function signInAction() {
-    // Cross-Site Request Forgery (CSRF) protection.
-    $this->view->setVar('token', $this->security->getToken());
-    $this->view->setVar('tokenKey', $this->security->getTokenKey());
-
     if ($this->request->isPost()) {
 
       try {
@@ -95,6 +91,8 @@ class AuthController extends BaseController {
         setcookie("token", $token, mktime(0, 0, 0, 12, 12, 2030), "/", $this->application->serverName);
 
         $user->save();
+
+        return $this->response->redirect("index");
       }
       catch (\Exception $e) {
         // To avoid Internet Explorer 6.x implementation issues.
@@ -104,7 +102,7 @@ class AuthController extends BaseController {
         setcookie("token", "", time(), "/", $this->application->serverName);
 
         // Displays the error message.
-        $this->flash->error($e);
+        $this->flashSession->error($e->getMessage());
       }
 
     }
@@ -183,7 +181,7 @@ class AuthController extends BaseController {
 
     $storage = new Session();
 
-    $credentials = new Credentials($this->facebook->key, $this->facebook->secret, $currentUri->getAbsoluteUri());
+    $credentials = new Credentials($this->di['config']['facebook']['key'], $this->di['config']['facebook']['secret'], $currentUri->getAbsoluteUri());
     $serviceFactory = new ServiceFactory();
     $service = $serviceFactory->createService('facebook', $credentials, $storage, []);
 
@@ -200,6 +198,7 @@ class AuthController extends BaseController {
     }
     else {
       $url = $service->getAuthorizationUri();
+      //$this->response->redirect($url);
       header('Location: ' . $url);
     }
 
@@ -214,7 +213,7 @@ class AuthController extends BaseController {
 
     $storage = new Session();
 
-    $credentials = new Credentials($this->google->key, $this->google->secret, $currentUri->getAbsoluteUri());
+    $credentials = new Credentials($this->di['config']['google']['key'], $this->di['config']['google']['secret'], $currentUri->getAbsoluteUri());
     $serviceFactory = new ServiceFactory();
     $service = $serviceFactory->createService('google', $credentials, $storage, ['userinfo_email', 'userinfo_profile']);
 
@@ -245,7 +244,7 @@ class AuthController extends BaseController {
 
     $storage = new Session();
 
-    $credentials = new Credentials($this->linkedin->key, $this->linkedin->secret, $currentUri->getAbsoluteUri());
+    $credentials = new Credentials($this->di['config']['linkedin']['key'], $this->di['config']['linkedin']['secret'], $currentUri->getAbsoluteUri());
     $serviceFactory = new ServiceFactory();
     $service = $serviceFactory->createService('linkedin', $credentials, $storage, ['r_basicprofile']);
 
@@ -277,7 +276,7 @@ class AuthController extends BaseController {
 
     $storage = new Session();
 
-    $credentials = new Credentials($this->github->key, $this->github->secret, $currentUri->getAbsoluteUri());
+    $credentials = new Credentials($this->di['config']['github']['key'], $this->di['config']['github']['secret'], $currentUri->getAbsoluteUri());
     $serviceFactory = new ServiceFactory();
     $service = $serviceFactory->createService('GitHub', $credentials, $storage, ['user']);
 
