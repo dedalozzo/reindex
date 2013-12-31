@@ -37,11 +37,11 @@ class AuthGroup extends Group {
     // All the following routes start with /login.
     $this->setPrefix('/accedi');
 
-    $this->addGet('/', ['action' => 'signIn']);
-    $this->addGet('/facebook/{params}', ['action' => 'facebook']);
-    $this->addGet('/google/{params}', ['action' => 'google']);
-    $this->addGet('/linkedin/{params}', ['action' => 'linkedin']);
-    $this->addGet('/github/{params}', ['action' => 'github']);
+    $this->add('/', ['action' => 'signIn'], ['GET', 'POST']);
+    $this->addGet('/facebook/', ['action' => 'facebook']);
+    $this->addGet('/google/', ['action' => 'google']);
+    $this->addGet('/linkedin/', ['action' => 'linkedin']);
+    $this->addGet('/github/', ['action' => 'github']);
   }
 
 }
