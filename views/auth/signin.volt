@@ -1,11 +1,13 @@
 <div id="title" class="dark">Accedi</div>
 
+{{ flash.output() }}
+
 <div class="ghost gutter-plus">
   <p>Possiedi un'utenza su {{ serverName|capitalize }}? Accedi usando le credenziali in tuo possesso.</p>
   <form action="{{ baseUri }}/accedi/" id="signinform" name="signinform" method="post" role="form">
-    <input type="hidden" name="{{ tokenKey }}" value="{{ token }}"/>
+    <input type="hidden" name="{{ security.getTokenKey() }}" value="{{ security.getToken() }}"/>
     <ul class="list vertical mbottom10">
-      <li>{{ email_field(["email", "placeholder": "Email"]) }}&nbsp;&nbsp;<a class="small" href="{{ baseUri }}/invia-email-attivazione/" target="_self">Non hai ricevuto l'e-mail di attivazione?</a></li>
+      <li>{{ email_field("email", "placeholder": "Email") }}&nbsp;&nbsp;<a class="small" href="{{ baseUri }}/invia-email-attivazione/" target="_self">Non hai ricevuto l'e-mail di attivazione?</a></li>
       <li>{{ password_field("password", "placeholder": "Password") }}&nbsp;&nbsp;<a class="small" href="{{ baseUri }}/resetta-password/" target="_self">Hai dimenticato la password?</a></li>
       <li><button type="submit" name="signin" class="btn blue">Accedi</button></li>
     </ul>
