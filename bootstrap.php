@@ -45,6 +45,7 @@ $debug->listen();
   require $root."/services/mysql.php";
   require $root."/services/markdown.php";
   require $root."/services/crypt.php";
+  require $root."/services/flash.php";
 
   /*
   USE THE FOLLOWING CODE FOR DEBUG PURPOSE ONLY
