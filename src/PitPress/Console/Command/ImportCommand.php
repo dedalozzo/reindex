@@ -285,30 +285,28 @@ class ImportCommand extends AbstractCommand {
         $book->username = NULL;
       }
 
-      $book->body = iconv('LATIN1', 'UTF-8', $item->body);
-
-      if (preg_match('/\\[isbn\\](.*?)\\[\/isbn\\]/su', $book->body, $matches))
+      if (preg_match('/\\[isbn\\](.*?)\\[\/isbn\\]/su', $item->body, $matches))
         $book->isbn = iconv('LATIN1', 'UTF-8', $matches[1]);
-      if (preg_match('/\\[authors\\](.*?)\\[\/authors\\]/su', $book->body, $matches))
+      if (preg_match('/\\[authors\\](.*?)\\[\/authors\\]/su', $item->body, $matches))
         $book->authors = iconv('LATIN1', 'UTF-8', $matches[1]);
-      if (preg_match('/\\[publisher\\](.*?)\\[\/publisher\\]/su', $book->body, $matches))
+      if (preg_match('/\\[publisher\\](.*?)\\[\/publisher\\]/su', $item->body, $matches))
         $book->publisher = iconv('LATIN1', 'UTF-8', $matches[1]);
-      if (preg_match('/\\[language\\](.*?)\\[\/language\\]/su', $book->body, $matches))
+      if (preg_match('/\\[language\\](.*?)\\[\/language\\]/su', $item->body, $matches))
         $book->language = iconv('LATIN1', 'UTF-8', $matches[1]);
-      if (preg_match('/\\[year\\](.*?)\\[\/year\\]/s', $book->body, $matches))
+      if (preg_match('/\\[year\\](.*?)\\[\/year\\]/s', $item->body, $matches))
         $book->year = $matches[1];
-      if (preg_match('/\\[pages\\](.*?)\\[\/pages\\]/s', $book->body, $matches))
+      if (preg_match('/\\[pages\\](.*?)\\[\/pages\\]/s', $item->body, $matches))
         $book->pages = $matches[1];
-      if (preg_match('/\\[attachments\\](.*?)\\[\/attachments\\]/su', $book->body, $matches) && !empty($matches[1]))
+      if (preg_match('/\\[attachments\\](.*?)\\[\/attachments\\]/su', $item->body, $matches) && !empty($matches[1]))
         $book->attachments = iconv('LATIN1', 'UTF-8', $matches[1]);
-      if (preg_match('/\\[review\\](.*?)\\[\/review\\]/su', $book->body, $matches))
-        $review = $matches[1];
-      if (preg_match('/\\[positive\\](.*?)\\[\/positive\\]/su', $book->body, $matches))
+      if (preg_match('/\\[review\\](.*?)\\[\/review\\]/su', $item->body, $matches))
+        $review = iconv('LATIN1', 'UTF-8', $matches[1]);
+      if (preg_match('/\\[positive\\](.*?)\\[\/positive\\]/su', $item->body, $matches))
         $positive = iconv('LATIN1', 'UTF-8', $matches[1]);
-      if (preg_match('/\\[negative\\](.*?)\\[\/negative\\]/su', $book->body, $matches))
+      if (preg_match('/\\[negative\\](.*?)\\[\/negative\\]/su', $item->body, $matches))
         $negative = iconv('LATIN1', 'UTF-8', $matches[1]);
 
-      if (preg_match('/\\[vendorLink\\](.*?)\\[\/vendorLink\\]/su', $book->body, $matches) && !empty($matches[1]))
+      if (preg_match('/\\[vendorLink\\](.*?)\\[\/vendorLink\\]/su', $item->body, $matches) && !empty($matches[1]))
         $book->link = iconv('LATIN1', 'UTF-8', $matches[1]);
 
 
