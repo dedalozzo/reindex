@@ -96,7 +96,11 @@ abstract class Post extends Item implements Extension\ICount, Extension\IStar, E
 
   //! @brief Gets the number of the answer or comments.
   public function getReplaysCount() {
+    $opts = new ViewQueryOpts();
+    $opts->groupResults();
+    $replays = $this->couch->queryView("replays", "perPost", [$this->id], $opts)['rows'];
 
+    return is_null($replays[0]['value']) ? 0 : $replays[0]['value'];
   }
 
   //@}
