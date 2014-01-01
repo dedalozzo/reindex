@@ -12,7 +12,7 @@ use Phalcon\Flash\Session as Flash;
 // Returns the flash instance.
 $di->setShared('flash', function() {
   return new Flash([
-    'error' => 'alert alert-error',
+    'error' => 'alert alert-danger',
     'success' => 'alert alert-success',
     'notice' => 'alert alert-info',
   ]);
