@@ -20,7 +20,8 @@
   <![endif]-->
   <style>
     body {
-      background-image: url("/img/background.jpg");
+      background-image: url("{{ baseUri }}/pit-bootstrap/img/backgrounds/bg_px.png");
+      background-repeat: repeat;
     }
   </style>
 </head>
