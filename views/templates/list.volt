@@ -26,7 +26,7 @@
           {% endfor  %}
             <li class="space"></li>
         </ul>
-        <div class="item-info pull-right">
+        <div class="item-info pull-right no-gutter">
           <div>{{ entry.whenHasBeenPublished }}, <b>{{ entry.hitsCount }}</b> lettori</div>
           <a href="{{ userUrl }}"><img class="gravatar" src="{{ entry.gravatar }}&s=32" /></a>
           <div>
