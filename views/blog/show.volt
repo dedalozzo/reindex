@@ -1,42 +1,43 @@
-<div id="title">/*&nbsp;<a href="">{{ doc.title }}</a>&nbsp;*/</div>
-
 <div class="column-left">
   {% set usersBaseUrl = 'http://utenti.'~serverName~'/' %}
   {% set userUrl = usersBaseUrl~doc.userId %}
-
-  <ul class="list toolbar no-border">
-    <li class="toolgroup">
-      <a href="#" title ="Questo articolo è interessante"><i class="icon-arrow-up"></i></a>
-      <span>{{ doc.getScore() }}</span>
-      <a href="#" title="Questo articolo è poco chiaro e di dubbia utilità"><i class="icon-arrow-down"></i></a>
-    </li>
-    <li class="toolgroup">
-      <a href="#" title="Aggiungi ai preferiti"><i class="icon-star-empty"></i></a>
-      <span>{{ doc.getStarsCount() }}</span>
-    </li>
-    <li class="toolgroup">
-      <a href="#" title="Sottoscrivi la discussione"><i class="icon-eye-open"></i></a>
-      <span>{{ doc.getSubscribersCount() }}</span>
-    </li>
-    <li class="toolgroup">
-      <a href="#" title="Condividi su Twitter"><i class="icon-twitter"></i></a>
-      <a href="#" title="Condividi su Facebook"><i class="icon-facebook"></i></a>
-      <a href="#" title="Condividi su Google+"><i class="icon-google-plus"></i></a>
-      <span>{{ doc.getStarsCount() }}</span>
-    </li>
-    <li class="toolgroup">
-      <a href="#"><i class="icon-unlock"></i></a>
-      <a href="#"><i class="icon-umbrella"></i></a>
-      <a href="#"><i class="icon-pushpin"></i></a>
-      <a href="#"><i class="icon-flag"></i></a>
-    </li>
-    <li class="tool"><a href="#"><i class="icon-trash"></i></a></li>
-    <li class="tool"><a href="#"><i class="icon-stackexchange"></i></a></li>
-    <li class="tool"><a href="#"><i class="icon-file-text"></i></a></li>
-  </ul>
+  {% set replaysCount = doc.getReplaysCount() %}
 
   <div class="item">
-    <div class="item-container">
+    <div class="item-tools">
+      <a href="#" title ="Questo articolo è interessante"><i class="icon-arrow-up icon-large"></i></a>{{ doc.getScore() }}<a href="#" title="Questo articolo è poco chiaro e di dubbia utilità"><i class="icon-arrow-down icon-large"></i></a>
+      <a href="#"><i class="icon-comments icon-large"></i></a>{{ replaysCount }}
+    </div>
+
+    <div class="item-section">
+      <a href="#">{{ doc.getPublishingType() }}</a>
+    </div>
+
+    <div class="item-container shift">
+      <div id="title"><a href="">{{ doc.title }}</a></div>
+      <ul class="list toolbar no-border">
+        <li class="toolgroup">
+          <a href="#" title="Aggiungi ai preferiti"><i class="icon-star-empty"></i></a>
+          <span>{{ doc.getStarsCount() }}</span>
+        </li>
+        <li class="toolgroup break">
+          <a href="#" title="Sottoscrivi la discussione"><i class="icon-eye-open"></i></a>
+          <span>{{ doc.getSubscribersCount() }}</span>
+        </li>
+        <li class="toolgroup">
+          <a href="#" title="Condividi su Twitter"><i class="icon-twitter"></i></a>
+          <span>{{ doc.getStarsCount() }}</span>
+        </li>
+        <li class="toolgroup">
+          <a href="#" title="Condividi su Facebook"><i class="icon-facebook"></i></a>
+          <span>{{ doc.getStarsCount() }}</span>
+        </li>
+        <li class="toolgroup break">
+          <a href="#" title="Condividi su Google+"><i class="icon-google-plus"></i></a>
+          <span>{{ doc.getStarsCount() }}</span>
+        </li>
+      </ul>
+
       {% if doc.type == 'book' %}
       <div class="item-meta">
         <img class="" src="http://programmazione.it/picture.php?idItem=48456&amp;id=52558c0458cae" alt="Copertina" />
@@ -54,10 +55,10 @@
         {{ doc.html }}
         {% if doc.type == 'book' %}
         <div class="positive">
-          {{ doc.positive }}
+          {{ markdown.render(doc.positive) }}
         </div>
         <div class="negative">
-          {{ doc.negative }}
+          {{ markdown.render(doc.negative) }}
         </div>
         {% endif %}
       </div>
@@ -75,41 +76,48 @@
           <div class="reputation"><b>2345</b><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 10<i class="icon-certificate bronze"></i> 10</div>
         </div>
       </div>
+      <div class="list item-links">
+        <li><a class="btn mini blue" href="#"><i class="icon-file-text"></i> MODIFICA</a></li>
+        <li><a class="btn mini blue" href="#"><i class="icon-flag"></i> FLAGGA</a></li>
+        <li><a class="btn mini red" href="#"><i class="icon-trash"></i> ELIMINA</a></li>
+        <li><a class="btn mini orange" href="#"><i class="icon-unlock"></i> BLOCCA</a></li>
+        <li><a class="btn mini orange" href="#"><i class="icon-umbrella"></i> PROTEGGI</a></li>
+        <li><a class="btn mini blue" href="#"><i class="icon-pushpin"></i> APPUNTA</a></li>
+        <li class="space"></li>
+      </div>
     </div>
   </div>
 
   <ul class="list tabs">
-    <li><span><b>COMMENTI</b></span></li>
+    <li><span><b>{{ replaysCount }}{% if replaysCount == 1 %} COMMENTO{% else %} COMMENTI{% endif %}</b></span></li>
     <li class="pull-right"><a href="#">PIÙ VOTATI</a></li>
     <li class="active pull-right"><a href="#">RECENTI</a></li>
   </ul>
 
   {% for replay in replays %}
   {% set userUrl = usersBaseUrl~replay.userId %}
-  <ul class="list toolbar">
-    <li class="tool large"><a href="#"><i class="icon-ok largest"></i></a></li>
-    <li class="toolgroup">
-      <a href="#"><i class="icon-arrow-up"></i></a>
-      <span>{{ replay.getScore() }}</span>
-      <a href="#"><i class="icon-arrow-down"></i></a>
-    </li>
-    <li class="toolgroup">
-      <a href="#"><i class="icon-twitter"></i></a>
-      <a href="#"><i class="icon-facebook"></i></a>
-      <a href="#"><i class="icon-google-plus"></i></a>
-    </li>
-    <li class="toolgroup">
-      <a href="#"><i class="icon-unlock"></i></a>
-      <a href="#"><i class="icon-umbrella"></i></a>
-      <a href="#"><i class="icon-flag"></i></a>
-    </li>
-    <li class="tool"><a href="#"><i class="icon-trash"></i></a></li>
-    <li class="tool"><a href="#"><i class="icon-stackexchange"></i></a></li>
-    <li class="tool"><a href="#"><i class="icon-file-text"></i></a></li>
-  </ul>
+
+  <div class="item-tools">
+    <a href="#" title ="Questo articolo è interessante"><i class="icon-arrow-up icon-large"></i></a>{{ replay.getScore() }}<a href="#" title="Questo articolo è poco chiaro e di dubbia utilità"><i class="icon-arrow-down icon-large"></i></a>
+    <a href="#"><i class="icon-ok icon-large"></i></a>
+  </div>
 
   <div class="item">
-    <div class="item-container">
+    <div class="item-container shift">
+      <ul class="list toolbar">
+        <li class="toolgroup">
+          <a href="#" title="Condividi su Twitter"><i class="icon-twitter"></i></a>
+          <span>{{ doc.getStarsCount() }}</span>
+        </li>
+        <li class="toolgroup">
+          <a href="#" title="Condividi su Facebook"><i class="icon-facebook"></i></a>
+          <span>{{ doc.getStarsCount() }}</span>
+        </li>
+        <li class="toolgroup">
+          <a href="#" title="Condividi su Google+"><i class="icon-google-plus"></i></a>
+          <span>{{ doc.getStarsCount() }}</span>
+        </li>
+      </ul>
       <div class="item-body">
         {{ replay.html }}
       </div>
@@ -120,6 +128,13 @@
           <a href="{{ userUrl }}">{{ replay.getDisplayName() }}</a><br>
           <div class="reputation"><b>2345</b><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 10<i class="icon-certificate bronze"></i> 10</div>
         </div>
+      </div>
+      <div class="list item-links">
+        <li><a class="btn mini blue" href="#"><i class="icon-file-text"></i> MODIFICA</a></li>
+        <li><a class="btn mini blue" href="#"><i class="icon-flag"></i> FLAGGA</a></li>
+        <li><a class="btn mini red" href="#"><i class="icon-trash"></i> ELIMINA</a></li>
+        <li><a class="btn mini blue" href="#"><i class="icon-unlock"></i> RISPONDI</a></li>
+        <li class="space"></li>
       </div>
     </div>
   </div>
