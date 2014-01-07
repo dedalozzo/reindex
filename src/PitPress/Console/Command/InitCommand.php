@@ -644,6 +644,21 @@ class InitCommand extends AbstractCommand {
     $doc->addHandler(usersByDisplayName());
 
 
+    function usersByEmail() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'user')
+                  \$emit(\$doc->email);
+              };";
+
+      $handler = new ViewHandler("byEmail");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(usersByEmail());
+
+
     $this->couch->saveDoc($doc);
   }
 
