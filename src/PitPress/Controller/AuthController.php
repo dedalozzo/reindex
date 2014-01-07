@@ -70,10 +70,10 @@ class AuthController extends BaseController {
 
         // Checks if the user has confirmed his registration.
         if (!$user->isConfirmed())
-          throw new UserNotConfirmedException("L'utente risulta iscritto, ma l'iscrizione non è ancora stata confermata. Segui le istruzioni ricevute nella e-mail di attivazione che ti è stata inviata. Se ancora non l'hai ricevuta, richiedi una nuova e-mail di attivazione.");
+          throw new UserNotConfirmedException("L'utente risulta iscritto, ma l'iscrizione non è ancora stata confermata. Segui le istruzioni ricevute nella e-mail di attivazione che ti è stata inviata. Se ancora non l'hai ricevuta, <a href=\"".$this->baseUri."/invia-email-attivazione/\">richiedi una nuova e-mail di attivazione</a>.");
 
         if (($user->password != $password))
-          throw new WrongPasswordException("Non vi è nessun utente registrato con la login inserita o la password è errata.");
+          throw new WrongPasswordException("Non vi è nessun utente registrato con la login inserita o la password è errata. <a href=\"".$this->baseUri."/resetta-password/\">Hai dimenticato la password?</a>");
 
         // Updates the ip address with the current one.
         $user->ipAddress = $_SERVER['REMOTE_ADDR'];
