@@ -68,6 +68,8 @@ class BlogController extends ListController {
     $this->view->setVar('doc', $doc);
     $this->view->setVar('replays', $doc->getReplays());
 
+    $this->view->setVar('title', $doc->title);
+
     $this->view->disableLevel(View::LEVEL_LAYOUT);
   }
 
