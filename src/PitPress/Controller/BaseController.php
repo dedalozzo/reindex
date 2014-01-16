@@ -65,10 +65,13 @@ abstract class BaseController extends Controller {
   }
 
 
-  public function afterExecuteRoute() {
+  public function beforeExecuteRoute() {
     $this->actionName = $this->dispatcher->getActionName();
-
     $this->view->setVar('actionName', $this->actionName);
+  }
+
+
+  public function afterExecuteRoute() {
   }
 
 
