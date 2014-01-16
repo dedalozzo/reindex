@@ -3,19 +3,31 @@
   {% set userUrl = usersBaseUrl~doc.userId %}
   {% set replaysCount = doc.getReplaysCount() %}
 
+  {% if doc.type == 'question' %}
+    {% set label = 'formulata' %}
+  {% elseif doc.type == 'link' %}
+    {% set label = 'inserito' %}
+  {% elseif doc.type == 'article' %}
+    {% set label = 'scritto' %}
+  {% else %}
+    {% set label = 'recensito' %}
+  {% endif %}
+
   <div class="item">
+    <div class="item-section">
+      <a href="#">{{ doc.getPublishingType() }}</a>
+    </div>
+
+    <div id="title"><span>{{ doc.title }}</span></div>
+
     <div class="item-tools">
       <a href="#" title ="Questo articolo è interessante"><i class="icon-arrow-up icon-large"></i></a>{{ doc.getScore() }}<a href="#" title="Questo articolo è poco chiaro e di dubbia utilità"><i class="icon-arrow-down icon-large"></i></a>
       <a href="#"><i class="icon-comments icon-large"></i></a>{{ replaysCount }}
     </div>
 
-    <div class="item-section">
-      <a href="#">{{ doc.getPublishingType() }}</a>
-    </div>
-
     <div class="item-container shift">
-      <div id="title"><a href="">{{ doc.title }}</a></div>
-      <ul class="list toolbar no-border">
+      <div class="item-hits"><b>{{ doc.getHitsCount() }}</b> lettori</div>
+      <ul class="list toolbar">
         <li class="toolgroup">
           <a href="#" title="Aggiungi ai preferiti"><i class="icon-star-empty"></i></a>
           <span>{{ doc.getStarsCount() }}</span>
@@ -69,7 +81,7 @@
         {% endfor  %}
       </ul>
       <div class="item-info pull-right">
-        <div>{{ doc.whenHasBeenPublished() }}, <b>{{ doc.getHitsCount() }}</b> lettori</div>
+        <div>{{ doc.whenHasBeenPublished() }}, {{ label }} da</div>
         <a href="{{ userUrl }}"><img class="gravatar" src="{{ doc.getGravatar() }}&s=32" /></a>
         <div>
           <a href="{{ userUrl }}">{{ doc.getDisplayName() }}</a>
@@ -96,6 +108,10 @@
 
   {% for replay in replays %}
   {% set userUrl = usersBaseUrl~replay.userId %}
+
+  {% if not loop.first %}
+  <div class="line"></div>
+  {% endif %}
 
   <div class="item-tools">
     <a href="#" title ="Questo articolo è interessante"><i class="icon-arrow-up icon-large"></i></a>{{ replay.getScore() }}<a href="#" title="Questo articolo è poco chiaro e di dubbia utilità"><i class="icon-arrow-down icon-large"></i></a>
