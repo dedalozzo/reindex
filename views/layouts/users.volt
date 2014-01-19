@@ -41,5 +41,5 @@
 
 
   {% elsefor %}
-  <div class="ghost">Siamo spiacenti, la ricerca non ha prodotto alcun risultato.</div>
+  <div class="alert alert-info">Siamo spiacenti, la ricerca non ha prodotto alcun risultato.</div>
 {% endfor %}
