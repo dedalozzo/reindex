@@ -7,8 +7,14 @@
   <form action="{{ baseUri }}/accedi/" id="signinform" name="signinform" method="post" role="form">
     <input type="hidden" name="{{ security.getTokenKey() }}" value="{{ security.getToken() }}"/>
     <ul class="list vertical mbottom10">
-      <li>{{ email_field("email", "placeholder": "Email") }}</li>
-      <li>{{ password_field("password", "placeholder": "Password") }}</li>
+      <li>
+        {{ email_field("email", "placeholder": "E-mail") }}
+        <label>{{ validation.first("email") }}</label>
+      </li>
+      <li>
+        {{ password_field("password", "placeholder": "Password") }}
+        <label>{{ validation.first("password") }}</label>
+      </li>
       <li><button type="submit" name="signin" class="btn blue">Accedi</button></li>
     </ul>
   </form>
