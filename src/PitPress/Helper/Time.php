@@ -12,7 +12,7 @@ namespace PitPress\Helper;
 use ElephantOnCouch\Helper\TimeHelper;
 
 
-//! This class extends the ElephantOnCouch TimeHelper, adding new methods.
+//! @brief This class extends the ElephantOnCouch TimeHelper, adding new methods.
 class Time extends TimeHelper {
 
   private static $periods = ['sempre', 'anno', 'trimestre', 'mese', 'settimana', '24-ore'];
