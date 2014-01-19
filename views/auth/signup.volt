@@ -16,7 +16,7 @@
   <form action="{{ baseUri }}/registrati/" id="signinform" name="signinform" method="post" role="form">
     <ul class="list vertical mbottom10">
       <li>{{ text_field("username", "placeholder": "Nome utente") }}</li>
-      <li>{{ email_field(["email", "placeholder": "Email"]) }}</li>
+      <li>{{ email_field("email", "placeholder": "E-mail") }}</li>
       <li>{{ password_field("password", "placeholder": "Password") }}</li>
       <li>{{ password_field("password2", "placeholder": "Ripeti la password") }}</li>
       <li><button type="submit" name="signin" class="btn blue">Registrati</button></li>
