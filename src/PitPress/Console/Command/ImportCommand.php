@@ -93,7 +93,7 @@ class ImportCommand extends AbstractCommand {
       $user->creationDate = (int)$item->creationDate;
       $user->confirmationHash = iconv('LATIN1', 'UTF-8', $item->confirmationHash);
 
-      if ($item->confirmed === 1)
+      if ($item->confirmed == 1)
         $user->confirm();
 
       $this->couch->saveDoc($user);
