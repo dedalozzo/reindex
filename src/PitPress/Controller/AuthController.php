@@ -15,7 +15,8 @@ use OAuth\Common\Consumer\Credentials;
 use OAuth\ServiceFactory;
 
 use Phalcon\Mvc\View;
-use Phalcon\Validation;
+use PitPress\Exception\InvalidFieldException;
+use PitPress\Helper\ValidationHelper;
 use Phalcon\Validation\Validator\PresenceOf;
 use Phalcon\Validation\Validator\Email;
 
@@ -34,6 +35,11 @@ class AuthController extends BaseController {
 
   //! @brief Sign in with a PitPress account.
   public function signInAction() {
+
+    // The validation object must be created in any case.
+    $validation = new ValidationHelper();
+    $this->view->setVar('validation', $validation);
+
     if ($this->request->isPost()) {
 
       try {
@@ -41,17 +47,24 @@ class AuthController extends BaseController {
         if (!$this->security->checkToken())
           throw new InvalidTokenException("Il token è invalido, la richiesta non può essere evasa.");
 
-        $validation = new Validation();
-
         $validation->setFilters("email", "trim");
         $validation->setFilters("email", "lower");
-
-        $validation->setFilters("password", "trim");
-
         $validation->add("email", new PresenceOf(["message" => "L'e-mail è richiesta"]));
         $validation->add("email", new Email(["message" => "L'e-mail non è valida"]));
 
+        $validation->setFilters("password", "trim");
         $validation->add("password", new PresenceOf(["message" => "La password è richiesta"]));
+
+        $group = $validation->validate($_POST);
+        if (count($group) > 0) {
+          throw new InvalidFieldException("I campi sono incompleti o i valori indicati non sono validi. Gli errori sono segnalati a fianco di ogni campo.");
+        }
+
+        // Filters only the messages generated for the field 'name'.
+        /*foreach ($validation->getMessages()->filter('email') as $message) {
+          $this->flashSession->notice($message->getMessage());
+          break;
+        }*/
 
         $email = $this->request->getPost('email');
         //$password = $this->security->hash($this->request->getPost('password'));
