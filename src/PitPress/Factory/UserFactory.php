@@ -6,41 +6,55 @@
 //! @author Filippo F. Fadda
 
 
+//! @brief This is the namespace of all classes that implement the factory pattern.
 namespace PitPress\Factory;
 
 
 use PitPress\Model\User;
 
+use Phalcon\DI;
 
+use ElephantOnCouch\Couch;
+
+
+//! @brief This class implements the factory pattern and it's used to creates users.
+//! @nosubgrouping
 class UserFactory {
 
+  //! @brief This function tries to recognize a user from his ID and the secret token. In case the user has been
+  //! recognized, an user object is returned, else this function returns `null`.
+  //! @return User An instance of the user has been recognized by his cookie.
   public static function getFromCookie() {
-    if (isset($_COOKIE['id']) && ($_COOKIE['id'] != 'deleted') && isset($_COOKIE['md5']) && ($_COOKIE['md5'] != 'deleted')) {
-      $idMember = $_COOKIE['id'];
-      $md5 = $_COOKIE['md5'];
+    $di = DI::getDefault();
+    $couch = $di['couchdb'];
+    $security = $di['security'];
 
-      $sql = "SELECT idMember, name, surname, nickName, email, password, ipAddress, admin, homePage, regDate FROM Member WHERE idMember = ".mysql_real_escape_string($idMember)." AND confirmed = 1";
+    if (isset($_COOKIE['id']) && ($_COOKIE['id'] != 'deleted') && isset($_COOKIE['token']) && ($_COOKIE['token'] != 'deleted')) {
+      $id = $_COOKIE['id'];
+      $savedToken = $_COOKIE['token'];
 
-      $result = mysql_query($sql, $connection);
+      // Gets the user.
+      $user = $couch->getDoc(Couch::STD_DOC_PATH, $id);
 
-      if (mysql_num_rows($result)) {
-        $row = mysql_fetch_object($result);
-        $temp = md5(crypt($row->idMember.$row->ipAddress.$row->regDate, 'jzojhghgfd'));
+      // Creates a token based on the user id and his IP address, obviously encrypted.
+      $updatedToken = $security->hash($user->id.$_SERVER['REMOTE_ADDR']);
 
-        if ($md5 == $temp)
-          return $row;
-        else
-          return null;
+      if ($savedToken == $updatedToken)
+        return $user;
+      else {
+        // To avoid Internet Explorer 6.x implementation issues.
+        header('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
+        header('P3P: CP="IDC DSP COR CURa ADMa OUR IND PHY ONL COM STA"');
+
+        // Deletes the cookies.
+        setcookie("id", "", time(), "/", $di->application->serverName);
+        setcookie("token", "", time(), "/", $di->application->serverName);
+
+        return NULL;
       }
-      else
-        return null;
-
-      mysql_free_result($result);
-
     }
     else
-      return null;
+      return NULL;
   }
-
 
 } 
