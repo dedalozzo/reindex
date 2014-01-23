@@ -99,7 +99,7 @@ class AuthController extends BaseController {
         header('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
         header('P3P: CP="IDC DSP COR CURa ADMa OUR IND PHY ONL COM STA"');
 
-        // Finally I write the id and the token.
+        // Finally let's write the id and the token.
         setcookie("id", $user->id, mktime(0, 0, 0, 12, 12, 2030), "/", $this->application->serverName);
         setcookie("token", $token, mktime(0, 0, 0, 12, 12, 2030), "/", $this->application->serverName);
 
@@ -111,6 +111,8 @@ class AuthController extends BaseController {
         // To avoid Internet Explorer 6.x implementation issues.
         header('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
         header('P3P: CP="IDC DSP COR CURa ADMa OUR IND PHY ONL COM STA"');
+
+        // Deletes the cookies.
         setcookie("id", "", time(), "/", $this->application->serverName);
         setcookie("token", "", time(), "/", $this->application->serverName);
 
