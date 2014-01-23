@@ -6,7 +6,7 @@
 //! @author Filippo F. Fadda
 
 
-//! @brief This is the hooks namespace
+//! @brief This is the hooks namespace.
 namespace PitPress\Hook;
 
 use Phalcon\CLI\Console\Exception;
@@ -21,6 +21,7 @@ use PitPress\Model\Accessory\Vote;
 use PitPress\Model\Accessory\Score;
 
 
+//! @brief This class calculates the score for every single post.
 class UpdateScoreHook implements ChunkHook, InjectionAwareInterface {
 
   private $di;
@@ -37,6 +38,8 @@ class UpdateScoreHook implements ChunkHook, InjectionAwareInterface {
   private $lastChunkRead = FALSE;
 
 
+  //! @brief Reduces the votes.
+  //! @return int The sum of the votes.
   private function reduce() {
     $reductions = [];
     foreach ($this->votes as $vote) {
@@ -53,6 +56,7 @@ class UpdateScoreHook implements ChunkHook, InjectionAwareInterface {
   }
 
 
+  //! @brief Processes the chunk.
   public function process($chunk) {
     $chunk = trim($chunk, ",\r\n");
 
