@@ -20,31 +20,14 @@
     <li><a href="{{ baseUri }}/tour/">Tour</a></li>
     <li><a href="{{ baseUri }}/aiuto/">Aiuto</a></li>
     <li class="space"></li>
+    {% if user is defined %}
+      {% set userUri = 'http://utenti.'~serverName~'/'~user.id %}
+    <li><a href="{{ userUri }}"><img class="gravatar" src="{{ user.getGravatar(user.email) }}&s=20" />&nbsp;{{ user.displayName }}</a></li>
+    {% else %}
     <li><a href="{{ baseUri }}/accedi/">Accedi</a></li>
     <li><a href="{{ baseUri }}/registrati/">Registrati</a></li>
+    {% endif %}
     <!-- <li><a href="#" data-toggle="modal" data-target="#myModal">Registrati</a></li> -->
-    <!-- <li><a href="#"><img class="gravatar" src="http://gravatar.com/avatar/6e8f028adc23ca57bf0e730c4c7f7ae8?d=identicon&s=20" />&nbsp;dedalo</a></li> -->
     <!-- Button trigger modal -->
-
   </ul>
 </div>
-
-<!-- <li class="dropdown-wrapper"><a id="blog" data-toggle="dropdown" href="#">BLOG&nbsp;<span class="toggle" /></a>
-<ul class="dropdown" role="list" aria-labelledby="drop3">
-  <li><a tabindex="-1" href="#">Pensiero Digitale</a></li>
-</ul>
-</li> -->
-<!-- <li class="dropdown-wrapper clean"><a data-toggle="dropdown" class="icon-user"></i>pippo</a>
-  <ul class="dropdown dropdown-arrow" role="list" aria-labelledby="user">
-    <li><a tabindex="-1" href="#"><span class="icon-cog" />&nbsp;Impostazioni</a></li>
-    <li><a tabindex="-1" href="#"><span class="icon-user" />&nbsp;Profilo</a></li>
-    <li class="divider"></li>
-    <li><a tabindex="-1" href="#"><span class="icon-signout" />&nbsp;Disconnetti</a></li>
-  </ul>
-</li> -->
-<!-- <li class="dropdown-wrapper clean"><span data-toggle="dropdown" class="icon-search icon-large"></span>
-  <ul class="dropdown dropdown-arrow" role="list" aria-labelledby="search">
-    <li><a tabindex="-1" href="#"><span class="icon-cog" />&nbsp;Pippo</a></li>
-  </ul>
-</li> -->
-<!-- <li class="clean"><a href="#" class="icon-inbox icon-large"></a></li> -->
