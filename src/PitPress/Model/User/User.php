@@ -236,17 +236,17 @@ class User extends Storable implements Extension\ICount {
   }
   
 
-  public function getIPAddress($value) {
-    $this->meta['ipAddress'] = $value;
+  public function getInternetProtocolAddress() {
+    return $this->meta['ipAddress'];
   }
 
 
-  public function issetIPAddress() {
+  public function issetInternetProtocolAddress() {
     return isset($this->meta['ipAddress']);
   }
 
 
-  public function setIPAddress($value) {
+  public function setInternetProtocolAddress($value) {
     $this->meta['ipAddress'] = $value;
   }
 

@@ -15,7 +15,7 @@ class User  {
   string $email; //!< E-mail.
   string $password; //!< Password chosen by the user.
   string $confirmationHash //!< String hash sent via e-mail to the user to confirm that his e-mail is real.
-  string $ipAddress //!< The IP address of the user.
+  string $internetProtocolAddress //!< The IP address of the user.
 
   integer $creationDate; //!< Registration date.
 
