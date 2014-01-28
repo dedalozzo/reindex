@@ -31,15 +31,12 @@ class UserFactory {
 
     if (isset($_COOKIE['id']) && ($_COOKIE['id'] != 'deleted') && isset($_COOKIE['token']) && ($_COOKIE['token'] != 'deleted')) {
       $id = $_COOKIE['id'];
-      $savedToken = $_COOKIE['token'];
+      $token = $_COOKIE['token'];
 
       // Gets the user.
       $user = $couch->getDoc(Couch::STD_DOC_PATH, $id);
 
-      // Creates a token based on the user id and his IP address, obviously encrypted.
-      $updatedToken = $security->hash($user->id.$_SERVER['REMOTE_ADDR']);
-
-      if ($savedToken == $updatedToken)
+      if ($security->checkHash($token, $user->id.$_SERVER['REMOTE_ADDR']))
         return $user;
       else {
         // To avoid Internet Explorer 6.x implementation issues.
