@@ -89,10 +89,10 @@ class AuthController extends BaseController {
           throw new WrongPasswordException("Non vi è nessun utente registrato con la login inserita o la password è errata. <a href=\"".$this->baseUri."/resetta-password/\">Hai dimenticato la password?</a>");
 
         // Updates the ip address with the current one.
-        $user->ipAddress = $_SERVER['REMOTE_ADDR'];
+        $user->internetProtocolAddress = $_SERVER['REMOTE_ADDR'];
 
         // Creates a token based on the user id and his IP address, obviously encrypted.
-        $token = $this->security->hash($user->id.$user->ipAddress);
+        $token = $this->security->hash($user->id.$user->internetProtocolAddress);
 
         // To avoid Internet Explorer 6.x implementation issues. I don't fuckin care about IE 6 but this code worked so
         // let's use it.
@@ -100,8 +100,8 @@ class AuthController extends BaseController {
         header('P3P: CP="IDC DSP COR CURa ADMa OUR IND PHY ONL COM STA"');
 
         // Finally let's write the id and the token.
-        setcookie("id", $user->id, mktime(0, 0, 0, 12, 12, 2030), "/", $this->application->serverName);
-        setcookie("token", $token, mktime(0, 0, 0, 12, 12, 2030), "/", $this->application->serverName);
+        setcookie("id", $user->id, mktime(0, 0, 0, 12, 12, 2030), "/", $this->serverName);
+        setcookie("token", $token, mktime(0, 0, 0, 12, 12, 2030), "/", $this->serverName);
 
         $user->save();
 
