@@ -12,6 +12,8 @@ namespace PitPress\Controller;
 
 use Phalcon\Mvc\Controller;
 
+use PitPress\Factory\UserFactory;
+
 
 //! @brief The base controller, a subclass of Phalcon controller.
 //! @nosubgrouping
@@ -25,6 +27,8 @@ abstract class BaseController extends Controller {
   protected $baseUri;
   protected $controllerName;
   protected $actionName;
+
+  protected $user;
 
   // Stores the main menu definition.
   protected static $mainMenu = [
@@ -52,6 +56,10 @@ abstract class BaseController extends Controller {
     $this->serverName = $this->di['config']['application']['serverName'];
     $this->baseUri = "http://".$this->serverName;
     $this->controllerName = $this->dispatcher->getControllerName();
+
+    $this->user = UserFactory::getFromCookie();
+    if (isset($this->user))
+      $this->view->setVar('user', $this->user);
 
     // The main menu is present in every page.
     $this->view->setVar('mainMenu', self::$mainMenu);
