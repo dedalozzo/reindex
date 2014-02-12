@@ -8,6 +8,7 @@
 
 namespace PitPress\Controller;
 
+use ElephantOnCouch\Couch;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Helper\Time;
@@ -77,6 +78,25 @@ class UsersController extends SectionController {
           'controller' => 'users',
           'action' => 'reputation'
         ]);
+
+    $opts = new ViewQueryOpts();
+    $opts->setKey($id)->setLimit(1);
+    $rows = $this->couch->queryView("users", "allNames", NULL, $opts)['rows'];
+
+    if (empty($rows))
+      $this->dispatcher->forward(
+        [
+          'controller' => 'error',
+          'action' => 'show404'
+        ]);
+
+    $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $id);
+    $doc->incHits();
+    $this->view->setVar('doc', $doc);
+
+    $this->view->setVar('title', $doc->displayName);
+
+    $this->view->disableLevel(View::LEVEL_LAYOUT);
   }
 
 
