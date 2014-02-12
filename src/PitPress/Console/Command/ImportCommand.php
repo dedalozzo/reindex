@@ -285,11 +285,11 @@ class ImportCommand extends AbstractCommand {
         $book->username = NULL;
       }
 
-      if (preg_match('/\\[isbn\\](.*?)\\[\/isbn\\]/su', $item->body, $matches))
+      if (preg_match('/\\[isbn\\](.*?)\\[\/isbn\\]/s', $item->body, $matches))
         $book->isbn = iconv('LATIN1', 'UTF-8', $matches[1]);
-      if (preg_match('/\\[authors\\](.*?)\\[\/authors\\]/su', $item->body, $matches))
+      if (preg_match('/\\[authors\\](.*?)\\[\/authors\\]/s', $item->body, $matches))
         $book->authors = iconv('LATIN1', 'UTF-8', $matches[1]);
-      if (preg_match('/\\[publisher\\](.*?)\\[\/publisher\\]/su', $item->body, $matches))
+      if (preg_match('/\\[publisher\\](.*?)\\[\/publisher\\]/s', $item->body, $matches))
         $book->publisher = iconv('LATIN1', 'UTF-8', $matches[1]);
       if (preg_match('/\\[language\\](.*?)\\[\/language\\]/su', $item->body, $matches))
         $book->language = iconv('LATIN1', 'UTF-8', $matches[1]);
@@ -297,16 +297,16 @@ class ImportCommand extends AbstractCommand {
         $book->year = $matches[1];
       if (preg_match('/\\[pages\\](.*?)\\[\/pages\\]/s', $item->body, $matches))
         $book->pages = $matches[1];
-      if (preg_match('/\\[attachments\\](.*?)\\[\/attachments\\]/su', $item->body, $matches) && !empty($matches[1]))
+      if (preg_match('/\\[attachments\\](.*?)\\[\/attachments\\]/s', $item->body, $matches) && !empty($matches[1]))
         $book->attachments = iconv('LATIN1', 'UTF-8', $matches[1]);
-      if (preg_match('/\\[review\\](.*?)\\[\/review\\]/su', $item->body, $matches))
+      if (preg_match('/\\[review\\](.*?)\\[\/review\\]/s', $item->body, $matches))
         $review = iconv('LATIN1', 'UTF-8', $matches[1]);
-      if (preg_match('/\\[positive\\](.*?)\\[\/positive\\]/su', $item->body, $matches))
+      if (preg_match('/\\[positive\\](.*?)\\[\/positive\\]/s', $item->body, $matches))
         $positive = iconv('LATIN1', 'UTF-8', $matches[1]);
-      if (preg_match('/\\[negative\\](.*?)\\[\/negative\\]/su', $item->body, $matches))
+      if (preg_match('/\\[negative\\](.*?)\\[\/negative\\]/s', $item->body, $matches))
         $negative = iconv('LATIN1', 'UTF-8', $matches[1]);
 
-      if (preg_match('/\\[vendorLink\\](.*?)\\[\/vendorLink\\]/su', $item->body, $matches) && !empty($matches[1]))
+      if (preg_match('/\\[vendorLink\\](.*?)\\[\/vendorLink\\]/s', $item->body, $matches) && !empty($matches[1]))
         $book->link = iconv('LATIN1', 'UTF-8', $matches[1]);
 
 
