@@ -1,6 +1,7 @@
 <div class="column-left">
   {% set usersBaseUrl = 'http://utenti.'~serverName~'/' %}
   {% set userUrl = usersBaseUrl~doc.userId %}
+  {% set hitsCount = doc.getHitsCount() %}
   {% set replaysCount = doc.getReplaysCount() %}
 
   {% if doc.type == 'question' %}
@@ -26,7 +27,7 @@
     </div>
 
     <div class="item-container shift">
-      <div class="item-hits"><b>{{ doc.getHitsCount() }}</b> lettori</div>
+      <div class="item-hits"><b>{{ doc.hitsCount }}</b>{% if hitsCount == 1 %} lettore{% else %} lettori{% endif %}</div>
       <ul class="list toolbar">
         <li class="toolgroup">
           <a href="#" title="Aggiungi ai preferiti"><i class="icon-star-empty"></i></a>
