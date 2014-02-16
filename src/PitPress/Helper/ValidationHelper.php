@@ -31,6 +31,5 @@ class ValidationHelper extends Validation {
     else
       return "";
   }
-  //$this->flashSession->notice($message->getMessage());
 
 } 
