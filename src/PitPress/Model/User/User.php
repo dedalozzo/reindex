@@ -34,7 +34,8 @@ class User extends Storable implements Extension\ICount {
   public function getAge() {
     if ($this->issetBirthday()) {
       $now = new \DateTime();
-      $birthday = new \DateTime("@$this->getBirthday()");
+      $birthdayTimestamp = $this->getBirthday();
+      $birthday = new \DateTime("@$birthdayTimestamp");
       return $now->diff($birthday)->y;
     }
     else
@@ -43,8 +44,19 @@ class User extends Storable implements Extension\ICount {
 
 
   //! @brief Last time the user has logged in.
-  public function getLastVisit($value) {
-    $this->meta['lastVisit'] = $value;
+  //! @return string The time expressed as `3 Aprile, 2013` or an empty string.
+  public function getLastVisit() {
+    if (isset($this->meta['lastVisit']))
+      return strftime('%e %B, %Y', $this->meta['lastVisit']);
+    else
+      return "";
+  }
+
+
+  //! @brief Returns the elapsed time since the user registration.
+  //! @return string
+  public function getElapsedTimeSinceRegistration() {
+    return strftime('%e %B, %Y', $this->getCreationDate());
   }
 
 
@@ -86,6 +98,51 @@ class User extends Storable implements Extension\ICount {
   //@}
 
 
+  //! @name Access Control Management Methods
+  // @{
+
+  //! @brief Promotes the user to administrator.
+  public function setAsAdmin() {
+    $this->unsetAsModerator();
+    $this->meta['admin'] = "true";
+  }
+
+
+  //! @brief Reverts the administrator to a normal user.
+  public function unsetAsAdmin() {
+    if ($this->isMetadataPresent('admin'))
+      unset($this->meta['admin']);
+  }
+
+
+  //! @brief Returns `true` in case the user is an administrator.
+  public function isAdmin() {
+    return isset($this->meta['admin']);
+  }
+
+
+  //! @brief Promotes the user to moderator.
+  public function setAsModerator() {
+    if (!$this->isAdmin())
+      $this->meta['moderator'] = "true";
+  }
+
+
+  //! @brief Reverts the moderator to a normal user.
+  public function unsetAsModerator() {
+    if ($this->isMetadataPresent('moderator'))
+      unset($this->meta['moderator']);
+  }
+
+
+  //! @brief Returns `true` in case the user is a moderator.
+  public function isModerator() {
+    return isset($this->meta['moderator']);
+  }
+
+  //@}
+
+
   //! @name Ban Management Methods
   // @{
 
@@ -114,7 +171,6 @@ class User extends Storable implements Extension\ICount {
 
 
   //! @cond HIDDEN_SYMBOLS
-
 
   public function getFirstName() {
     return $this->meta['firstName'];
