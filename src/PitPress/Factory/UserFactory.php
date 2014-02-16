@@ -36,7 +36,7 @@ class UserFactory {
       // Gets the user.
       $user = $couch->getDoc(Couch::STD_DOC_PATH, $id);
 
-      if ($security->checkHash($token, $user->id.$_SERVER['REMOTE_ADDR']))
+      if ($security->checkHash($user->id.$_SERVER['REMOTE_ADDR'], $token))
         return $user;
       else {
         // To avoid Internet Explorer 6.x implementation issues.
@@ -44,8 +44,8 @@ class UserFactory {
         header('P3P: CP="IDC DSP COR CURa ADMa OUR IND PHY ONL COM STA"');
 
         // Deletes the cookies.
-        setcookie("id", "", time(), "/", $di->application->serverName);
-        setcookie("token", "", time(), "/", $di->application->serverName);
+        setcookie("id", "", time(), "/", $di['config']['application']->serverName);
+        setcookie("token", "", time(), "/", $di['config']['application']->serverName);
 
         return NULL;
       }
@@ -54,4 +54,4 @@ class UserFactory {
       return NULL;
   }
 
-} 
+}
