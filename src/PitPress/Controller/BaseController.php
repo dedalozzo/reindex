@@ -42,9 +42,18 @@ abstract class BaseController extends Controller {
   ];
 
 
-  // Returns an associative array of paths indexed by controller name.
+  //! @brief Returns an associative array of paths indexed by controller name.
   protected static function getPaths($menu) {
     return array_column($menu, 'path', 'name');
+  }
+
+  //! @brief Redirects to the home specified uri. In case an uri is not provided, the function redirects to the home page.
+  //! @param[in] string $uri The redirect URI.
+  protected function redirect($uri = "") {
+    if (empty($uri))
+      return $this->response->redirect($this->baseUri, TRUE);
+    else
+      return $this->response->redirect($uri, TRUE);
   }
 
 
