@@ -13,6 +13,8 @@ use Phalcon\DI\FactoryDefault as DependencyInjector;
 
 $start = microtime(true);
 
+setlocale(LC_TIME, 'it_IT');
+
 //try {
 
 $debug = new Phalcon\Debug();
