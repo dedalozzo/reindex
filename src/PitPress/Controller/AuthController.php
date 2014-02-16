@@ -136,9 +136,10 @@ class AuthController extends BaseController {
       $requestUri = $this->baseUri.$_SERVER['REQUEST_URI'];
       $refererUri = $_SERVER['HTTP_REFERER'];
 
-      if (($requestUri != $refererUri) && !$this->session->has("referer")) {
+      if ($requestUri != $refererUri)
         $this->session->set("referer", $refererUri);
-      }
+      else
+        $this->session->remove("referer");
     }
 
     $this->view->disableLevel(View::LEVEL_LAYOUT);
