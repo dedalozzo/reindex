@@ -72,8 +72,9 @@ class UsersController extends SectionController {
 
 
   public function showAction($id) {
+    // If no user id is provided, shows all the users.
     if (empty($id))
-      $this->dispatcher->forward(
+      return $this->dispatcher->forward(
         [
           'controller' => 'users',
           'action' => 'reputation'
@@ -83,8 +84,9 @@ class UsersController extends SectionController {
     $opts->setKey($id)->setLimit(1);
     $rows = $this->couch->queryView("users", "allNames", NULL, $opts)['rows'];
 
+    // If the user doesn't exist, forward to 404.
     if (empty($rows))
-      $this->dispatcher->forward(
+      return $this->dispatcher->forward(
         [
           'controller' => 'error',
           'action' => 'show404'
