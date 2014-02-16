@@ -18,9 +18,10 @@ class Time extends TimeHelper {
   private static $periods = ['sempre', 'anno', 'trimestre', 'mese', 'settimana', '24-ore'];
 
 
-  //! @brief Returns a measure of the time passed since timestamp. In case is passed more than a day, returns a human
-  //! readable date.
+  //! @brief Returns a measure of the time passed since the provided timestamp. In case is passed more than a day,
+  //! returns a human readable date.
   //! @param[in] string $timestamp A timestamp in seconds.
+  //! @param[in] bool $showTime When `true` returns also the time passed in case of an event occurred in the past.
   //! @return string
   public static function when($timestamp, $showtime = TRUE) {
     $today = date('Ymd');
