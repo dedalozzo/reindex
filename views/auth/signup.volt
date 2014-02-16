@@ -1,5 +1,7 @@
 <div id="title" class="dark">Registrati</div>
 
+{{ flash.output() }}
+
 <div class="ghost gutter-plus">
   <p>Se possiedi già un'utenza su uno dei seguenti social network, clicca il banner corrispondente per registrarti.</p>
   <ul class="list social-grp">
