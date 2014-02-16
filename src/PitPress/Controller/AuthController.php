@@ -33,8 +33,19 @@ use PitPress\Exception\WrongPasswordException;
 //! @nosubgrouping
 class AuthController extends BaseController {
 
+  //! @brief Redirects to the referer page if any.
+  protected function referer() {
+    if ($this->session->has("referer"))
+      return $this->response->redirect($this->session->get("referer"), TRUE);
+    else
+      return $this->redirect();
+  }
+
+
   //! @brief Sign in with a PitPress account.
   public function signInAction() {
+    if (isset($this->user))
+      return $this->referer($this->user->id);
 
     // The validation object must be created in any case.
     $validation = new ValidationHelper();
@@ -62,7 +73,7 @@ class AuthController extends BaseController {
 
         // Filters only the messages generated for the field 'name'.
         /*foreach ($validation->getMessages()->filter('email') as $message) {
-          $this->flashSession->notice($message->getMessage());
+          $this->flash->notice($message->getMessage());
           break;
         }*/
 
@@ -105,7 +116,7 @@ class AuthController extends BaseController {
 
         $user->save();
 
-        return $this->response->redirect("index");
+        return $this->referer();
       }
       catch (\Exception $e) {
         // To avoid Internet Explorer 6.x implementation issues.
@@ -113,13 +124,21 @@ class AuthController extends BaseController {
         header('P3P: CP="IDC DSP COR CURa ADMa OUR IND PHY ONL COM STA"');
 
         // Deletes the cookies.
-        setcookie("id", "", time(), "/", $this->application->serverName);
-        setcookie("token", "", time(), "/", $this->application->serverName);
+        setcookie("id", "", time(), "/", $this->serverName);
+        setcookie("token", "", time(), "/", $this->serverName);
 
         // Displays the error message.
-        $this->flashSession->error($e->getMessage());
+        $this->flash->error($e->getMessage());
       }
+    }
+    else {
+      // Sets the HTTP Referer to be able to return to the previous page.
+      $requestUri = $this->baseUri.$_SERVER['REQUEST_URI'];
+      $refererUri = $_SERVER['HTTP_REFERER'];
 
+      if (($requestUri != $refererUri) && !$this->session->has("referer")) {
+        $this->session->set("referer", $refererUri);
+      }
     }
 
     $this->view->disableLevel(View::LEVEL_LAYOUT);
@@ -128,18 +147,43 @@ class AuthController extends BaseController {
 
   //! @brief Sign out.
   public function signOutAction() {
+    if (is_null($this->user))
+      return $this->redirect();
 
     // To avoid Internet Explorer 6.x implementation issues.
     header('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
     header('P3P: CP="IDC DSP COR CURa ADMa OUR IND PHY ONL COM STA"');
 
     // Sets a null cookie and redirect to the home page.
-    setcookie("id", "", 0, "/", $this->application->serverName);
-    setcookie("token", "", 0, "/", $this->application->serverName);
-    setcookie("test", "", 0, "/", $this->application->serverName);
+    setcookie("id", "", 0, "/", $this->serverName);
+    setcookie("token", "", 0, "/", $this->serverName);
+    setcookie("test", "", 0, "/", $this->serverName);
 
-    header("Location: /");
-    exit;
+    // Displays the error message.
+    $this->flash->success("Disconnessione avvenuta con successo.");
+
+    //$userId = $this->user->id;
+    //$this->user = NULL;
+    //$this->view->setVar('user', NULL);
+
+    //$this->url->setBaseUri('http://utenti.programmazione.me/');
+    $this->view->disable();
+    $redirectUri = "http://utenti.".$this->serverName."/".$this->user->id;
+    return $this->redirect($redirectUri);
+
+    //exit;
+
+
+    //$this->redirect($this->user->id);
+
+    /*
+    return $this->dispatcher->forward(
+      [
+        'controller' => 'users',
+        'action' => 'show',
+        'params' => [$userId]
+      ]);
+    */
   }
 
 
