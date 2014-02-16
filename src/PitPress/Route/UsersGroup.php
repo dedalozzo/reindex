@@ -27,7 +27,6 @@ class UsersGroup extends Group {
 
     $this->setHostName('utenti.programmazione.me');
 
-    $this->addGet('/', ['action' => 'reputation']);
     $this->addGet('/{id}', ['action' => 'show']);
     $this->addGet('/reputazione/{period}', ['action' => 'reputation']);
     $this->addGet('/nuovi/', ['action' => 'newest']);
