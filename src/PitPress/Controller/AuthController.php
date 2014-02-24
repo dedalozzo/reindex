@@ -15,13 +15,14 @@ use OAuth\Common\Consumer\Credentials;
 use OAuth\ServiceFactory;
 
 use Phalcon\Mvc\View;
-use PitPress\Exception\InvalidFieldException;
-use PitPress\Helper\ValidationHelper;
 use Phalcon\Validation\Validator\PresenceOf;
 use Phalcon\Validation\Validator\Email;
 
 use ElephantOnCouch\Couch;
 use ElephantOnCouch\Opt\ViewQueryOpts;
+
+use PitPress\Exception\InvalidFieldException;
+use PitPress\Helper\ValidationHelper;
 
 use PitPress\Exception\InvalidTokenException;
 use PitPress\Exception\UserNotConfirmedException;
