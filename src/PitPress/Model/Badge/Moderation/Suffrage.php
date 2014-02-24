@@ -16,4 +16,14 @@ use PitPress\Model\Badge\Bronze;
 //! @details Awarded once.
 class Suffrage extends Bronze {
 
+
+  public function award() {
+
+  }
+
+
+  public function withdrawn() {
+
+  }
+
 } 

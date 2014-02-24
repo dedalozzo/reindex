@@ -16,4 +16,14 @@ use PitPress\Model\Badge\Silver;
 //! @details Awarded multiple times.
 class Enlightened extends Silver {
 
-} 
+
+  public function award() {
+
+  }
+
+
+  public function withdrawn() {
+
+  }
+
+}

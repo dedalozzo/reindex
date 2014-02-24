@@ -1,21 +1,20 @@
 <?php
 
-//! @file GoodAnswer.php
-//! @brief This file contains the GoodAnswer class.
+//! @file TechnicalWriter.php
+//! @brief This file contains the TechnicalWriter class.
 //! @details
 //! @author Filippo F. Fadda
 
 
-namespace PitPress\Model\Badge\Answer;
+namespace PitPress\Model\Badge\Article;
 
 
 use PitPress\Model\Badge\Silver;
 
 
-//! @brief Answer score of 25 or more.
+//! @brief Wrote 5 articles.
 //! @details Awarded multiple times.
-class GoodAnswer extends Silver {
-
+class TechnicalWriter extends Silver {
 
   public function award() {
 

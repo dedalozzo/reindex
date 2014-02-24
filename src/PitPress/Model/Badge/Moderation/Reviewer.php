@@ -16,4 +16,14 @@ use PitPress\Model\Badge\Silver;
 //! @details Awarded once per review type.
 class Reviewer extends Silver {
 
+
+  public function award() {
+
+  }
+
+
+  public function withdrawn() {
+
+  }
+
 } 

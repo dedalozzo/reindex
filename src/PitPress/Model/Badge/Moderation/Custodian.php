@@ -16,4 +16,14 @@ use PitPress\Model\Badge\Bronze;
 //! @details Awarded once per review type.
 class Custodian extends Bronze {
 
+
+  public function award() {
+
+  }
+
+
+  public function withdrawn() {
+
+  }
+
 } 

@@ -16,4 +16,14 @@ use PitPress\Model\Badge\Bronze;
 //! @details Awarded once.
 class Commentator extends Bronze {
 
+
+  public function award() {
+
+  }
+
+
+  public function withdrawn() {
+
+  }
+
 } 

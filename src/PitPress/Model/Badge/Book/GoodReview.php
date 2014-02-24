@@ -9,6 +9,21 @@
 namespace PitPress\Model\Badge\Book;
 
 
-class GoodReview {
+use PitPress\Model\Badge\Article\GoodArticle;
+
+
+//! @brief Book score of 25 or more.
+//! @details Awarded multiple times.
+class GoodReview extends GoodArticle {
+
+
+  public function award() {
+
+  }
+
+
+  public function withdrawn() {
+
+  }
 
 } 

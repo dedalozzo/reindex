@@ -1,7 +1,7 @@
 <?php
 
 //! @file StellarArticle.php
-//! @brief This file contains the ${CLASS_NAME} class.
+//! @brief This file contains the StellarArticle class.
 //! @details
 //! @author Filippo F. Fadda
 
@@ -9,6 +9,11 @@
 namespace PitPress\Model\Badge\Article;
 
 
-class StellarArticle {
+use PitPress\Model\Badge\Question\StellarQuestion;
+
+
+//! @brief Article starred by 100 users.
+//! @details Awarded multiple times.
+class StellarArticle extends StellarQuestion {
 
 } 

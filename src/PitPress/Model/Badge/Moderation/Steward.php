@@ -16,4 +16,14 @@ use PitPress\Model\Badge\Gold;
 //! @details Awarded once per review type.
 class Steward extends Gold {
 
+
+  public function award() {
+
+  }
+
+
+  public function withdrawn() {
+
+  }
+
 } 

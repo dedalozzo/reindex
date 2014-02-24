@@ -15,4 +15,14 @@ use PitPress\Model\Badge\Gold;
 //! @brief Asked a question with 10.000 views.
 class FamousQuestion extends Gold {
 
+
+  public function award() {
+
+  }
+
+
+  public function withdrawn() {
+
+  }
+
 } 

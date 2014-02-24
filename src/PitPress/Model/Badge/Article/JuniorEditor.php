@@ -1,21 +1,20 @@
 <?php
 
-//! @file CopyEditor.php
-//! @brief This file contains the CopyEditor class.
+//! @file JuniorEditor.php
+//! @brief This file contains the JuniorEditor class.
 //! @details
 //! @author Filippo F. Fadda
 
 
-namespace PitPress\Model\Badge\Moderation;
+namespace PitPress\Model\Badge\Article;
 
 
 use PitPress\Model\Badge\Silver;
 
 
-//! @brief Edited 100 posts.
+//! @brief Wrote 10 articles.
 //! @details Awarded once.
-class CopyEditor extends Silver {
-
+class JuniorEditor extends Silver {
 
   public function award() {
 
@@ -26,4 +25,4 @@ class CopyEditor extends Silver {
 
   }
 
-} 
+}

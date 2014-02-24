@@ -16,4 +16,13 @@ use PitPress\Model\Badge\Gold;
 //! @details Awarded multiple times.
 class StellarQuestion extends Gold {
 
+  public function award() {
+
+  }
+
+
+  public function withdrawn() {
+
+  }
+
 } 

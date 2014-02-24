@@ -16,4 +16,14 @@ use PitPress\Model\Badge\Silver;
 //! @details Awarded once.
 class Archaeologist extends Silver {
 
-} 
+
+  public function award() {
+
+  }
+
+
+  public function withdrawn() {
+
+  }
+
+}

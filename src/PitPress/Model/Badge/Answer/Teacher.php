@@ -16,4 +16,14 @@ use PitPress\Model\Badge\Bronze;
 //! details Awarded once.
 class Teacher extends Bronze {
 
+
+  public function award() {
+
+  }
+
+
+  public function withdrawn() {
+
+  }
+
 } 

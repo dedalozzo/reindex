@@ -16,4 +16,14 @@ use PitPress\Model\Badge\Silver;
 //! @details Awarded once.
 class Tenacious extends Silver {
 
+
+  public function award() {
+
+  }
+
+
+  public function withdrawn() {
+
+  }
+
 } 
