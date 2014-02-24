@@ -115,12 +115,44 @@ class IndexController extends ListController {
   }
 
 
-  public function aboutAction() {
+  //! @brief Displays the tour page.
+  public function tourAction() {
 
   }
 
 
+  //! @brief Displays the help page.
   public function helpAction() {
+
+  }
+
+
+  //! @brief Displays a page with the legal info.
+  public function legalAction() {
+
+  }
+
+
+  //! @brief Displays the privacy page.
+  public function privacyAction() {
+
+  }
+
+
+  //! @brief Displays the career page.
+  public function careerAction() {
+
+  }
+
+
+  //! @brief Displays the advertising page.
+  public function advertisingAction() {
+
+  }
+
+
+  //! @brief Displays the contacts page.
+  public function contactAction() {
 
   }
 
