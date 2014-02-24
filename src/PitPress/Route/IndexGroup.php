@@ -30,8 +30,13 @@ class IndexGroup extends Group {
 
     $this->addGet('/', ['action' => 'popular']);
 
-    $this->addGet('/tour/', ['action' => 'about']);
+    $this->addGet('/tour/', ['action' => 'tour']);
     $this->addGet('/aiuto/', ['action' => 'help']);
+    $this->addGet('/legale/', ['action' => 'legal']);
+    $this->addGet('/privacy/', ['action' => 'privacy']);
+    $this->addGet('/lavoro/', ['action' => 'career']);
+    $this->addGet('/pubblicita/', ['action' => 'advertising']);
+    $this->addGet('/contatti/', ['action' => 'contact']);
 
     // All the following routes start with /aggiornamenti.
     $this->setPrefix('/aggiornamenti');
