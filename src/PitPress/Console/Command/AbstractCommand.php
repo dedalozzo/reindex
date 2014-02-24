@@ -19,7 +19,7 @@ use Symfony\Component\Console\Application;
 //! @brief This class represents an abstract command that implements the InjectionAwareInterface to automatic set the
 //! Phalcon Dependency Injector and make it available to every subclasses.
 //! @nosubgrouping
-class AbstractCommand extends Command implements InjectionAwareInterface {
+abstract class AbstractCommand extends Command implements InjectionAwareInterface {
 
   protected $_di;
   protected $logger;
