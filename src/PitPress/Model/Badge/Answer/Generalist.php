@@ -16,4 +16,13 @@ use PitPress\Model\Badge\Silver;
 //! @details Awarded once.
 class Generalist extends Silver {
 
+  public function award() {
+
+  }
+
+
+  public function withdrawn() {
+
+  }
+
 } 

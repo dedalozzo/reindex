@@ -16,4 +16,14 @@ use PitPress\Model\Badge\Silver;
 //! @details Awarded once.
 class ResearchAssistant extends Silver {
 
+
+  public function award() {
+
+  }
+
+
+  public function withdrawn() {
+
+  }
+
 } 

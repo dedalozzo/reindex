@@ -12,7 +12,6 @@ namespace PitPress\Model;
 use ElephantOnCouch\Doc\Doc;
 
 use Phalcon\DI;
-use Phalcon\Events\EventsAwareInterface;
 
 
 //! @brief This class is used to represent a storable object.
@@ -33,7 +32,7 @@ abstract class Storable extends Doc {
 
   //! @brief Returns information about the last update.
   public function getLastUpdateInfo() {
-
+    return "";
   }
 
   //! @brief Saves the item to the database.

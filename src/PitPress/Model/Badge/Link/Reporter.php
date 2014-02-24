@@ -1,21 +1,20 @@
 <?php
 
-//! @file CopyEditor.php
-//! @brief This file contains the CopyEditor class.
+//! @file Reporter.php
+//! @brief This file contains the Reporter class.
 //! @details
 //! @author Filippo F. Fadda
 
 
-namespace PitPress\Model\Badge\Moderation;
+namespace PitPress\Model\Badge\Link;
 
 
 use PitPress\Model\Badge\Silver;
 
 
-//! @brief Edited 100 posts.
+//! @brief Reported 25 links.
 //! @details Awarded once.
-class CopyEditor extends Silver {
-
+class Reporter extends Silver {
 
   public function award() {
 
@@ -26,4 +25,4 @@ class CopyEditor extends Silver {
 
   }
 
-} 
+}

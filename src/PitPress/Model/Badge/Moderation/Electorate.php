@@ -16,4 +16,14 @@ use PitPress\Model\Badge\Gold;
 //! @details Awarded once.
 class Electorate extends Gold {
 
+
+  public function award() {
+
+  }
+
+
+  public function withdrawn() {
+
+  }
+
 } 

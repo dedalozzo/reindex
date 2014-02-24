@@ -14,6 +14,16 @@ use PitPress\Model\Badge\Silver;
 
 //! @brief Question score of 25 or more.
 //! @details Awarded multiple times.
-class GoodQuestion extends Silver{
+class GoodQuestion extends Silver {
+
+
+  public function award() {
+
+  }
+
+
+  public function withdrawn() {
+
+  }
 
 } 

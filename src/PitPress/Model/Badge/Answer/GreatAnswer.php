@@ -16,4 +16,14 @@ use PitPress\Model\Badge\Gold;
 //! @details Awarded multiple times.
 class GreatAnswer extends Gold {
 
+
+  public function award() {
+
+  }
+
+
+  public function withdrawn() {
+
+  }
+
 } 
