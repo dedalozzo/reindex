@@ -1,10 +1,10 @@
-<div id="title" class="dark">Registrati</div>
+<div id="page-title" class="dark">Registrati</div>
 
 {{ flash.output() }}
 
 <div class="ghost gutter-plus">
   <p>Se possiedi già un'utenza su uno dei seguenti social network, clicca il banner corrispondente per registrarti.</p>
-  <ul class="list social-grp">
+  <ul class="list social">
     <li><a id="facebook-btn" rel="facebook" href="{{ baseUri }}/accedi/facebook/"><span class="logo"></span>Facebook</a></li>
     <li><a id="google-btn" rel="google" href="{{ baseUri }}/accedi/google/"><span class="logo"></span>Google+</a></li>
     <li><a id="linkedin-btn" rel="linkedin" href="{{ baseUri }}/accedi/linkedin/"><span class="logo"></span>LinkedIn</a></li>
