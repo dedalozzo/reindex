@@ -1,4 +1,4 @@
-<div id="title" class="dark">Accedi</div>
+<div id="page-title" class="dark">Accedi</div>
 
 {{ flash.output() }}
 
@@ -22,7 +22,7 @@
 
 <div class="ghost">
   <p>Se sei già registrato su uno dei seguenti social network, clicca il banner corrispondente per accedere.</p>
-  <ul class="list social-grp">
+  <ul class="list social">
     <li><a id="facebook-btn" rel="facebook" href="{{ baseUri }}/accedi/facebook/"><span class="logo"></span>Facebook</a></li>
     <li><a id="google-btn" rel="google" href="{{ baseUri }}/accedi/google/"><span class="logo"></span>Google+</a></li>
     <li><a id="linkedin-btn" rel="linkedin" href="{{ baseUri }}/accedi/linkedin/"><span class="logo"></span>LinkedIn</a></li>
