@@ -16,9 +16,9 @@
   {% if loop.first %}
   <ul class="list gutter">
   {% endif %}
-    <li class="user" style="width: 25%;">
+    <li class="avatar" style="width: 25%;">
       <a href="{{ url }}"><img class="gravatar" src="{{ entry.gravatar }}&s=64" /></a>
-      <div class="user-info">
+      <div class="avatar-info">
         <div><a href="{{ url }}">{{ entry.displayName }}</a></div>
         <div class="reputation"><b>2345</b><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 10<i class="icon-certificate bronze"></i> 10</div>
         <div class="when">iscritto il {{ entry.when }}</div>
