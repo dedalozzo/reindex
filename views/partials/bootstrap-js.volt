@@ -1,5 +1,3 @@
-<script src="http://code.jquery.com/jquery-latest.js"></script>
-
 <script src="{{ controllerPath }}/pit-bootstrap/js/affix.js"></script>
 <script src="{{ controllerPath }}/pit-bootstrap/js/alert.js"></script>
 <script src="{{ controllerPath }}/pit-bootstrap/js/button.js"></script>
