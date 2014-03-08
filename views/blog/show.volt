@@ -19,7 +19,7 @@
       <a href="#">{{ doc.getPublishingType() }}</a>
     </div>
 
-    <div id="title"><span>{{ doc.title }}</span></div>
+    <div id="page-title"><span>{{ doc.title }}</span></div>
 
     <div class="item-tools">
       <a href="#" title ="Questo articolo è interessante"><i class="icon-arrow-up icon-large"></i></a>{{ doc.getScore() }}<a href="#" title="Questo articolo è poco chiaro e di dubbia utilità"><i class="icon-arrow-down icon-large"></i></a>
@@ -90,12 +90,12 @@
         </div>
       </div>
       <div class="list item-links">
-        <li><a class="btn mini blue" href="#"><i class="icon-file-text"></i> MODIFICA</a></li>
-        <li><a class="btn mini blue" href="#"><i class="icon-flag"></i> FLAGGA</a></li>
-        <li><a class="btn mini red" href="#"><i class="icon-trash"></i> ELIMINA</a></li>
-        <li><a class="btn mini orange" href="#"><i class="icon-unlock"></i> BLOCCA</a></li>
-        <li><a class="btn mini orange" href="#"><i class="icon-umbrella"></i> PROTEGGI</a></li>
-        <li><a class="btn mini blue" href="#"><i class="icon-pushpin"></i> APPUNTA</a></li>
+        <li><a class="btn mini blue" href="{{ controllerPath~'/'~doc.id~'/modifica/' }}"><i class="icon-file-text"></i> MODIFICA</a></li>
+        <li><a class="btn mini blue" href="{{ controllerPath~'/flagga/'~doc.id }}"><i class="icon-flag"></i> FLAGGA</a></li>
+        <li><a class="btn mini red" href="{{ controllerPath~'/elimina/'~doc.id }}"><i class="icon-trash"></i> ELIMINA</a></li>
+        <li><a class="btn mini orange" href="{{ controllerPath~'/blocca/'~doc.id }}"><i class="icon-unlock"></i> BLOCCA</a></li>
+        <li><a class="btn mini orange" href="{{ controllerPath~'/proteggi/'~doc.id }}"><i class="icon-umbrella"></i> PROTEGGI</a></li>
+        <li><a class="btn mini blue" href="{{ controllerPath~'/appunta/'~doc.id }}"><i class="icon-pushpin"></i> APPUNTA</a></li>
         <li class="space"></li>
       </div>
     </div>
