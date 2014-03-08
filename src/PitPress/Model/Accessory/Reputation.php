@@ -16,7 +16,8 @@ use ElephantOnCouch\Doc\Doc;
 //! @nosubgrouping
 class Reputation extends Doc {
 
-  //! @brief Creates an instance of Star class.
+
+  //! @brief Creates an instance of Reputation class.
   public static function create($userId, $itemId, $points, $timestamp = NULL) {
     $instance = new self();
 
@@ -29,6 +30,5 @@ class Reputation extends Doc {
 
     return $instance;
   }
-
 
 } 
