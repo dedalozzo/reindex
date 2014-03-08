@@ -28,7 +28,11 @@ class BlogGroup extends Group {
     $this->setHostName('blog.programmazione.me');
 
     $this->addGet('/', ['action' => 'newest']);
+
     $this->addGet('/{year}/{month}/{day}/{slug}', ['action' => 'show']);
+
+    $this->addGet('/{id}/modifica/', ['action' => 'edit']);
+
     $this->addGet('/articoli/{period}', ['action' => 'articles']);
     $this->addGet('/guide/{period}', ['action' => 'tutorials']);
     $this->addGet('/libri/{period}', ['action' => 'books']);
