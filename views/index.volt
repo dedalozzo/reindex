@@ -9,15 +9,16 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <!-- Bootstrap -->
-  <link rel="stylesheet" href="{{ controllerPath }}/pit-bootstrap/css/bootstrap.css" rel="text/css" />
+  <link rel="shortcut icon" href="{{ baseUri }}/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="{{ controllerPath }}/pit-bootstrap/css/bootstrap.css">
+  <link rel="stylesheet" href="{{ controllerPath }}/codemirror/lib/codemirror.css">
 
-  <link rel="shortcut icon" href="{{ baseUri }}/favicon.ico" type="image/x-icon" />
-
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
   <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
   <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
+  {% include "partials/codemirror-js.volt" %}
   <style>
     body {
       background-image: url("{{ baseUri }}/pit-bootstrap/img/backgrounds/bg_px.png");
