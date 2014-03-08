@@ -51,6 +51,7 @@ class BlogController extends ListController {
   }
 
 
+  //! @brief Displays the blog post.
   public function showAction($year, $month, $day, $slug) {
     $opts = new ViewQueryOpts();
     $opts->setKey(['blog', $year, $month, $day, $slug])->setLimit(1);
@@ -68,6 +69,26 @@ class BlogController extends ListController {
     $this->view->setVar('doc', $doc);
     $this->view->setVar('replays', $doc->getReplays());
 
+    $this->view->setVar('title', $doc->title);
+
+    $this->view->disableLevel(View::LEVEL_LAYOUT);
+  }
+
+
+  public function editAction($id) {
+    if (empty($id))
+      $this->dispatcher->forward(
+        [
+          'controller' => 'error',
+          'action' => 'show404'
+        ]);
+
+    $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $id);
+
+    $this->tag->setDefault("title", $doc->title);
+    $this->tag->setDefault("body", $doc->body);
+
+    $this->view->setVar('doc', $doc);
     $this->view->setVar('title', $doc->title);
 
     $this->view->disableLevel(View::LEVEL_LAYOUT);
