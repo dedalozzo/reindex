@@ -7,8 +7,11 @@
 
 
 use Phalcon\Config\Adapter\Ini as IniReader;
-use Phalcon\Logger\Adapter\File as FileAdapter;
 use Phalcon\DI\FactoryDefault as DependencyInjector;
+
+use Monolog\Logger;
+use Monolog\ErrorHandler;
+use Monolog\Handler\StreamHandler;
 
 
 $start = microtime(true);
@@ -28,15 +31,21 @@ $debug->listen();
   // Reads the application's configuration.
   $config = new IniReader($root.'/config.ini');
 
-  $logger = new FileAdapter($root."/log/pit-press.log");
-  $logger->begin();
+  //$logger = new FileAdapter($root."/log/pit-press.log");
+  $monolog = new Logger('pit-press');
+
+  // Registers the Monolog error handler to log errors and exceptions.
+  ErrorHandler::register($monolog);
+
+  // Creates a stream handler to log debugging messages.
+  $monolog->pushHandler(new StreamHandler($root.$config->application->logDir."pit-press.log", Logger::DEBUG));
 
   // The FactoryDefault Dependency Injector automatically registers the right services providing a full stack framework.
   $di = new DependencyInjector();
 
   // Initializes the services. The order doesn't matter.
   require $root."/services/config.php";
-  require $root."/services/logger.php";
+  require $root . "/services/monolog.php";
   require $root."/services/dispatcher.php";
   require $root."/services/router.php";
   require $root."/services/view.php";
