@@ -89,7 +89,7 @@ class ImportCommand extends AbstractCommand {
       $user->email = iconv('LATIN1', 'UTF-8', $item->email);
       $user->password = iconv('LATIN1', 'UTF-8', $item->password);
       $user->birthday = (int)$item->birthday;
-      $user->ipAddress = iconv('LATIN1', 'UTF-8', $item->ipAddress);
+      $user->internetProtocolAddress = iconv('LATIN1', 'UTF-8', $item->ipAddress);
       $user->creationDate = (int)$item->creationDate;
       $user->confirmationHash = iconv('LATIN1', 'UTF-8', $item->confirmationHash);
 
