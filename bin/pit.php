@@ -11,10 +11,11 @@ use PitPress\Console\Console as PitPressConsole;
 use PitPress\Console\Command;
 
 use Phalcon\Config\Adapter\Ini as IniReader;
-use Phalcon\Logger\Adapter\File as FileAdapter;
 use Phalcon\DI\FactoryDefault as DependencyInjector;
 
-use ElephantOnCouch\Couch;
+use Monolog\Logger;
+use Monolog\ErrorHandler;
+use Monolog\Handler\StreamHandler;
 
 
 $start = microtime(true);
@@ -28,15 +29,20 @@ try {
   // Reads the application's configuration.
   $config = new IniReader($root.'/config.ini');
 
-  $logger = new FileAdapter($root."/log/pit.log");
-  //$logger->begin();
+  $monolog = new Logger('pit-press');
+
+  // Registers the Monolog error handler to log errors and exceptions.
+  ErrorHandler::register($monolog);
+
+  // Creates a stream handler to log debugging messages.
+  $monolog->pushHandler(new StreamHandler($root.$config->application->logDir."pit.log", Logger::DEBUG));
 
   // The FactoryDefault Dependency Injector automatically registers the right services providing a full stack framework.
   $di = new DependencyInjector();
 
   // Initializes the services. The order doesn't matter.
   require $root."/services/config.php";
-  require $root."/services/logger.php";
+  require $root."/services/monolog.php";
   require $root."/services/couchdb.php";
   require $root."/services/redis.php";
   require $root."/services/mysql.php";
@@ -70,7 +76,4 @@ try {
 }
 catch (Exception $e) {
   echo $e;
-}
-finally {
-  //$logger->commit();
 }
