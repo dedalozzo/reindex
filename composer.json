@@ -18,7 +18,8 @@
         "3f/pygmentize": "dev-master",
         "3f/converter": "dev-master",
         "symfony/console": "2.4.*@dev",
-        "lusitanian/oauth": "~0.2"
+        "lusitanian/oauth": "~0.2",
+        "monolog/monolog": "1.7.0"
     },
     "autoload": {
         "psr-0": {"PitPress": "src/"}
