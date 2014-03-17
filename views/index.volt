@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="{{ controllerPath }}/codemirror/lib/codemirror.css">
 
   <script src="http://code.jquery.com/jquery-latest.js"></script>
+  <script src="{{ controllerPath }}/pit-bootstrap/js/jquery/jquery.selectbox-0.2.min.js"></script>
   <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
   <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
