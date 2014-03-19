@@ -33,8 +33,8 @@ abstract class SectionController extends BaseController {
   public function beforeExecuteRoute() {
     parent::beforeExecuteRoute();
 
-    $this->view->setVar('actionPath', self::getPaths(static::$sectionMenu)[$this->actionName]);
-    $this->view->setVar('title', self::getTitles()[$this->actionName]);
+    $this->view->setVar('actionPath', @self::getPaths(static::$sectionMenu)[$this->actionName]);
+    $this->view->setVar('title', @self::getTitles()[$this->actionName]);
   }
 
 
