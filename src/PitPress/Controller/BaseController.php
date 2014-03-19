@@ -22,6 +22,7 @@ abstract class BaseController extends Controller {
 
   protected $couch;
   protected $redis;
+  protected $monolog;
 
   protected $serverName;
   protected $baseUri;
@@ -61,6 +62,7 @@ abstract class BaseController extends Controller {
   public function initialize() {
     $this->couch = $this->di['couchdb'];
     $this->redis = $this->di['redis'];
+    $this->monolog = $this->di['monolog'];
 
     $this->serverName = $this->di['config']['application']['serverName'];
     $this->baseUri = "http://".$this->serverName;
@@ -82,6 +84,8 @@ abstract class BaseController extends Controller {
   }
 
 
+  //! @brief This method is executed before the initialize. In my opinion it's a bug.
+  //! @details Cannot log inside this method using the monolog instance.
   public function beforeExecuteRoute() {
     $this->actionName = $this->dispatcher->getActionName();
     $this->view->setVar('actionName', $this->actionName);
