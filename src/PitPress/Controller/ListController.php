@@ -46,6 +46,13 @@ abstract class ListController extends SectionController {
   }
 
 
+  //! @brief Builds the post url, given its section, publishing date and slug.
+  //! @return string The complete url of the post.
+  protected function buildUrl($section, $publishingDate, $slug) {
+    return "http://".$section.".".$this->serverName.date('/Y/m/d/', $publishingDate).$slug;
+  }
+
+
   //! @brief Given a set of keys, retrieves entries.
   protected function getEntries($keys) {
     if (empty($keys))
@@ -54,7 +61,7 @@ abstract class ListController extends SectionController {
     $opts = new ViewQueryOpts();
 
     // Posts.
-    $opts->doNotReduce();
+      $opts->doNotReduce();
     $result = $this->couch->queryView("posts", "all", $keys, $opts);
     $posts = $result['rows'];
 
@@ -83,7 +90,7 @@ abstract class ListController extends SectionController {
       $properties = &$posts[$i]['value'];
       $entry->title = $properties['title'];
       $entry->excerpt = $properties['excerpt'];
-      $entry->url = "http://".$properties['section'].".".$this->serverName.date('/Y/m/d/', $properties['publishingDate']).$properties['slug'];
+      $entry->url = $this->buildUrl($properties['section'], $properties['publishingDate'], $properties['slug']);
       $entry->publishingType = $properties['publishingType'];
       $entry->whenHasBeenPublished = Time::when($properties['publishingDate']);
       $entry->userId = $properties['userId'];
