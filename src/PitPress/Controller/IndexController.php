@@ -49,6 +49,11 @@ class IndexController extends ListController {
     $opts->includeMissingKeys()->groupResults();
     $scores = $this->couch->queryView("votes", "perPost", $keys, $opts)['rows'];
 
+    // Replays.
+    $opts->reset();
+    $opts->includeMissingKeys()->groupResults();
+    $replays = $this->couch->queryView("replays", "perPost", $keys, $opts)['rows'];
+
     $entries = [];
     $postCount = count($posts);
     for ($i = 0; $i < $postCount - 1; $i++) {
@@ -57,9 +62,10 @@ class IndexController extends ListController {
 
       $properties = &$posts[$i]['value'];
       $entry->title = $properties['title'];
-      $entry->url = $properties['url'];
+      $entry->url = $this->buildUrl($properties['section'], $properties['publishingDate'], $properties['slug']);
       $entry->whenHasBeenPublished = Time::when($properties['publishingDate']);
       $entry->score = is_null($scores[$i]['value']) ? 0 : $scores[$i]['value'];
+      $entry->replaysCount = is_null($replays[$i]['value']) ? 0 : $replays[$i]['value'];
 
       $entries[] = $entry;
     }
@@ -117,7 +123,9 @@ class IndexController extends ListController {
 
   //! @brief Displays the tour page.
   public function tourAction() {
+    phpinfo();
 
+    $this->view->disableLevel(View::LEVEL_LAYOUT);
   }
 
 
