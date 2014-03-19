@@ -77,7 +77,7 @@ abstract class AbstractCommand extends Command implements InjectionAwareInterfac
   //! @brief Sets the Dependency Injector.
   public function setDi($di) {
     $this->_di = $di;
-    $this->logger = $this->_di['logger'];
+    $this->monolog = $this->_di['monolog'];
   }
 
 
