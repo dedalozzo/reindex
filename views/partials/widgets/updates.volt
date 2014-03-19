@@ -8,8 +8,8 @@
     <ul class="items">
       {% for article in articles %}
         <li>
-          <a href="#">
-            <div><i class="icon-thumbs-up"></i>&nbsp;{{ article.score }}&nbsp;&nbsp;<i class="icon-comments"></i>&nbsp;5</div>
+          <a href="{{ article.url }}">
+            <div><i class="icon-thumbs-up"></i>&nbsp;{{ article.score }}&nbsp;&nbsp;<i class="icon-comments"></i>&nbsp;{{ article.replaysCount }}</div>
             <div>{{ article.whenHasBeenPublished }}</div>
             {{ article.title }}
           </a>
@@ -21,8 +21,8 @@
     <ul class="items">
       {% for tutorial in tutorials %}
         <li>
-          <a href="#">
-            <div><i class="icon-thumbs-up"></i>&nbsp;{{ tutorial.score }}&nbsp;&nbsp;<i class="icon-comments"></i>&nbsp;5</div>
+          <a href="{{ tutorial.url }}">
+            <div><i class="icon-thumbs-up"></i>&nbsp;{{ tutorial.score }}&nbsp;&nbsp;<i class="icon-comments"></i>&nbsp;{{ tutorial.replaysCount }}</div>
             <div>{{ tutorial.whenHasBeenPublished }}</div>
             {{ tutorial.title }}
           </a>
@@ -34,8 +34,8 @@
     <ul class="items">
       {% for book in books %}
         <li>
-          <a href="#">
-            <div><i class="icon-thumbs-up"></i>&nbsp;{{ book.score }}&nbsp;&nbsp;<i class="icon-comments"></i>&nbsp;5</div>
+          <a href="{{ book.url }}">
+            <div><i class="icon-thumbs-up"></i>&nbsp;{{ book.score }}&nbsp;&nbsp;<i class="icon-comments"></i>&nbsp;{{ book.replaysCount }}</div>
             <div>{{ book.whenHasBeenPublished }}</div>
             {{ book.title }}
           </a>
