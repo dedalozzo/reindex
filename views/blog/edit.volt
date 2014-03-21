@@ -8,11 +8,32 @@
     <fieldset>
       <div class="pure-control-group">
         <label for="revision">Revisione: </label>
-        {{ select_static("revision", ["a", "b"], "class": "pure-input-1") }}
+
+        <select name="country_id" id="country_id" tabindex="1">
+          <option value="">-- Select country --</option>
+          <optgroup label="North America">
+            <option value="1">USA</option>
+            <option value="9">Canada</option>
+          </optgroup>
+          <optgroup label="Europe">
+            <option value="2">France</option>
+            <option value="3">Spain</option>
+            <option value="6">Bulgaria</option>
+            <option value="7" disabled="disabled">Greece</option>
+            <option value="8">Italy</option>
+          </optgroup>
+          <optgroup label="Asia" disabled="disabled">
+            <option value="5">Japan</option>
+            <option value="11">China</option>
+          </optgroup>
+          <option value="4">Brazil</option>
+          <option value="10">South Africa</option>
+        </select>
+
       </div>
       <div class="pure-control-group">
         <label for="title">Titolo: </label>
-        {{ text_field("title", "placeholder": "Titolo", "class": "pure-input-1") }}
+        {{ text_field("title", "placeholder": "{{ doc.title }}", "class": "pure-input-1") }}
       </div>
     </fieldset>
     <fieldset>
@@ -55,7 +76,7 @@
     </fieldset>
   </form>
 
-  <script>
+  <script type="text/javascript">
     var editor = CodeMirror.fromTextArea(document.getElementById("body"), {
       mode: 'gfm',
       lineNumbers: true,
@@ -73,6 +94,12 @@
 
     editor.refresh();
   </script>
+  <script type="text/javascript">
+    $(function () {
+      $("#country_id").selectbox();
+    });
+  </script>
+
 
 </div> <!-- /column-left -->
 

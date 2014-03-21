@@ -27,7 +27,7 @@ $di->setShared('volt',
 
     $compiler->addFilter('minustospace',
       function($resolvedArgs, $exprArgs) {
-        return "str_replace('-', ' ', ".$resolvedArgs.")";
+        return "str_replace('-', ' ', '".$resolvedArgs."')";
       }
     );
 
