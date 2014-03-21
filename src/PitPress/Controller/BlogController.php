@@ -109,12 +109,15 @@ class BlogController extends ListController {
 
 
   //! @brief Displays the most popular blog entries.
-  public function popularAction($period) {
+  public function popularAction($period = "settimana") {
     if (empty($period))
       $period = 'settimana';
 
     $this->view->setVar('subsectionMenu', Time::periods(5));
     $this->view->setVar('subsectionIndex', Time::periodIndex($period));
+
+    $this->monolog->addDebug("sub:", Time::periods(5));
+    $this->monolog->addDebug("subIndex: ".Time::periodIndex($period));
 
     $this->popularEver('blog');
 
