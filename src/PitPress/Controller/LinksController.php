@@ -52,7 +52,7 @@ class LinksController extends ListController {
 
 
   //! @brief Displays the most popular links.
-  public function popularAction($period) {
+  public function popularAction($period = 'settimana') {
     if (empty($period))
       $period = 'settimana';
 
