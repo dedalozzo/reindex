@@ -4,6 +4,7 @@
     <li><a href="#tutorials" data-toggle="tab">GUIDE</a></li>
     <li><a href="#books" data-toggle="tab">LIBRI</a></li>
   </ul>
+  {% if articles is defined %}
   <div class="notebook-page active" id="articles">
     <ul class="items">
       {% for article in articles %}
@@ -17,6 +18,8 @@
       {% endfor %}
     </ul>
   </div>
+  {% endif %}
+  {% if tutorials is defined %}
   <div class="notebook-page" id="tutorials">
     <ul class="items">
       {% for tutorial in tutorials %}
@@ -30,6 +33,8 @@
       {% endfor %}
     </ul>
   </div>
+  {% endif %}
+  {% if tutorials is defined %}
   <div class="notebook-page" id="books">
     <ul class="items">
       {% for book in books %}
@@ -43,4 +48,5 @@
       {% endfor %}
     </ul>
   </div>
+  {% endif %}
 </div>
