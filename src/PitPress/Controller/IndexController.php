@@ -14,6 +14,8 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
 use PitPress\Helper\Time;
 use PitPress\Helper\Stat;
 
+use Phalcon\Mvc\View;
+
 
 //! @brief Controller of Index actions.
 //! @nosubgrouping
@@ -101,7 +103,7 @@ class IndexController extends ListController {
     if (empty($period))
       $period = '24-ore';
 
-    $this->view->setVar('subsectionMenu', Time::periods(5));
+    $this->view->setVar('subsectionMenu', Time::periods(6));
     $this->view->setVar('subsectionIndex', Time::periodIndex($period));
 
     $this->popularEver(new \stdClass(), $period);
