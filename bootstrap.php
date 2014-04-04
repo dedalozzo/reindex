@@ -8,6 +8,7 @@
 
 use Phalcon\Config\Adapter\Ini as IniReader;
 use Phalcon\DI\FactoryDefault as DependencyInjector;
+use Phalcon\Mvc\Application as Application;
 
 use Whoops\Run;
 use Whoops\Handler\PrettyPageHandler;
@@ -50,8 +51,8 @@ require $root."/services/config.php";
 require $root."/services/monolog.php";
 require $root."/services/dispatcher.php";
 require $root."/services/router.php";
-require $root."/services/volt.php";
 require $root."/services/view.php";
+require $root."/services/volt.php";
 require $root."/services/session.php";
 require $root."/services/couchdb.php";
 require $root."/services/redis.php";
@@ -60,7 +61,7 @@ require $root."/services/crypt.php";
 require $root."/services/flash.php";
 
 /*
-USE THE FOLLOWING CODE FOR DEBUG PURPOSE ONLY
+// USE THE FOLLOWING CODE FOR DEBUG PURPOSE ONLY
 
 // Retrieves the Router component.
 $router = $di['router'];
@@ -110,13 +111,14 @@ echo $response->getContent();
 */
 
 // Creates the application object.
-$application = new Phalcon\Mvc\Application();
+$application = new Application();
 
 // Sets the dependency injector component.
 $application->setDI($di);
 
 // Handles the request.
 echo $application->handle()->getContent();
+
 
 $stop = microtime(true);
 $time = round($stop - $start, 3);
