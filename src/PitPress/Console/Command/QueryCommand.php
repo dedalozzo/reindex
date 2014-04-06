@@ -151,7 +151,7 @@ class QueryCommand extends AbstractCommand {
   //! @brief Executes the command.
   //! @bug https://github.com/dedalozzo/pit-press/issues/1
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $couch = $this->_di['couchdb'];
+    $couch = $this->di['couchdb'];
 
     $view = $input->getArgument('design-doc/view-name');
 

@@ -737,8 +737,8 @@ class InitCommand extends AbstractCommand {
   //! @brief Executes the command.
   protected function execute(InputInterface $input, OutputInterface $output) {
 
-    $this->mysql = $this->_di['mysql'];
-    $this->couch = $this->_di['couchdb'];
+    $this->mysql = $this->di['mysql'];
+    $this->couch = $this->di['couchdb'];
 
     $documents = $input->getArgument('documents');
 

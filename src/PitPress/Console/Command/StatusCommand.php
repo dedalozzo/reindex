@@ -30,7 +30,7 @@ class StatusCommand extends AbstractCommand {
 
   //! @brief Executes the command.
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $this->couch = $this->_di['couchdb'];
+    $this->couch = $this->di['couchdb'];
 
     print_r($this->couch->getActiveTasks());
   }

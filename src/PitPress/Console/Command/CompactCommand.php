@@ -31,7 +31,7 @@ class CompactCommand extends AbstractCommand {
 
   //! @brief Executes the command.
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $couch = $this->_di['couchdb'];
+    $couch = $this->di['couchdb'];
 
     $couch->compactDb();
   }

@@ -30,7 +30,7 @@ class CommitCommand extends AbstractCommand {
 
   //! @brief Executes the command.
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $couch = $this->_di['couchdb'];
+    $couch = $this->di['couchdb'];
 
     echo "File Opened Since: ".TimeHelper::since($couch->ensureFullCommit()).PHP_EOL;
   }

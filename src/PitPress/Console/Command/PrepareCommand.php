@@ -31,7 +31,7 @@ class PrepareCommand extends AbstractCommand {
 
   //! @brief Executes the command.
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $mysql = $this->_di['mysql'];
+    $mysql = $this->di['mysql'];
 
     // Creates a new 'Redazione' user and assigns to every item and tag where idMember is null.
     $sql = "INSERT INTO Member (idMember, nickName, email, password, regDate) VALUES (1, 'Redazione', 'redazione@programmazione.it', MD5('chid0rmen0npigliap3sci'), NOW())";

@@ -98,8 +98,8 @@ class GenerateCommand extends AbstractCommand {
     $this->input = $input;
     $this->output = $output;
 
-    $this->mysql = $this->_di['mysql'];
-    $this->couch = $this->_di['couchdb'];
+    $this->mysql = $this->di['mysql'];
+    $this->couch = $this->di['couchdb'];
 
     $types = $input->getArgument('types');
 
