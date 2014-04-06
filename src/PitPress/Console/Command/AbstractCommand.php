@@ -21,8 +21,8 @@ use Symfony\Component\Console\Application;
 //! @nosubgrouping
 abstract class AbstractCommand extends Command implements InjectionAwareInterface {
 
-  protected $_di;
-  protected $logger;
+  protected $di;
+  protected $monolog;
 
 
   //! @brief Returns `true` in case `$arg` seems to be the string representation of an array, `false` otherwise.
@@ -76,14 +76,14 @@ abstract class AbstractCommand extends Command implements InjectionAwareInterfac
 
   //! @brief Sets the Dependency Injector.
   public function setDi($di) {
-    $this->_di = $di;
-    $this->monolog = $this->_di['monolog'];
+    $this->di = $di;
+    $this->monolog = $this->di['monolog'];
   }
 
 
   //! @brief Gets the Dependency Injector.
   public function getDi() {
-    return $this->_di;
+    return $this->di;
   }
 
 }
