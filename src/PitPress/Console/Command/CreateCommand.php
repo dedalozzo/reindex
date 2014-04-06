@@ -31,7 +31,7 @@ class CreateCommand extends AbstractCommand {
 
   //! @brief Executes the command.
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $config = $this->_di['config'];
+    $config = $this->di['config'];
 
     $couch = new Couch(Couch::DEFAULT_SERVER, $config->couchdb->user, $config->couchdb->password);
 

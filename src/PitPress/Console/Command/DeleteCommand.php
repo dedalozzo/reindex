@@ -35,13 +35,13 @@ class DeleteCommand extends AbstractCommand {
     $confirm = $dialog->ask($output, 'Are you sure you want delete the PitPress database? [Y/n]'.PHP_EOL, 'n');
 
     if ($confirm == 'Y') {
-      $config = $this->_di['config'];
+      $config = $this->di['config'];
 
       $couch = new Couch(Couch::DEFAULT_SERVER, $config->couchdb->user, $config->couchdb->password);
 
       $couch->deleteDb($config->couchdb->database);
 
-      $redis = $this->_di['redis'];
+      $redis = $this->di['redis'];
       $redis->flushDB();
     }
   }

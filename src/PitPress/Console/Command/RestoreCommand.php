@@ -31,7 +31,7 @@ class RestoreCommand  extends AbstractCommand {
 
   //! @brief Executes the command.
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $mysql = $this->_di['mysql'];
+    $mysql = $this->di['mysql'];
 
     // Deletes the 'Redazione' member and removes every references from the Item table.
     $sql = "DELETE FROM Member WHERE idMember = 1";

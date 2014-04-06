@@ -29,7 +29,7 @@ class AboutCommand extends AbstractCommand {
 
   //! @brief Executes the command.
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $couch = $this->_di['couchdb'];
+    $couch = $this->di['couchdb'];
 
     echo "[server]".PHP_EOL.PHP_EOL;
     echo $couch->getServerInfo();
