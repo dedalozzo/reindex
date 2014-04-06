@@ -155,7 +155,7 @@ class ImportCommand extends AbstractCommand {
         $article->html = $this->markdown->render($article->body);
       }
       catch(\Exception $e) {
-        $this->logger->error(sprintf(" %d - %s", $item->idItem, $article->title));
+        $this->monolog->addCritical(sprintf(" %d - %s", $item->idItem, $article->title));
       }
 
       $purged = Text::purge($article->html);
@@ -167,8 +167,8 @@ class ImportCommand extends AbstractCommand {
         $article->save();
       }
       catch(\Exception $e) {
-        $this->logger->error($e);
-        $this->logger->error(sprintf("Invalid JSON: %d - %s", $item->idItem, $article->title));
+        $this->monolog->addCritical($e);
+        $this->monolog->addCritical(sprintf("Invalid JSON: %d - %s", $item->idItem, $article->title));
       }
 
       // We update the article views.
@@ -240,8 +240,8 @@ class ImportCommand extends AbstractCommand {
         $tutorial->save();
       }
       catch(\Exception $e) {
-        $this->logger->error($e);
-        $this->logger->error(sprintf("Invalid JSON: %d - %s", $item->idItem, $tutorial->title));
+        $this->monolog->addCritical($e);
+        $this->monolog->addCritical(sprintf("Invalid JSON: %d - %s", $item->idItem, $tutorial->title));
       }
 
       $progress->advance();
@@ -292,7 +292,7 @@ class ImportCommand extends AbstractCommand {
         $book->authors = iconv('LATIN1', 'UTF-8', $matches[1]);
       if (preg_match('/\\[publisher\\](.*?)\\[\/publisher\\]/s', $item->body, $matches))
         $book->publisher = iconv('LATIN1', 'UTF-8', $matches[1]);
-      if (preg_match('/\\[language\\](.*?)\\[\/language\\]/su', $item->body, $matches))
+      if (preg_match('/\\[language\\](.*?)\\[\/language\\]/s', $item->body, $matches))
         $book->language = iconv('LATIN1', 'UTF-8', $matches[1]);
       if (preg_match('/\\[year\\](.*?)\\[\/year\\]/s', $item->body, $matches))
         $book->year = $matches[1];
@@ -319,7 +319,7 @@ class ImportCommand extends AbstractCommand {
         $book->html = $this->markdown->render($book->body);
       }
       catch(\Exception $e) {
-        $this->logger->error(sprintf(" %d - %s", $item->idItem, $book->title));
+        $this->monolog->addCritical(sprintf(" %d - %s", $item->idItem, $book->title));
       }
 
       $purged = Text::purge($book->html);
@@ -337,7 +337,7 @@ class ImportCommand extends AbstractCommand {
         $book->save();
       }
       catch(\Exception $e) {
-        $this->logger->error(sprintf("Invalid JSON: %d - %s", $item->idItem, $book->title));
+        $this->monolog->addCritical(sprintf("Invalid JSON: %d - %s", $item->idItem, $book->title));
       }
 
       // We update the book views.
@@ -521,7 +521,7 @@ class ImportCommand extends AbstractCommand {
         $comment->html = $this->markdown->render($comment->body);
       }
       catch(\Exception $e) {
-        $this->logger->error(sprintf(" %d - %s", $item->id, $comment->title));
+        $this->monolog->addCritical(sprintf(" %d - %s", $item->id, $comment->title));
       }
 
       // We finally save the comment.
@@ -530,8 +530,8 @@ class ImportCommand extends AbstractCommand {
         $comment->save();
       }
       catch(\Exception $e) {
-        $this->logger->error($e);
-        $this->logger->error(sprintf("Invalid JSON: %d", $item->id));
+        $this->monolog->addCritical($e);
+        $this->monolog->addCritical(sprintf("Invalid JSON: %d", $item->id));
       }
 
       $progress->advance();
@@ -575,10 +575,10 @@ class ImportCommand extends AbstractCommand {
 
   //! @brief Executes the command.
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $this->mysql = $this->_di['mysql'];
-    $this->couch = $this->_di['couchdb'];
-    $this->redis = $this->_di['redis'];
-    $this->markdown = $this->_di['markdown'];
+    $this->mysql = $this->di['mysql'];
+    $this->couch = $this->di['couchdb'];
+    $this->redis = $this->di['redis'];
+    $this->markdown = $this->di['markdown'];
 
     $this->input = $input;
     $this->output = $output;
