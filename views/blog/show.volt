@@ -26,7 +26,7 @@
       <a href="#"><i class="icon-comments icon-large"></i></a>{{ replaysCount }}
     </div>
 
-    <div class="item-container shift">
+    <div class="item-content shift">
       <div class="item-hits"><b>{{ doc.hitsCount }}</b>{% if hitsCount == 1 %} lettore{% else %} lettori{% endif %}</div>
       <ul class="list toolbar">
         <li class="toolgroup">
@@ -119,40 +119,38 @@
     <a href="#"><i class="icon-ok icon-large"></i></a>
   </div>
 
-  <div class="item">
-    <div class="item-container shift">
-      <ul class="list toolbar">
-        <li class="toolgroup">
-          <a href="#" title="Condividi su Twitter"><i class="icon-twitter"></i></a>
-          <span>{{ doc.getStarsCount() }}</span>
-        </li>
-        <li class="toolgroup">
-          <a href="#" title="Condividi su Facebook"><i class="icon-facebook"></i></a>
-          <span>{{ doc.getStarsCount() }}</span>
-        </li>
-        <li class="toolgroup">
-          <a href="#" title="Condividi su Google+"><i class="icon-google-plus"></i></a>
-          <span>{{ doc.getStarsCount() }}</span>
-        </li>
-      </ul>
-      <div class="item-body">
-        {{ replay.html }}
+  <div class="item-content shift">
+    <ul class="list toolbar">
+      <li class="toolgroup">
+        <a href="#" title="Condividi su Twitter"><i class="icon-twitter"></i></a>
+        <span>{{ doc.getStarsCount() }}</span>
+      </li>
+      <li class="toolgroup">
+        <a href="#" title="Condividi su Facebook"><i class="icon-facebook"></i></a>
+        <span>{{ doc.getStarsCount() }}</span>
+      </li>
+      <li class="toolgroup">
+        <a href="#" title="Condividi su Google+"><i class="icon-google-plus"></i></a>
+        <span>{{ doc.getStarsCount() }}</span>
+      </li>
+    </ul>
+    <div class="item-body">
+      {{ replay.html }}
+    </div>
+    <div class="item-info pull-right">
+      <div>{{ replay.whenHasBeenPublished() }}</div>
+      <a href="{{ userUrl }}"><img class="gravatar" src="{{ replay.getGravatar() }}&s=32" /></a>
+      <div>
+        <a href="{{ userUrl }}">{{ replay.getDisplayName() }}</a><br>
+        <div class="reputation"><b>2345</b><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 10<i class="icon-certificate bronze"></i> 10</div>
       </div>
-      <div class="item-info pull-right">
-        <div>{{ replay.whenHasBeenPublished() }}</div>
-        <a href="{{ userUrl }}"><img class="gravatar" src="{{ replay.getGravatar() }}&s=32" /></a>
-        <div>
-          <a href="{{ userUrl }}">{{ replay.getDisplayName() }}</a><br>
-          <div class="reputation"><b>2345</b><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 10<i class="icon-certificate bronze"></i> 10</div>
-        </div>
-      </div>
-      <div class="list item-links">
-        <li><a class="btn mini blue" href="#"><i class="icon-file-text"></i> MODIFICA</a></li>
-        <li><a class="btn mini blue" href="#"><i class="icon-flag"></i> FLAGGA</a></li>
-        <li><a class="btn mini red" href="#"><i class="icon-trash"></i> ELIMINA</a></li>
-        <li><a class="btn mini blue" href="#"><i class="icon-unlock"></i> RISPONDI</a></li>
-        <li class="space"></li>
-      </div>
+    </div>
+    <div class="list item-links">
+      <li><a class="btn mini blue" href="#"><i class="icon-file-text"></i> MODIFICA</a></li>
+      <li><a class="btn mini blue" href="#"><i class="icon-flag"></i> FLAGGA</a></li>
+      <li><a class="btn mini red" href="#"><i class="icon-trash"></i> ELIMINA</a></li>
+      <li><a class="btn mini blue" href="#"><i class="icon-unlock"></i> RISPONDI</a></li>
+      <li class="space"></li>
     </div>
   </div>
 
