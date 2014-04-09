@@ -11,12 +11,14 @@ namespace PitPress\Model;
 
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
+use PitPress\Extension;
 use PitPress\Helper\Time;
 
 
 //! @brief A generic content created by a user.
 //! @nosubgrouping
 abstract class Item extends Storable {
+  use Extension\TVersion;
 
 
   public function save() {
