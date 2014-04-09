@@ -32,6 +32,16 @@ $di->setShared('markdown',
         ]
     );
 
+    /*
+    // Replaced Sundown with Hoedown.
+    $markdown = new Hoedown(
+        [
+          Hoedown::SPACE_HEADERS => TRUE,
+          Hoedown::SUPERSCRIPT => TRUE
+        ]
+    );
+    */
+
     return $markdown;
   }
 );
