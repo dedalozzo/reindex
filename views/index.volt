@@ -11,15 +11,20 @@
 
   <link rel="shortcut icon" href="{{ baseUri }}/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="{{ controllerPath }}/pit-bootstrap/css/bootstrap.css">
-  <link rel="stylesheet" href="{{ controllerPath }}/codemirror/lib/codemirror.css">
+  <!-- <link rel="stylesheet" href="{{ controllerPath }}/pit-bootstrap/css/selectize.bootstrap3.css"> -->
 
-  <script src="http://code.jquery.com/jquery-latest.js"></script>
-  <script src="{{ controllerPath }}/pit-bootstrap/js/jquery/jquery.selectbox-0.2.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js"></script>
+  <script src="{{ controllerPath }}/pit-bootstrap/js/selectize.min.js"></script>
+  <script src="{{ controllerPath }}/pit-bootstrap/js/selectbox.min.js"></script>
+
+{% include "partials/codemirror.volt" %}
+
   <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
   <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
-  {% include "partials/codemirror-js.volt" %}
+
   <style>
     body {
       background-image: url("{{ baseUri }}/pit-bootstrap/img/backgrounds/bg_px.png");
@@ -29,7 +34,7 @@
 </head>
 <body onload="localStorage.clear();">
 
-  {% include "partials/navigation/topbar.volt" %}
+{% include "partials/navigation/topbar.volt" %}
 
   <a id="page-skin" href="#"></a>
 
@@ -53,8 +58,6 @@
       $('#myTab a:last').tab('show');
     });
   </script>
-
-  {% include "partials/bootstrap-js.volt" %}
 
 </body>
 </html>
