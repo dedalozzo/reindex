@@ -20,7 +20,7 @@
         Ho {{ doc.getAge() }} anni.
       {% endif %}
       Mi sono iscritto il {{ doc.getElapsedTimeSinceRegistration()|lower }}.
-      {% if lastVisit is !empty %}
+      {% if lastVisit != "" %}
         La mia ultima visita risale al {{ lastVisit|lower }}.
       {% endif %}
       Il mio profilo è stato visualizzato {% if hitsCount == 1 %}una volta{% else %}{{ hitsCount }} volte{% endif %}.
