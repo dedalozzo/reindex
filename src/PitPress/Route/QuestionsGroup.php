@@ -10,6 +10,7 @@ namespace PitPress\Route;
 
 
 use Phalcon\Mvc\Router\Group;
+use Phalcon\DI;
 
 
 //! @brief Group of questions routes.
@@ -25,7 +26,7 @@ class QuestionsGroup extends Group {
         'controller' => 'questions'
       ]);
 
-    $this->setHostName('domande.programmazione.me');
+    $this->setHostName('domande.'.DI::getDefault()['config']['application']['domainName']);
 
     $this->addGet('/', ['action' => 'important']);
     $this->addGet('/nuove/', ['action' => 'newest']);

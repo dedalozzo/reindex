@@ -11,6 +11,7 @@ namespace PitPress\Route;
 
 
 use Phalcon\Mvc\Router\Group;
+use Phalcon\DI;
 
 
 //! @brief Group of index routes.
@@ -26,7 +27,7 @@ class IndexGroup extends Group {
         'controller' => 'index'
       ]);
 
-    $this->setHostName('programmazione.me');
+    $this->setHostName(DI::getDefault()['config']['application']['domainName']);
 
     $this->addGet('/', ['action' => 'popular']);
 

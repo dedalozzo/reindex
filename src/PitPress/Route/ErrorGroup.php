@@ -10,6 +10,7 @@ namespace PitPress\Route;
 
 
 use Phalcon\Mvc\Router\Group;
+use Phalcon\DI;
 
 
 //! @brief Group of error routes.
@@ -25,7 +26,7 @@ class ErrorGroup extends Group {
         'controller' => 'error'
       ]);
 
-    $this->setHostName('programmazione.me');
+    $this->setHostName(DI::getDefault()['config']['application']['domainName']);
 
     $this->addGet('/404/', ['action' => 'show404']);
   }

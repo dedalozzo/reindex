@@ -34,7 +34,7 @@ class AuthGroup extends Group {
     $this->addGet('/attiva/', ['action' => 'activate']);
     $this->addGet('/disconnetti/', ['action' => 'signOut']);
 
-    // All the following routes start with /login.
+    // All the following routes start with /accedi.
     $this->setPrefix('/accedi');
 
     $this->add('/', ['action' => 'signIn'], ['GET', 'POST']);

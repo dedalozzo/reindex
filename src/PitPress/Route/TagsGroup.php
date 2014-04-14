@@ -10,6 +10,7 @@ namespace PitPress\Route;
 
 
 use Phalcon\Mvc\Router\Group;
+use Phalcon\DI;
 
 
 //! @brief Group of tags' routes.
@@ -25,7 +26,7 @@ class TagsGroup extends Group {
         'controller' => 'tags'
       ]);
 
-    $this->setHostName('tags.programmazione.me');
+    $this->setHostName('tags'.DI::getDefault()['config']['application']['domainName']);
 
     $this->addGet('/', ['action' => 'newest']);
     $this->addGet('/popolari/', ['action' => 'popular']);
