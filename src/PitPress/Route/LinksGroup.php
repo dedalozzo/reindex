@@ -10,6 +10,7 @@ namespace PitPress\Route;
 
 
 use Phalcon\Mvc\Router\Group;
+use Phalcon\DI;
 
 
 //! @brief Group of links' routes.
@@ -25,7 +26,7 @@ class LinksGroup extends Group {
         'controller' => 'links'
       ]);
 
-    $this->setHostName('links.programmazione.me');
+    $this->setHostName('links.'.DI::getDefault()['config']['application']['domainName']);
 
     $this->addGet('/', ['action' => 'popular']);
     $this->addGet('/nuovi/', ['action' => 'newest']);

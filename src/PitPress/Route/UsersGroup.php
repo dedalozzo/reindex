@@ -10,6 +10,7 @@ namespace PitPress\Route;
 
 
 use Phalcon\Mvc\Router\Group;
+use Phalcon\DI;
 
 
 //! @brief Group of users' routes.
@@ -25,7 +26,7 @@ class UsersGroup extends Group {
         'controller' => 'users'
       ]);
 
-    $this->setHostName('utenti.programmazione.me');
+    $this->setHostName('utenti'.DI::getDefault()['config']['application']['domainName']);
 
     $this->addGet('/{id}', ['action' => 'show']);
     $this->addGet('/reputazione/{period}', ['action' => 'reputation']);
@@ -37,6 +38,22 @@ class UsersGroup extends Group {
     $this->addGet('/bloggers/{period}', ['action' => 'bloggers']);
     $this->addGet('/moderatori/', ['action' => 'moderators']);
     $this->addGet('/privilegi/', ['action' => 'privileges']);
+
+    $this->addGet('/registrati/', ['action' => 'signUp']);
+    $this->addGet('/resetta-password/', ['action' => 'resetPassword']);
+    $this->addGet('/invia-email-attivazione/', ['action' => 'sendActivationEmail']);
+    $this->addGet('/attiva/', ['action' => 'activate']);
+    $this->addGet('/disconnetti/', ['action' => 'signOut']);
+
+    // All the following routes start with /accedi.
+    $this->setPrefix('/accedi');
+
+    $this->add('/', ['action' => 'signIn'], ['GET', 'POST']);
+    $this->addGet('/facebook/', ['action' => 'facebook']);
+    $this->addGet('/google/', ['action' => 'google']);
+    $this->addGet('/linkedin/', ['action' => 'linkedin']);
+    $this->addGet('/github/', ['action' => 'github']);
+
   }
 
 }

@@ -10,6 +10,7 @@ namespace PitPress\Route;
 
 
 use Phalcon\Mvc\Router\Group;
+use Phalcon\DI;
 
 
 //! @brief Group of blog routes.
@@ -25,7 +26,7 @@ class BlogGroup extends Group {
         'controller' => 'blog'
       ]);
 
-    $this->setHostName('blog.programmazione.me');
+    $this->setHostName('blog.'.DI::getDefault()['config']['application']['domainName']);
 
     $this->addGet('/', ['action' => 'newest']);
 

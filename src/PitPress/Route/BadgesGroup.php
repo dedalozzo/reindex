@@ -10,6 +10,7 @@ namespace PitPress\Route;
 
 
 use Phalcon\Mvc\Router\Group;
+use Phalcon\DI;
 
 
 //! @brief Group of badges' routes.
@@ -24,7 +25,7 @@ class BadgesGroup extends Group {
         'controller' => 'badges'
       ]);
 
-    $this->setHostName('badges.programmazione.me');
+    $this->setHostName('badges.'.DI::getDefault()['config']['application']['domainName']);
 
     $this->addGet('/', ['action' => 'all']);
     $this->addGet('/tutti/', ['action' => 'all']);
