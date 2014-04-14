@@ -11,6 +11,7 @@ namespace PitPress\Route;
 
 
 use Phalcon\Mvc\Router\Group;
+use Phalcon\DI;
 
 
 //! @brief Group of authentication routes.
@@ -26,7 +27,7 @@ class AuthGroup extends Group {
         'controller' => 'auth'
       ]);
 
-    $this->setHostName('programmazione.me');
+    $this->setHostName(DI::getDefault()['config']['application']['domainName']);
 
     $this->addGet('/registrati/', ['action' => 'signUp']);
     $this->addGet('/resetta-password/', ['action' => 'resetPassword']);
