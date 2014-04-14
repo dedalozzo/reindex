@@ -26,7 +26,7 @@ class TagsGroup extends Group {
         'controller' => 'tags'
       ]);
 
-    $this->setHostName('tags'.DI::getDefault()['config']['application']['domainName']);
+    $this->setHostName('tags.'.DI::getDefault()['config']['application']['domainName']);
 
     $this->addGet('/', ['action' => 'newest']);
     $this->addGet('/popolari/', ['action' => 'popular']);
