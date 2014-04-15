@@ -1,3 +1,5 @@
+{% include "partials/navigation/sections/tags.volt" %}
+
 {% include "partials/navigation/section-menu.volt" %}
 
 {% include "partials/navigation/subsection-menu.volt" %}

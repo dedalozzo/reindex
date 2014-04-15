@@ -1,5 +1,5 @@
 <div class="column-left">
-  {% set usersBaseUrl = 'http://utenti.'~serverName~'/' %}
+  {% set usersBaseUrl = '//utenti.'~serverName~'/' %}
   {% set userUrl = usersBaseUrl~doc.userId %}
   {% set hitsCount = doc.getHitsCount() %}
   {% set replaysCount = doc.getReplaysCount() %}
@@ -53,7 +53,7 @@
 
       {% if doc.type == 'book' %}
       <div class="item-meta">
-        <img class="" src="http://programmazione.it/picture.php?idItem=48456&amp;id=52558c0458cae" alt="Copertina" />
+        <img class="" src="//programmazione.it/picture.php?idItem=48456&amp;id=52558c0458cae" alt="Copertina" />
         <span>ISBN: </span>{{ doc.isbn }}<br>
         <span>Autori: </span>{{ doc.authors }}<br>
         <span>Editore: </span>{{ doc.publisher }}<br>
@@ -90,12 +90,12 @@
         </div>
       </div>
       <div class="list item-links">
-        <li><a class="btn mini blue" href="{{ controllerPath~'/'~doc.id~'/modifica/' }}"><i class="icon-file-text"></i> MODIFICA</a></li>
-        <li><a class="btn mini blue" href="{{ controllerPath~'/flagga/'~doc.id }}"><i class="icon-flag"></i> FLAGGA</a></li>
-        <li><a class="btn mini red" href="{{ controllerPath~'/elimina/'~doc.id }}"><i class="icon-trash"></i> ELIMINA</a></li>
-        <li><a class="btn mini orange" href="{{ controllerPath~'/blocca/'~doc.id }}"><i class="icon-unlock"></i> BLOCCA</a></li>
-        <li><a class="btn mini orange" href="{{ controllerPath~'/proteggi/'~doc.id }}"><i class="icon-umbrella"></i> PROTEGGI</a></li>
-        <li><a class="btn mini blue" href="{{ controllerPath~'/appunta/'~doc.id }}"><i class="icon-pushpin"></i> APPUNTA</a></li>
+        <li><a class="btn mini blue" href="//{{ serverName~'/'~doc.id~'/modifica/' }}"><i class="icon-file-text"></i> MODIFICA</a></li>
+        <li><a class="btn mini blue" href="//{{ serverName~'/flagga/'~doc.id }}"><i class="icon-flag"></i> FLAGGA</a></li>
+        <li><a class="btn mini red" href="//{{ serverName~'/elimina/'~doc.id }}"><i class="icon-trash"></i> ELIMINA</a></li>
+        <li><a class="btn mini orange" href="//{{ serverName~'/blocca/'~doc.id }}"><i class="icon-unlock"></i> BLOCCA</a></li>
+        <li><a class="btn mini orange" href="//{{ serverName~'/proteggi/'~doc.id }}"><i class="icon-umbrella"></i> PROTEGGI</a></li>
+        <li><a class="btn mini blue" href="//{{ serverName~'/appunta/'~doc.id }}"><i class="icon-pushpin"></i> APPUNTA</a></li>
         <li class="space"></li>
       </div>
     </div>

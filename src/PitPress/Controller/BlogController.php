@@ -23,19 +23,6 @@ use Phalcon\Mvc\View;
 //! @bug
 class BlogController extends ListController {
 
-  protected static $sectionLabel = 'PUBBLICAZIONI';
-
-  // Stores the main menu definition.
-  protected static $sectionMenu = [
-    ['name' => 'books', 'path' => '/libri/', 'label' => 'LIBRI', 'title' => 'Libri'],
-    ['name' => 'tutorials', 'path' => '/guide/', 'label' => 'GUIDE', 'title' => 'Guide'],
-    ['name' => 'articles', 'path' => '/articoli/', 'label' => 'ARTICOLI', 'title' => 'Articoli'],
-    ['name' => 'interesting', 'path' => '/pubblicazioni/interessanti/', 'label' => 'INTERESSANTI', 'title' => 'Pubblicazioni interessanti'],
-    ['name' => 'updated', 'path' => '/pubblicazioni/aggiornate/', 'label' => 'AGGIORNATE', 'title' => 'Pubblicazioni modificate di recente'],
-    ['name' => 'popular', 'path' => '/pubblicazioni/popolari/', 'label' => 'POPOLARI', 'title' => 'Pubblicazioni popolari'],
-    ['name' => 'newest', 'path' => '/pubblicazioni/nuove/', 'label' => 'NUOVE', 'title' => 'Ultime pubblicazioni']
-  ];
-
 
   private function newestInPeriod($type, $period) {
     $opts = new ViewQueryOpts();

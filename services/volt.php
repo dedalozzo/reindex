@@ -31,6 +31,8 @@ $di->setShared('volt',
       }
     );
 
+    $compiler->addFunction('arraycolumn', 'array_column');
+
     return $volt;
   }
 );

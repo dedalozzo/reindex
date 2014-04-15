@@ -18,12 +18,6 @@ abstract class SectionController extends BaseController {
   abstract protected function getEntries($keys);
 
 
-  //! @brief Returns an associative array of titles indexed by action name.
-  protected static function getTitles() {
-    return array_column(static::$sectionMenu, 'title', 'name');
-  }
-
-
   public function initialize() {
     parent::initialize();
   }
@@ -31,17 +25,11 @@ abstract class SectionController extends BaseController {
 
   public function beforeExecuteRoute() {
     parent::beforeExecuteRoute();
-
-    $this->view->setVar('actionPath', @self::getPaths(static::$sectionMenu)[$this->actionName]);
-    $this->view->setVar('title', @self::getTitles()[$this->actionName]);
   }
 
 
   public function afterExecuteRoute() {
     parent::afterExecuteRoute();
-
-    $this->view->setVar('sectionLabel', static::$sectionLabel);
-    $this->view->setVar('sectionMenu', static::$sectionMenu);
   }
 
 }

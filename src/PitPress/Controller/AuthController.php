@@ -112,8 +112,8 @@ class AuthController extends BaseController {
         header('P3P: CP="IDC DSP COR CURa ADMa OUR IND PHY ONL COM STA"');
 
         // Finally let's write the id and the token.
-        setcookie("id", $user->id, mktime(0, 0, 0, 12, 12, 2030), "/", $this->serverName);
-        setcookie("token", $token, mktime(0, 0, 0, 12, 12, 2030), "/", $this->serverName);
+        setcookie("id", $user->id, mktime(0, 0, 0, 12, 12, 2030), "/", $this->domainName);
+        setcookie("token", $token, mktime(0, 0, 0, 12, 12, 2030), "/", $this->domainName);
 
         $user->save();
 
@@ -125,8 +125,8 @@ class AuthController extends BaseController {
         header('P3P: CP="IDC DSP COR CURa ADMa OUR IND PHY ONL COM STA"');
 
         // Deletes the cookies.
-        setcookie("id", "", time(), "/", $this->serverName);
-        setcookie("token", "", time(), "/", $this->serverName);
+        setcookie("id", "", time(), "/", $this->domainName);
+        setcookie("token", "", time(), "/", $this->domainName);
 
         // Displays the error message.
         $this->flash->error($e->getMessage());
@@ -157,9 +157,9 @@ class AuthController extends BaseController {
     header('P3P: CP="IDC DSP COR CURa ADMa OUR IND PHY ONL COM STA"');
 
     // Sets a null cookie and redirect to the home page.
-    setcookie("id", "", 0, "/", $this->serverName);
-    setcookie("token", "", 0, "/", $this->serverName);
-    setcookie("test", "", 0, "/", $this->serverName);
+    setcookie("id", "", 0, "/", $this->domainName);
+    setcookie("token", "", 0, "/", $this->domainName);
+    setcookie("test", "", 0, "/", $this->domainName);
 
     // Displays the error message.
     $this->flash->success("Disconnessione avvenuta con successo.");
@@ -170,7 +170,7 @@ class AuthController extends BaseController {
 
     //$this->url->setBaseUri('http://utenti.programmazione.me/');
     $this->view->disable();
-    $redirectUri = "http://utenti.".$this->serverName."/".$this->user->id;
+    $redirectUri = "http://utenti.".$this->domainName."/".$this->user->id;
     return $this->redirect($redirectUri);
 
     //exit;

@@ -24,23 +24,12 @@ abstract class BaseController extends Controller {
   protected $redis;
   protected $monolog;
 
-  protected $serverName;
   protected $baseUri;
+  protected $domainName;
   protected $controllerName;
   protected $actionName;
 
   protected $user;
-
-  // Stores the main menu definition.
-  protected static $mainMenu = [
-    ['name' => 'index', 'path' => '', 'label' => 'P.IT', 'icon' => 'home'],
-    ['name' => 'questions', 'path' => 'domande.', 'label' => 'DOMANDE', 'icon' => 'question'],
-    ['name' => 'links', 'path' => 'links.', 'label' => 'LINKS', 'icon' => 'link'],
-    ['name' => 'blog', 'path' => 'blog.', 'label' => 'BLOG', 'icon' => 'code'],
-    ['name' => 'tags', 'path' => 'tags.', 'label' => 'TAGS', 'icon' => 'tags'],
-    ['name' => 'badges', 'path' => 'badges.', 'label' => 'BADGES', 'icon' => 'certificate'],
-    ['name' => 'users', 'path' => 'utenti.', 'label' => 'UTENTI', 'icon' => 'group']
-  ];
 
 
   //! @brief Returns an associative array of paths indexed by controller name.
@@ -64,35 +53,35 @@ abstract class BaseController extends Controller {
     $this->redis = $this->di['redis'];
     $this->monolog = $this->di['monolog'];
 
-    $this->serverName = $this->di['config']['application']['serverName'];
-    $this->baseUri = "http://".$this->serverName;
-    $this->controllerName = $this->dispatcher->getControllerName();
+    // Used in subclasses also.
+    $this->domainName = $this->di['config']['application']['domainName'];
+
+    $this->baseUri = "//".$this->domainName;
 
     $this->user = UserFactory::getFromCookie();
-    if (isset($this->user))
-      $this->view->setVar('user', $this->user);
-
-    // The main menu is present in every page.
-    $this->view->setVar('mainMenu', self::$mainMenu);
-
-    $this->view->setVar('year', date('Y'));
-    $this->view->setVar('version', self::VERSION);
-    $this->view->setVar('serverName', $this->serverName);
-    $this->view->setVar('baseUri', $this->baseUri);
-    $this->view->setVar('controllerName', $this->controllerName);
-    $this->view->setVar('controllerPath', 'http://'.self::getPaths(self::$mainMenu)[$this->controllerName].$this->serverName);
   }
 
 
   //! @brief This method is executed before the initialize. In my opinion it's a bug.
   //! @details Cannot log inside this method using the monolog instance.
   public function beforeExecuteRoute() {
-    $this->actionName = $this->dispatcher->getActionName();
-    $this->view->setVar('actionName', $this->actionName);
   }
 
 
   public function afterExecuteRoute() {
+    $this->view->setVar('year', date('Y'));
+
+    $this->view->setVar('version', self::VERSION);
+
+    $this->view->setVar('domainName', $this->domainName);
+    $this->view->setVar('serverName', $_SERVER['SERVER_NAME']);
+    $this->view->setVar('controllerName', $this->dispatcher->getControllerName());
+    $this->view->setVar('actionName', $this->dispatcher->getActionName());
+
+    $this->view->setVar('baseUri', $this->baseUri);
+
+    if (isset($this->user))
+      $this->view->setVar('user', $this->user);
   }
 
 

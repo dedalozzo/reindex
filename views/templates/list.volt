@@ -1,10 +1,14 @@
+{% block sectionMenu %}
+  {% include "partials/navigation/sections/index.volt" %}
+{% endblock %}
+
 {% include "partials/navigation/section-menu.volt" %}
 
 {% include "partials/navigation/subsection-menu.volt" %}
 
 <div class="column-left">
 {% block columnLeft %}
-  {% set usersBaseUrl = 'http://utenti.'~serverName~'/' %}
+  {% set usersBaseUrl = '//utenti.'~domainName~'/' %}
 
   {% if entries is defined %}
     {% for entry in entries %}

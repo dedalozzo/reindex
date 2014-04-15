@@ -19,18 +19,6 @@ use PitPress\Helper\Stat;
 //! @nosubgrouping
 class QuestionsController extends ListController {
 
-  protected static $sectionLabel = 'DOMANDE';
-
-  // Stores the main menu definition.
-  protected static $sectionMenu = [
-    ['name' => 'open', 'path' => '/aperte/', 'label' => 'SENZA RISPOSTA', 'title' => 'Domande senza risposta'],
-    ['name' => 'interesting', 'path' => '/interessanti/', 'label' => 'INTERESSANTI', 'title' => 'Domande interessanti'],
-    ['name' => 'updated', 'path' => '/aggiornate/', 'label' => 'AGGIORNATE', 'title' => 'Domande aggiornate di recente'],
-    ['name' => 'popular', 'path' => '/popolari/', 'label' => 'POPOLARI', 'title' => 'Domande popolari'],
-    ['name' => 'newest', 'path' => '/nuove/', 'label' => 'NUOVE', 'title' => 'Nuove domande'],
-    ['name' => 'important', 'path' => '/importanti/', 'label' => 'IMPORTANTI', 'title' => 'Domande con un premio attivo']
-  ];
-
   // Stores the still open answer sub-menu definition.
   protected static $stillOpenSubMenu = ['nessuna-risposta', 'popolari', 'nuove', 'rivolte-a-me'];
 
