@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="it" xmlns="http://www.w3.org/1999/html">
-<!-- Copyright (c) 2000-2013 3F sas All rights reserved. -->
-<!-- Version 7.0 -->
+<!-- Copyright (c) 2000-{{ year }} 3F sas All rights reserved. -->
+<!-- Version {{ version }} -->
 <head>
   <title>{{ title }} - {{ domainName|capitalize }}</title>
   <meta charset="UTF-8">
