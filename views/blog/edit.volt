@@ -2,7 +2,7 @@
   <!-- <div class="alert alert-info">Le tue modifiche saranno poste in coda sino a che il processo di revisione paritaria (peer review) avrà luogo. Ogni modifica, purché costruttiva, è benvenuta. Grazie.</div> -->
   {{ flash.output() }}
 
-  <div id="page-title"><span>{{ doc.title }}</span></div>
+  <div id="page-title">{{ doc.title }}</div>
 
   <form class="frm frm-stacked" action="{{ baseUri }}/accedi/" id="signinform" name="signinform" method="post" role="form">
     <fieldset>
