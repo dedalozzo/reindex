@@ -12,14 +12,13 @@ namespace PitPress\Controller;
 
 use Phalcon\Mvc\Controller;
 
+use PitPress\Helper\Version;
 use PitPress\Factory\UserFactory;
 
 
 //! @brief The base controller, a subclass of Phalcon controller.
 //! @nosubgrouping
 abstract class BaseController extends Controller {
-  const VERSION = '7.0';
-
   protected $couch;
   protected $redis;
   protected $monolog;
@@ -71,7 +70,7 @@ abstract class BaseController extends Controller {
   public function afterExecuteRoute() {
     $this->view->setVar('year', date('Y'));
 
-    $this->view->setVar('version', self::VERSION);
+    $this->view->setVar('version', Version::getNumber());
 
     $this->view->setVar('domainName', $this->domainName);
     $this->view->setVar('serverName', $_SERVER['SERVER_NAME']);
