@@ -1,4 +1,4 @@
-<div id="page-title" class="dark">Accedi</div>
+<div id="page-title">{{ title }}</div>
 
 {{ flash.output() }}
 
