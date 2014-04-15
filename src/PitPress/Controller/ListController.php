@@ -49,7 +49,7 @@ abstract class ListController extends SectionController {
   //! @brief Builds the post url, given its section, publishing date and slug.
   //! @return string The complete url of the post.
   protected function buildUrl($section, $publishingDate, $slug) {
-    return "http://".$section.".".$this->serverName.date('/Y/m/d/', $publishingDate).$slug;
+    return "http://".$section.".".$this->domainName.date('/Y/m/d/', $publishingDate).$slug;
   }
 
 

@@ -3,26 +3,26 @@
 <!-- Copyright (c) 2000-2013 3F sas All rights reserved. -->
 <!-- Version 7.0 -->
 <head>
-  <title>{{ title }} - {{ serverName|capitalize }}</title>
+  <title>{{ title }} - {{ domainName|capitalize }}</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="">
   <meta name="author" content="">
 
   <link rel="shortcut icon" href="{{ baseUri }}/favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="{{ controllerPath }}/pit-bootstrap/css/bootstrap.css">
-  <!-- <link rel="stylesheet" href="{{ controllerPath }}/pit-bootstrap/css/selectize.bootstrap3.css"> -->
+  <link rel="stylesheet" href="//{{ serverName }}/pit-bootstrap/css/bootstrap.css">
+  <!-- <link rel="stylesheet" href="//{{ serverName }}/pit-bootstrap/css/selectize.bootstrap3.css"> -->
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js"></script>
-  <script src="{{ controllerPath }}/pit-bootstrap/js/selectize.min.js"></script>
-  <script src="{{ controllerPath }}/pit-bootstrap/js/selectbox.min.js"></script>
+  <script src="//{{ serverName }}/pit-bootstrap/js/selectize.min.js"></script>
+  <script src="//{{ serverName }}/pit-bootstrap/js/selectbox.min.js"></script>
 
 {% include "partials/codemirror.volt" %}
 
   <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
   <!--[if lt IE 9]>
-  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
 
   <style>

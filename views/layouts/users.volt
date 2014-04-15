@@ -1,3 +1,5 @@
+{% include "partials/navigation/sections/users.volt" %}
+
 {% include "partials/navigation/section-menu.volt" %}
 
 {% include "partials/navigation/subsection-menu.volt" %}
@@ -12,7 +14,7 @@
 {% if entries is defined %}
   {% for entry in entries %}
     {% set modulus = loop.index % 4 %}
-    {% set url = controllerPath~'/'~entry.id %}
+    {% set url = '//'~serverName~'/'~entry.id %}
     {% if loop.first %}
     <ul class="list gutter">
     {% endif %}

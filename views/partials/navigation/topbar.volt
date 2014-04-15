@@ -3,7 +3,7 @@
       <li class="topbar-brand">
         <ul class="list">
           <li><a class="topbar-brand-logo" href="{{ baseUri }}"></a></li>
-          <li><a href="{{ baseUri }}">{{ serverName|upper }}</a></li>
+          <li><a href="{{ baseUri }}">{{ domainName|upper }}</a></li>
         </ul>
       </li>
       <li class="topbar-search">
@@ -40,7 +40,7 @@
         </ul>
       </li>
       {% if user is defined %}
-        {% set userUri = 'http://utenti.'~serverName~'/'~user.id %}
+        {% set userUri = '//utenti.'~serverName~'/'~user.id %}
       <li><a href="{{ userUri }}"><img class="gravatar" src="{{ user.getGravatar(user.email) }}&s=20" />&nbsp;{{ user.displayName }}</a></li>
       {% else %}
       <li><a href="{{ baseUri }}/accedi/">Accedi</a></li>
