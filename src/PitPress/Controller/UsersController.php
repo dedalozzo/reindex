@@ -19,7 +19,7 @@ use Phalcon\Mvc\View;
 
 //! @brief Controller of Users actions.
 //! @nosubgrouping
-class UsersController extends SectionController {
+class UsersController extends BaseController {
 
 
   protected function getEntries($keys) {
