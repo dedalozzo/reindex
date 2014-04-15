@@ -17,7 +17,7 @@ use PitPress\Helper\Stat;
 
 //! @brief Controller of Tags actions.
 //! @nosubgrouping
-class TagsController extends SectionController {
+class TagsController extends BaseController {
 
 
   protected function getEntries($keys) {
