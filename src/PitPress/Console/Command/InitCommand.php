@@ -51,6 +51,7 @@ class InitCommand extends AbstractCommand {
       $map = "function(\$doc) use (\$emit) {
                 if (isset(\$doc->supertype) and \$doc->supertype == 'post')
                   \$emit(\$doc->_id, [
+                     'type' => \$doc->type,
                      'title' => \$doc->title,
                      'excerpt' => \$doc->excerpt,
                      'slug' => \$doc->slug,
