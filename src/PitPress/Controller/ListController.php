@@ -19,7 +19,7 @@ use Phalcon\Mvc\View;
 
 //! @brief Ancestor controller for any controller displaying posts.
 //! @nosubgrouping
-abstract class ListController extends SectionController {
+abstract class ListController extends BaseController {
 
 
   //! @brief Gets a list of tags recently updated.
@@ -61,7 +61,7 @@ abstract class ListController extends SectionController {
     $opts = new ViewQueryOpts();
 
     // Posts.
-      $opts->doNotReduce();
+    $opts->doNotReduce();
     $result = $this->couch->queryView("posts", "all", $keys, $opts);
     $posts = $result['rows'];
 
@@ -88,6 +88,7 @@ abstract class ListController extends SectionController {
       $entry->id = $posts[$i]['id'];
 
       $properties = &$posts[$i]['value'];
+      $entry->type = $properties['type'];
       $entry->title = $properties['title'];
       $entry->excerpt = $properties['excerpt'];
       $entry->url = $this->buildUrl($properties['section'], $properties['publishingDate'], $properties['slug']);
