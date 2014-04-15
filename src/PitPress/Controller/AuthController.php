@@ -143,6 +143,8 @@ class AuthController extends BaseController {
         $this->session->remove("referer");
     }
 
+    $this->view->setVar('title', 'Accedi');
+
     $this->view->disableLevel(View::LEVEL_LAYOUT);
   }
 
@@ -191,6 +193,8 @@ class AuthController extends BaseController {
 
   //! @brief Sign up a PitPress account.
   public function signUpAction() {
+    $this->view->setVar('title', 'Registrati');
+
     $this->view->disableLevel(View::LEVEL_LAYOUT);
   }
 
