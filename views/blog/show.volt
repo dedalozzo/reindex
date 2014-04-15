@@ -1,103 +1,100 @@
+{% set usersBaseUrl = '//utenti.'~serverName~'/' %}
+{% set userUrl = usersBaseUrl~doc.userId %}
+{% set hitsCount = doc.getHitsCount() %}
+{% set replaysCount = doc.getReplaysCount() %}
+
+{% if doc.type == 'question' %}
+  {% set label = 'formulata' %}
+{% elseif doc.type == 'link' %}
+  {% set label = 'inserito' %}
+{% elseif doc.type == 'article' %}
+  {% set label = 'scritto' %}
+{% else %}
+  {% set label = 'recensito' %}
+{% endif %}
+
 <div class="column-left">
-  {% set usersBaseUrl = '//utenti.'~serverName~'/' %}
-  {% set userUrl = usersBaseUrl~doc.userId %}
-  {% set hitsCount = doc.getHitsCount() %}
-  {% set replaysCount = doc.getReplaysCount() %}
 
-  {% if doc.type == 'question' %}
-    {% set label = 'formulata' %}
-  {% elseif doc.type == 'link' %}
-    {% set label = 'inserito' %}
-  {% elseif doc.type == 'article' %}
-    {% set label = 'scritto' %}
-  {% else %}
-    {% set label = 'recensito' %}
-  {% endif %}
+  <div class="item-section {{ doc.type }}">{{ doc.getPublishingType() }}</div>
 
-  <div class="item">
-    <div class="item-section">
-      <a href="#">{{ doc.getPublishingType() }}</a>
+  <div id="page-title">{{ doc.title }}</div>
+
+  <div class="item-tools">
+    <a href="#" title ="Questo articolo è interessante"><i class="icon-arrow-up icon-large"></i></a>{{ doc.getScore() }}<a href="#" title="Questo articolo è poco chiaro e di dubbia utilità"><i class="icon-arrow-down icon-large"></i></a>
+    <a href="#"><i class="icon-comments icon-large"></i></a>{{ replaysCount }}
+  </div>
+
+  <div class="item-content shift">
+    <div class="item-hits"><b>{{ doc.hitsCount }}</b>{% if hitsCount == 1 %} lettore{% else %} lettori{% endif %}</div>
+    <ul class="list toolbar">
+      <li class="toolgroup">
+        <a href="#" title="Aggiungi ai preferiti"><i class="icon-star-empty"></i></a>
+        <span>{{ doc.getStarsCount() }}</span>
+      </li>
+      <li class="toolgroup break">
+        <a href="#" title="Sottoscrivi la discussione"><i class="icon-eye-open"></i></a>
+        <span>{{ doc.getSubscribersCount() }}</span>
+      </li>
+      <li class="toolgroup">
+        <a href="#" title="Condividi su Twitter"><i class="icon-twitter"></i></a>
+        <span>{{ doc.getStarsCount() }}</span>
+      </li>
+      <li class="toolgroup">
+        <a href="#" title="Condividi su Facebook"><i class="icon-facebook"></i></a>
+        <span>{{ doc.getStarsCount() }}</span>
+      </li>
+      <li class="toolgroup break">
+        <a href="#" title="Condividi su Google+"><i class="icon-google-plus"></i></a>
+        <span>{{ doc.getStarsCount() }}</span>
+      </li>
+    </ul>
+
+    {% if doc.type == 'book' %}
+    <div class="item-meta">
+      <img class="" src="//programmazione.it/picture.php?idItem=48456&amp;id=52558c0458cae" alt="Copertina" />
+      <span>ISBN: </span>{{ doc.isbn }}<br>
+      <span>Autori: </span>{{ doc.authors }}<br>
+      <span>Editore: </span>{{ doc.publisher }}<br>
+      <span>Lingua: </span>{{ doc.language }}<br>
+      <span>Anno: </span>{{ doc.year }}<br>
+      <span>Pagine: </span>{{ doc.pages }}<br>
+      <span>Allegati: </span>{{ doc.attachments is empty ? 'nessuno' : doc.attachments }}
+      <div class="clear"></div>
     </div>
-
-    <div id="page-title"><span>{{ doc.title }}</span></div>
-
-    <div class="item-tools">
-      <a href="#" title ="Questo articolo è interessante"><i class="icon-arrow-up icon-large"></i></a>{{ doc.getScore() }}<a href="#" title="Questo articolo è poco chiaro e di dubbia utilità"><i class="icon-arrow-down icon-large"></i></a>
-      <a href="#"><i class="icon-comments icon-large"></i></a>{{ replaysCount }}
-    </div>
-
-    <div class="item-content shift">
-      <div class="item-hits"><b>{{ doc.hitsCount }}</b>{% if hitsCount == 1 %} lettore{% else %} lettori{% endif %}</div>
-      <ul class="list toolbar">
-        <li class="toolgroup">
-          <a href="#" title="Aggiungi ai preferiti"><i class="icon-star-empty"></i></a>
-          <span>{{ doc.getStarsCount() }}</span>
-        </li>
-        <li class="toolgroup break">
-          <a href="#" title="Sottoscrivi la discussione"><i class="icon-eye-open"></i></a>
-          <span>{{ doc.getSubscribersCount() }}</span>
-        </li>
-        <li class="toolgroup">
-          <a href="#" title="Condividi su Twitter"><i class="icon-twitter"></i></a>
-          <span>{{ doc.getStarsCount() }}</span>
-        </li>
-        <li class="toolgroup">
-          <a href="#" title="Condividi su Facebook"><i class="icon-facebook"></i></a>
-          <span>{{ doc.getStarsCount() }}</span>
-        </li>
-        <li class="toolgroup break">
-          <a href="#" title="Condividi su Google+"><i class="icon-google-plus"></i></a>
-          <span>{{ doc.getStarsCount() }}</span>
-        </li>
-      </ul>
-
+    {% endif %}
+    <div class="item-body">
+      {{ doc.html }}
       {% if doc.type == 'book' %}
-      <div class="item-meta">
-        <img class="" src="//programmazione.it/picture.php?idItem=48456&amp;id=52558c0458cae" alt="Copertina" />
-        <span>ISBN: </span>{{ doc.isbn }}<br>
-        <span>Autori: </span>{{ doc.authors }}<br>
-        <span>Editore: </span>{{ doc.publisher }}<br>
-        <span>Lingua: </span>{{ doc.language }}<br>
-        <span>Anno: </span>{{ doc.year }}<br>
-        <span>Pagine: </span>{{ doc.pages }}<br>
-        <span>Allegati: </span>{{ doc.attachments is empty ? 'nessuno' : doc.attachments }}
-        <div class="clear"></div>
+      <div class="positive">
+        {{ markdown.render(doc.positive) }}
+      </div>
+      <div class="negative">
+        {{ markdown.render(doc.negative) }}
       </div>
       {% endif %}
-      <div class="item-body">
-        {{ doc.html }}
-        {% if doc.type == 'book' %}
-        <div class="positive">
-          {{ markdown.render(doc.positive) }}
-        </div>
-        <div class="negative">
-          {{ markdown.render(doc.negative) }}
-        </div>
-        {% endif %}
+    </div>
+    <ul class="list item-tags">
+      {% set tags = doc.getTags() %}
+      {% for tag in tags %}
+        <li><a class="tag" href="/tag/">{{ tag['value'] }}</a></li>
+      {% endfor  %}
+    </ul>
+    <div class="item-info pull-right">
+      <div>{{ doc.whenHasBeenPublished() }}, {{ label }} da</div>
+      <a href="{{ userUrl }}"><img class="gravatar" src="{{ doc.getGravatar() }}&s=32" /></a>
+      <div>
+        <a href="{{ userUrl }}">{{ doc.getDisplayName() }}</a>
+        <div class="reputation"><b>2345</b><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 10<i class="icon-certificate bronze"></i> 10</div>
       </div>
-      <ul class="list item-tags">
-        {% set tags = doc.getTags() %}
-        {% for tag in tags %}
-          <li><a class="tag" href="/tag/">{{ tag['value'] }}</a></li>
-        {% endfor  %}
-      </ul>
-      <div class="item-info pull-right">
-        <div>{{ doc.whenHasBeenPublished() }}, {{ label }} da</div>
-        <a href="{{ userUrl }}"><img class="gravatar" src="{{ doc.getGravatar() }}&s=32" /></a>
-        <div>
-          <a href="{{ userUrl }}">{{ doc.getDisplayName() }}</a>
-          <div class="reputation"><b>2345</b><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 10<i class="icon-certificate bronze"></i> 10</div>
-        </div>
-      </div>
-      <div class="list item-links">
-        <li><a class="btn mini blue" href="//{{ serverName~'/'~doc.id~'/modifica/' }}"><i class="icon-file-text"></i> MODIFICA</a></li>
-        <li><a class="btn mini blue" href="//{{ serverName~'/flagga/'~doc.id }}"><i class="icon-flag"></i> FLAGGA</a></li>
-        <li><a class="btn mini red" href="//{{ serverName~'/elimina/'~doc.id }}"><i class="icon-trash"></i> ELIMINA</a></li>
-        <li><a class="btn mini orange" href="//{{ serverName~'/blocca/'~doc.id }}"><i class="icon-unlock"></i> BLOCCA</a></li>
-        <li><a class="btn mini orange" href="//{{ serverName~'/proteggi/'~doc.id }}"><i class="icon-umbrella"></i> PROTEGGI</a></li>
-        <li><a class="btn mini blue" href="//{{ serverName~'/appunta/'~doc.id }}"><i class="icon-pushpin"></i> APPUNTA</a></li>
-        <li class="space"></li>
-      </div>
+    </div>
+    <div class="list item-links gutter-plus">
+      <li><a class="btn mini blue" href="//{{ serverName~'/'~doc.id~'/modifica/' }}"><i class="icon-file-text"></i> MODIFICA</a></li>
+      <li><a class="btn mini blue" href="//{{ serverName~'/flagga/'~doc.id }}"><i class="icon-flag"></i> FLAGGA</a></li>
+      <li><a class="btn mini red" href="//{{ serverName~'/elimina/'~doc.id }}"><i class="icon-trash"></i> ELIMINA</a></li>
+      <li><a class="btn mini orange" href="//{{ serverName~'/blocca/'~doc.id }}"><i class="icon-unlock"></i> BLOCCA</a></li>
+      <li><a class="btn mini orange" href="//{{ serverName~'/proteggi/'~doc.id }}"><i class="icon-umbrella"></i> PROTEGGI</a></li>
+      <li><a class="btn mini blue" href="//{{ serverName~'/appunta/'~doc.id }}"><i class="icon-pushpin"></i> APPUNTA</a></li>
+      <li class="space"></li>
     </div>
   </div>
 
@@ -145,7 +142,7 @@
         <div class="reputation"><b>2345</b><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 10<i class="icon-certificate bronze"></i> 10</div>
       </div>
     </div>
-    <div class="list item-links">
+    <div class="list item-links gutter">
       <li><a class="btn mini blue" href="#"><i class="icon-file-text"></i> MODIFICA</a></li>
       <li><a class="btn mini blue" href="#"><i class="icon-flag"></i> FLAGGA</a></li>
       <li><a class="btn mini red" href="#"><i class="icon-trash"></i> ELIMINA</a></li>
