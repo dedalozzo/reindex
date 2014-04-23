@@ -1,4 +1,4 @@
-<div class="notebook" id="updates">
+<section class="notebook" id="updates">
   <ul class="list tabs no-gutter">
     <li class="active"><a href="#articles" data-toggle="tab">ARTICOLI</a></li>
     <li><a href="#tutorials" data-toggle="tab">GUIDE</a></li>
@@ -49,4 +49,4 @@
     </ul>
   </div>
   {% endif %}
-</div>
+</section>
