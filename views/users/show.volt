@@ -4,10 +4,10 @@
   <div class="user-profile">
     <img class="img-polaroid" src="{{ doc.getGravatar(doc.email) }}&s=240" />
     <div class="user-name">{% if doc.sex == 0 %}<i class="icon-male"></i>{% else %}<i class="icon-female"></i>{% endif %}&nbsp;{{ doc.displayName }}</div>
-
-    <div class="user-reputation">
-      <div class="user-points"><div>2345</div>REPUTAZIONE</div>
-      <div class="user-badges"><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 10<i class="icon-certificate bronze"></i> 10</div>
+    <div class="reputation big">
+      <div>2345</div>
+      <div><span>REPUTAZIONE</span></div>
+      <div><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 10<i class="icon-certificate bronze"></i> 10</div>
     </div>
 
     <blockquote>
