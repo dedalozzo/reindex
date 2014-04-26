@@ -9,7 +9,7 @@
 {% if actionName == 'byName' %}
 <div class="ghost gutter">
   <form method="get" action="search.php" autocomplete="off" name="form_search">
-    <label>Cerca tra i <b>{{ entriesCount }}</b> tags: </label><input placeholder="nome tag" autocomplete="on" id="keyword" name="keyword" />
+    <label>Cerca tra i <b>{{ entriesCount }}</b> tags: </label><input type="text" placeholder="nome tag" autocomplete="on" id="keyword" name="keyword" />
   </form>
 </div>
 {% endif %}
