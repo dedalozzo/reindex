@@ -1,4 +1,4 @@
-{% set usersBaseUrl = '//utenti.'~serverName~'/' %}
+{% set usersBaseUrl = '//utenti.'~domainName~'/' %}
 {% set userUrl = usersBaseUrl~doc.userId %}
 {% set hitsCount = doc.getHitsCount() %}
 {% set replaysCount = doc.getReplaysCount() %}
@@ -14,9 +14,6 @@
 {% endif %}
 
 <div class="column-left">
-
-  <div class="item-section {{ doc.type }}">{{ doc.getPublishingType() }}</div>
-
   <div id="page-title">{{ doc.title }}</div>
 
   <div class="item-tools">
@@ -24,7 +21,7 @@
     <a href="#"><i class="icon-comments icon-large"></i></a>{{ replaysCount }}
   </div>
 
-  <div class="item-content shift">
+  <section class="item-content shift">
     <div class="item-hits"><b>{{ doc.hitsCount }}</b>{% if hitsCount == 1 %} lettore{% else %} lettori{% endif %}</div>
     <ul class="list toolbar">
       <li class="toolgroup">
@@ -62,7 +59,7 @@
       <div class="clear"></div>
     </div>
     {% endif %}
-    <div class="item-body">
+    <section class="item-body">
       {{ doc.html }}
       {% if doc.type == 'book' %}
       <div class="positive">
@@ -72,31 +69,36 @@
         {{ markdown.render(doc.negative) }}
       </div>
       {% endif %}
-    </div>
-    <ul class="list item-tags">
-      {% set tags = doc.getTags() %}
-      {% for tag in tags %}
+    </section>
+    <div class="ghost gutter">
+      <ul class="list item-tags">
+        <li><span class="tag {{ doc.type }}">{{ doc.getPublishingType() }}</span></li>
+        {% set tags = doc.getTags() %}
+        {% for tag in tags %}
         <li><a class="tag" href="/tag/">{{ tag['value'] }}</a></li>
-      {% endfor  %}
-    </ul>
-    <div class="item-info pull-right">
-      <div>{{ doc.whenHasBeenPublished() }}, {{ label }} da</div>
-      <a href="{{ userUrl }}"><img class="gravatar" src="{{ doc.getGravatar() }}&s=32" /></a>
-      <div>
-        <a href="{{ userUrl }}">{{ doc.getDisplayName() }}</a>
-        <div class="reputation"><b>2345</b><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 10<i class="icon-certificate bronze"></i> 10</div>
-      </div>
+        {% endfor  %}
+      </ul>
+      <section class="item-user">
+        <a class="avatar" href="{{ userUrl }}"><img class="img-polaroid" src="{{ doc.getGravatar() }}&s=48" /></a>
+        <div class="reputation">
+          <div>2345</div>
+          <div>REPUTAZIONE</div>
+          <div><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 14<i class="icon-certificate bronze"></i> 122</div>
+        </div>
+        <a class="username" href="{{ userUrl }}">{{ doc.getDisplayName() }}</a>
+      </section>
     </div>
-    <div class="list item-links gutter-plus">
-      <li><a class="btn mini blue" href="//{{ serverName~'/'~doc.id~'/modifica/' }}"><i class="icon-file-text"></i> MODIFICA</a></li>
-      <li><a class="btn mini blue" href="//{{ serverName~'/flagga/'~doc.id }}"><i class="icon-flag"></i> FLAGGA</a></li>
-      <li><a class="btn mini red" href="//{{ serverName~'/elimina/'~doc.id }}"><i class="icon-trash"></i> ELIMINA</a></li>
-      <li><a class="btn mini orange" href="//{{ serverName~'/blocca/'~doc.id }}"><i class="icon-unlock"></i> BLOCCA</a></li>
-      <li><a class="btn mini orange" href="//{{ serverName~'/proteggi/'~doc.id }}"><i class="icon-umbrella"></i> PROTEGGI</a></li>
-      <li><a class="btn mini blue" href="//{{ serverName~'/appunta/'~doc.id }}"><i class="icon-pushpin"></i> APPUNTA</a></li>
+    <ul class="list pills gutter-plus">
+      <li><a class="blue" href="//{{ serverName~'/'~doc.id~'/modifica/' }}"><i class="icon-file-text"></i></a></li>
+      <li><a class="blue" href="//{{ serverName~'/flagga/'~doc.id }}"><i class="icon-flag"></i></a></li>
+      <li><a class="red" href="//{{ serverName~'/elimina/'~doc.id }}"><i class="icon-trash"></i></a></li>
+      <li><a class="orange" href="//{{ serverName~'/blocca/'~doc.id }}"><i class="icon-unlock"></i></a></li>
+      <li><a class="orange" href="//{{ serverName~'/proteggi/'~doc.id }}"><i class="icon-umbrella"></i></a></li>
+      <li><a class="blue" href="//{{ serverName~'/appunta/'~doc.id }}"><i class="icon-pushpin"></i></a></li>
       <li class="space"></li>
-    </div>
-  </div>
+      <li><a class="red" href="//{{ serverName~'/appunta/'~doc.id }}">COMMENTA</a></li>
+    </ul>
+  </section>
 
   <ul class="list tabs">
     <li><span><b>{{ replaysCount }}{% if replaysCount == 1 %} COMMENTO{% else %} COMMENTI{% endif %}</b></span></li>
@@ -117,6 +119,7 @@
   </div>
 
   <div class="item-content shift">
+    <!--
     <ul class="list toolbar">
       <li class="toolgroup">
         <a href="#" title="Condividi su Twitter"><i class="icon-twitter"></i></a>
@@ -131,32 +134,34 @@
         <span>{{ doc.getStarsCount() }}</span>
       </li>
     </ul>
+    -->
     <div class="item-body">
       {{ replay.html }}
     </div>
-    <div class="item-info pull-right">
-      <div>{{ replay.whenHasBeenPublished() }}</div>
-      <a href="{{ userUrl }}"><img class="gravatar" src="{{ replay.getGravatar() }}&s=32" /></a>
-      <div>
-        <a href="{{ userUrl }}">{{ replay.getDisplayName() }}</a><br>
-        <div class="reputation"><b>2345</b><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 10<i class="icon-certificate bronze"></i> 10</div>
+    <section class="item-user">
+      <a class="avatar" href="{{ userUrl }}"><img class="img-polaroid" src="{{ replay.getGravatar() }}&s=48" /></a>
+      <div class="reputation">
+        <div>2345</div>
+        <div>REPUTAZIONE</div>
+        <div><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 14<i class="icon-certificate bronze"></i> 122</div>
       </div>
-    </div>
-    <div class="list item-links gutter">
+      <a class="username" href="{{ userUrl }}">{{ replay.getDisplayName() }}</a>
+    </section>
+    <ul class="list item-links gutter">
       <li><a class="btn mini blue" href="#"><i class="icon-file-text"></i> MODIFICA</a></li>
       <li><a class="btn mini blue" href="#"><i class="icon-flag"></i> FLAGGA</a></li>
       <li><a class="btn mini red" href="#"><i class="icon-trash"></i> ELIMINA</a></li>
-      <li><a class="btn mini blue" href="#"><i class="icon-unlock"></i> RISPONDI</a></li>
       <li class="space"></li>
-    </div>
+      <li><a class="btn mini blue" href="#"><i class="icon-unlock"></i> RISPONDI</a></li>
+    </ul>
   </div>
 
   {% endfor %}
 
 </div> <!-- /column-left -->
 
-<div class="column-right">
+<aside class="column-right">
 
 <div class="banner"><a href="#"><img src="/img/300x250cro.jpeg" /></a></div>
 
-</div> <!-- /column-right -->
+</aside> <!-- /column-right -->
