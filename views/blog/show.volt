@@ -78,7 +78,7 @@
         <li><a class="tag" href="/tag/">{{ tag['value'] }}</a></li>
         {% endfor  %}
       </ul>
-      <section class="item-user">
+      <section class="item-user pull-right">
         <a class="avatar" href="{{ userUrl }}"><img class="img-polaroid" src="{{ doc.getGravatar() }}&s=48" /></a>
         <div class="reputation">
           <div>2345</div>
