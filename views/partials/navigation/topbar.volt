@@ -14,7 +14,7 @@
         <span><i class="icon-inbox"></i>&nbsp;<i class="icon-caret-down"></i></span>
         <span><i class="icon-plus"></i>&nbsp;<i class="icon-caret-down"></i></span>
       {% if user is defined %}
-        {% set userUri = '//utenti.'~serverName~'/'~user.id %}
+        {% set userUri = '//utenti.'~domainName~'/'~user.id %}
         <a href="{{ userUri }}"><img class="gravatar" src="{{ user.getGravatar(user.email) }}&s=20">&nbsp;{{ user.displayName }}</a>
       {% else %}
         <a href="{{ baseUri }}/accedi/">Accedi</a>
