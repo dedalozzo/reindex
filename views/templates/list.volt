@@ -14,7 +14,7 @@
       {% set userUrl = usersBaseUrl~entry.userId %}
       {% set postType = entry.type %}
       {% include "partials/helpers/tag.volt" %}
-  <hr>
+  <hr class="fade">
   <div class="item-time">{{ entry.whenHasBeenPublished }}</div>
   <div class="item-tools">
     <a href="#"><i class="icon-arrow-up icon-large"></i></a>{{ entry.score }}<a href="#"><i class="icon-arrow-down icon-large"></i></a>
