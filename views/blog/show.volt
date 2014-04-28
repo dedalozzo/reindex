@@ -63,10 +63,10 @@
       {{ doc.html }}
       {% if doc.type == 'book' %}
       <div class="positive">
-        {{ markdown.render(doc.positive) }}
+        {{ markdown.parse(doc.positive) }}
       </div>
       <div class="negative">
-        {{ markdown.render(doc.negative) }}
+        {{ markdown.parse(doc.negative) }}
       </div>
       {% endif %}
     </section>
