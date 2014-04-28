@@ -6,20 +6,26 @@
 //! @author Filippo F. Fadda
 
 
-use PitPress\Render\SyntaxHighlighter;
+//use PitPress\Render\SyntaxHighlighter;
+use Pygmentize\Pygmentize;
 
 
 // Creates an instance of Redis client and return it.
 $di->setShared('markdown',
   function() use ($config) {
+    // We no longer need the SyntaxHighlighter class, because Hoedown uses a closure.
+
+    /*
     $render = new SyntaxHighlighter(
         [
           'filter_html' => TRUE,
           'hard_wrap' => TRUE
         ]
     );
+    */
 
-    $markdown = new Sundown\Markdown($render,
+    /*
+     $markdown = new Sundown\Markdown($render,
         [
           'no_intra_emphasis' => TRUE,
           'tables' => TRUE,
@@ -31,17 +37,27 @@ $di->setShared('markdown',
           'superscript' => TRUE
         ]
     );
-
-    /*
-    // Replaced Sundown with Hoedown.
-    $markdown = new Hoedown(
-        [
-          Hoedown::SPACE_HEADERS => TRUE,
-          Hoedown::SUPERSCRIPT => TRUE
-        ]
-    );
     */
 
-    return $markdown;
+    // Replaced Sundown with Hoedown.
+    // For a description of the predefined constants see: https://github.com/kjdev/php-ext-hoedown#predefined-constants.
+    $hoedown = new Hoedown(
+        [
+          Hoedown::SPACE_HEADERS => TRUE,
+          Hoedown::SUPERSCRIPT => TRUE,
+          Hoedown::UNDERLINE => TRUE,
+          Hoedown::HIGHLIGHT => TRUE,
+          Hoedown::SKIP_HTML => TRUE,
+          Hoedown::SKIP_STYLE => TRUE,
+          Hoedown::NO_INTRA_EMPHASIS => FALSE
+        ]
+    );
+
+    $hoedown->addRender("blockcode", function($code, $language) {
+       return Pygmentize::highlight($code, $language);
+      }
+    );
+
+    return $hoedown;
   }
 );
