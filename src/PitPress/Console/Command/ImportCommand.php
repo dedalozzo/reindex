@@ -152,7 +152,7 @@ class ImportCommand extends AbstractCommand {
       $article->body = $converter->toMarkdown();
 
       try {
-        $article->html = $this->markdown->render($article->body);
+        $article->html = $this->markdown->parse($article->body);
       }
       catch(\Exception $e) {
         $this->monolog->addCritical(sprintf(" %d - %s", $item->idItem, $article->title));
@@ -316,7 +316,7 @@ class ImportCommand extends AbstractCommand {
       $book->body = $converter->toMarkdown();
 
       try {
-        $book->html = $this->markdown->render($book->body);
+        $book->html = $this->markdown->parse($book->body);
       }
       catch(\Exception $e) {
         $this->monolog->addCritical(sprintf(" %d - %s", $item->idItem, $book->title));
@@ -518,7 +518,7 @@ class ImportCommand extends AbstractCommand {
       $comment->body = $converter->toMarkdown();
 
       try {
-        $comment->html = $this->markdown->render($comment->body);
+        $comment->html = $this->markdown->parse($comment->body);
       }
       catch(\Exception $e) {
         $this->monolog->addCritical(sprintf(" %d - %s", $item->id, $comment->title));
