@@ -35,9 +35,7 @@
 
       <ul class="list gutter">
     {% endif %}
-
-
-      {% elsefor %}
+  {% elsefor %}
     <div class="alert alert-info">Siamo spiacenti, la ricerca non ha prodotto alcun risultato.</div>
   {% endfor %}
 {% endif %}
