@@ -83,6 +83,7 @@ class UsersController extends BaseController {
 
     $this->view->setVar('title', $doc->displayName);
 
+    $this->view->disableLevel(View::LEVEL_MAIN_LAYOUT);
     $this->view->disableLevel(View::LEVEL_LAYOUT);
   }
 
