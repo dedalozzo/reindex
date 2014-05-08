@@ -4,31 +4,29 @@
 
   <div id="page-title">{{ doc.title }}</div>
 
-  <form class="frm frm-stacked" action="{{ baseUri }}/accedi/" id="signinform" name="signinform" method="post" role="form">
+  <form class="frm-stacked" action="{{ baseUri }}/accedi/" id="signinform" name="signinform" method="post" role="form">
     <fieldset>
-
-        <label for="select-nation">Revisione: </label>
-        <select name="select-nation" id="select-nation" placeholder="Nazione...">
-          <option value="">Seleziona nazione...</option>
-          <optgroup label="North America">
-            <option value="1">USA</option>
-            <option value="9">Canada</option>
-          </optgroup>
-          <optgroup label="Europe">
-            <option value="2">France</option>
-            <option value="3">Spain</option>
-            <option value="6">Bulgaria</option>
-            <option value="7" disabled="disabled">Greece</option>
-            <option value="8">Italy</option>
-          </optgroup>
-          <optgroup label="Asia" disabled="disabled">
-            <option value="5">Japan</option>
-            <option value="11">China</option>
-          </optgroup>
-          <option value="4">Brazil</option>
-          <option value="10">South Africa</option>
-        </select>
-
+      <label for="revision">Revisione: </label>
+      <select name="revision" id="select-nation" placeholder="Nazione...">
+        <option value="">Seleziona nazione...</option>
+        <optgroup label="North America">
+          <option value="1">USA</option>
+          <option value="9">Canada</option>
+        </optgroup>
+        <optgroup label="Europe">
+          <option value="2">France</option>
+          <option value="3">Spain</option>
+          <option value="6">Bulgaria</option>
+          <option value="7" disabled="disabled">Greece</option>
+          <option value="8">Italy</option>
+        </optgroup>
+        <optgroup label="Asia" disabled="disabled">
+          <option value="5">Japan</option>
+          <option value="11">China</option>
+        </optgroup>
+        <option value="4">Brazil</option>
+        <option value="10">South Africa</option>
+      </select>
       <script>
         $('#select-nation').selectize({
           sortField: {
@@ -38,6 +36,9 @@
           dropdownParent: 'body'
         });
       </script>
+
+      <label for="title">Titolo: </label>
+      <input type="text" style="width: 100%;" placeholder="Titolo" autocomplete="on" id="keyword" name="keyword" value="{{ doc.title }}">
     </fieldset>
     <fieldset>
       <ul class="list tabs">
@@ -91,102 +92,39 @@
       </div>
     </fieldset>
     <fieldset>
-      <label for="select-to">Email: </label>
-      <select id="select-to" class="contacts" placeholder="Pick some people..."></select>
+      <label for="tags">Tags: </label>
+      <select id="tags" placeholder="Seleziona alcuni tags..."></select>
       <script>
-        var REGEX_EMAIL = '([a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*@' +
-          '(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)';
-
-        $('#select-to').selectize({
+        $('#tags').selectize({
+          plugins: ['remove_button'],
           persist: false,
+          create: true,
+          //theme: 'links',
           maxItems: null,
-          valueField: 'email',
-          labelField: 'name',
-          searchField: ['name', 'email'],
+          valueField: 'id',
+          searchField: 'title',
           options: [
-            {email: 'brian@thirdroute.com', name: 'Brian Reavis'},
-            {email: 'nikola@tesla.com', name: 'Nikola Tesla'},
-            {email: 'someone@gmail.com'}
+            {id: 1, title: 'php', url: 'https://diy.org'},
+            {id: 2, title: 'java', url: 'http://google.com'},
+            {id: 3, title: 'c#', url: 'http://yahoo.com'}
           ],
           render: {
-            item: function(item, escape) {
-              return '<div>' +
-              (item.name ? '<span class="name">' + escape(item.name) + '</span>' : '') +
-              (item.email ? '<span class="email">' + escape(item.email) + '</span>' : '') +
+            option: function(data, escape) {
+              return '<div class="option">' +
+              '<span class="title">' + escape(data.title) + '</span>' +
               '</div>';
             },
-            option: function(item, escape) {
-              var label = item.name || item.email;
-              var caption = item.name ? item.email : null;
-              return '<div>' +
-              '<span class="label">' + escape(label) + '</span>' +
-              (caption ? '<span class="caption">' + escape(caption) + '</span>' : '') +
-              '</div>';
+            item: function(data, escape) {
+              return '<div class="item"><a class="tag" href="' + escape(data.url) + '">' + escape(data.title) + '</a></div>';
             }
           },
           create: function(input) {
-            if ((new RegExp('^' + REGEX_EMAIL + '$', 'i')).test(input)) {
-              return {email: input};
-            }
-            var match = input.match(new RegExp('^([^<]*)\<' + REGEX_EMAIL + '\>$', 'i'));
-            if (match) {
-              return {
-                email : match[2],
-                name  : $.trim(match[1])
-              };
-            }
-            alert('Invalid email address.');
-            return false;
+            return {
+              id: 0,
+              title: input,
+              url: '#'
+            };
           }
-        });
-      </script>
-      <label for="select-movie">Movies: </label>
-      <select id="select-movie" class="movies" placeholder="Find a movie..."></select>
-      <script>
-        $('#select-movie').selectize({
-          persist: false,
-          maxItems: null,
-          valueField: 'title',
-          labelField: 'title',
-          searchField: 'title',
-          options: [],
-          create: false,
-          render: {
-            option: function(item, escape) {
-              var actors = [];
-              for (var i = 0, n = item.abridged_cast.length; i < n; i++) {
-                actors.push('<span>' + escape(item.abridged_cast[i].name) + '</span>');
-              }
-
-              return '<div>' +
-              '<img src="' + escape(item.posters.thumbnail) + '" alt="">' +
-              '<span class="title">' +
-              '<span class="name">' + escape(item.title) + '</span>' +
-              '</span>' +
-              '<span class="description">' + escape(item.synopsis || 'No synopsis available at this time.') + '</span>' +
-              '<span class="actors">' + (actors.length ? 'Starring ' + actors.join(', ') : 'Actors unavailable') + '</span>' +
-              '</div>';
-            }
-          },
-          load: function(query, callback) {
-            if (!query.length) return callback();
-            $.ajax({
-              url: 'http://api.rottentomatoes.com/api/public/v1.0/movies.json',
-              type: 'GET',
-              dataType: 'jsonp',
-              data: {
-                q: query,
-                page_limit: 10,
-                apikey: '3qqmdwbuswut94jv4eua3j85'
-              },
-              error: function() {
-                callback();
-              },
-              success: function(res) {
-                  callback(res.movies);
-                }
-              });
-            }
         });
       </script>
     </fieldset>
@@ -199,8 +137,8 @@
 
 </div> <!-- /column-left -->
 
-<div class="column-right">
+<aside class="column-right">
 
 <div class="banner"><a href="#"><img src="/img/300x250cro.jpeg" /></a></div>
 
-</div> <!-- /column-right -->
+</aside> <!-- /column-right -->
