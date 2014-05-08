@@ -13,9 +13,9 @@
     <div class="pull-right">
       <span><i class="icon-inbox"></i>&nbsp;<i class="icon-caret-down"></i></span>
       <span><i class="icon-plus"></i>&nbsp;<i class="icon-caret-down"></i></span>
-    {% if user is defined %}
-      {% set userUri = '//utenti.'~domainName~'/'~user.id %}
-      <a href="{{ userUri }}"><img class="gravatar" src="{{ user.getGravatar(user.email) }}&s=20">&nbsp;{{ user.displayName }}</a>
+    {% if currentUser is defined %}
+      {% set userUri = '//utenti.'~domainName~'/'~currentUser.id %}
+      <a href="{{ userUri }}"><img class="gravatar" src="{{ currentUser.getGravatar(currentUser.email) }}&s=20">&nbsp;{{ currentUser.displayName }}</a>
     {% else %}
       <a href="{{ baseUri }}/accedi/">Accedi</a>
       <a href="{{ baseUri }}/registrati/">Registrati</a>
