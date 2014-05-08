@@ -1,9 +1,10 @@
-{% include "partials/navigation/sections/tags.volt" %}
+{% extends "templates/structure/single-column.volt" %}
 
-{% include "partials/navigation/section-menu.volt" %}
+{% block sectionMenu %}
+  {% include "partials/navigation/sections/tags.volt" %}
+{% endblock %}
 
-{% include "partials/navigation/subsection-menu.volt" %}
-
+{% block column %}
 <div class="ghost gutter">Un tag è un'etichetta che relaziona un contenuto con altri simili, inerenti lo stesso argomento. Un corretto utilizzo dei tag permette agli utenti di trovare contenuti afferenti ai propri interessi, agevolandoli nella selezione delle domande a cui potrebbero essere in grado di rispondere.</div>
 
 {% if actionName == 'byName' %}
@@ -39,3 +40,4 @@
     <div class="alert alert-info">Siamo spiacenti, la ricerca non ha prodotto alcun risultato.</div>
   {% endfor %}
 {% endif %}
+{% endblock %}
