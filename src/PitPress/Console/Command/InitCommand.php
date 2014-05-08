@@ -89,6 +89,40 @@ class InitCommand extends AbstractCommand {
     $doc->addHandler(postsByUrl());
 
 
+    // @params: userId
+    function newestPostsByUser() {
+      $map = "function(\$doc) use (\$emit) {
+                if (isset(\$doc->supertype) and \$doc->supertype == 'post')
+                  \$emit([\$doc->userId, \$doc->publishingDate]);
+              };";
+
+      $handler = new ViewHandler("newestByUser");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
+
+      return $handler;
+    }
+
+    $doc->addHandler(newestPostsByUser());
+
+
+    // @params: userId, type
+    function newestPostsByUserPerType() {
+      $map = "function(\$doc) use (\$emit) {
+                if (isset(\$doc->supertype) and \$doc->supertype == 'post')
+                  \$emit([\$doc->userId, \$doc->type, \$doc->publishingDate]);
+              };";
+
+      $handler = new ViewHandler("newestByUserPerType");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
+
+      return $handler;
+    }
+
+    $doc->addHandler(newestPostsByUserPerType());
+
+
     // @params: type
     function newestPostsPerType() {
       $map = "function(\$doc) use (\$emit) {
