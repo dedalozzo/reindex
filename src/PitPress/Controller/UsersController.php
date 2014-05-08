@@ -8,7 +8,6 @@
 
 namespace PitPress\Controller;
 
-use ElephantOnCouch\Couch;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Helper\Time;
@@ -22,7 +21,7 @@ use Phalcon\Mvc\View;
 class UsersController extends BaseController {
 
 
-  protected function getEntries($keys) {
+  protected function getUsers($keys) {
     if (empty($keys))
       return [];
 
@@ -33,58 +32,26 @@ class UsersController extends BaseController {
     $result = $this->couch->queryView("users", "all", $keys, $opts);
 
     $this->view->setVar('usersCount', $result['total_rows']);
-    $users = $result['rows'];
+    $docs = $result['rows'];
 
     // Retrieves the users reputation.
     //$opts->reset();
     //$opts->groupResults()->includeMissingKeys();
     //$reputations = $this->couch->queryView("reputation", "perUser", $keys, $opts)['rows'];
 
-    $entries = [];
-    $usersCount = count($users);
+    $users = [];
+    $usersCount = count($docs);
     for ($i = 0; $i < $usersCount; $i++) {
-      $entry = new \stdClass();
-      $entry->id = $users[$i]['id'];
-      $entry->displayName = $users[$i]['value'][0];
-      $entry->gravatar = User::getGravatar($users[$i]['value'][1]);
-      $entry->when = Time::when($users[$i]['value'][2], false);
+      $user = new \stdClass();
+      $user->id = $docs[$i]['id'];
+      $user->displayName = $docs[$i]['value'][0];
+      $user->gravatar = User::getGravatar($docs[$i]['value'][1]);
+      $user->when = Time::when($docs[$i]['value'][2], false);
 
-      $entries[] = $entry;
+      $users[] = $user;
     }
 
-    return $entries;
-  }
-
-
-  public function showAction($id) {
-    // If no user id is provided, shows all the users.
-    if (empty($id))
-      return $this->dispatcher->forward(
-        [
-          'controller' => 'users',
-          'action' => 'reputation'
-        ]);
-
-    $opts = new ViewQueryOpts();
-    $opts->setKey($id)->setLimit(1);
-    $rows = $this->couch->queryView("users", "allNames", NULL, $opts)['rows'];
-
-    // If the user doesn't exist, forward to 404.
-    if (empty($rows))
-      return $this->dispatcher->forward(
-        [
-          'controller' => 'error',
-          'action' => 'show404'
-        ]);
-
-    $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $id);
-    $doc->incHits();
-    $this->view->setVar('doc', $doc);
-
-    $this->view->setVar('title', $doc->displayName);
-
-    $this->view->disableLevel(View::LEVEL_MAIN_LAYOUT);
-    $this->view->disableLevel(View::LEVEL_LAYOUT);
+    return $users;
   }
 
 
@@ -104,7 +71,7 @@ class UsersController extends BaseController {
     $opts->reverseOrderOfResults()->setLimit(40);
     $users = $this->couch->queryView("users", "newest", NULL, $opts)['rows'];
 
-    $this->view->setVar('entries', $this->getEntries(array_column($users, 'id')));
+    $this->view->setVar('users', $this->getUsers(array_column($users, 'id')));
   }
 
 
@@ -114,7 +81,7 @@ class UsersController extends BaseController {
     $opts->setLimit(40);
     $users = $this->couch->queryView("users", "byDisplayName", NULL, $opts)['rows'];
 
-    $this->view->setVar('entries', $this->getEntries(array_column($users, 'id')));
+    $this->view->setVar('users', $this->getUsers(array_column($users, 'id')));
   }
 
 
