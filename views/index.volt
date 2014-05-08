@@ -43,7 +43,6 @@
     <div class="banner"><a href="#"><img src="/img/970x180.jpg" /></a></div>
 
     <div id="content">
-      {% include "partials/navigation/main-menu.volt" %}
       {{ content() }}
     </div> <!-- /content -->
 
