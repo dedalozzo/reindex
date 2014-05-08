@@ -1,9 +1,10 @@
-{% include "partials/navigation/sections/users.volt" %}
+{% extends "templates/structure/single-column.volt" %}
 
-{% include "partials/navigation/section-menu.volt" %}
+{% block sectionMenu %}
+  {% include "partials/navigation/sections/users.volt" %}
+{% endblock %}
 
-{% include "partials/navigation/subsection-menu.volt" %}
-
+{% block column %}
 {% if actionName == 'byName' %}
 <div class="ghost gutter">
   <form method="get" action="search.php" autocomplete="off" name="form_search">
@@ -11,22 +12,22 @@
   </form>
 </div>
 {% endif %}
-{% if entries is defined %}
-  {% for entry in entries %}
+{% if users is defined %}
+  {% for user in users %}
     {% set modulus = loop.index % 4 %}
-    {% set url = '//'~serverName~'/'~entry.id %}
+    {% set url = '//utenti.'~domainName~'/'~user.id %}
     {% if loop.first %}
     <ul class="list gutter">
     {% endif %}
       <li style="width: 25%;">
         <section class="item-user">
-          <a class="avatar" href="{{ url }}"><img class="img-polaroid" src="{{ entry.gravatar }}&s=48" /></a>
+          <a class="avatar" href="{{ url }}"><img class="img-polaroid" src="{{ user.gravatar }}&s=48" /></a>
           <div class="reputation">
             <div>2345</div>
             <div>REPUTAZIONE</div>
             <div><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 14<i class="icon-certificate bronze"></i> 122</div>
           </div>
-          <a class="username" href="{{ url }}">{{ entry.displayName }}</a>
+          <a class="username" href="{{ url }}">{{ user.displayName }}</a>
         </section>
       </li>
     {% if loop.last %}
@@ -47,3 +48,4 @@
     <div class="alert alert-info">Siamo spiacenti, la ricerca non ha prodotto alcun risultato.</div>
   {% endfor %}
 {% endif %}
+{% endblock %}

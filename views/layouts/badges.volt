@@ -1,7 +1,8 @@
-{% extends "templates/list.volt" %}
+{% extends "templates/structure/single-column.volt" %}
 
 {% block sectionMenu %}
   {% include "partials/navigation/sections/badges.volt" %}
 {% endblock %}
 
-{% block columnRight %}{% endblock %}
+{% block column %}
+{% endblock %}
