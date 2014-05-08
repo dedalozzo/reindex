@@ -80,7 +80,7 @@ abstract class BaseController extends Controller {
     $this->view->setVar('baseUri', $this->baseUri);
 
     if (isset($this->user))
-      $this->view->setVar('user', $this->user);
+      $this->view->setVar('currentUser', $this->user);
   }
 
 
