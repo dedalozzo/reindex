@@ -27,7 +27,7 @@ class AuthGroup extends Group {
         'controller' => 'auth'
       ]);
 
-    $this->setHostName(DI::getDefault()['config']['application']['domainName']);
+    $this->setHostName('utenti.'.DI::getDefault()['config']['application']['domainName']);
 
     $this->addGet('/registrati/', ['action' => 'signUp']);
     $this->addGet('/resetta-password/', ['action' => 'resetPassword']);
