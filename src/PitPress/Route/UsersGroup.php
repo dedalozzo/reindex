@@ -28,7 +28,7 @@ class UsersGroup extends Group {
 
     $this->setHostName('utenti.'.DI::getDefault()['config']['application']['domainName']);
 
-    $this->addGet('/{id}', ['action' => 'show']);
+    $this->addGet('/', ['action' => 'newest']);
     $this->addGet('/reputazione/{period}', ['action' => 'reputation']);
     $this->addGet('/nuovi/', ['action' => 'newest']);
     $this->addGet('/per-nome/', ['action' => 'byName']);
