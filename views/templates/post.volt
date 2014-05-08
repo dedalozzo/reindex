@@ -1,5 +1,4 @@
 {% block columnLeft %}
-
 {% endblock %}
 
 {% block columnRight %}
