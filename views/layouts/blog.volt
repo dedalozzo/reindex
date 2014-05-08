@@ -1,4 +1,4 @@
-{% extends "templates/list.volt" %}
+{% extends "templates/structure/double-column.volt" %}
 
 {% block sectionMenu %}
   {% include "partials/navigation/sections/blog.volt" %}
