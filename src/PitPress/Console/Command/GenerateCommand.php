@@ -25,6 +25,7 @@ class GenerateCommand extends AbstractCommand {
   const BOOK = 11;
 
   private $limit = 50;
+  private $onlyPositive = FALSE;
 
   private $mysql;
   private $couch;
@@ -57,7 +58,12 @@ class GenerateCommand extends AbstractCommand {
 
         while ($row = mysqli_fetch_array($cursor)) {
           $userId = $row[0];
-          $value = rand(0, 100) > 7 ? 1 : -1;
+
+          if ($this->onlyPositive)
+            $value = 1;
+          else
+            $value = rand(0, 100) > 7 ? 1 : -1;
+
           $postType = ($item->stereotype == self::ARTICLE) ? 'article' : 'book';
 
           $vote = Vote::create($postType, 'blog', $item->id, $userId, $value);
@@ -86,10 +92,16 @@ class GenerateCommand extends AbstractCommand {
       InputArgument::IS_ARRAY | InputArgument::REQUIRED,
       "The types you want create. Use 'all' if you want generate fakes of all types, 'votes' if
       you want just generate fake votes or separate multiple types with a space. The available types are: votes.");
+
     $this->addOption("limit",
       NULL,
       InputOption::VALUE_OPTIONAL,
       "Limit the number of fake documents per post.");
+
+    $this->addOption("only-positive",
+      NULL,
+      InputOption::VALUE_NONE,
+      "Generates only positive votes.");
   }
 
 
@@ -107,6 +119,10 @@ class GenerateCommand extends AbstractCommand {
 
     if ($limit > 0)
       $this->limit = $limit;
+
+    // Generates only positive votes.
+    if ($input->getOption('only-positive'))
+      $this->onlyPositive = TRUE;
 
     // Checks if the argument 'all' is provided.
     $index = array_search("all", $types);
