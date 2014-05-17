@@ -487,7 +487,7 @@ class ImportCommand extends AbstractCommand {
 
 
   //! @brief Imports comments.
-  private function importComments() {
+  private function importReplies() {
     $this->output->writeln("Importing comments...");
 
     $sql = "SELECT C.idComment AS id, I.id AS postId, M.id AS userId, UNIX_TIMESTAMP(C.date) AS unixTime, C.body FROM Comment C, Item I, Member M WHERE C.idItem = I.idItem AND C.idMember = M.idMember ORDER BY C.date DESC";
@@ -553,7 +553,7 @@ class ImportCommand extends AbstractCommand {
     $this->importFavourites();
     $this->importTutorials();
     $this->importSubscriptions();
-    $this->importComments();
+    $this->importReplies();
   }
 
 
@@ -630,8 +630,8 @@ class ImportCommand extends AbstractCommand {
             $this->importSubscriptions();
             break;
 
-          case 'comments':
-            $this->importComments();
+          case 'replies':
+            $this->importReplies();
             break;
         }
 
