@@ -40,6 +40,11 @@ interface IVote {
   public function getScore();
 
 
+  //! @brief Returns the list of users have voted.
+  //! @return associative array
+  public function getUsersHaveVoted();
+
+
   //! @brief Returns the thumbs state expressed by the current user in relation to the current post.
   //! @param[in] User $user The current user logged in.
   //! @return string|boolean Returns `false` in case the user never voted, '+' for thumbs up and '-' for thumbs down.
