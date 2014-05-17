@@ -15,7 +15,7 @@ trait TCount {
   //! @copydoc ICount
   public function getHitsCount() {
     if (isset($this->rev))
-      return $this->redis->hGet($this->id, 'hits');
+      return number_format($this->redis->hGet($this->id, 'hits'), 0, ",", ".");
     else
       return 0;
   }
