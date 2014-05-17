@@ -45,9 +45,11 @@
       {% include "partials/widgets/badges.volt" %}
 
       <div class="reputation big">
-        <div>2345</div>
-        <div><span>REPUTAZIONE</span></div>
-        <div><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 10<i class="icon-certificate bronze"></i> 10</div>
+        <table>
+          <tr><td>2345</td></tr>
+          <tr><td>REPUTAZIONE</td></tr>
+          <tr><td><span class="badges"><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 14<i class="icon-certificate bronze"></i> 122</span></td></tr>
+        </table>
       </div>
 
       <!--<blockquote>
