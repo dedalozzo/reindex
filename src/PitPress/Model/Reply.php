@@ -24,7 +24,7 @@ class Reply extends Item implements Extension\IVote, Extension\IVersion {
   //! @param[in] $bypass When `true` calls directly the parent method.
   public function save($bypass = FALSE) {
     if (!$bypass)
-      $this->meta['supertype'] = 'replay';
+      $this->meta['supertype'] = 'reply';
 
     parent::save();
   }
