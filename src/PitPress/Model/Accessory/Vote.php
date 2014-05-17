@@ -16,7 +16,13 @@ use ElephantOnCouch\Doc\Doc;
 //! @nosubgrouping
 class Vote extends Doc {
 
-  //! @brief Creates an instance of Vote class.
+  //! @brief Creates an instance of Vote class. This parameter is not required, you can provide NULL.
+  //! @param[in] $postType The post type.
+  //! @param[in] $postSection The post section.
+  //! @param[in] $postId The post identifier. Can be also an item.
+  //! @param[in] $userId The identifier of the user who has voted.
+  //! @param[in] $value The value of the vote.
+  //! @return An instance of Vote class.
   public static function create($postType, $postSection, $postId, $userId, $value) {
     $instance = new self();
 
@@ -30,6 +36,21 @@ class Vote extends Doc {
     return $instance;
   }
 
+
+  //! @brief Returns `true`if the vote has been recorded by the PitPress daemon.
+  //! @return boolean
+  public function hasBeenRecorded() {
+    return $this->meta["recorded"];
+  }
+
+
+  //! @brief Marks the vote has recorded.
+  public function markAsRecorded() {
+    $this->meta["recorded"] = TRUE;
+  }
+
+
+  //! @cond HIDDEN_SYMBOLS
 
   public function getPostId() {
     return $this->meta["postId"];
@@ -61,17 +82,6 @@ class Vote extends Doc {
     return $this->meta["timestamp"];
   }
 
-
-  //! @brief Returns `true`if the vote has been recorded by the PitPress daemon.
-  //! @return boolean
-  public function hasBeenRecorded() {
-    return $this->meta["recorded"];
-  }
-
-
-  //! @brief Marks the vote has recorded.
-  public function markAsRecorded() {
-    $this->meta["recorded"] = TRUE;
-  }
+  //! @endcond
 
 }
