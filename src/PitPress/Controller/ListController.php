@@ -73,7 +73,7 @@ abstract class ListController extends BaseController {
     // Replays.
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
-    $replays = $this->couch->queryView("replays", "perPost", $keys, $opts)['rows'];
+    $replies = $this->couch->queryView("replies", "perPost", $keys, $opts)['rows'];
 
     // Users.
     $keys = array_column(array_column($posts, 'value'), 'userId');
@@ -99,7 +99,7 @@ abstract class ListController extends BaseController {
       $entry->gravatar = User::getGravatar($users[$i]['value'][1]);
       $entry->hitsCount = $this->redis->hGet($entry->id, 'hits');
       $entry->score = is_null($scores[$i]['value']) ? 0 : $scores[$i]['value'];
-      $entry->replaysCount = is_null($replays[$i]['value']) ? 0 : $replays[$i]['value'];
+      $entry->repliesCount = is_null($replies[$i]['value']) ? 0 : $replies[$i]['value'];
 
       // Tags.
       $opts->reset();

@@ -44,7 +44,7 @@ class IndexController extends ListController {
     // Replays.
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
-    $replays = $this->couch->queryView("replays", "perPost", $keys, $opts)['rows'];
+    $replies = $this->couch->queryView("replies", "perPost", $keys, $opts)['rows'];
 
     $entries = [];
     $postCount = count($posts);
@@ -57,7 +57,7 @@ class IndexController extends ListController {
       $entry->url = $this->buildUrl($properties['section'], $properties['publishingDate'], $properties['slug']);
       $entry->whenHasBeenPublished = Time::when($properties['publishingDate']);
       $entry->score = is_null($scores[$i]['value']) ? 0 : $scores[$i]['value'];
-      $entry->replaysCount = is_null($replays[$i]['value']) ? 0 : $replays[$i]['value'];
+      $entry->repliesCount = is_null($replies[$i]['value']) ? 0 : $replies[$i]['value'];
 
       $entries[] = $entry;
     }
