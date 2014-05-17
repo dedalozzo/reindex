@@ -70,7 +70,7 @@ abstract class ListController extends BaseController {
     $opts->includeMissingKeys()->groupResults();
     $scores = $this->couch->queryView("votes", "perPost", $keys, $opts)['rows'];
 
-    // Replays.
+    // Replies.
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
     $replies = $this->couch->queryView("replies", "perPost", $keys, $opts)['rows'];
