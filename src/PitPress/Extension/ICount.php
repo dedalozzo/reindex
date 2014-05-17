@@ -18,6 +18,7 @@ interface ICount {
   // @{
 
   //! @brief Returns the times the item has been viewed.
+  //! @return string A formatted number.
   public function getHitsCount();
 
 
