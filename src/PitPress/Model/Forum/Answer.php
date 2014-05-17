@@ -9,12 +9,12 @@
 namespace PitPress\Model\Forum;
 
 
-use PitPress\Model\Replay;
+use PitPress\Model\Reply;
 
 
-//! @brief
+//! @brief A user's answer to a question.
 //! @nosubgrouping
-class Answer extends Replay {
+class Answer extends Reply {
 
   //! @brief Marks the item as duplicate of another item.
   public function markAsDuplicate() {
