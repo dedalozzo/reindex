@@ -19,7 +19,7 @@ use PitPress\Model\Blog\Book;
 use PitPress\Model\Tag\Tag;
 use PitPress\Model\User\User;
 use PitPress\Model\Blog\Tutorial;
-use PitPress\Model\Replay;
+use PitPress\Model\Reply;
 use PitPress\Model\Accessory\Star;
 use PitPress\Model\Accessory\Classification;
 use PitPress\Model\Accessory\Subscription;
@@ -500,7 +500,7 @@ class ImportCommand extends AbstractCommand {
     $progress->start($this->output, $rows);
 
     while ($item = mysqli_fetch_object($result)) {
-      $comment = new Replay();
+      $comment = new Reply();
 
       $comment->id = UUID::generate(UUID::UUID_RANDOM, UUID::FMT_STRING);
       $comment->publishingDate = (int)$item->unixTime;
