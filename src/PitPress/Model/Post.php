@@ -78,29 +78,29 @@ abstract class Post extends Item implements Extension\ICount, Extension\IStar, E
 
 
   //! @brief Get the post replays, answers, in case of a question, else comments
-  public function getReplays() {
+  public function getReplies() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(20)->reverseOrderOfResults()->setStartKey([$this->id, new \stdClass()])->setEndKey([$this->id])->includeDocs();
-    $rows = $this->couch->queryView("replays", "newestPerPost", NULL, $opts)['rows'];
+    $rows = $this->couch->queryView("replies", "newestPerPost", NULL, $opts)['rows'];
 
-    $replays = [];
+    $replies = [];
     foreach ($rows as $row) {
-      $replay = new Replay();
-      $replay->assignArray($row['doc']);
-      $replays[] = $replay;
+      $reply = new Reply();
+      $reply->assignArray($row['doc']);
+      $replies[] = $reply;
     }
 
-    return $replays;
+    return $replies;
   }
 
 
   //! @brief Gets the number of the answer or comments.
-  public function getReplaysCount() {
+  public function getRepliesCount() {
     $opts = new ViewQueryOpts();
     $opts->groupResults();
-    $replays = $this->couch->queryView("replays", "perPost", [$this->id], $opts)['rows'];
+    $replies = $this->couch->queryView("replies", "perPost", [$this->id], $opts)['rows'];
 
-    return empty($replays) ? 0 : $replays[0]['value'];
+    return empty($replies) ? 0 : $replies[0]['value'];
   }
 
   //@}
