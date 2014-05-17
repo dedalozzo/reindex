@@ -38,7 +38,7 @@ class InitCommand extends AbstractCommand {
     $this->initBadges();
     $this->initFavorites();
     $this->initUsers();
-    $this->initReplays();
+    $this->initReplies();
   }
 
 
@@ -694,18 +694,34 @@ class InitCommand extends AbstractCommand {
     $doc->addHandler(usersByEmail());
 
 
+    // @params: [postId]
+    function usersHaveVoted() {
+      $map = "function(\$doc) use (\$emit) {
+                if (\$doc->type == 'vote')
+                  \$emit(\$doc->postId, \$doc->userId);
+              };";
+
+      $handler = new ViewHandler("haveVoted");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(usersHaveVoted());
+
+
     $this->couch->saveDoc($doc);
   }
 
 
-  private function initReplays() {
-    $doc = DesignDoc::create('replays');
+  private function initReplies() {
+    $doc = DesignDoc::create('replies');
 
 
     // @params postId
-    function replaysPerPost() {
+    function repliesPerPost() {
       $map = "function(\$doc) use (\$emit) {
-                if (isset(\$doc->supertype) and \$doc->supertype == 'replay')
+                if (isset(\$doc->supertype) and \$doc->supertype == 'reply')
                   \$emit(\$doc->postId);
               };";
 
@@ -716,13 +732,13 @@ class InitCommand extends AbstractCommand {
       return $handler;
     }
 
-    $doc->addHandler(replaysPerPost());
+    $doc->addHandler(repliesPerPost());
 
 
     // @params: postId
-    function newestReplaysPerPost() {
+    function newestRepliesPerPost() {
       $map = "function(\$doc) use (\$emit) {
-                if (isset(\$doc->supertype) and \$doc->supertype == 'replay')
+                if (isset(\$doc->supertype) and \$doc->supertype == 'reply')
                   \$emit([\$doc->postId, \$doc->publishingDate]);
               };";
 
@@ -733,13 +749,13 @@ class InitCommand extends AbstractCommand {
       return $handler;
     }
 
-    $doc->addHandler(newestReplaysPerPost());
+    $doc->addHandler(newestRepliesPerPost());
 
 
     // @params: postId
-    function lastUpdatedReplaysPerPost() {
+    function lastUpdatedRepliesPerPost() {
       $map = "function(\$doc) use (\$emit) {
-                if (isset(\$doc->supertype) and \$doc->supertype == 'replay')
+                if (isset(\$doc->supertype) and \$doc->supertype == 'reply')
                   \$emit([\$doc->postId, \$doc->lastUpdate]);
               };";
 
@@ -750,7 +766,7 @@ class InitCommand extends AbstractCommand {
       return $handler;
     }
 
-    $doc->addHandler(lastUpdatedReplaysPerPost());
+    $doc->addHandler(lastUpdatedRepliesPerPost());
 
 
     $this->couch->saveDoc($doc);
@@ -764,8 +780,8 @@ class InitCommand extends AbstractCommand {
     $this->addArgument("documents",
       InputArgument::IS_ARRAY | InputArgument::REQUIRED,
       "The documents containing the views you want create. Use 'all' if you want insert all the documents, 'users' if
-      you want just init the users or separate multiple documents with a space. The available documents are: users,
-      articles, books, tags, reputation.");
+      you want just init the users or separate multiple documents with a space. The available documents are: posts, tags,
+      votes, scores, stars, subscriptions, classifications, badges, favorites, users, reputation, replies.");
   }
 
 
@@ -828,8 +844,8 @@ class InitCommand extends AbstractCommand {
             $this->initReputation();
             break;
 
-          case 'replays':
-            $this->initReplays();
+          case 'replies':
+            $this->initReplies();
             break;
         }
 
