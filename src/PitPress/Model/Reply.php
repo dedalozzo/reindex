@@ -1,7 +1,7 @@
 <?php
 
-//! @file Replay.php
-//! @brief This file contains the Replay class.
+//! @file Reply.php
+//! @brief This file contains the Reply class.
 //! @details
 //! @author Filippo F. Fadda
 
@@ -13,13 +13,18 @@ use PitPress\Extension;
 use PitPress\Property;
 
 
-class Replay extends Item implements Extension\IVote, Extension\IVersion {
+//! @brief A generic reply. It can be an answer, a comment to a question (or to an answer) or a reply to a post (an
+//! article, a book review, etc.).
+//! @nosubgrouping
+class Reply extends Item implements Extension\IVote, Extension\IVersion {
   use Extension\TVote, Extension\TVersion;
   use Property\TBody;
 
 
-  public function save() {
-    $this->meta['supertype'] = 'replay';
+  //! @param[in] $bypass When `true` calls directly the parent method.
+  public function save($bypass = FALSE) {
+    if (!$bypass)
+      $this->meta['supertype'] = 'replay';
 
     parent::save();
   }
