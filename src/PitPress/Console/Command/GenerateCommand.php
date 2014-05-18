@@ -14,7 +14,11 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use SimplePie;
+
 use PitPress\Model\Accessory\Vote;
+use PitPress\Model\Link\Link;
+use PitPress\Helper\Text;
 
 
 //! @brief Generates fake documents for testing purpose.
@@ -34,13 +38,17 @@ class GenerateCommand extends AbstractCommand {
   private $output;
 
 
-  //! @brief Insert all design documents.
-  private function generateAll() {
-    $this->generateVotes();
-  }
+  //! @brief Generates fake votes.
+  private function generateVotes(InputInterface $input, OutputInterface $output) {
+    $limit = (int)$input->getOption('limit');
 
+    if ($limit > 0)
+      $this->limit = $limit;
 
-  private function generateVotes() {
+    // Generates only positive votes.
+    if ($input->getOption('only-positive'))
+      $this->onlyPositive = TRUE;
+
     $usersCount = mysqli_fetch_array(mysqli_query($this->mysql, "SELECT COUNT(*) FROM Member"))[0];
 
     $sql = "SELECT id, stereotype FROM Item WHERE (stereotype = ".self::ARTICLE." OR stereotype = ".self::BOOK.") ORDER BY date DESC";
@@ -84,24 +92,55 @@ class GenerateCommand extends AbstractCommand {
   }
 
 
+  //! @brief Consumes a site feed and generate a link for every item.
+  private function generateLinks(InputInterface $input, OutputInterface $output) {
+
+    // Consume the feed.
+    $feed = new SimplePie();
+    $feed->set_feed_url($input->getOption('feed'));
+    $feed->init();
+
+    foreach ($feed->get_items() as $item) {
+      $link = new Link();
+      $link->title = $item->get_title();
+
+      $purged = Text::purge($item->get_description());
+      $link->excerpt = Text::truncate($purged);
+
+      $link->url = $item->get_link();
+      $link->userId = '60de120d-d2ae-4919-a19f-4eec233f22f0';
+      $link->publishingDate = time();
+      $link->save();
+    }
+  }
+
+
   //! @brief Configures the command.
   protected function configure() {
     $this->setName("generate");
-    $this->setDescription("Generates fake accessory documents per post.");
-    $this->addArgument("types",
-      InputArgument::IS_ARRAY | InputArgument::REQUIRED,
-      "The types you want create. Use 'all' if you want generate fakes of all types, 'votes' if
-      you want just generate fake votes or separate multiple types with a space. The available types are: votes.");
+    $this->setDescription("Generates fake documents.");
+    $this->addArgument("subcommand",
+      InputArgument::REQUIRED,
+      "The fake documents you want create. Use 'votes' if you want generate fake votes or 'links' to consume a feed and
+      import links from it.");
 
+    // This is used just in case of fake votes, ignored otherwise.
     $this->addOption("limit",
       NULL,
       InputOption::VALUE_OPTIONAL,
-      "Limit the number of fake documents per post.");
+      "Limit the number of fake votes per post.");
 
+    // This is used just in case of fake votes, ignored otherwise.
     $this->addOption("only-positive",
       NULL,
       InputOption::VALUE_NONE,
       "Generates only positive votes.");
+
+    // This is used when reading from a feed, ignored otherwise.
+    $this->addOption("feed",
+      NULL,
+      InputOption::VALUE_REQUIRED,
+      "Feed URL.");
   }
 
 
@@ -113,32 +152,16 @@ class GenerateCommand extends AbstractCommand {
     $this->mysql = $this->di['mysql'];
     $this->couch = $this->di['couchdb'];
 
-    $types = $input->getArgument('types');
+    $subcommand = $input->getArgument('subcommand');
 
-    $limit = (int)$input->getOption('limit');
-
-    if ($limit > 0)
-      $this->limit = $limit;
-
-    // Generates only positive votes.
-    if ($input->getOption('only-positive'))
-      $this->onlyPositive = TRUE;
-
-    // Checks if the argument 'all' is provided.
-    $index = array_search("all", $types);
-
-    if ($index === FALSE) {
-
-      foreach ($types as $name)
-        switch ($name) {
-          case 'votes':
-            $this->generateVotes();
-            break;
-        }
-
+    switch ($subcommand) {
+      case 'votes':
+        $this->generateVotes($input, $output);
+        break;
+      case 'links':
+        $this->generateLinks($input, $output);
+        break;
     }
-    else
-      $this->generateAll();
   }
 
 }
