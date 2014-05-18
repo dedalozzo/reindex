@@ -10,11 +10,13 @@ namespace PitPress\Model\Link;
 
 
 use PitPress\Model\Post;
+use PitPress\Property;
 
 
 //! @brief
 //! @nosubgrouping
 class Link extends Post {
+  use Property\TExcerpt;
 
 
   protected function needForApproval() {
@@ -30,5 +32,52 @@ class Link extends Post {
   public function getPublishingType() {
     return 'LINK';
   }
+
+
+  //! @cond HIDDEN_SYMBOLS
+
+  public function getLanguage() {
+    return $this->meta['language'];
+  }
+
+
+  public function issetLanguage() {
+    return isset($this->meta['language']);
+  }
+
+
+  public function setLanguage($value) {
+    $this->meta['language'] = $value;
+  }
+
+
+  public function unsetLanguage() {
+    if ($this->isMetadataPresent('language'))
+      unset($this->meta['language']);
+  }
+
+
+  public function getUrl() {
+    return $this->meta['url'];
+  }
+
+
+  public function issetUrl() {
+    return isset($this->meta['url']);
+  }
+
+
+  public function setUrl($value) {
+    $this->meta['url'] = $value;
+  }
+
+
+  public function unsetUrl() {
+    if ($this->isMetadataPresent('url'))
+      unset($this->meta['url']);
+  }
+
+  //! @endcond
+
 
 }
