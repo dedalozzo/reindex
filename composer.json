@@ -20,7 +20,8 @@
         "symfony/console": "2.4.*@dev",
         "lusitanian/oauth": "~0.2",
         "monolog/monolog": "1.7.0",
-        "filp/whoops": "dev-master"
+        "filp/whoops": "dev-master",
+        "simplepie/simplepie": "dev-master"
     },
     "autoload": {
         "psr-0": {"PitPress": "src/"}
