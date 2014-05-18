@@ -1,4 +1,4 @@
-{% set sectionLabel = currentUser.displayName|upper %}
+{% set sectionLabel = doc.displayName|upper %}
 {% set sectionMenu = [
   ['name': 'bounties', 'path': '/bounties/', 'label': 'BOUNTIES', 'title': 'Bounties'],
   ['name': 'activities', 'path': '/attivita/', 'label': 'ATTIVITÀ', 'title': 'Attività'],
