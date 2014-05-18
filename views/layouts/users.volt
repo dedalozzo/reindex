@@ -22,10 +22,12 @@
       <li style="width: 25%;">
         <section class="item-user">
           <a class="avatar" href="{{ url }}"><img class="img-polaroid" src="{{ user.gravatar }}&s=48" /></a>
-          <div class="reputation">
-            <div>2345</div>
-            <div>REPUTAZIONE</div>
-            <div><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 14<i class="icon-certificate bronze"></i> 122</div>
+          <div class="reputation ext">
+            <table>
+              <tr><td>2345</td></tr>
+              <tr><td>REPUTAZIONE</td></tr>
+              <tr><td><span class="badges"><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 14<i class="icon-certificate bronze"></i> 122</span></td></tr>
+            </table>
           </div>
           <a class="username" href="{{ url }}">{{ user.displayName }}</a>
         </section>
