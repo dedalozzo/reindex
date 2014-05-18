@@ -30,18 +30,18 @@ class Time extends TimeHelper {
     if ($today == date('Ymd', $timestamp)) {
       $time = TimeHelper::since($timestamp);
 
-      if ($time['hours'] == 1)
+      if ($time['hours'] > 1)
+        return sprintf('%d ore fa', $time['hours']);
+      elseif ($time['hours'] == 1)
         return "un'ora fa";
-      elseif ($time['hours'] > 1)
-        return sprintf('$d ore fa', $time['hours']);
+      elseif ($time['minutes'] > 1)
+        return sprintf('%d minuti fa', $time['minutes']);
       elseif ($time['minutes'] == 1)
         return "un minuto fa";
-      elseif ($time['minutes'] > 1)
-        return sprintf('$d minuti fa', $time['minutes']);
-      elseif ($time['seconds'] == 1)
+      elseif ($time['seconds'] > 1)
+        return sprintf('%d secondi fa', $time['seconds']);
+      else // $time['seconds'] == 1
         return "un secondo fa";
-      else // $time['seconds'] > 1
-        return sprintf('$d secondi fa', $time['seconds']);
     }
     // Yesterday.
     elseif (strtotime('-1 day', $today) == date('Ymd', $timestamp))
