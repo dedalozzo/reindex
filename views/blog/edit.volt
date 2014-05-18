@@ -131,7 +131,7 @@
 
     <div class="pure-controls">
       <button type="submit" name="signin" class="btn large red">Salva le modifiche</button>
-      <a href="//{{ serverName~doc.getUrl() }}" class="btn large">Annulla</a>
+      <a href="//{{ serverName~doc.getHref() }}" class="btn large">Annulla</a>
     </div>
   </form>
 
