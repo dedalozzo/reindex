@@ -58,7 +58,7 @@ abstract class Post extends Item implements Extension\ICount, Extension\IStar, E
 
   //! @brief Gets the post URL.
   //! @return string
-  public function getUrl() {
+  public function getHref() {
     return "/".date("Y/m/d", $this->publishingDate)."/".$this->getSlug();
   }
 
