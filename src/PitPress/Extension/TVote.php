@@ -88,6 +88,39 @@ trait TVote {
 
 
   //! @copydoc IVote
+  public function getUsersHaveVoted() {
+
+    // Gets the users have voted the item.
+    $opts = new ViewQueryOpts();
+    $opts->setKey($this->id);
+    $rows = $this->couch->queryView("users", "haveVoted", NULL, $opts)['rows'];
+
+    if (empty($rows))
+      return [];
+
+    // Gets the users information: display name and email.
+    $keys = array_column($rows, 'value');
+    $opts->reset();
+    $opts->doNotReduce();
+    $users = $this->couch->queryView("users", "allNames", $keys, $opts)['rows'];
+
+    $entries = [];
+    foreach ($users as $user) {
+      $entry = new \stdClass();
+      $entry->id = $user['id'];
+
+      // We just need the e-mail to get the Gravatar link.
+      $entry->displayName = $user['value'][0];
+      $entry->gravatar = User::getGravatar($user['value'][1]);
+
+      $entries[] = $entry;
+    }
+
+    return $entries;
+  }
+
+
+  //! @copydoc IVote
   public function getThumbsDirection(User $user) {
     return $this->redis->hGet($user->id, $this->id);
   }
