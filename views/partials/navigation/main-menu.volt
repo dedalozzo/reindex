@@ -18,10 +18,10 @@
   <li class="icon"><a href="http://facebook.com/programmazione.it"><i class="icon-facebook icon-large"></i></a></li>
   <li class="icon"><a href="#"><i class="icon-google-plus icon-large"></i></a></li>
   {% elseif controllerName == 'questions' %}
-  <li><a class="orange" href="#"><i class="icon-question"></i> FAI UNA DOMANDA</a></li>
+    <li><button class="btn mini orange"><i class="icon-plus"></i> FAI UNA DOMANDA</button></li>
   {% elseif controllerName == 'links' %}
-  <li><a class="orange" href="#"><i class="icon-link"></i> AGGIUNGI UN LINK</a></li>
+  <li><button class="btn mini orange"><i class="icon-plus"></i> AGGIUNGI UN LINK</button></li>
   {% elseif controllerName == 'blog' %}
-  <li><a class="orange" href="#"><i class="icon-code"></i> SCRIVI SUL BLOG</a></li>
+    <li><button class="btn mini orange"><i class="icon-plus"></i> SCRIVI UN ARTICOLO</button></li>
   {% endif %}
 </ul>
