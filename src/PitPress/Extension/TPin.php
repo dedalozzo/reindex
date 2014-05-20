@@ -10,26 +10,24 @@ namespace PitPress\Extension;
 
 
 //! @brief Implements IPin interface.
+//! @copydoc IPin
 trait TPin {
 
 
-  //! @copydoc IPin
   public function pin() {
-    if ($this->isPublished) {
+    if ($this->isPublished()) {
       $this->meta['pinned'] = TRUE;
       $this->save();
     }
   }
 
 
-  //! @copydoc IPin
   public function unpin() {
     $this->meta['pinned'] = FALSE;
     $this->save();
   }
 
 
-  //! @copydoc IPin
   public function isPinned() {
     return $this->meta["pinned"];
   }
