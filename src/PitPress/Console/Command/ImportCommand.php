@@ -404,7 +404,7 @@ class ImportCommand extends AbstractCommand {
 
     while ($item = mysqli_fetch_object($result)) {
 
-      if ($item->stereotype == 2)
+      if ($item->stereotype == self::ARTICLE)
         $postType = 'article';
       else
         $postType = 'book';
@@ -423,10 +423,10 @@ class ImportCommand extends AbstractCommand {
 
 
   //! @brief Imports favourites.
-  private function importFavourites() {
-    $this->output->writeln("Importing favourites...");
+  private function importFavorites() {
+    $this->output->writeln("Importing favorites...");
 
-    $sql = "SELECT I.id AS itemId, M.idMember AS userId, UNIX_TIMESTAMP(F.date) as timestamp FROM Item I, Member M, Favourite F WHERE I.idItem = F.idItem AND M.idMember = F.idMember";
+    $sql = "SELECT I.id AS itemId, I.stereotype, M.id AS userId, UNIX_TIMESTAMP(F.date) as timestamp FROM Item I, Member M, Favourite F WHERE I.idItem = F.idItem AND M.idMember = F.idMember AND (I.stereotype = 2 OR I.stereotype = 11) ";
     $sql .= $this->limit;
 
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
@@ -438,10 +438,15 @@ class ImportCommand extends AbstractCommand {
     while ($item = mysqli_fetch_object($result)) {
       $timestamp = (int)$item->timestamp;
 
-      if ($timestamp > 0)
-        $doc = Star::create($item->itemId, $item->userId, $timestamp);
+      if ($item->stereotype == 2)
+        $itemType = 'article';
       else
-        $doc = Star::create($item->itemId, $item->userId);
+        $itemType = 'book';
+
+      if ($timestamp > 0)
+        $doc = Star::create($item->userId, $item->itemId, $itemType, $timestamp);
+      else
+        $doc = Star::create($item->userId, $item->itemId, $itemType);
 
       $this->couch->saveDoc($doc);
 
@@ -458,7 +463,7 @@ class ImportCommand extends AbstractCommand {
   private function importSubscriptions() {
     $this->output->writeln("Importing subscriptions...");
 
-    $sql = "SELECT I.id AS itemId, M.idMember AS userId, UNIX_TIMESTAMP(T.creationTime) as timestamp FROM Item I, Member M, Thread T WHERE I.idItem = T.idItem AND M.idMember = T.idMember";
+    $sql = "SELECT I.id AS itemId, M.id AS userId, UNIX_TIMESTAMP(T.creationTime) as timestamp FROM Item I, Member M, Thread T WHERE I.idItem = T.idItem AND M.idMember = T.idMember";
     $sql .= $this->limit;
 
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
@@ -550,7 +555,7 @@ class ImportCommand extends AbstractCommand {
     $this->importBooks();
     $this->importTags();
     $this->importClassifications();
-    $this->importFavourites();
+    $this->importFavorites();
     $this->importTutorials();
     $this->importSubscriptions();
     $this->importReplies();
@@ -565,7 +570,7 @@ class ImportCommand extends AbstractCommand {
         InputArgument::IS_ARRAY | InputArgument::REQUIRED,
         "The entities you want import. Use 'all' if you want import all the entities, 'users' if you want just import the
         users or separate multiple entities with a space. The available entities are: users, articles, books, tags,
-        classifications, favourites, tutorials, subscriptions.");
+        classifications, favorites, tutorials, subscriptions.");
     $this->addOption("limit",
         NULL,
         InputOption::VALUE_OPTIONAL,
@@ -618,8 +623,8 @@ class ImportCommand extends AbstractCommand {
             $this->importClassifications();
             break;
 
-          case 'favourites':
-            $this->importFavourites();
+          case 'favorites':
+            $this->importFavorites();
             break;
 
           case 'tutorials':
