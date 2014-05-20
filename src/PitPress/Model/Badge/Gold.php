@@ -9,6 +9,12 @@
 namespace PitPress\Model\Badge;
 
 
+//! @brief This is the ancestor for all gold badges.
 abstract class Gold extends Badge {
+
+  //! @copydoc
+  public function getMetal() {
+    return "gold";
+  }
 
 } 

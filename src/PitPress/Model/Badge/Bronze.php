@@ -9,6 +9,12 @@
 namespace PitPress\Model\Badge;
 
 
+//! @brief This is the ancestor for all bronze badges.
 abstract class Bronze extends Badge {
+
+  //! @copydoc
+  public function getMetal() {
+    return "silver";
+  }
 
 } 
