@@ -10,7 +10,6 @@ namespace PitPress\Extension;
 
 
 //! @brief Implements IPin interface.
-//! @copydoc IPin
 trait TPin {
 
 

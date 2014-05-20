@@ -10,7 +10,6 @@ namespace PitPress\Extension;
 
 
 //! @brief Implements IVersion interface.
-//! @copydoc IVersion
 trait TVersion {
 
 

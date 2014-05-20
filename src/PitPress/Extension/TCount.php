@@ -10,7 +10,6 @@ namespace PitPress\Extension;
 
 
 //! @brief Implements ICount interface.
-//! @copydoc ICount
 trait TCount {
 
 

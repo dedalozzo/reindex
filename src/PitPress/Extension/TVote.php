@@ -17,7 +17,6 @@ use PitPress\Model\User\User;
 
 
 //! @brief Implements the IVote interface.
-//! @copydoc IVote
 trait TVote {
 
   private function vote(User $user, $value) {

@@ -17,7 +17,6 @@ use PitPress\Model\User\User;
 
 
 //! @brief Implements the IStar interface.
-//! @copydoc IStar
 trait TStar {
 
 

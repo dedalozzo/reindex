@@ -17,7 +17,6 @@ use PitPress\Model\User\User;
 
 
 //! @brief Implements the ISubscribe interface.
-//! @copydoc ISubscribe
 trait TSubscribe {
 
 

@@ -13,7 +13,6 @@ use PitPress\Enum\PostState;
 
 
 //! @brief Implements the IModerate interface.
-//! @copydoc IModerate
 trait TModerate {
 
   public function getState() {
