@@ -42,6 +42,27 @@ class InitCommand extends AbstractCommand {
   }
 
 
+  private function initDocs() {
+    $doc = DesignDoc::create('docs');
+
+    function docsByType() {
+      $map = "function(\$doc) use (\$emit) {
+                \$emit(\$doc->type);
+              };";
+
+      $handler = new ViewHandler("byType");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(docsByType());
+
+
+    $this->couch->saveDoc($doc);
+  }
+
+
   private function initPosts() {
     $doc = DesignDoc::create('posts');
 
@@ -579,7 +600,7 @@ class InitCommand extends AbstractCommand {
     function lastAddedFavorites() {
       $map = "function(\$doc) use (\$emit) {
                 if (\$doc->type == 'star')
-                  \$emit([\$doc->userId, \$doc->timestamp], \$doc->postId);
+                  \$emit([\$doc->userId, \$doc->timestamp], \$doc->itemId);
               };";
 
       $handler = new ViewHandler("lastAdded");
@@ -596,7 +617,7 @@ class InitCommand extends AbstractCommand {
     function lastAddedFavoritesPerType() {
       $map = "function(\$doc) use (\$emit) {
                 if (\$doc->type == 'star')
-                  \$emit([\$doc->userId, \$doc->postType, \$doc->timestamp], \$doc->postId);
+                  \$emit([\$doc->userId, \$doc->itemType, \$doc->timestamp], \$doc->itemId);
               };";
 
       $handler = new ViewHandler("lastAddedPerType");
@@ -780,8 +801,8 @@ class InitCommand extends AbstractCommand {
     $this->addArgument("documents",
       InputArgument::IS_ARRAY | InputArgument::REQUIRED,
       "The documents containing the views you want create. Use 'all' if you want insert all the documents, 'users' if
-      you want just init the users or separate multiple documents with a space. The available documents are: posts, tags,
-      votes, scores, stars, subscriptions, classifications, badges, favorites, users, reputation, replies.");
+      you want just init the users or separate multiple documents with a space. The available documents are: docs, posts,
+      tags, votes, scores, stars, subscriptions, classifications, badges, favorites, users, reputation, replies.");
   }
 
 
@@ -800,6 +821,10 @@ class InitCommand extends AbstractCommand {
 
       foreach ($documents as $name)
         switch ($name) {
+          case 'docs':
+            $this->initDocs();
+            break;
+
           case 'posts':
             $this->initPosts();
             break;
@@ -832,7 +857,7 @@ class InitCommand extends AbstractCommand {
             $this->initBadges();
             break;
 
-          case 'favourites':
+          case 'favorites':
             $this->initFavorites();
             break;
 
