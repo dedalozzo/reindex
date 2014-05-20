@@ -29,9 +29,9 @@ class ProfileGroup extends Group {
     $this->setHostName('utenti.'.DI::getDefault()['config']['application']['domainName']);
 
     $this->addGet('/{id}', ['action' => 'timeline']);
-    $this->addGet('/{id}/blog/{type}', ['action' => 'timeline']);
+    $this->addGet('/{id}/timeline/{type}', ['action' => 'timeline']);
     $this->addGet('/{id}/connessioni/{type}', ['action' => 'connections']);
-    $this->addGet('/{id}/preferiti/{type}', ['action' => 'favourites']);
+    $this->addGet('/{id}/preferiti/{type}', ['action' => 'favorites']);
     $this->addGet('/{id}/reputatione/{type}', ['action' => 'reputation']);
     $this->addGet('/{id}/attivita/{type}', ['action' => 'activities']);
     $this->addGet('/{id}/bounties/{type}', ['action' => 'bounties']);
