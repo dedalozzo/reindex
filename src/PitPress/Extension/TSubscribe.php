@@ -17,9 +17,10 @@ use PitPress\Model\User\User;
 
 
 //! @brief Implements the ISubscribe interface.
+//! @copydoc ISubscribe
 trait TSubscribe {
 
-  //! @copydoc ISubscribe
+
   public function isSubscribed(User $user, &$subscriptionId = NULL) {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $user->id]);
@@ -35,7 +36,6 @@ trait TSubscribe {
   }
 
 
-//! @copydoc ISubscribe
   public function subscribe(User $user) {
 
     if (!$this->isSubscribed($user)) {
@@ -45,7 +45,6 @@ trait TSubscribe {
   }
 
 
-  //! @copydoc ISubscribe
   public function unsubscribe(User $user) {
     if ($this->isSubscribed($user, $subscriptionId)) {
       $doc = $this->couch->getDoc(Couch::STD_DOC_PATH, $subscriptionId);
@@ -55,7 +54,6 @@ trait TSubscribe {
   }
 
 
-  //! @copydoc ISubscribe
   public function getSubscribersCount() {
     $opts = new ViewQueryOpts();
     $opts->setKey([$this->id]);
@@ -67,7 +65,5 @@ trait TSubscribe {
     else
       return $result['rows'][0]['value'];
   }
-
-  //@}
 
 }

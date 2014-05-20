@@ -17,6 +17,7 @@ use PitPress\Model\User\User;
 
 
 //! @brief Implements the IVote interface.
+//! @copydoc IVote
 trait TVote {
 
   private function vote(User $user, $value) {
@@ -44,20 +45,17 @@ trait TVote {
   }
 
 
-  //! @copydoc IVote
   public function voteUp(User $user) {
     $this->vote($user, 1);
   }
 
 
 
-  //! @copydoc IVote
   public function voteDown(User $user) {
     $this->vote($user, -1);
   }
 
 
-  //! @copydoc IVote
   public function didUserVote(User $user, &$voteId = NULL) {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $user->id]);
@@ -73,7 +71,6 @@ trait TVote {
   }
 
 
-  //! @copydoc IVote
   public function getScore() {
     $opts = new ViewQueryOpts();
     $opts->setKey($this->id);
@@ -87,7 +84,6 @@ trait TVote {
   }
 
 
-  //! @copydoc IVote
   public function getUsersHaveVoted() {
 
     // Gets the users have voted the item.
@@ -120,10 +116,8 @@ trait TVote {
   }
 
 
-  //! @copydoc IVote
   public function getThumbsDirection(User $user) {
     return $this->redis->hGet($user->id, $this->id);
   }
 
 }
-//! @endcond

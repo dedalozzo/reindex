@@ -10,21 +10,20 @@ namespace PitPress\Extension;
 
 
 //! @brief Implements ILock interface.
+//! @copydoc ILock
 trait TLock {
 
-  //! @copydoc ILock
+
   public function lock() {
 
   }
 
 
-  //! @copydoc ILock
   public function unlock() {
 
   }
 
 
-  //! @copydoc ILock
   public function isLocked() {
     return $this->meta["locked"];
   }

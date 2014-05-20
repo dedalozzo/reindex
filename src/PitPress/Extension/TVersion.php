@@ -10,15 +10,14 @@ namespace PitPress\Extension;
 
 
 //! @brief Implements IVersion interface.
+//! @copydoc IVersion
 trait TVersion {
 
 
-  //! @copydoc IVersion
   public function getChanges() {
   }
 
 
-  //! @copydoc IVersion
   public function rollback($version) {
   }
 

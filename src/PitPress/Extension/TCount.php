@@ -10,9 +10,10 @@ namespace PitPress\Extension;
 
 
 //! @brief Implements ICount interface.
+//! @copydoc ICount
 trait TCount {
 
-  //! @copydoc ICount
+
   public function getHitsCount() {
     if (isset($this->rev))
       return number_format($this->redis->hGet($this->id, 'hits'), 0, ",", ".");
@@ -21,7 +22,6 @@ trait TCount {
   }
 
 
-  //! @copydoc ICount
   public function incHits() {
     // We can increment the views of a document that has been already saved.
     if (isset($this->rev))
