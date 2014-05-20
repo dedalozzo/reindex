@@ -17,11 +17,12 @@ use ElephantOnCouch\Doc\Doc;
 class Star extends Doc {
 
   //! @brief Creates an instance of Star class.
-  public static function create($itemId, $userId, $timestamp = NULL) {
+  public static function create($userId, $itemId, $itemType, $timestamp = NULL) {
     $instance = new self();
 
-    $instance->meta["itemId"] = $itemId;
     $instance->meta["userId"] = $userId;
+    $instance->meta["itemId"] = $itemId;
+    $instance->meta["itemType"] = $itemType;
 
     if (is_null($timestamp))
       $instance->meta["timestamp"] = time();
