@@ -10,7 +10,6 @@ namespace PitPress\Extension;
 
 
 //! @brief Implements ILock interface.
-//! @copydoc ILock
 trait TLock {
 
 
