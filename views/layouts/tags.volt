@@ -1,6 +1,7 @@
 {% extends "templates/structure/single-column.volt" %}
 
 {% block sectionMenu %}
+  {% set displayName = '' %}
   {% include "partials/navigation/sections/tags.volt" %}
 {% endblock %}
 
