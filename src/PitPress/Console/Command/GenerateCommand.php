@@ -28,26 +28,24 @@ class GenerateCommand extends AbstractCommand {
   const ARTICLE = 2;
   const BOOK = 11;
 
-  private $limit = 50;
-  private $onlyPositive = FALSE;
-
   private $mysql;
   private $couch;
-
-  private $input;
-  private $output;
 
 
   //! @brief Generates fake votes.
   private function generateVotes(InputInterface $input, OutputInterface $output) {
+    $output->writeln("Generate votes...");
+
     $limit = (int)$input->getOption('limit');
 
-    if ($limit > 0)
-      $this->limit = $limit;
+    if ($limit <= 0)
+      $limit = 50;
 
     // Generates only positive votes.
     if ($input->getOption('only-positive'))
-      $this->onlyPositive = TRUE;
+      $onlyPositive = TRUE;
+    else
+      $onlyPositive = FALSE;
 
     $usersCount = mysqli_fetch_array(mysqli_query($this->mysql, "SELECT COUNT(*) FROM Member"))[0];
 
@@ -56,18 +54,18 @@ class GenerateCommand extends AbstractCommand {
 
     $rows = mysqli_num_rows($result);
     $progress = $this->getApplication()->getHelperSet()->get('progress');
-    $progress->start($this->output, $rows);
+    $progress->start($output, $rows);
 
     while ($item = mysqli_fetch_object($result)) {
       $offset = rand(0, $usersCount);
-      $counter = rand(0, $this->limit);
+      $counter = rand(0, $limit);
 
       if ($cursor = mysqli_query($this->mysql, "SELECT id FROM Member LIMIT $counter OFFSET $offset")) {
 
         while ($row = mysqli_fetch_array($cursor)) {
           $userId = $row[0];
 
-          if ($this->onlyPositive)
+          if ($onlyPositive)
             $value = 1;
           else
             $value = rand(0, 100) > 7 ? 1 : -1;
@@ -94,11 +92,15 @@ class GenerateCommand extends AbstractCommand {
 
   //! @brief Consumes a site feed and generate a link for every item.
   private function generateLinks(InputInterface $input, OutputInterface $output) {
+    $output->writeln("Generate links...");
 
     // Consume the feed.
     $feed = new SimplePie();
     $feed->set_feed_url($input->getOption('feed'));
     $feed->init();
+
+    $progress = $this->getApplication()->getHelperSet()->get('progress');
+    $progress->start($output, $feed->get_item_quantity());
 
     foreach ($feed->get_items() as $item) {
       $link = new Link();
@@ -111,7 +113,11 @@ class GenerateCommand extends AbstractCommand {
       $link->userId = '60de120d-d2ae-4919-a19f-4eec233f22f0';
       $link->publishingDate = time();
       $link->save();
+
+      $progress->advance();
     }
+
+    $progress->finish();
   }
 
 
