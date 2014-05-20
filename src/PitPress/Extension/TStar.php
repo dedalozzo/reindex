@@ -17,9 +17,10 @@ use PitPress\Model\User\User;
 
 
 //! @brief Implements the IStar interface.
+//! @copydoc IStar
 trait TStar {
 
-  //! @copydoc IStar
+
   public function isStarred(User $user, &$starId = NULL) {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $user->id]);
@@ -35,16 +36,14 @@ trait TStar {
   }
 
 
-  //! @copydoc IStar
   public function star(User $user) {
     if (!$this->isStarred($user)) {
-      $doc = Star::create($this->id, $user->id);
+      $doc = Star::create($user->id, $this->id, $this->getType());
       $this->couch->saveDoc($doc);
     }
   }
 
 
-  //! @copydoc IStar
   public function unstar(User $user) {
     if ($this->isStarred($user, $starId)) {
       $doc = $this->couch->getDoc(Couch::STD_DOC_PATH, $starId);
@@ -54,7 +53,6 @@ trait TStar {
   }
 
 
-  //! @copydoc IStar
   public function getStarsCount() {
     $opts = new ViewQueryOpts();
     $opts->setKey([$this->id]);
