@@ -71,6 +71,7 @@ try {
   $console->add(new Command\QueryCommand());
   $console->add(new Command\StatusCommand());
   $console->add(new Command\GenerateCommand());
+  $console->add(new Command\RemoveCommand());
 
   $console->run();
 }
