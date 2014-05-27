@@ -164,4 +164,9 @@ class ProfileController extends ListController {
 
   }
 
+
+  public function projectsAction($id) {
+
+  }
+
 } 
