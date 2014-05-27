@@ -1,28 +1,68 @@
-<section class="topbar">
-  <nav>
-    <div class="pull-left">
-      <a class="topbar-brand-logo" href="{{ baseUri }}"></a>
-      <a class="topbar-brand-name" href="//{{ domainName }}">PROGRAMMAZIONE.IT</a>
-      <form class="topbar-search" method="get" action="search.php" autocomplete="off" name="form_search">
-        <input type="search" placeholder="Cerca" autocomplete="on" id="keyword" name="keyword">
-        <i class="icon-search"></i>
-      </form>
-      <a href="{{ baseUri }}/tour/">Tour</a>
-      <a href="{{ baseUri }}/aiuto/">Aiuto</a>
-    </div>
-    <div class="pull-right">
-      <span><i class="icon-inbox"></i>&nbsp;<i class="icon-caret-down"></i></span>
-      <span><i class="icon-plus"></i>&nbsp;<i class="icon-caret-down"></i></span>
-    {% if currentUser is defined %}
-      {% set userUri = '//utenti.'~domainName~'/'~currentUser.id %}
-      <a href="{{ userUri }}"><img class="gravatar" src="{{ currentUser.getGravatar(currentUser.email) }}&s=20">&nbsp;{{ currentUser.displayName }}</a>
-    {% else %}
-      <a href="{{ baseUri }}/accedi/">Accedi</a>
-      <a href="{{ baseUri }}/registrati/">Registrati</a>
-    {% endif %}
-    <!-- <a href="#" data-toggle="modal" data-target="#myModal">Registrati</a> -->
-    <!-- Button trigger modal -->
-      <span class="fixsize"></span>
-    </div>
-  </nav>
-</section>
+{% include "partials/navigation/main-menu.volt" %}
+<nav class="topbar">
+  <ul class="list">
+    <li><a class="topbar-brand-logo" href="{{ baseUri }}">&#62<blink>&#95</blink></a></li>
+    <li><a class="topbar-brand-name" href="//{{ domainName }}">PROGRAMMAZIONE.IT</a></li>
+    <li>
+      <ul class="list pills no-gutter">
+        {% for item in mainMenu %}
+          <li{{ (item['name'] == sectionName) ? ' class="active"' : '' }}><a href="//{{ item['path']~domainName }}"><i class="icon-{{ item['icon'] }}" ></i>&nbsp;{{ item['label'] }}</a></li>
+        {% endfor %}
+        <!-- <li><a href="{{ baseUri }}/tour/">Tour</a></li>
+        <li><a href="{{ baseUri }}/aiuto/">Aiuto</a></li> -->
+
+        <!-- <li class="icon"><a href="http://twitter.com/prg_it"><i class="icon-twitter icon-large"></i></a></li>
+        <li class="icon"><a href="http://facebook.com/programmazione.it"><i class="icon-facebook icon-large"></i></a></li>
+        <li class="icon"><a href="#"><i class="icon-google-plus icon-large"></i></a></li> -->
+      </ul>
+    </li>
+    <li class="space"></li>
+    <li>
+      <ul class="list">
+        <li><button class="btn btn-icon blue" title="cerca" data-dropdown="#dropdown-search"><i class="icon-search icon-large"></i></button></li>
+        <li><button class="btn btn-icon blue" title="collabora" data-dropdown="#dropdown-plus"><i class="icon-file icon-large"></i></button></li>
+        {% if currentUser is defined %}
+          {% set userUri = '//utenti.'~domainName~'/'~currentUser.id %}
+        <li><button class="btn btn-icon blue" title="messaggi e notifiche" data-dropdown="#dropdown-inbox"><i class="icon-inbox icon-large"></i></button></li>
+        <li><button class="btn btn-icon blue" data-dropdown="#dropdown-user"><img class="gravatar" src="{{ currentUser.getGravatar(currentUser.email) }}&s=20"></button></li>
+        {% else %}
+        <li><a href="{{ baseUri }}/accedi/">Accedi</a></li>
+        <li><a href="{{ baseUri }}/registrati/">Registrati</a></li>
+        {% endif %}
+      </ul>
+    </li>
+  </ul>
+
+  <!-- <a href="#" data-toggle="modal" data-target="#myModal">Registrati</a> -->
+  <!-- Button trigger modal -->
+</nav>
+
+{% if currentUser is defined %}
+<div id="dropdown-plus" class="dropdown dropdown-anchor-right dropdown-tip pull-left">
+  <ul class="dropdown-menu">
+    <li><button><i class="icon-link"></i>Aggiungi un link</button></li>
+    <li><button><i class="icon-question"></i>Fai una domanda</button></li>
+    <li class="dropdown-divider"></li>
+    <li><button><i class="icon-pencil"></i>Scrivi un articolo</button></li>
+    <li><button><i class="icon-pencil"></i>Scrivi una guida</button></li>
+    <li><button><i class="icon-pencil"></i>Recensisci un libro</button></li>
+    <li class="dropdown-divider"></li>
+    <li><button><i class="icon-tag"></i>Aggiungi un tag</button></li>
+  </ul>
+</div>
+
+<div id="dropdown-user" class="dropdown dropdown-anchor-right dropdown-tip pull-left">
+  <ul class="dropdown-menu">
+    <li><a href="{{ userUri }}"><i class="icon-user"></i>Profilo</a></li>
+    <li><button><i class="icon-gears"></i>Impostazioni</button></li>
+    <li class="dropdown-divider"></li>
+    <li><a href="{{ baseUri }}/disconnetti/"><i class="icon-signout"></i>Esci</a></li>
+  </ul>
+</div>
+{% endif %}
+
+
+<!-- <form class="topbar-search" method="get" action="search.php" autocomplete="off" name="form_search">
+  <input type="search" placeholder="Cerca" autocomplete="on" id="keyword" name="keyword">
+  <i class="icon-search"></i>
+</form> -->
