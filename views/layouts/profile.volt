@@ -18,7 +18,7 @@
         {% endif %}
       </div>
       <div class="pippo">{{ doc.firstName }} {{ doc.lastName }}</div>
-x      <div class="pull-right" style="margin-top: 148px;">
+      <div class="pull-right" style="margin-top: 148px;">
         {% if currentUser is defined and (doc.id == currentUser.id or currentUser.isAdmin()) %}
         <a class="btn blue" href="#"><i class="icon-user"></i> MODIFICA</a>
         {% endif %}
