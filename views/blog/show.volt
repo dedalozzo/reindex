@@ -101,32 +101,36 @@
       <li><button class="btn btn-link score">{{ score }}</button></li>
       <li class="space"></li>
       <li><button class="btn btn-icon active yellow" title="aggiungi la domanda ai preferiti"><i class="icon-star icon-large"></i></button></li>
-      <li><button class="btn btn-icon blue" title="condividi la domanda" data-dropdown="#dropdown-share"><i class="icon-share icon-large"></i></button></li>
+      <li>
+        <button class="btn btn-icon blue" title="condividi la domanda" data-dropdown="#dropdown-share"><i class="icon-share icon-large"></i></button>
+        <div id="dropdown-share" class="dropdown dropdown-relative dropdown-tip">
+          <ul class="dropdown-menu">
+            <li><button title="condividi la domanda su Facebook"><i class="icon-facebook"></i>Condividi su Facebook</button></li>
+            <li><button title="condividi la domanda su Twitter"><i class="icon-twitter"></i>Condividi su Twitter</button></li>
+            <li><button title="condividi la domanda su Google+"><i class="icon-google-plus"></i>Condividi su Google+</button></li>
+            <li class="dropdown-divider"></li>
+            <li><button title="manda il link via e-mail"><i class="icon-mail-forward"></i>Condividi via e-mail</button></li>
+            <li><button title="copia il link permanente negli appunti"><i class="icon-link"></i>Permalink</button></li>
+          </ul>
+        </div>
+      </li>
       <li><button class="btn btn-icon blue" title="segnala un problema riguardante la domanda"><i class="icon-flag icon-large"></i></button></li>
       <li><a class="btn btn-icon trans blue" title="migliora la domanda modificandone il contenuto" href="//{{ serverName~'/'~doc.id~'/modifica/' }}"><i class="icon-file-text icon-large"></i></a></li>
-      <li><button class="btn btn-icon orange" title="strumenti di amministrazione" data-dropdown="#dropdown-admin"><i class="icon-gear icon-large"></i></button></li>
+      <li>
+        <button class="btn btn-icon orange" title="strumenti di amministrazione" data-dropdown="#dropdown-admin"><i class="icon-gear icon-large"></i></button>
+        <div id="dropdown-admin" class="dropdown dropdown-relative dropdown-anchor-right dropdown-tip">
+          <ul class="dropdown-menu">
+            <li><button title="impedisci che vengono aggiunte ulteriori risposte alla domanda"><i class="icon-unlock"></i>Chiudi</button></li>
+            <li><button title="proteggi la domanda da eventuali modifiche"><i class="icon-umbrella"></i>Proteggi</button></li>
+            <li><button title="proteggi la domanda da eventuali modifiche"><i class="icon-eye-close"></i>Nascondi</button></li>
+            <li class="dropdown-divider"></li>
+            <li><button title="appunta la domanda"><i class="icon-pushpin"></i>Appunta</button></li>
+            <li><button title="elimina la domanda"><i class="icon-trash"></i>Elimina</button></li>
+          </ul>
+        </div>
+      </li>
       <li><button class="btn blue"><i class="icon-reply"></i> RISPONDI</button></li>
     </ul>
-    <div id="dropdown-share" class="dropdown dropdown-relative dropdown-tip pull-left">
-      <ul class="dropdown-menu">
-        <li><button title="condividi la domanda su Facebook"><i class="icon-facebook"></i>Condividi su Facebook</button></li>
-        <li><button title="condividi la domanda su Twitter"><i class="icon-twitter"></i>Condividi su Twitter</button></li>
-        <li><button title="condividi la domanda su Google+"><i class="icon-google-plus"></i>Condividi su Google+</button></li>
-        <li class="dropdown-divider"></li>
-        <li><button title="manda il link via e-mail"><i class="icon-mail-forward"></i>Condividi via e-mail</button></li>
-        <li><button title="copia il link permanente negli appunti"><i class="icon-link"></i>Permalink</button></li>
-      </ul>
-    </div>
-    <div id="dropdown-admin" class="dropdown dropdown-relative dropdown-anchor-right dropdown-tip pull-left">
-      <ul class="dropdown-menu">
-        <li><button title="impedisci che vengono aggiunte ulteriori risposte alla domanda"><i class="icon-unlock"></i>Chiudi</button></li>
-        <li><button title="proteggi la domanda da eventuali modifiche"><i class="icon-umbrella"></i>Proteggi</button></li>
-        <li><button title="proteggi la domanda da eventuali modifiche"><i class="icon-eye-close"></i>Nascondi</button></li>
-        <li class="dropdown-divider"></li>
-        <li><button title="appunta la domanda"><i class="icon-pushpin"></i>Appunta</button></li>
-        <li><button title="elimina la domanda"><i class="icon-trash"></i>Elimina</button></li>
-      </ul>
-    </div>
 
     <ul class="list item-actors">
       {% set usersHaveVoted = doc.getUsersHaveVoted() %}
