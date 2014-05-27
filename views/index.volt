@@ -10,13 +10,14 @@
   <meta name="author" content="">
 
   <link rel="shortcut icon" href="{{ baseUri }}/favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="//{{ serverName }}/pit-bootstrap/css/bootstrap.css">
+  <link rel="stylesheet" href="//{{ serverName }}/pit-bootstrap/dist/css/bootstrap.css">
   <!-- <link rel="stylesheet" href="//{{ serverName }}/pit-bootstrap/css/selectize.bootstrap3.css"> -->
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
   <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-scrollTo/1.4.11/jquery.scrollTo.min.js"></script> -->
-  <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js"></script>
-  <script src="//{{ serverName }}/pit-bootstrap/js/selectize.min.js"></script>
+  <script src="//{{ serverName }}/pit-bootstrap/dist/js/tab.min.js"></script>
+  <script src="//{{ serverName }}/pit-bootstrap/dist/js/dropdown.min.js"></script>
+  <script src="//{{ serverName }}/pit-bootstrap/dist/js/selectize.min.js"></script>
 
 {% include "partials/codemirror.volt" %}
 
@@ -27,14 +28,17 @@
 
   <style>
     body {
-      background-image: url({{ baseUri }}/pit-bootstrap/img/backgrounds/bg_px.png);
+      background-image: url({{ baseUri }}/pit-bootstrap/dist/img/backgrounds/bg_px.png);
       background-repeat: repeat;
     }
   </style>
 </head>
 <body onload="localStorage.clear();">
 
-  {% include "partials/navigation/topbar.volt" %}
+  {% block topbar %}
+    {% set sectionName = controllerName %}
+    {% include "partials/navigation/topbar.volt" %}
+  {% endblock %}
 
   <a id="skin" href="#"></a>
 
