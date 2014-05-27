@@ -36,7 +36,6 @@
           dropdownParent: 'body'
         });
       </script>
-
       <label for="title">Titolo: </label>
       <input type="text" style="width: 100%;" placeholder="Titolo" autocomplete="on" id="keyword" name="keyword" value="{{ doc.title }}">
     </fieldset>
