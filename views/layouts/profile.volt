@@ -1,29 +1,34 @@
 {% extends "index.volt" %}
 
+{% block topbar %}
+  {% set sectionName = 'users' %}
+  {% include "partials/navigation/topbar.volt" %}
+{% endblock %}
+
 {% block scrollable %}
 {% set lastVisit = doc.getLastvisit() %}
 {% set hitsCount = doc.getHitsCount() %}
 <div id="scrollable">
-  <div id="content" style="background-image: url(//tourists360.com/wp-content/uploads/2014/02/Paradise-Island-7.jpg); background-size: 970px 410px; background-repeat: no-repeat;">
+  <div id="content" style="background-image: url(//www.utepprintstore.com/wp-content/uploads/Desktop-Background-1024x768.jpg); background-size: 970px 410px; background-repeat: no-repeat;">
     <div class="ghost gutter-plus" style="margin-top: 200px;">
-      <img id="avatar" class="img-polaroid pull-left" src="{{ doc.getGravatar(doc.email) }}&s=160">
-      <div class="pull-right" style="margin-top: 148px;">
-        <a class="btn small cyan" href="#"><i class="icon-file-text"></i> CAMBIA FOTO</a>
+      <div style="position: relative;">
+        <img id="avatar" class="img-polaroid pull-left" src="{{ doc.getGravatar(doc.email) }}&s=160">
+        {% if currentUser is defined and doc.id == currentUser.id %}
+        <a class="change-avatar" href="#"><i class="icon-camera"></i>CAMBIA FOTO</a>
+        {% endif %}
+      </div>
+      <div class="pippo">{{ doc.firstName }} {{ doc.lastName }}</div>
+x      <div class="pull-right" style="margin-top: 148px;">
         {% if currentUser is defined and (doc.id == currentUser.id or currentUser.isAdmin()) %}
-        <a class="btn small orange" href="#"><i class="icon-file-text"></i> MODIFICA</a>
+        <a class="btn blue" href="#"><i class="icon-user"></i> MODIFICA</a>
         {% endif %}
         {% if currentUser is defined and currentUser.isAdmin() %}
-        <a class="btn small red" href="#"><i class="icon-flag"></i> BANNA</a>
-        {% endif %}
-        {% if currentUser is defined and (doc.id == currentUser.id or currentUser.isAdmin()) %}
-        <a class="btn small red" href="#"><i class="icon-trash"></i> ELIMINA</a>
-        {% endif %}
-        {% if currentUser is defined and doc.id == currentUser.id %}
-        <a class="btn small blue" href="{{ baseUri }}/disconnetti/"><i class="icon-signout"></i> DISCONNETTI</a>
+        <a class="btn" href="#"><i class="icon-flag"></i> BANNA</a>
         {% endif %}
       </div>
     </div>
 
+    {% set displayName = '/'~doc.id %}
     {% include "partials/navigation/sections/profile.volt" %}
     {% include "partials/navigation/section-menu.volt" %}
     {% include "partials/navigation/subsection-menu.volt" %}
@@ -54,7 +59,7 @@
 
       <!--<blockquote>
         {% if doc.firstName is defined %}
-          Mi chiamo {{ doc.firstName }} {{ doc.lastName }}.
+          Mi chiamo {{ doc.firstName|upper }} {{ doc.lastName|upper }}.
         {% else %}
           {{ doc.displayName }}
         {% endif %}
