@@ -20,15 +20,49 @@
     <li>
       <ul class="list">
         <li><button class="btn btn-icon blue" title="cerca" data-dropdown="#dropdown-search"><i class="icon-search icon-large"></i></button></li>
-        <li><button class="btn btn-icon blue" title="collabora" data-dropdown="#dropdown-plus"><i class="icon-file icon-large"></i></button></li>
+        <li>
+          <button class="btn btn-icon blue" title="collabora" data-dropdown="#dropdown-plus"><i class="icon-file icon-large"></i></button>
+          <div id="dropdown-plus" class="dropdown dropdown-relative dropdown-anchor-right dropdown-tip">
+            <ul class="dropdown-menu">
+              <li><button><i class="icon-link"></i>Aggiungi un link</button></li>
+              <li><button><i class="icon-question"></i>Fai una domanda</button></li>
+              <li class="dropdown-divider"></li>
+              <li><button><i class="icon-pencil"></i>Scrivi un articolo</button></li>
+              <li><button><i class="icon-pencil"></i>Scrivi una guida</button></li>
+              <li><button><i class="icon-pencil"></i>Recensisci un libro</button></li>
+              <li class="dropdown-divider"></li>
+              <li><button><i class="icon-tag"></i>Aggiungi un tag</button></li>
+            </ul>
+          </div>
+        </li>
         {% if currentUser is defined %}
           {% set userUri = '//utenti.'~domainName~'/'~currentUser.id %}
         <li><button class="btn btn-icon blue" title="messaggi e notifiche" data-dropdown="#dropdown-inbox"><i class="icon-inbox icon-large"></i></button></li>
-        <li><button class="btn btn-icon blue" data-dropdown="#dropdown-user"><img class="gravatar" src="{{ currentUser.getGravatar(currentUser.email) }}&s=20"></button></li>
+        <li>
+          <button class="btn btn-icon blue" data-dropdown="#dropdown-user"><img class="gravatar" src="{{ currentUser.getGravatar(currentUser.email) }}&s=20"></button>
+          <div id="dropdown-user" class="dropdown dropdown-relative dropdown-anchor-right dropdown-tip">
+            <ul class="dropdown-menu">
+              <li><a href="{{ userUri }}"><i class="icon-home"></i>Timeline</a></li>
+              <li class="dropdown-divider"></li>
+              <li><a href="{{ userUri }}"><i class="icon-user"></i>Profilo</a></li>
+              <li><a href="{{ userUri }}"><i class="icon-group"></i>Connessioni</a></li>
+              <li><a href="{{ userUri }}"><i class="icon-star"></i>Preferiti</a></li>
+              <li><a href="{{ userUri }}"><i class="icon-github"></i>Progetti</a></li>
+              <li><a href="{{ userUri }}"><i class="icon-tasks"></i>Attività</a></li>
+              <li class="dropdown-divider"></li>
+              <li><button><i class="icon-wrench"></i>Impostazioni</button></li>
+              <li><button><i class="icon-gears"></i>Amministrazione</button></li>
+              <li class="dropdown-divider"></li>
+              <li><a href="{{ baseUri }}/disconnetti/"><i class="icon-signout"></i>Disconnetti</a></li>
+            </ul>
+          </div>
+        </li>
         {% else %}
         <li><a href="{{ baseUri }}/accedi/">Accedi</a></li>
         <li><a href="{{ baseUri }}/registrati/">Registrati</a></li>
         {% endif %}
+
+
       </ul>
     </li>
   </ul>
@@ -36,31 +70,6 @@
   <!-- <a href="#" data-toggle="modal" data-target="#myModal">Registrati</a> -->
   <!-- Button trigger modal -->
 </nav>
-
-{% if currentUser is defined %}
-<div id="dropdown-plus" class="dropdown dropdown-anchor-right dropdown-tip pull-left">
-  <ul class="dropdown-menu">
-    <li><button><i class="icon-link"></i>Aggiungi un link</button></li>
-    <li><button><i class="icon-question"></i>Fai una domanda</button></li>
-    <li class="dropdown-divider"></li>
-    <li><button><i class="icon-pencil"></i>Scrivi un articolo</button></li>
-    <li><button><i class="icon-pencil"></i>Scrivi una guida</button></li>
-    <li><button><i class="icon-pencil"></i>Recensisci un libro</button></li>
-    <li class="dropdown-divider"></li>
-    <li><button><i class="icon-tag"></i>Aggiungi un tag</button></li>
-  </ul>
-</div>
-
-<div id="dropdown-user" class="dropdown dropdown-anchor-right dropdown-tip pull-left">
-  <ul class="dropdown-menu">
-    <li><a href="{{ userUri }}"><i class="icon-user"></i>Profilo</a></li>
-    <li><button><i class="icon-gears"></i>Impostazioni</button></li>
-    <li class="dropdown-divider"></li>
-    <li><a href="{{ baseUri }}/disconnetti/"><i class="icon-signout"></i>Esci</a></li>
-  </ul>
-</div>
-{% endif %}
-
 
 <!-- <form class="topbar-search" method="get" action="search.php" autocomplete="off" name="form_search">
   <input type="search" placeholder="Cerca" autocomplete="on" id="keyword" name="keyword">
