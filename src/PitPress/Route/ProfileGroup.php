@@ -34,7 +34,8 @@ class ProfileGroup extends Group {
     $this->addGet('/{id}/preferiti/{type}', ['action' => 'favorites']);
     $this->addGet('/{id}/reputatione/{type}', ['action' => 'reputation']);
     $this->addGet('/{id}/attivita/{type}', ['action' => 'activities']);
-    $this->addGet('/{id}/bounties/{type}', ['action' => 'bounties']);
+    $this->addGet('/{id}/ricompense/{type}', ['action' => 'bounties']);
+    $this->addGet('/{id}/progetti/{type}', ['action' => 'projects']);
   }
 
 }
