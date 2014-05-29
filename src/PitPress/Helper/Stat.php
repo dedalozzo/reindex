@@ -27,18 +27,15 @@ class Stat {
   }
 
 
-  private function formatNumber($rows) {
-    if (empty($rows))
-      return 0;
-    else
-      return number_format($rows[0]['value'], 0, ",", ".");
+  private function formatNumber($number) {
+    return number_format($number, 0, ",", ".");
   }
 
 
   //! @brief Gets the total number of updates.
   public function getUpdatesCount() {
-    $rows = $this->couch->queryView("posts", "newest")['rows'];
-    return $this->formatNumber($rows);
+    $count = $this->couch->queryView("posts", "newest")->getReducedValue();
+    return $this->formatNumber($count);
   }
 
 
@@ -46,8 +43,8 @@ class Stat {
   public function getBlogEntriesCount() {
     $opts = new ViewQueryOpts();
     $opts->setStartKey(['blog'])->setEndKey(['blog', new \stdClass()]);
-    $rows = $this->couch->queryView('posts', 'newestPerSection', NULL, $opts)['rows'];
-    return $this->formatNumber($rows);
+    $count = $this->couch->queryView('posts', 'newestPerSection', NULL, $opts)->getReducedValue();
+    return $this->formatNumber($count);
   }
 
 
@@ -55,8 +52,8 @@ class Stat {
   public function getArticlesCount() {
     $opts = new ViewQueryOpts();
     $opts->setStartKey(['article'])->setEndKey(['article', new \stdClass()]);
-    $rows = $this->couch->queryView('posts', 'newestPerType', NULL, $opts)['rows'];
-    return $this->formatNumber($rows);
+    $count = $this->couch->queryView('posts', 'newestPerType', NULL, $opts)->getReducedValue();
+    return $this->formatNumber($count);
   }
 
 
@@ -64,8 +61,8 @@ class Stat {
   public function getBooksCount() {
     $opts = new ViewQueryOpts();
     $opts->setStartKey(['book'])->setEndKey(['book', new \stdClass()]);
-    $rows = $this->couch->queryView('posts', 'newestPerType', NULL, $opts)['rows'];
-    return $this->formatNumber($rows);
+    $count = $this->couch->queryView('posts', 'newestPerType', NULL, $opts)->getReducedValue();
+    return $this->formatNumber($count);
   }
 
 
@@ -73,8 +70,8 @@ class Stat {
   public function getTutorialsCount() {
     $opts = new ViewQueryOpts();
     $opts->setStartKey(['tutorial'])->setEndKey(['tutorial', new \stdClass()]);
-    $rows = $this->couch->queryView('posts', 'newestPerType', NULL, $opts)['rows'];
-    return $this->formatNumber($rows);
+    $count = $this->couch->queryView('posts', 'newestPerType', NULL, $opts)->getReducedValue();
+    return $this->formatNumber($count);
   }
 
 
@@ -82,8 +79,8 @@ class Stat {
   public function getLinksCount() {
     $opts = new ViewQueryOpts();
     $opts->setStartKey(['link'])->setEndKey(['link', new \stdClass()]);
-    $rows = $this->couch->queryView('posts', 'newestPerType', NULL, $opts)['rows'];
-    return $this->formatNumber($rows);
+    $count = $this->couch->queryView('posts', 'newestPerType', NULL, $opts)->getReducedValue();
+    return $this->formatNumber($count);
   }
 
 
@@ -91,15 +88,15 @@ class Stat {
   public function getQuestionsCount() {
     $opts = new ViewQueryOpts();
     $opts->setStartKey(['question'])->setEndKey(['question', new \stdClass()]);
-    $rows = $this->couch->queryView('posts', 'newestPerType', NULL, $opts)['rows'];
-    return $this->formatNumber($rows);
+    $count = $this->couch->queryView('posts', 'newestPerType', NULL, $opts)->getReducedValue();
+    return $this->formatNumber($count);
   }
 
 
   //! @brief Gets the total number of tags.
   public function getTagsCount() {
-    $rows = $this->couch->queryView("tags", "all")['rows'];
-    return $this->formatNumber($rows);
+    $count = $this->couch->queryView("tags", "all")->getReducedValue();
+    return $this->formatNumber($count);
   }
 
 }
