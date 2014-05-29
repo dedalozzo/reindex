@@ -32,9 +32,9 @@ class BlogController extends ListController {
     else
       $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey([$type, new \stdClass()])->setEndKey([$type]);
 
-    $rows = $this->couch->queryView('posts', 'newestPerType', NULL, $opts)['rows'];
+    $rows = $this->couch->queryView('posts', 'newestPerType', NULL, $opts);
 
-    $this->view->setVar('entries', $this->getEntries(array_column($rows, 'id')));
+    $this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'id')));
   }
 
 
@@ -42,7 +42,7 @@ class BlogController extends ListController {
   public function showAction($year, $month, $day, $slug) {
     $opts = new ViewQueryOpts();
     $opts->setKey(['blog', $year, $month, $day, $slug])->setLimit(1);
-    $rows = $this->couch->queryView("posts", "byUrl", NULL, $opts)['rows'];
+    $rows = $this->couch->queryView("posts", "byUrl", NULL, $opts);
 
     if (empty($rows))
       $this->dispatcher->forward(
@@ -86,9 +86,9 @@ class BlogController extends ListController {
   public function newestAction() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey(['blog', new \stdClass()])->setEndKey(['blog']);
-    $rows = $this->couch->queryView("posts", "newestPerSection", NULL, $opts)['rows'];
+    $rows = $this->couch->queryView("posts", "newestPerSection", NULL, $opts);
 
-    $this->view->setVar('entries', $this->getEntries(array_column($rows, 'id')));
+    $this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'id')));
 
     $stat = new Stat();
     $this->view->setVar('entriesCount', $stat->getBlogEntriesCount());
@@ -115,7 +115,7 @@ class BlogController extends ListController {
 
   //! @brief Displays the last updated blog entries.
   public function updatedAction() {
-    //$this->view->setVar('entries', $this->getEntries(array_column($rows, 'id')));
+    //$this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'id')));
 
     $stat = new Stat();
     $this->view->setVar('entriesCount', $stat->getBlogEntriesCount());
@@ -124,7 +124,7 @@ class BlogController extends ListController {
 
   //! @brief Displays the newest blog entries based on my tags.
   public function interestingAction() {
-    //$this->view->setVar('entries', $this->getEntries(array_column($rows, 'id')));
+    //$this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'id')));
 
     $stat = new Stat();
     $this->view->setVar('entriesCount', $stat->getBlogEntriesCount());

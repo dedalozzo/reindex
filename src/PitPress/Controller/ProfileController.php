@@ -36,7 +36,7 @@ class ProfileController extends ListController {
 
     $opts = new ViewQueryOpts();
     $opts->setKey($id)->setLimit(1);
-    $rows = $this->couch->queryView("users", "allNames", NULL, $opts)['rows'];
+    $rows = $this->couch->queryView("users", "allNames", NULL, $opts);
 
     // If the user doesn't exist, forward to 404.
     if (empty($rows))
@@ -58,17 +58,17 @@ class ProfileController extends ListController {
     if ($type == 'tutti') {
       $opts = new ViewQueryOpts();
       $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey([$doc->id, new \stdClass()])->setEndKey([$doc->id]);
-      $rows = $this->couch->queryView("posts", "newestByUser", NULL, $opts)['rows'];
+      $rows = $this->couch->queryView("posts", "newestByUser", NULL, $opts);
     }
     else {
       $typology = self::$typologyCorrespondence[$type];
 
       $opts = new ViewQueryOpts();
       $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey([$doc->id, $typology, new \stdClass()])->setEndKey([$doc->id, $typology]);
-      $rows = $this->couch->queryView('posts', 'newestByUserPerType', NULL, $opts)['rows'];
+      $rows = $this->couch->queryView('posts', 'newestByUserPerType', NULL, $opts);
     }
 
-    $this->view->setVar('entries', $this->getEntries(array_column($rows, 'id')));
+    $this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'id')));
 
     $stat = new Stat();
     $this->view->setVar('entriesCount', $stat->getUpdatesCount());
@@ -102,7 +102,7 @@ class ProfileController extends ListController {
 
     $opts = new ViewQueryOpts();
     $opts->setKey($id)->setLimit(1);
-    $rows = $this->couch->queryView("users", "allNames", NULL, $opts)['rows'];
+    $rows = $this->couch->queryView("users", "allNames", NULL, $opts);
 
     // If the user doesn't exist, forward to 404.
     if (empty($rows))
@@ -123,17 +123,17 @@ class ProfileController extends ListController {
     if ($type == 'tutti') {
       $opts = new ViewQueryOpts();
       $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey([$doc->id, new \stdClass()])->setEndKey([$doc->id]);
-      $rows = $this->couch->queryView("favorites", "lastAdded", NULL, $opts)['rows'];
+      $rows = $this->couch->queryView("favorites", "lastAdded", NULL, $opts);
     }
     else {
       $typology = self::$typologyCorrespondence[$type];
 
       $opts = new ViewQueryOpts();
       $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey([$doc->id, $typology, new \stdClass()])->setEndKey([$doc->id, $typology]);
-      $rows = $this->couch->queryView('favorites', 'lastAddedPerType', NULL, $opts)['rows'];
+      $rows = $this->couch->queryView('favorites', 'lastAddedPerType', NULL, $opts);
     }
 
-    $this->view->setVar('entries', $this->getEntries(array_column($rows, 'value')));
+    $this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'value')));
 
     $stat = new Stat();
     $this->view->setVar('entriesCount', $stat->getUpdatesCount());
