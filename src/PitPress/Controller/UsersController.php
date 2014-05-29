@@ -31,22 +31,21 @@ class UsersController extends BaseController {
     $opts->doNotReduce();
     $result = $this->couch->queryView("users", "all", $keys, $opts);
 
-    $this->view->setVar('usersCount', $result['total_rows']);
-    $docs = $result['rows'];
+    $this->view->setVar('usersCount', $result->getTotalRows());
 
     // Retrieves the users reputation.
     //$opts->reset();
     //$opts->groupResults()->includeMissingKeys();
-    //$reputations = $this->couch->queryView("reputation", "perUser", $keys, $opts)['rows'];
+    //$reputations = $this->couch->queryView("reputation", "perUser", $keys, $opts);
 
     $users = [];
-    $usersCount = count($docs);
+    $usersCount = count($result);
     for ($i = 0; $i < $usersCount; $i++) {
       $user = new \stdClass();
-      $user->id = $docs[$i]['id'];
-      $user->displayName = $docs[$i]['value'][0];
-      $user->gravatar = User::getGravatar($docs[$i]['value'][1]);
-      $user->when = Time::when($docs[$i]['value'][2], false);
+      $user->id = $result[$i]['id'];
+      $user->displayName = $result[$i]['value'][0];
+      $user->gravatar = User::getGravatar($result[$i]['value'][1]);
+      $user->when = Time::when($result[$i]['value'][2], false);
 
       $users[] = $user;
     }
@@ -69,9 +68,9 @@ class UsersController extends BaseController {
   public function newestAction() {
     $opts = new ViewQueryOpts();
     $opts->reverseOrderOfResults()->setLimit(40);
-    $users = $this->couch->queryView("users", "newest", NULL, $opts)['rows'];
+    $users = $this->couch->queryView("users", "newest", NULL, $opts);
 
-    $this->view->setVar('users', $this->getUsers(array_column($users, 'id')));
+    $this->view->setVar('users', $this->getUsers(array_column($users->asArray(), 'id')));
   }
 
 
@@ -79,9 +78,9 @@ class UsersController extends BaseController {
   public function byNameAction() {
     $opts = new ViewQueryOpts();
     $opts->setLimit(40);
-    $users = $this->couch->queryView("users", "byDisplayName", NULL, $opts)['rows'];
+    $users = $this->couch->queryView("users", "byDisplayName", NULL, $opts);
 
-    $this->view->setVar('users', $this->getUsers(array_column($users, 'id')));
+    $this->view->setVar('users', $this->getUsers(array_column($users->asArray(), 'id')));
   }
 
 

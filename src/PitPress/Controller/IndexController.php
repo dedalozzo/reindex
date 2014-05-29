@@ -26,25 +26,25 @@ class IndexController extends ListController {
   protected function getNewestPostsPerType($viewName, $type, $count = 20) {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit($count)->reverseOrderOfResults()->setStartKey([$type, new \stdClass()])->setEndKey([$type]);
-    $rows = $this->couch->queryView('posts', $viewName, NULL, $opts)['rows'];
+    $rows = $this->couch->queryView('posts', $viewName, NULL, $opts);
 
     // Entries.
-    $keys = array_column($rows, 'id');
+    $keys = array_column($rows->asArray(), 'id');
 
     // Posts.
     $opts->reset();
     $opts->doNotReduce()->includeMissingKeys();
-    $posts = $this->couch->queryView("posts", "all", $keys, $opts)['rows'];
+    $posts = $this->couch->queryView("posts", "all", $keys, $opts);
 
     // Scores.
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
-    $scores = $this->couch->queryView("votes", "perPost", $keys, $opts)['rows'];
+    $scores = $this->couch->queryView("votes", "perPost", $keys, $opts);
 
     // Replies.
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
-    $replies = $this->couch->queryView("replies", "perPost", $keys, $opts)['rows'];
+    $replies = $this->couch->queryView("replies", "perPost", $keys, $opts);
 
     $entries = [];
     $postCount = count($posts);
@@ -52,7 +52,7 @@ class IndexController extends ListController {
       $entry = new \stdClass();
       $entry->id = $posts[$i]['id'];
 
-      $properties = &$posts[$i]['value'];
+      $properties = $posts[$i]['value'];
       $entry->title = $properties['title'];
       $entry->url = $this->buildUrl($properties['section'], $properties['publishingDate'], $properties['slug']);
       $entry->whenHasBeenPublished = Time::when($properties['publishingDate']);
@@ -82,9 +82,9 @@ class IndexController extends ListController {
   public function newestAction() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->reverseOrderOfResults()->setLimit(30);
-    $rows = $this->couch->queryView("posts", "newest", NULL, $opts)['rows'];
+    $rows = $this->couch->queryView("posts", "newest", NULL, $opts);
 
-    $this->view->setVar('entries', $this->getEntries(array_column($rows, 'id')));
+    $this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'id')));
   }
 
 

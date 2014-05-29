@@ -28,15 +28,14 @@ class TagsController extends BaseController {
 
     // Gets the tags properties.
     $opts->doNotReduce();
-    $result = $this->couch->queryView("tags", "all", $keys, $opts);
+    $tags = $this->couch->queryView("tags", "all", $keys, $opts);
 
-    $this->view->setVar('tagsCount', $result['total_rows']);
-    $tags = $result['rows'];
+    $this->view->setVar('tagsCount', $tags->getTotalRows());
 
     // Retrieves the posts count per tag.
     $opts->reset();
     $opts->groupResults()->includeMissingKeys();
-    $classifications = $this->couch->queryView("classifications", "perTag", $keys, $opts)['rows'];
+    $classifications = $this->couch->queryView("classifications", "perTag", $keys, $opts);
 
     $entries = [];
     $tagsCount = count($tags);
@@ -67,7 +66,7 @@ class TagsController extends BaseController {
   public function byNameAction() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(40);
-    $tags = $this->couch->queryView("tags", "byName", NULL, $opts)['rows'];
+    $tags = $this->couch->queryView("tags", "byName", NULL, $opts)->asArray();
 
     $this->view->setVar('entries', $this->getEntries(array_column($tags, 'id')));
 
@@ -80,7 +79,7 @@ class TagsController extends BaseController {
   public function newestAction() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->reverseOrderOfResults()->setLimit(40);
-    $tags = $this->couch->queryView("tags", "newest", NULL, $opts)['rows'];
+    $tags = $this->couch->queryView("tags", "newest", NULL, $opts)->asArray();
 
     $this->view->setVar('entries', $this->getEntries(array_column($tags, 'id')));
   }

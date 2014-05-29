@@ -28,15 +28,15 @@ abstract class ListController extends BaseController {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(60);
     // todo Change newest with newest.
-    $classifications = $this->couch->queryView("classifications", "newest", NULL, $opts)['rows'];
-    $keys = array_column($classifications, 'value');
+    $classifications = $this->couch->queryView("classifications", "newest", NULL, $opts);
+    $keys = array_column($classifications->asArray(), 'value');
 
     $opts->reset();
-    $tags = $this->couch->queryView("tags", "allNames", $keys, $opts)['rows'];
+    $tags = $this->couch->queryView("tags", "allNames", $keys, $opts);
 
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
-    $postsPerTag = $this->couch->queryView("classifications", "perTag", $keys, $opts)['rows'];
+    $postsPerTag = $this->couch->queryView("classifications", "perTag", $keys, $opts);
 
     $recentTags = [];
     for ($i = 0; $i < 60; $i++)
@@ -62,39 +62,31 @@ abstract class ListController extends BaseController {
 
     // Posts.
     $opts->doNotReduce();
-    $result = $this->couch->queryView("posts", "all", $keys, $opts);
-    $posts = $result['rows'];
+    $posts = $this->couch->queryView("posts", "all", $keys, $opts);
 
     // Scores.
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
-    $scores = $this->couch->queryView("votes", "perPost", $keys, $opts)['rows'];
+    $scores = $this->couch->queryView("votes", "perPost", $keys, $opts);
 
     // Replies.
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
-    $replies = $this->couch->queryView("replies", "perPost", $keys, $opts)['rows'];
+    $replies = $this->couch->queryView("replies", "perPost", $keys, $opts);
 
     // Users.
-    $keys = array_column(array_column($posts, 'value'), 'userId');
+    $keys = array_column(array_column($posts->asArray(), 'value'), 'userId');
     $opts->reset();
     $opts->doNotReduce()->includeMissingKeys();
-    $users = $this->couch->queryView("users", "allNames", $keys, $opts)['rows'];
+    $users = $this->couch->queryView("users", "allNames", $keys, $opts);
 
     $entries = [];
     $postCount = count($posts);
     for ($i = 0; $i < $postCount; $i++) {
-      $entry = new \stdClass();
+      $entry = (object)($posts[$i]['value']);
       $entry->id = $posts[$i]['id'];
-
-      $properties = &$posts[$i]['value'];
-      $entry->type = $properties['type'];
-      $entry->title = $properties['title'];
-      $entry->excerpt = $properties['excerpt'];
-      $entry->url = $this->buildUrl($properties['section'], $properties['publishingDate'], $properties['slug']);
-      $entry->publishingType = $properties['publishingType'];
-      $entry->whenHasBeenPublished = Time::when($properties['publishingDate']);
-      $entry->userId = $properties['userId'];
+      $entry->url = $this->buildUrl($entry->section, $entry->publishingDate, $entry->slug);
+      $entry->whenHasBeenPublished = Time::when($entry->publishingDate);
       $entry->displayName = $users[$i]['value'][0];
       $entry->gravatar = User::getGravatar($users[$i]['value'][1]);
       $entry->hitsCount = $this->redis->hGet($entry->id, 'hits');
@@ -104,13 +96,13 @@ abstract class ListController extends BaseController {
       // Tags.
       $opts->reset();
       $opts->doNotReduce()->setKey($entry->id);
-      $classifications = $this->couch->queryView("classifications", "perPost", NULL, $opts)['rows'];
+      $classifications = $this->couch->queryView("classifications", "perPost", NULL, $opts);
 
-      if (!empty($classifications)) {
-        $keys = array_column($classifications, 'value');
+      if (!$classifications->isEmpty()) {
+        $keys = array_column($classifications->asArray(), 'value');
         $opts->reset();
         $opts->doNotReduce();
-        $entry->tags = &$this->couch->queryView("tags", "allNames", $keys, $opts)['rows'];
+        $entry->tags = $this->couch->queryView("tags", "allNames", $keys, $opts);
       }
       else
         $entry->tags = [];
@@ -126,7 +118,7 @@ abstract class ListController extends BaseController {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey([$section, time(), new \stdClass()])->setEndKey([$section, 0, 0]);
 
-    $rows = $this->couch->queryView('scores', 'perSection', NULL, $opts)['rows'];
+    $rows = $this->couch->queryView('scores', 'perSection', NULL, $opts)->asArray();
 
     $this->view->setVar('entries', $this->getEntries(array_column($rows, 'value')));
   }

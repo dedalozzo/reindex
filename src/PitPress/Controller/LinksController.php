@@ -32,9 +32,9 @@ class LinksController extends ListController {
   public function newestAction() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey(['links', new \stdClass()])->setEndKey(['links']);
-    $rows = $this->couch->queryView("posts", "newestPerSection", NULL, $opts)['rows'];
+    $rows = $this->couch->queryView("posts", "newestPerSection", NULL, $opts);
 
-    $this->view->setVar('entries', $this->getEntries(array_column($rows, 'id')));
+    $this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'id')));
 
     $stat = new Stat();
     $this->view->setVar('entriesCount', $stat->getLinksCount());
