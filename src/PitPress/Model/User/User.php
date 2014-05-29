@@ -66,18 +66,20 @@ class User extends Storable implements Extension\ICount {
     $opts = new ViewQueryOpts();
     $opts->setKey([$this->id]);
 
-    $result = $this->couch->queryView("reputation", "perUser", NULL, $opts);
+    $reputation = $this->couch->queryView("reputation", "perUser", NULL, $opts)->getReducedValue();
 
-    if (!empty($result['rows'])) {
-      $reputation =  $result['rows'][0]['value'];
-
-      if ($reputation > 1)
-        return $reputation;
-      else
-        return 1;
-    }
+    if ($reputation > 1)
+      return $reputation;
     else
       return 1;
+  }
+
+
+  //! @brief Returns the list of badges rewarded to the user.
+  //! @param[in] string $metal Specify the metal used for building badges: `gold`, `silver` or `bronze`.
+  //! @return associative array
+  public function getBadges($metal = NULL) {
+
   }
 
 
