@@ -26,10 +26,10 @@ trait TStar {
 
     $result = $this->couch->queryView("stars", "perItem", NULL, $opts);
 
-    if (empty($result['rows']))
+    if ($result->isEmpty())
       return FALSE;
     else {
-      $starId = $result['rows'][0]['id'];
+      $starId = $result[0]['id'];
       return TRUE;
     }
   }
@@ -56,12 +56,7 @@ trait TStar {
     $opts = new ViewQueryOpts();
     $opts->setKey([$this->id]);
 
-    $result = $this->couch->queryView("stars", "perItem", NULL, $opts);
-
-    if (empty($result['rows']))
-      return 0;
-    else
-      return $result['rows'][0]['value'];
+    return $this->couch->queryView("stars", "perItem", NULL, $opts)->getReducedValue();;
   }
 
 }
