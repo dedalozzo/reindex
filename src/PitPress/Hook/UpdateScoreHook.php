@@ -87,7 +87,7 @@ class UpdateScoreHook implements ChunkHook, InjectionAwareInterface {
       // Scores.
       $opts = new ViewQueryOpts();
       $opts->includeMissingKeys()->doNotReduce()->includeDocs();
-      $scores = $this->couch2->queryView("scores", "perPost", $keys, $opts)['rows'];
+      $scores = $this->couch2->queryView("scores", "perPost", $keys, $opts);
 
       $counter = count($keys);
       for ($i = 0; $i < $counter; $i++) {
