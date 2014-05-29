@@ -61,10 +61,10 @@ trait TVote {
 
     $result = $this->couch->queryView("votes", "perPostAndUser", NULL, $opts);
 
-    if (empty($result['rows']))
+    if ($result->isEmpty())
       return FALSE;
     else {
-      $voteId = $result['rows'][0]['id'];
+      $voteId = $result[0]['id'];
       return TRUE;
     }
   }
@@ -74,12 +74,7 @@ trait TVote {
     $opts = new ViewQueryOpts();
     $opts->setKey($this->id);
 
-    $result = $this->couch->queryView("votes", "perPost", NULL, $opts);
-
-    if (empty($result['rows']))
-      return 0;
-    else
-      return $result['rows'][0]['value'];
+    return $this->couch->queryView("votes", "perPost", NULL, $opts)->getReducedValue();
   }
 
 
@@ -88,16 +83,16 @@ trait TVote {
     // Gets the users have voted the item.
     $opts = new ViewQueryOpts();
     $opts->setKey($this->id);
-    $rows = $this->couch->queryView("users", "haveVoted", NULL, $opts)['rows'];
+    $result = $this->couch->queryView("users", "haveVoted", NULL, $opts);
 
-    if (empty($rows))
+    if ($result->isEmpty())
       return [];
 
     // Gets the users information: display name and email.
-    $keys = array_column($rows, 'value');
+    $keys = array_column($result->asArray(), 'value');
     $opts->reset();
     $opts->doNotReduce();
-    $users = $this->couch->queryView("users", "allNames", $keys, $opts)['rows'];
+    $users = $this->couch->queryView("users", "allNames", $keys, $opts);
 
     $entries = [];
     foreach ($users as $user) {
