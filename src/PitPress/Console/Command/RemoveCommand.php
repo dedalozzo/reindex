@@ -34,7 +34,7 @@ class RemoveCommand extends AbstractCommand {
 
     $opts = new ViewQueryOpts();
     $opts->setKey($type)->includeDocs();
-    $rows = $this->couch->queryView("docs", "byType", NULL, $opts)['rows'];
+    $rows = $this->couch->queryView("docs", "byType", NULL, $opts);
 
     $progress = $this->getApplication()->getHelperSet()->get('progress');
     $progress->start($this->output, count($rows));
@@ -57,7 +57,7 @@ class RemoveCommand extends AbstractCommand {
 
     $opts = new ViewQueryOpts();
     $opts->includeDocs();
-    $rows = $this->couch->queryAllDocs(NULL, $opts)['rows'];
+    $rows = $this->couch->queryAllDocs(NULL, $opts);
 
     $progress = $this->getApplication()->getHelperSet()->get('progress');
     $progress->start($this->output, count($rows));
