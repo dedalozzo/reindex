@@ -83,9 +83,9 @@ class ImportCommand extends AbstractCommand {
       $user = new User();
 
       $user->id = $item->id;
-      $user->firstName = iconv('LATIN1', 'UTF-8', $item->firstName);
-      $user->lastName = iconv('LATIN1', 'UTF-8', $item->lastName);
-      $user->displayName = iconv('LATIN1', 'UTF-8', $item->displayName);
+      $user->firstName = iconv('LATIN1', 'UTF-8', stripslashes($item->firstName));
+      $user->lastName = iconv('LATIN1', 'UTF-8', stripslashes($item->lastName));
+      $user->displayName = iconv('LATIN1', 'UTF-8', stripslashes($item->displayName));
       $user->email = iconv('LATIN1', 'UTF-8', $item->email);
       $user->password = iconv('LATIN1', 'UTF-8', $item->password);
       $user->birthday = (int)$item->birthday;
@@ -126,7 +126,7 @@ class ImportCommand extends AbstractCommand {
 
       $article->id = $item->id;
       $article->publishingDate = (int)$item->unixTime;
-      $article->title = iconv('LATIN1', 'UTF-8', $item->title);
+      $article->title = iconv('LATIN1', 'UTF-8', stripslashes($item->title));
 
       if (isset($item->userId)) {
         $article->userId = $item->userId;
@@ -134,14 +134,14 @@ class ImportCommand extends AbstractCommand {
       }
       elseif (!empty($item->contributorName)) {
         $article->userId = NULL;
-        $article->username = iconv('LATIN1', 'UTF-8', $item->contributorName);
+        $article->username = iconv('LATIN1', 'UTF-8', stripslashes($item->contributorName));
       }
       else {
         $article->userId = NULL;
         $article->username = NULL;
       }
 
-      $article->body = iconv('LATIN1', 'UTF-8', $item->body);
+      $article->body = iconv('LATIN1', 'UTF-8', stripslashes($item->body));
 
       // Converts from HTML to BBCode!
       $converter = new HTMLConverter($article->body, $item->id);
@@ -205,7 +205,7 @@ class ImportCommand extends AbstractCommand {
 
       $tutorial->id = UUID::generate(UUID::UUID_RANDOM, UUID::FMT_STRING);
       $tutorial->publishingDate = (int)$item->unixTime;
-      $tutorial->title = iconv('LATIN1', 'UTF-8', rtrim($item->title, '()/123456789 \t\n\r\0\x0B'));
+      $tutorial->title = iconv('LATIN1', 'UTF-8', rtrim(stripslashes($item->title), '()/123456789 \t\n\r\0\x0B'));
 
       if (isset($item->userId)) {
         $tutorial->userId = $item->userId;
@@ -213,7 +213,7 @@ class ImportCommand extends AbstractCommand {
       }
       elseif (!empty($item->contributorName)) {
         $tutorial->userId = NULL;
-        $tutorial->username = iconv('LATIN1', 'UTF-8', $item->contributorName);
+        $tutorial->username = iconv('LATIN1', 'UTF-8', stripslashes($item->contributorName));
       }
       else {
         $tutorial->userId = NULL;
@@ -271,7 +271,7 @@ class ImportCommand extends AbstractCommand {
 
       $book->id = $item->id;
       $book->publishingDate = (int)$item->unixTime;
-      $book->title = iconv('LATIN1', 'UTF-8', $item->title);
+      $book->title = iconv('LATIN1', 'UTF-8', stripslashes($item->title));
 
       if (!is_null($item->userId)) {
         $book->userId = $item->userId;
@@ -279,12 +279,14 @@ class ImportCommand extends AbstractCommand {
       }
       elseif (!empty($item->contributorName)) {
         $book->userId = NULL;
-        $book->username = iconv('LATIN1', 'UTF-8', $item->contributorName);
+        $book->username = iconv('LATIN1', 'UTF-8', stripslashes($item->contributorName));
       }
       else {
         $book->userId = NULL;
         $book->username = NULL;
       }
+
+      $item->body = stripslashes($item->body);
 
       if (preg_match('/\\[isbn\\](.*?)\\[\/isbn\\]/s', $item->body, $matches))
         $book->isbn = iconv('LATIN1', 'UTF-8', $matches[1]);
@@ -375,7 +377,7 @@ class ImportCommand extends AbstractCommand {
 
       $tag->id = $item->id;
       $tag->publishingDate = (int)$item->unixTime;
-      $tag->name = iconv('LATIN1', 'UTF-8', strtolower(str_replace(" ", "-", $item->name)));
+      $tag->name = iconv('LATIN1', 'UTF-8', strtolower(str_replace(" ", "-", stripslashes($item->name))));
       $tag->userId = $userId;
 
       $this->couch->saveDoc($tag);
@@ -512,7 +514,7 @@ class ImportCommand extends AbstractCommand {
       $comment->postId = $item->postId;
       $comment->userId = $item->userId;
 
-      $comment->body = iconv('LATIN1', 'UTF-8', $item->body);
+      $comment->body = iconv('LATIN1', 'UTF-8', stripslashes($item->body));
 
       // Converts from HTML to BBCode!
       $converter = new HTMLConverter($comment->body, $item->id);
@@ -526,7 +528,7 @@ class ImportCommand extends AbstractCommand {
         $comment->html = $this->markdown->parse($comment->body);
       }
       catch(\Exception $e) {
-        $this->monolog->addCritical(sprintf(" %d - %s", $item->id, $comment->title));
+        $this->monolog->addCritical(sprintf(" Commento %d - Item %d", $item->id, $item->postId));
       }
 
       // We finally save the comment.
