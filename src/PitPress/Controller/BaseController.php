@@ -11,8 +11,7 @@ namespace PitPress\Controller;
 
 
 use Phalcon\Mvc\Controller;
-
-use PitPress\Helper\Version;
+use PitPress\Version;
 use PitPress\Factory\UserFactory;
 
 
