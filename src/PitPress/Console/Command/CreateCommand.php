@@ -9,12 +9,11 @@
 namespace PitPress\Console\Command;
 
 
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use ElephantOnCouch\Couch;
+use ElephantOnCouch\Adapter\NativeAdapter;
 
 
 //! @brief Creates a new PitPress database.
@@ -33,7 +32,7 @@ class CreateCommand extends AbstractCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     $config = $this->di['config'];
 
-    $couch = new Couch(Couch::DEFAULT_SERVER, $config->couchdb->user, $config->couchdb->password);
+    $couch = new Couch(new NativeAdapter(NativeAdapter::DEFAULT_SERVER, $config->couchdb->user, $config->couchdb->password));
 
     $couch->createDb($config->couchdb->database);
   }
