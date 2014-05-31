@@ -6,7 +6,7 @@
 //! @author Filippo F. Fadda
 
 
-namespace PitPress\Helper;
+namespace PitPress;
 
 
 //! @brief This helper class is aimed to provide the software version number.
