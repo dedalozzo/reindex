@@ -46,9 +46,11 @@ class InitCommand extends AbstractCommand {
     $doc = DesignDoc::create('docs');
 
     function docsByType() {
-      $map = "function(\$doc) use (\$emit) {
-                \$emit(\$doc->type);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  $emit($doc->type);
+};
+MAP;
 
       $handler = new ViewHandler("byType");
       $handler->mapFn = $map;
@@ -69,20 +71,22 @@ class InitCommand extends AbstractCommand {
 
     // @params: NONE
     function allPosts() {
-      $map = "function(\$doc) use (\$emit) {
-                if (isset(\$doc->supertype) and \$doc->supertype == 'post')
-                  \$emit(\$doc->_id, [
-                     'type' => \$doc->type,
-                     'title' => \$doc->title,
-                     'excerpt' => \$doc->excerpt,
-                     'slug' => \$doc->slug,
-                     'section' => \$doc->section,
-                     'publishingType' => \$doc->publishingType,
-                     'publishingDate' => \$doc->publishingDate,
-                     'userId' => \$doc->userId,
-                     'username' => \$doc->username
-                   ]);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) and $doc->supertype == 'post')
+    $emit($doc->_id, [
+       'type' => $doc->type,
+       'title' => $doc->title,
+       'excerpt' => $doc->excerpt,
+       'slug' => $doc->slug,
+       'section' => $doc->section,
+       'publishingType' => $doc->publishingType,
+       'publishingDate' => $doc->publishingDate,
+       'userId' => $doc->userId,
+       'username' => $doc->username
+     ]);
+};
+MAP;
 
       $handler = new ViewHandler("all");
       $handler->mapFn = $map;
@@ -96,10 +100,12 @@ class InitCommand extends AbstractCommand {
 
     // @params: section, year, month, day, slug
     function postsByUrl() {
-      $map = "function(\$doc) use (\$emit) {
-                if (isset(\$doc->supertype) and \$doc->supertype == 'post')
-                  \$emit([\$doc->section, \$doc->year, \$doc->month, \$doc->day, \$doc->slug]);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) and $doc->supertype == 'post')
+    $emit([$doc->section, $doc->year, $doc->month, $doc->day, $doc->slug]);
+};
+MAP;
 
       $handler = new ViewHandler("byUrl");
       $handler->mapFn = $map;
@@ -112,10 +118,12 @@ class InitCommand extends AbstractCommand {
 
     // @params: userId
     function newestPostsByUser() {
-      $map = "function(\$doc) use (\$emit) {
-                if (isset(\$doc->supertype) and \$doc->supertype == 'post')
-                  \$emit([\$doc->userId, \$doc->publishingDate]);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) and $doc->supertype == 'post')
+    $emit([$doc->userId, $doc->publishingDate]);
+};
+MAP;
 
       $handler = new ViewHandler("newestByUser");
       $handler->mapFn = $map;
@@ -129,10 +137,12 @@ class InitCommand extends AbstractCommand {
 
     // @params: userId, type
     function newestPostsByUserPerType() {
-      $map = "function(\$doc) use (\$emit) {
-                if (isset(\$doc->supertype) and \$doc->supertype == 'post')
-                  \$emit([\$doc->userId, \$doc->type, \$doc->publishingDate]);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) and $doc->supertype == 'post')
+    $emit([$doc->userId, $doc->type, $doc->publishingDate]);
+};
+MAP;
 
       $handler = new ViewHandler("newestByUserPerType");
       $handler->mapFn = $map;
@@ -146,10 +156,12 @@ class InitCommand extends AbstractCommand {
 
     // @params: type
     function newestPostsPerType() {
-      $map = "function(\$doc) use (\$emit) {
-                if (isset(\$doc->supertype) and \$doc->supertype == 'post')
-                  \$emit([\$doc->type, \$doc->publishingDate]);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) and $doc->supertype == 'post')
+    $emit([$doc->type, $doc->publishingDate]);
+};
+MAP;
 
       $handler = new ViewHandler("newestPerType");
       $handler->mapFn = $map;
@@ -163,10 +175,12 @@ class InitCommand extends AbstractCommand {
 
     // @params: section
     function newestPostsPerSection() {
-      $map = "function(\$doc) use (\$emit) {
-                if (isset(\$doc->section))
-                  \$emit([\$doc->section, \$doc->publishingDate]);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->section))
+    $emit([$doc->section, $doc->publishingDate]);
+};
+MAP;
 
       $handler = new ViewHandler("newestPerSection");
       $handler->mapFn = $map;
@@ -180,10 +194,12 @@ class InitCommand extends AbstractCommand {
 
     // @params: NONE
     function newestPosts() {
-      $map = "function(\$doc) use (\$emit) {
-                if (isset(\$doc->supertype) and \$doc->supertype == 'post')
-                  \$emit(\$doc->publishingDate);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) and $doc->supertype == 'post')
+    $emit($doc->publishingDate);
+};
+MAP;
 
       $handler = new ViewHandler("newest");
       $handler->mapFn = $map;
@@ -197,10 +213,12 @@ class InitCommand extends AbstractCommand {
 
     // @params: NONE
     function postsPerDate() {
-      $map = "function(\$doc) use (\$emit) {
-                if (isset(\$doc->supertype) and \$doc->supertype == 'post')
-                  \$emit([\$doc->year, \$doc->month, \$doc->day]);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) and $doc->supertype == 'post')
+    $emit([$doc->year, $doc->month, $doc->day]);
+};
+MAP;
 
       $handler = new ViewHandler("perDate");
       $handler->mapFn = $map;
@@ -220,10 +238,12 @@ class InitCommand extends AbstractCommand {
 
 
     function allTags() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'tag')
-                  \$emit(\$doc->_id, [\$doc->name, \$doc->excerpt, \$doc->publishingDate]);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'tag')
+    $emit($doc->_id, [$doc->name, $doc->excerpt, $doc->publishingDate]);
+};
+MAP;
 
       $handler = new ViewHandler("all");
       $handler->mapFn = $map;
@@ -236,10 +256,12 @@ class InitCommand extends AbstractCommand {
 
 
     function allNames() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'tag')
-                  \$emit(\$doc->_id, \$doc->name);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'tag')
+    $emit($doc->_id, $doc->name);
+};
+MAP;
 
       $handler = new ViewHandler("allNames");
       $handler->mapFn = $map;
@@ -251,10 +273,12 @@ class InitCommand extends AbstractCommand {
 
 
     function newestTags() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'tag')
-                  \$emit(\$doc->publishingDate);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'tag')
+    $emit($doc->publishingDate);
+};
+MAP;
 
       $handler = new ViewHandler("newest");
       $handler->mapFn = $map;
@@ -266,10 +290,12 @@ class InitCommand extends AbstractCommand {
 
 
     function tagsByName() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'tag')
-                  \$emit(\$doc->name);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'tag')
+    $emit($doc->name);
+};
+MAP;
 
       $handler = new ViewHandler("byName");
       $handler->mapFn = $map;
@@ -290,10 +316,12 @@ class InitCommand extends AbstractCommand {
 
     // @params: [postId]
     function votesPerPost() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'vote')
-                  \$emit(\$doc->postId, \$doc->value);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'vote')
+    $emit($doc->postId, $doc->value);
+};
+MAP;
 
       $handler = new ViewHandler("perPost");
       $handler->mapFn = $map;
@@ -307,10 +335,12 @@ class InitCommand extends AbstractCommand {
 
     // @params: postId, userId
     function votesPerPostAndUser() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'vote')
-                  \$emit([\$doc->postId, \$doc->userId], \$doc->value);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'vote')
+    $emit([$doc->postId, $doc->userId], $doc->value);
+};
+MAP;
 
       $handler = new ViewHandler("perPostAndUser");
       $handler->mapFn = $map;
@@ -324,10 +354,12 @@ class InitCommand extends AbstractCommand {
 
     // @params: [userId]
     function votesPerUser() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'vote')
-                  \$emit(\$doc->userId);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'vote')
+    $emit($doc->userId);
+};
+MAP;
 
       $handler = new ViewHandler("perUser");
       $handler->mapFn = $map;
@@ -341,10 +373,12 @@ class InitCommand extends AbstractCommand {
 
     // @params: type, postId
     function votesPerType() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'vote')
-                  \$emit([\$doc->postType, \$doc->postId], \$doc->value);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'vote')
+    $emit([$doc->postType, $doc->postId], $doc->value);
+};
+MAP;
 
       $handler = new ViewHandler("perType");
       $handler->mapFn = $map;
@@ -358,10 +392,12 @@ class InitCommand extends AbstractCommand {
 
     // @params: section, postId
     function votesPerSection() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'vote')
-                  \$emit([\$doc->section, \$doc->postId], \$doc->value);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'vote')
+    $emit([$doc->section, $doc->postId], $doc->value);
+};
+MAP;
 
       $handler = new ViewHandler("perSection");
       $handler->mapFn = $map;
@@ -375,10 +411,12 @@ class InitCommand extends AbstractCommand {
 
     // @params: timestamp
     function votesNotRecorded() {
-      $map = "function(\$doc) use (\$emit) {
-                if ((\$doc->type == 'vote') && (!\$doc->recorded))
-                  \$emit(\$doc->timestamp, \$doc);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (($doc->type == 'vote') && (!$doc->recorded))
+    $emit($doc->timestamp, $doc);
+};
+MAP;
 
       $handler = new ViewHandler("notRecorded");
       $handler->mapFn = $map;
@@ -400,10 +438,12 @@ class InitCommand extends AbstractCommand {
 
     // @params postId
     function scoresPerPost() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'score')
-                  \$emit(\$doc->postId, \$doc);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'score')
+    $emit($doc->postId, $doc);
+};
+MAP;
 
       $handler = new ViewHandler("perPost");
       $handler->mapFn = $map;
@@ -416,10 +456,12 @@ class InitCommand extends AbstractCommand {
 
     // @params: type
     function scoresPerType() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'score')
-                  \$emit([\$doc->postType, \$doc->points], \$doc->postId);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'score')
+    $emit([$doc->postType, $doc->points], $doc->postId);
+};
+MAP;
 
       $handler = new ViewHandler("perType");
       $handler->mapFn = $map;
@@ -432,10 +474,12 @@ class InitCommand extends AbstractCommand {
 
     // @params: section
     function scoresPerSection() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'score')
-                  \$emit([\$doc->postSection, \$doc->points], \$doc->postId);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'score')
+    $emit([$doc->postSection, $doc->points], $doc->postId);
+};
+MAP;
 
       $handler = new ViewHandler("perSection");
       $handler->mapFn = $map;
@@ -457,10 +501,12 @@ class InitCommand extends AbstractCommand {
     // @params postId, [userId]
     // @methods: VersionedItem.isStarred(), VersionedItem.getStarsCount()
     function starsPerItem() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'star')
-                  \$emit([\$doc->itemId, \$doc->userId]);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'star')
+    $emit([$doc->itemId, $doc->userId]);
+};
+MAP;
 
       $handler = new ViewHandler("perItem");
       $handler->mapFn = $map;
@@ -483,10 +529,12 @@ class InitCommand extends AbstractCommand {
     // @params itemId, [userId]
     // @methods: VersionedItem.isStarred(), VersionedItem.getSubscribersCount()
     function subscriptionsPerItem() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'subscription')
-                  \$emit([\$doc->itemId, \$doc->userId]);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'subscription')
+    $emit([$doc->itemId, $doc->userId]);
+};
+MAP;
 
       $handler = new ViewHandler("perItem");
       $handler->mapFn = $map;
@@ -508,10 +556,12 @@ class InitCommand extends AbstractCommand {
     // @params postId
     // @methods: Post.getTags()
     function classificationsPerPost() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'classification')
-                  \$emit(\$doc->postId, \$doc->tagId);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'classification')
+    $emit($doc->postId, $doc->tagId);
+};
+MAP;
 
       $handler = new ViewHandler("perPost");
       $handler->mapFn = $map;
@@ -525,10 +575,12 @@ class InitCommand extends AbstractCommand {
 
     // @params NONE
     function newestClassifications() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'classification')
-                  \$emit(\$doc->timestamp, \$doc->tagId);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'classification')
+    $emit($doc->timestamp, $doc->tagId);
+};
+MAP;
 
       $handler = new ViewHandler("newest");
       $handler->mapFn = $map;
@@ -542,10 +594,12 @@ class InitCommand extends AbstractCommand {
 
     // @params tagId
     function classificationsPerTag() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'classification')
-                  \$emit(\$doc->tagId);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'classification')
+    $emit($doc->tagId);
+};
+MAP;
 
       $handler = new ViewHandler("perTag");
       $handler->mapFn = $map;
@@ -572,10 +626,12 @@ class InitCommand extends AbstractCommand {
     // @params userId, [timestamp]
     // @methods: User.getReputation()
     function reputationPerUser() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'reputation')
-                  \$emit([\$doc->userId, \$doc->timestamp], \$doc->points);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'reputation')
+    $emit([$doc->userId, $doc->timestamp], $doc->points);
+};
+MAP;
 
       $handler = new ViewHandler("perUser");
       $handler->mapFn = $map;
@@ -598,10 +654,12 @@ class InitCommand extends AbstractCommand {
     // @params userId
     // @methods: todo
     function lastAddedFavorites() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'star')
-                  \$emit([\$doc->userId, \$doc->timestamp], \$doc->itemId);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'star')
+    $emit([$doc->userId, $doc->timestamp], $doc->itemId);
+};
+MAP;
 
       $handler = new ViewHandler("lastAdded");
       $handler->mapFn = $map;
@@ -615,10 +673,12 @@ class InitCommand extends AbstractCommand {
     // @params userId, type
     // @methods: todo
     function lastAddedFavoritesPerType() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'star')
-                  \$emit([\$doc->userId, \$doc->itemType, \$doc->timestamp], \$doc->itemId);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'star')
+    $emit([$doc->userId, $doc->itemType, $doc->timestamp], $doc->itemId);
+};
+MAP;
 
       $handler = new ViewHandler("lastAddedPerType");
       $handler->mapFn = $map;
@@ -639,10 +699,12 @@ class InitCommand extends AbstractCommand {
 
     // @params: [userId]
     function allUsers() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'user')
-                  \$emit(\$doc->_id, [\$doc->displayName, \$doc->email, \$doc->creationDate]);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'user')
+    $emit($doc->_id, [$doc->displayName, $doc->email, $doc->creationDate]);
+};
+MAP;
 
       $handler = new ViewHandler("all");
       $handler->mapFn = $map;
@@ -656,10 +718,12 @@ class InitCommand extends AbstractCommand {
 
     // @params: [userId]
     function allUserNames() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'user')
-                  \$emit(\$doc->_id, [\$doc->displayName, \$doc->email]);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'user')
+    $emit($doc->_id, [$doc->displayName, $doc->email]);
+};
+MAP;
 
       $handler = new ViewHandler("allNames");
       $handler->mapFn = $map;
@@ -671,10 +735,12 @@ class InitCommand extends AbstractCommand {
 
 
     function newestUsers() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'user')
-                  \$emit(\$doc->creationDate);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'user')
+    $emit($doc->creationDate);
+};
+MAP;
 
       $handler = new ViewHandler("newest");
       $handler->mapFn = $map;
@@ -686,10 +752,12 @@ class InitCommand extends AbstractCommand {
 
 
     function usersByDisplayName() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'user')
-                  \$emit(\$doc->displayName);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'user')
+    $emit($doc->displayName);
+};
+MAP;
 
       $handler = new ViewHandler("byDisplayName");
       $handler->mapFn = $map;
@@ -701,10 +769,12 @@ class InitCommand extends AbstractCommand {
 
 
     function usersByEmail() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'user')
-                  \$emit(\$doc->email);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'user')
+    $emit($doc->email);
+};
+MAP;
 
       $handler = new ViewHandler("byEmail");
       $handler->mapFn = $map;
@@ -717,10 +787,12 @@ class InitCommand extends AbstractCommand {
 
     // @params: [postId]
     function usersHaveVoted() {
-      $map = "function(\$doc) use (\$emit) {
-                if (\$doc->type == 'vote')
-                  \$emit(\$doc->postId, \$doc->userId);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'vote')
+    $emit($doc->postId, $doc->userId);
+};
+MAP;
 
       $handler = new ViewHandler("haveVoted");
       $handler->mapFn = $map;
@@ -741,10 +813,12 @@ class InitCommand extends AbstractCommand {
 
     // @params postId
     function repliesPerPost() {
-      $map = "function(\$doc) use (\$emit) {
-                if (isset(\$doc->supertype) and \$doc->supertype == 'reply')
-                  \$emit(\$doc->postId);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) and $doc->supertype == 'reply')
+    $emit($doc->postId);
+};
+MAP;
 
       $handler = new ViewHandler("perPost");
       $handler->mapFn = $map;
@@ -758,10 +832,12 @@ class InitCommand extends AbstractCommand {
 
     // @params: postId
     function newestRepliesPerPost() {
-      $map = "function(\$doc) use (\$emit) {
-                if (isset(\$doc->supertype) and \$doc->supertype == 'reply')
-                  \$emit([\$doc->postId, \$doc->publishingDate]);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) and $doc->supertype == 'reply')
+    $emit([$doc->postId, $doc->publishingDate]);
+};
+MAP;
 
       $handler = new ViewHandler("newestPerPost");
       $handler->mapFn = $map;
@@ -775,10 +851,12 @@ class InitCommand extends AbstractCommand {
 
     // @params: postId
     function lastUpdatedRepliesPerPost() {
-      $map = "function(\$doc) use (\$emit) {
-                if (isset(\$doc->supertype) and \$doc->supertype == 'reply')
-                  \$emit([\$doc->postId, \$doc->lastUpdate]);
-              };";
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) and $doc->supertype == 'reply')
+    $emit([$doc->postId, $doc->lastUpdate]);
+};
+MAP;
 
       $handler = new ViewHandler("lastUpdatedPerPost");
       $handler->mapFn = $map;
