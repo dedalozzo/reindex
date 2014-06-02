@@ -1,9 +1,11 @@
 <?php
 
-//! @file mysql.php
-//! @brief Establishes a connection to MySQL.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file mysql.php
+ * @brief Establishes a connection to MySQL.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 // Creates an instance of MySQL client and return it.

@@ -1,9 +1,11 @@
 <?php
 
-//! @file crypt.php
-//! @brief Creates a crypt component instance.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file crypt.php
+ * @brief Creates a crypt component instance.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 $di->set('crypt', function() use ($config) {

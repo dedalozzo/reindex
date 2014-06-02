@@ -1,9 +1,11 @@
 <?php
 
-//! @file dispatcher.php
-//! @brief Creates the dispatcher component.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file dispatcher.php
+ * @brief Creates the dispatcher component.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 use Phalcon\Mvc\Dispatcher;

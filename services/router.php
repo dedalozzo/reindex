@@ -1,9 +1,11 @@
 <?php
 
-//! @file router.php
-//! @brief Setting up the router.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file router.php
+ * @brief Setting up the router.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 use Phalcon\Mvc\Router;

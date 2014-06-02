@@ -1,9 +1,11 @@
 <?php
 
-//! @file volt.php
-//! @brief Registers Volt as a service.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file volt.php
+ * @brief Registers Volt as a service.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 use Phalcon\Mvc\View\Engine\Volt;

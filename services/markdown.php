@@ -1,9 +1,11 @@
 <?php
 
-//! @file markdown.php
-//! @brief Creates an instance of the Markdown parser and returns it.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file markdown.php
+ * @brief Creates an instance of the Markdown parser and returns it.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 //use PitPress\Render\SyntaxHighlighter;
