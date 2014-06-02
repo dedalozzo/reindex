@@ -1,9 +1,11 @@
 <?php
 
-//! @file view.php
-//! @brief Setting up the view.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file view.php
+ * @brief Setting up the view.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 use Phalcon\Mvc\View;

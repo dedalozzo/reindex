@@ -1,9 +1,11 @@
 <?php
 
-//! @file couchdb.php
-//! @brief Establishes a connection to CouchDB.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file couchdb.php
+ * @brief Establishes a connection to CouchDB.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 use ElephantOnCouch\Couch;

@@ -1,9 +1,11 @@
 <?php
 
-//! @file redis.php
-//! @brief Establishes a connection to Redis.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file redis.php
+ * @brief Establishes a connection to Redis.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 use ElephantOnCouch\Couch;

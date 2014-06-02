@@ -1,9 +1,11 @@
 <?php
 
-//! @file flash.php
-//! @brief Creates the flash component.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file flash.php
+ * @brief Creates the flash component.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 use Phalcon\Flash\Session as Flash;

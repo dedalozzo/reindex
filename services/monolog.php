@@ -1,9 +1,11 @@
 <?php
 
-//! @file monolog.php
-//! @brief Just a trick to return the logger.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file monolog.php
+ * @brief Just a trick to return the logger.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 // Returns a Monolog instance.
