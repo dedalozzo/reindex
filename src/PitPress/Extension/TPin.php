@@ -1,15 +1,19 @@
 <?php
 
-//! @file TPin.php
-//! @brief This file contains the TPin trait.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file TPin.php
+ * @brief This file contains the TPin trait.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Extension;
 
 
-//! @brief Implements IPin interface.
+/**
+ * @brief Implements IPin interface.
+ */
 trait TPin {
 
 

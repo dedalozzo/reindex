@@ -1,9 +1,11 @@
 <?php
 
-//! @file TSubscribe.php
-//! @brief This file contains the TSubscribe class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file TSubscribe.php
+ * @brief This file contains the TSubscribe class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Extension;
@@ -16,7 +18,9 @@ use PitPress\Model\Accessory\Subscription;
 use PitPress\Model\User\User;
 
 
-//! @brief Implements the ISubscribe interface.
+/**
+ * @brief Implements the ISubscribe interface.
+ */
 trait TSubscribe {
 
 

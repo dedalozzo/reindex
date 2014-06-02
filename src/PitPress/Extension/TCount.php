@@ -1,15 +1,19 @@
 <?php
 
-//! @file TCount.php
-//! @brief This file contains the TCount trait.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file TCount.php
+ * @brief This file contains the TCount trait.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Extension;
 
 
-//! @brief Implements ICount interface.
+/**
+ * @brief Implements ICount interface.
+ */
 trait TCount {
 
 
