@@ -1,9 +1,11 @@
 <?php
 
-//! @file BlogGroup.php
-//! @brief Group of Blog routes.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file BlogGroup.php
+ * @brief Group of Blog routes.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Route;
@@ -13,8 +15,10 @@ use Phalcon\Mvc\Router\Group;
 use Phalcon\DI;
 
 
-//! @brief Group of blog routes.
-//! @nosubgrouping
+/**
+ * @brief Group of blog routes.
+ * @nosubgrouping
+ */
 class BlogGroup extends Group {
 
 

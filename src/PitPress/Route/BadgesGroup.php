@@ -1,9 +1,11 @@
 <?php
 
-//! @file BadgesGroup.php
-//! @brief Group of Badges routes.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file BadgesGroup.php
+ * @brief Group of Badges routes.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Route;
@@ -13,8 +15,10 @@ use Phalcon\Mvc\Router\Group;
 use Phalcon\DI;
 
 
-//! @brief Group of badges' routes.
-//! @nosubgrouping
+/**
+ * @brief Group of badges' routes.
+ * @nosubgrouping
+ */
 class BadgesGroup extends Group {
 
   public function initialize() {

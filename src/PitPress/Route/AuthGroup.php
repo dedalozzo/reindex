@@ -1,12 +1,13 @@
 <?php
 
-//! @file AuthGroup.php
-//! @brief Group of Updates routes.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file AuthGroup.php
+ * @brief Group of Updates routes.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
-//! @brief PitPress routes namespace.
 namespace PitPress\Route;
 
 
@@ -14,8 +15,10 @@ use Phalcon\Mvc\Router\Group;
 use Phalcon\DI;
 
 
-//! @brief Group of authentication routes.
-//! @nosubgrouping
+/**
+ * @brief Group of authentication routes.
+ * @nosubgrouping
+ */
 class AuthGroup extends Group {
 
 

@@ -1,12 +1,14 @@
 <?php
 
-//! @file IndexGroup.php
-//! @brief Group of Updates routes.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file IndexGroup.php
+ * @brief Group of Updates routes.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
-//! @brief PitPress routes namespace.
+//! PitPress routes namespace.
 namespace PitPress\Route;
 
 
@@ -14,8 +16,10 @@ use Phalcon\Mvc\Router\Group;
 use Phalcon\DI;
 
 
-//! @brief Group of index routes.
-//! @nosubgrouping
+/**
+ * @brief Group of index routes.
+ * @nosubgrouping
+ */
 class IndexGroup extends Group {
 
 
