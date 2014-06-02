@@ -1,9 +1,11 @@
 <?php
 
-//! @file UsersController.php
-//! @brief Controller of Users actions.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file UsersController.php
+ * @brief Controller of Users actions.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Controller;
@@ -16,8 +18,10 @@ use PitPress\Model\User\User;
 use Phalcon\Mvc\View;
 
 
-//! @brief Controller of Users actions.
-//! @nosubgrouping
+/**
+ * @brief Controller of Users actions.
+ * @nosubgrouping
+ */
 class UsersController extends BaseController {
 
 
@@ -54,7 +58,9 @@ class UsersController extends BaseController {
   }
 
 
-  //! @brief Displays the users with the highest reputation.
+  /**
+   * @brief Displays the users with the highest reputation.
+   */
   public function reputationAction($period) {
     if (empty($period))
       $period = 'settimana';
@@ -64,7 +70,9 @@ class UsersController extends BaseController {
   }
 
 
-  //! @brief Displays the newest users.
+  /**
+   * @brief Displays the newest users.
+   */
   public function newestAction() {
     $opts = new ViewQueryOpts();
     $opts->reverseOrderOfResults()->setLimit(40);
@@ -74,7 +82,9 @@ class UsersController extends BaseController {
   }
 
 
-  //! @brief Displays the users in alphabetic order.
+  /**
+   * @brief Displays the users in alphabetic order.
+   */
   public function byNameAction() {
     $opts = new ViewQueryOpts();
     $opts->setLimit(40);
@@ -84,7 +94,9 @@ class UsersController extends BaseController {
   }
 
 
-  //! @brief Displays the users have given most votes.
+  /**
+   * @brief Displays the users have given most votes.
+   */
   public function votersAction($period) {
     if (empty($period))
       $period = 'settimana';
@@ -94,7 +106,9 @@ class UsersController extends BaseController {
   }
 
 
-  //! @brief Displays the users have edited most posts.
+  /**
+   * @brief Displays the users have edited most posts.
+   */
   public function editorsAction($period) {
     if (empty($period))
       $period = 'settimana';
@@ -104,7 +118,9 @@ class UsersController extends BaseController {
   }
 
 
-  //! @brief Displays the users have added more links.
+  /**
+   * @brief Displays the users have added more links.
+   */
   public function reportersAction($period) {
     if (empty($period))
       $period = 'settimana';
@@ -114,7 +130,9 @@ class UsersController extends BaseController {
   }
 
 
-  //! @brief Displays the users have written more posts.
+  /**
+   * @brief Displays the users have written more posts.
+   */
   public function bloggersAction($period) {
     if (empty($period))
       $period = 'settimana';
@@ -124,12 +142,16 @@ class UsersController extends BaseController {
   }
 
 
-  //! @brief Displays the most popular tags.
+  /**
+   * @brief Displays the most popular tags.
+   */
   public function moderatorsAction() {
   }
 
 
-  //! @brief Displays the most popular tags.
+  /**
+   * @brief Displays the most popular tags.
+   */
   public function privilegesAction() {
   }
 

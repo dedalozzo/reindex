@@ -1,9 +1,11 @@
 <?php
 
-//! @file TagsController.php
-//! @brief Controller of Tags actions.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file TagsController.php
+ * @brief Controller of Tags actions.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Controller;
@@ -15,8 +17,10 @@ use PitPress\Helper\Time;
 use PitPress\Helper\Stat;
 
 
-//! @brief Controller of Tags actions.
-//! @nosubgrouping
+/**
+ * @brief Controller of Tags actions.
+ * @nosubgrouping
+ */
 class TagsController extends BaseController {
 
 
@@ -54,15 +58,19 @@ class TagsController extends BaseController {
   }
 
 
-  //! @brief Displays the most popular tags.
-  //! @todo This requires more job. I have to pickup all the classifications grouped by tag, then use a list function to
-  //! order them by count descending and return just the last 40.
+  /**
+   * @brief Displays the most popular tags.
+   * @todo This requires more job. I have to pickup all the classifications grouped by tag, then use a list function to
+   * order them by count descending and return just the last 40.
+   */
   public function popularAction() {
 
   }
 
 
-  //! @brief Displays the tags sorted by name.
+  /**
+   * @brief Displays the tags sorted by name.
+   */
   public function byNameAction() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(40);
@@ -75,7 +83,9 @@ class TagsController extends BaseController {
   }
 
 
-  //! @brief Displays the newest tags.
+  /**
+   * @brief Displays the newest tags.
+   */
   public function newestAction() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->reverseOrderOfResults()->setLimit(40);
@@ -85,8 +95,10 @@ class TagsController extends BaseController {
   }
 
 
-  //! @brief Displays the synonyms.
-  //! @todo I still don't know how to make this one.
+  /**
+   * @brief Displays the synonyms.
+   * @todo I still don't know how to make this one.
+   */
   public function synonymsAction() {
 
   }

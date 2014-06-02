@@ -1,9 +1,11 @@
 <?php
 
-//! @file AuthController.php
-//! @brief This file contains the AuthController class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file AuthController.php
+ * @brief This file contains the AuthController class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Controller;
@@ -30,11 +32,15 @@ use PitPress\Exception\UserNotFoundException;
 use PitPress\Exception\WrongPasswordException;
 
 
-//! @brief Controller of Authentication actions.
-//! @nosubgrouping
+/**
+ * @brief Controller of Authentication actions.
+ * @nosubgrouping
+ */
 class AuthController extends BaseController {
 
-  //! @brief Redirects to the referer page if any.
+  /**
+   * @brief Redirects to the referer page if any.
+   */
   protected function referer() {
     if ($this->session->has("referer"))
       return $this->response->redirect($this->session->get("referer"), TRUE);
@@ -43,7 +49,9 @@ class AuthController extends BaseController {
   }
 
 
-  //! @brief Sign in with a PitPress account.
+  /**
+   * @brief Sign in with a PitPress account.
+   */
   public function signInAction() {
     if (isset($this->user))
       return $this->referer($this->user->id);
@@ -149,7 +157,9 @@ class AuthController extends BaseController {
   }
 
 
-  //! @brief Sign out.
+  /**
+   * @brief Sign out.
+   */
   public function signOutAction() {
     if (is_null($this->user))
       return $this->redirect();
@@ -191,7 +201,9 @@ class AuthController extends BaseController {
   }
 
 
-  //! @brief Sign up a PitPress account.
+  /**
+   * @brief Sign up a PitPress account.
+   */
   public function signUpAction() {
     $this->view->setVar('title', 'Registrati');
 
@@ -199,19 +211,25 @@ class AuthController extends BaseController {
   }
 
 
-  //! @brief Reset the password of your PitPress account.
+  /**
+   * @brief Reset the password of your PitPress account.
+   */
   public function resetPasswordAction() {
     $this->view->disableLevel(View::LEVEL_LAYOUT);
   }
 
 
-  //! @brief Sends an e-mail with a confirmation link to authenticate the user's e-mail address.
+  /**
+   * @brief Sends an e-mail with a confirmation link to authenticate the user's e-mail address.
+   */
   public function sendActivationEmailAction() {
     $this->view->disableLevel(View::LEVEL_LAYOUT);
   }
 
 
-  //! @brief The user has clicked on the confirmation link sent via e-mail by the previous action.
+  /**
+   * @brief The user has clicked on the confirmation link sent via e-mail by the previous action.
+   */
   public function activateAction($confirmationHash) {
     //$sql = "SELECT idMember, UNIX_TIMESTAMP(lastUpdate), confirmed, email FROM Member WHERE confirmHash = '".mysql_real_escape_string($confirmHash)."'";
     /*$result = mysql_query($sql, $connection) or die(mysql_error());
@@ -238,7 +256,9 @@ class AuthController extends BaseController {
   }
 
 
-  //! @brief Sign in with Facebook.
+  /**
+   * @brief Sign in with Facebook.
+   */
   public function facebookAction() {
     $uriFactory = new UriFactory();
     $currentUri = $uriFactory->createFromSuperGlobalArray($_SERVER);
@@ -270,7 +290,9 @@ class AuthController extends BaseController {
   }
 
 
-  //! @brief Sign in with Google+.
+  /**
+   * @brief Sign in with Google+.
+   */
   public function googleAction() {
     $uriFactory = new UriFactory();
     $currentUri = $uriFactory->createFromSuperGlobalArray($_SERVER);
@@ -301,7 +323,9 @@ class AuthController extends BaseController {
   }
 
 
-  //! @brief Sign in with LinkedIn.
+  /**
+   * @brief Sign in with LinkedIn.
+   */
   public function linkedinAction() {
     $uriFactory = new UriFactory();
     $currentUri = $uriFactory->createFromSuperGlobalArray($_SERVER);
@@ -333,7 +357,9 @@ class AuthController extends BaseController {
   }
 
 
-  //! @brief Sign in with GitHub.
+  /**
+   * @brief Sign in with GitHub.
+   */
   public function githubAction() {
     $uriFactory = new UriFactory();
     $currentUri = $uriFactory->createFromSuperGlobalArray($_SERVER);

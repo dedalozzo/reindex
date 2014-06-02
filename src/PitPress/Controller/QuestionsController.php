@@ -1,9 +1,11 @@
 <?php
 
-//! @file QuestionsController.php
-//! @brief This file contains the QuestionsController class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file QuestionsController.php
+ * @brief This file contains the QuestionsController class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Controller;
@@ -15,8 +17,10 @@ use PitPress\Helper\Time;
 use PitPress\Helper\Stat;
 
 
-//! @brief Controller of Questions actions.
-//! @nosubgrouping
+/**
+ * @brief Controller of Questions actions.
+ * @nosubgrouping
+ */
 class QuestionsController extends ListController {
 
   // Stores the still open answer sub-menu definition.
@@ -31,12 +35,16 @@ class QuestionsController extends ListController {
   }
 
 
-  //! @brief Displays the newest questions having a bounty.
+  /**
+   * @brief Displays the newest questions having a bounty.
+   */
   public function importantAction() {
   }
 
 
-  //! @brief Displays the newest questions.
+  /**
+   * @brief Displays the newest questions.
+   */
   public function newestAction() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey(['forum', new \stdClass()])->setEndKey(['forum']);
@@ -49,7 +57,9 @@ class QuestionsController extends ListController {
   }
 
 
-  //! @brief Displays the most popular questions.
+  /**
+   * @brief Displays the most popular questions.
+   */
   public function popularAction($period) {
     if (empty($period))
       $period = 'settimana';
@@ -59,17 +69,23 @@ class QuestionsController extends ListController {
   }
 
 
-  //! @brief Displays the last updated questions.
+  /**
+   * @brief Displays the last updated questions.
+   */
   public function updatedAction() {
   }
 
 
-  //! @brief Displays the newest questions based on user's tags.
+  /**
+   * @brief Displays the newest questions based on user's tags.
+   */
   public function interestingAction() {
   }
 
 
-  //! @brief Displays the questions, still open, based on user's tags.
+  /**
+   * @brief Displays the questions, still open, based on user's tags.
+   */
   public function openAction($type) {
     if (empty($type))
       $type = 'rivolte-a-me';

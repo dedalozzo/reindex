@@ -1,9 +1,11 @@
 <?php
 
-//! @file LinksController.php
-//! @brief Controller of Links actions.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file LinksController.php
+ * @brief Controller of Links actions.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Controller;
@@ -15,8 +17,10 @@ use PitPress\Helper\Time;
 use PitPress\Helper\Stat;
 
 
-//! @brief Controller of Links actions.
-//! @nosubgrouping
+/**
+ * @brief Controller of Links actions.
+ * @nosubgrouping
+ */
 class LinksController extends ListController {
 
 
@@ -28,7 +32,9 @@ class LinksController extends ListController {
   }
 
 
-  //! @brief Displays the newest links.
+  /**
+   * @brief Displays the newest links.
+   */
   public function newestAction() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey(['links', new \stdClass()])->setEndKey(['links']);
@@ -41,7 +47,9 @@ class LinksController extends ListController {
   }
 
 
-  //! @brief Displays the most popular links.
+  /**
+   * @brief Displays the most popular links.
+   */
   public function popularAction($period = 'settimana') {
     if (empty($period))
       $period = 'settimana';
@@ -51,12 +59,16 @@ class LinksController extends ListController {
   }
 
 
-  //! @brief Displays the last updated entries.
+  /**
+   * @brief Displays the last updated entries.
+   */
   public function updatedAction() {
   }
 
 
-  //! @brief Displays the newest links based on my tags.
+  /**
+   * @brief Displays the newest links based on my tags.
+   */
   public function interestingAction() {
   }
 
