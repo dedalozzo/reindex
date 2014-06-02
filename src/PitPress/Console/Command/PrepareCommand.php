@@ -1,35 +1,41 @@
 <?php
 
-//! @file PrepareCommand.php
-//! @brief This file contains the PrepareCommand class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file PrepareCommand.php
+ * @brief This file contains the PrepareCommand class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Console\Command;
 
 
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use ElephantOnCouch\Generator\UUID;
 
 
-//! @brief Prepares Programmazione.it v6.4 MySQL database to be imported.
-//! @nosubgrouping
+/**
+ * @brief Prepares Programmazione.it v6.4 MySQL database to be imported.
+ * @nosubgrouping
+ */
 class PrepareCommand extends AbstractCommand {
 
 
-  //! @brief Configures the command.
+  /**
+   * @brief Configures the command.
+   */
   protected function configure() {
     $this->setName("prepare");
     $this->setDescription("Prepares Programmazione.it v6.4 MySQL database to be imported.");
   }
 
 
-  //! @brief Executes the command.
+  /**
+   * @brief Executes the command.
+   */
   protected function execute(InputInterface $input, OutputInterface $output) {
     $mysql = $this->di['mysql'];
 

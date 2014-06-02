@@ -1,9 +1,11 @@
 <?php
 
-//! @file ImportCommand.php
-//! @brief This file contains the ImportCommand class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file ImportCommand.php
+ * @brief This file contains the ImportCommand class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Console\Command;
@@ -31,14 +33,16 @@ use Converter\HTMLConverter;
 use ElephantOnCouch\Generator\UUID;
 
 
-//! @brief Imports into CouchDB the data from Programmazione.it v6.4 MySQL database.
-//! @nosubgrouping
-//! @todo: Download and save images as article attachments.
-//! @todo: Save attachments.
-//! @todo: Convert [center][/center] to Markdown.
-//! @todo: Convert quotes.
-//! @todo: Import questions.
-//! @todo: Import answers.
+/**
+ * @brief Imports into CouchDB the data from Programmazione.it v6.4 MySQL database.
+ * @nosubgrouping
+ * @todo: Download and save images as article attachments.
+ * @todo: Save attachments.
+ * @todo: Convert [center][/center] to Markdown.
+ * @todo: Convert quotes.
+ * @todo: Import questions.
+ * @todo: Import answers.
+ */
 class ImportCommand extends AbstractCommand {
 
   const ARTICLE_DRAFT = 0;
@@ -65,7 +69,9 @@ class ImportCommand extends AbstractCommand {
   private $output;
 
 
-  //! @brief Imports users.
+  /**
+   * @brief Imports users.
+   */
   private function importUsers() {
     $this->output->writeln("Importing users...");
 
@@ -108,7 +114,9 @@ class ImportCommand extends AbstractCommand {
   }
 
 
-  //! @brief Imports articles.
+  /**
+   * @brief Imports articles.
+   */
   private function importArticles() {
     $this->output->writeln("Importing articles...");
 
@@ -187,7 +195,9 @@ class ImportCommand extends AbstractCommand {
   }
 
 
-  //! @brief Imports tutorials.
+  /**
+   * @brief Imports tutorials.
+   */
   private function importTutorials() {
     $this->output->writeln("Importing tutorials...");
 
@@ -253,7 +263,9 @@ class ImportCommand extends AbstractCommand {
   }
 
 
-  //! @brief Imports books.
+  /**
+   * @brief Imports books.
+   */
   private function importBooks() {
     $this->output->writeln("Importing books...");
 
@@ -354,7 +366,9 @@ class ImportCommand extends AbstractCommand {
   }
 
 
-  //! @brief Imports tags.
+  /**
+   * @brief Imports tags.
+   */
   private function importTags() {
     $this->output->writeln("Importing tags...");
 
@@ -391,7 +405,9 @@ class ImportCommand extends AbstractCommand {
   }
 
 
-  //! @brief Imports classifications.
+  /**
+   * @brief Imports classifications.
+   */
   private function importClassifications() {
     $this->output->writeln("Importing classifications...");
 
@@ -424,7 +440,9 @@ class ImportCommand extends AbstractCommand {
   }
 
 
-  //! @brief Imports favourites.
+  /**
+   * @brief Imports favourites.
+   */
   private function importFavorites() {
     $this->output->writeln("Importing favorites...");
 
@@ -461,7 +479,9 @@ class ImportCommand extends AbstractCommand {
   }
 
 
-  //! @brief Imports subscriptions.
+  /**
+   * @brief Imports subscriptions.
+   */
   private function importSubscriptions() {
     $this->output->writeln("Importing subscriptions...");
 
@@ -493,7 +513,9 @@ class ImportCommand extends AbstractCommand {
   }
 
 
-  //! @brief Imports comments.
+  /**
+   * @brief Imports comments.
+   */
   private function importReplies() {
     $this->output->writeln("Importing comments...");
 
@@ -550,7 +572,9 @@ class ImportCommand extends AbstractCommand {
   }
 
 
-  //! @brief Imports all entities.
+  /**
+   * @brief Imports all entities.
+   */
   private function importAll() {
     $this->importUsers();
     $this->importArticles();
@@ -564,7 +588,9 @@ class ImportCommand extends AbstractCommand {
   }
 
 
-  //! @brief Configures the command.
+  /**
+   * @brief Configures the command.
+   */
   protected function configure() {
     $this->setName("import");
     $this->setDescription("Imports into CouchDB the data from Programmazione.it v6.4 MySQL database.");
@@ -580,7 +606,9 @@ class ImportCommand extends AbstractCommand {
   }
 
 
-  //! @brief Executes the command.
+  /**
+   * @brief Executes the command.
+   */
   protected function execute(InputInterface $input, OutputInterface $output) {
     $this->mysql = $this->di['mysql'];
     $this->couch = $this->di['couchdb'];
