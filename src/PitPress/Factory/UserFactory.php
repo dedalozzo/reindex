@@ -1,12 +1,14 @@
 <?php
 
-//! @file UserFactory.php
-//! @brief This file contains the UserFactory class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file UserFactory.php
+ * @brief This file contains the UserFactory class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
-//! @brief This is the namespace of all classes that implement the factory pattern.
+//! This is the namespace of all classes that implement the factory pattern.
 namespace PitPress\Factory;
 
 
@@ -17,13 +19,17 @@ use Phalcon\DI;
 use ElephantOnCouch\Couch;
 
 
-//! @brief This class implements the factory pattern and it's used to creates users.
-//! @nosubgrouping
+/**
+ * @brief This class implements the factory pattern and it's used to creates users.
+ * @nosubgrouping
+ */
 class UserFactory {
 
-  //! @brief This function tries to recognize a user from his ID and the secret token. In case the user has been
-  //! recognized, an user object is returned, else this function returns `null`.
-  //! @return User An instance of the user has been recognized by his cookie.
+  /**
+   * @brief This function tries to recognize a user from his ID and the secret token. In case the user has been
+   * recognized, an user object is returned, else this function returns `null`.
+   * @return User An instance of the user has been recognized by his cookie.
+   */
   public static function getFromCookie() {
     $di = DI::getDefault();
     $couch = $di['couchdb'];
