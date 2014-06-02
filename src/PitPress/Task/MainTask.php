@@ -1,9 +1,11 @@
 <?php
 
-//! @file MainTask.php
-//! @brief This file contains the MainTask class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file MainTask.php
+ * @brief This file contains the MainTask class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Task;
