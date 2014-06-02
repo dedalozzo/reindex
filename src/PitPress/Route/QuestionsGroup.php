@@ -1,9 +1,11 @@
 <?php
 
-//! @file QuestionsGroup.php
-//! @brief Group of Questions routes.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file QuestionsGroup.php
+ * @brief Group of Questions routes.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Route;
@@ -13,8 +15,10 @@ use Phalcon\Mvc\Router\Group;
 use Phalcon\DI;
 
 
-//! @brief Group of questions routes.
-//! @nosubgrouping
+/**
+ * @brief Group of questions routes.
+ * @nosubgrouping
+ */
 class QuestionsGroup extends Group {
 
 

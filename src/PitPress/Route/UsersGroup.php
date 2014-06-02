@@ -1,9 +1,11 @@
 <?php
 
-//! @file UsersGroup.php
-//! @brief Group of Users routes.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file UsersGroup.php
+ * @brief Group of Users routes.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Route;
@@ -13,8 +15,10 @@ use Phalcon\Mvc\Router\Group;
 use Phalcon\DI;
 
 
-//! @brief Group of users' routes.
-//! @nosubgrouping
+/**
+ * @brief Group of users' routes.
+ * @nosubgrouping
+ */
 class UsersGroup extends Group {
 
 

@@ -1,9 +1,11 @@
 <?php
 
-//! @file LinksGroup.php
-//! @brief Group of Links routes.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file LinksGroup.php
+ * @brief Group of Links routes.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Route;
@@ -13,8 +15,10 @@ use Phalcon\Mvc\Router\Group;
 use Phalcon\DI;
 
 
-//! @brief Group of links' routes.
-//! @nosubgrouping
+/**
+ * @brief Group of links' routes.
+ * @nosubgrouping
+ */
 class LinksGroup extends Group {
 
 

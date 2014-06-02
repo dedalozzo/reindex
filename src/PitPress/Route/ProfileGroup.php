@@ -1,9 +1,11 @@
 <?php
 
-//! @file ProfileGroup.php
-//! @brief User's profile routes.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file ProfileGroup.php
+ * @brief User's profile routes.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Route;
@@ -13,8 +15,10 @@ use Phalcon\Mvc\Router\Group;
 use Phalcon\DI;
 
 
-//! @brief Group of user's profile routes.
-//! @nosubgrouping
+/**
+ * @brief Group of user's profile routes.
+ * @nosubgrouping
+ */
 class ProfileGroup extends Group {
 
 
