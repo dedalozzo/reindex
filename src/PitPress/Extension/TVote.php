@@ -1,9 +1,11 @@
 <?php
 
-//! @file TVote.php
-//! @brief This file contains the TVote trait.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file TVote.php
+ * @brief This file contains the TVote trait.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Extension;
@@ -16,7 +18,9 @@ use PitPress\Model\Accessory\Vote;
 use PitPress\Model\User\User;
 
 
-//! @brief Implements the IVote interface.
+/**
+ * @brief Implements the IVote interface.
+ */
 trait TVote {
 
   private function vote(User $user, $value) {

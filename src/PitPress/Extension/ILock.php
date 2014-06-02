@@ -1,31 +1,42 @@
 <?php
 
-//! @file ILock.php
-//! @brief This file contains the ILock interface.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file ILock.php
+ * @brief This file contains the ILock interface.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Extension;
 
 
-//! @brief Defines locking methods.
+/**
+ * @brief Defines locking methods.
+ * @nosubgrouping
+ */
 interface ILock {
 
-  //! @name Moderating Methods
-  //@{
+  /** @name Moderating Methods */
+  //!@{
 
-  //! @brief
+  /**
+   * @brief
+   */
   public function lock();
 
 
-  //! @brief
+  /**
+   * @brief
+   */
   public function unlock();
 
 
-  //! @brief Returns `true` if any user can't post comments or answers.
+  /**
+   * @brief Returns `true` if any user can't post comments or answers.
+   */
   public function isLocked();
 
-  //@}
+  //!@}
 
 } 

@@ -1,15 +1,19 @@
 <?php
 
-//! @file TLock.php
-//! @brief This file contains the TLock trait.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file TLock.php
+ * @brief This file contains the TLock trait.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Extension;
 
 
-//! @brief Implements ILock interface.
+/**
+ * @brief Implements ILock interface.
+ */
 trait TLock {
 
 

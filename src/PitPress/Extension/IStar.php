@@ -1,9 +1,11 @@
 <?php
 
-//! @file IStar.php
-//! @brief This file contains the IStar interface.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file IStar.php
+ * @brief This file contains the IStar interface.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Extension;
@@ -12,34 +14,44 @@ namespace PitPress\Extension;
 use PitPress\Model\User\User;
 
 
-//! @brief Defines starring methods.
-//! @nosubgrouping
+/*
+ * @brief Defines starring methods.
+ * @nosubgrouping
+ */
 interface IStar {
 
-  //! @name Starring Methods
-  //@{
+  /** @name Starring Methods */
+  //!@{
 
-  //! @brief Returns `true` if the current user starred this post.
-  //! @param[in] User $user The current user logged in.
-  //! @param[out] string $starId The star document identifier related to the current post.
-  //! @return boolean
+  /**
+   * @brief Returns `true` if the current user starred this post.
+   * @param[in] User $user The current user logged in.
+   * @param[out] string $starId The star document identifier related to the current post.
+   * @return bool
+   */
   public function isStarred(User $user, &$starId = NULL);
 
 
-  //! @brief Adds the item to the favourites list of the current user.
-  //! @param[in] User $user The current user logged in.
+  /**
+   * @brief Adds the item to the favourites list of the current user.
+   * @param[in] User $user The current user logged in.
+   */
   public function star(User $user);
 
 
-  //! @brief Removes the item from the favourites list of the current user.
-  //! @param[in] User $user The current user logged in.
+  /**
+   * @brief Removes the item from the favourites list of the current user.
+   * @param[in] User $user The current user logged in.
+   */
   public function unstar(User $user);
 
 
-  //! @brief Returns the number of times the item has been starred.
-  //! @return integer
+  /**
+   * @brief Returns the number of times the item has been starred.
+   * @return integer
+   */
   public function getStarsCount();
 
-  //! @}
+  //!@}
 
 } 

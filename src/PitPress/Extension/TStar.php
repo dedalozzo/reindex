@@ -1,9 +1,11 @@
 <?php
 
-//! @file TStar.php
-//! @brief This file contains the TStar trait.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file TStar.php
+ * @brief This file contains the TStar trait.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Extension;
@@ -16,7 +18,9 @@ use PitPress\Model\Accessory\Star;
 use PitPress\Model\User\User;
 
 
-//! @brief Implements the IStar interface.
+/**
+ * @brief Implements the IStar interface.
+ */
 trait TStar {
 
 
