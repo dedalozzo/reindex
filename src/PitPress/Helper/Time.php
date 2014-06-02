@@ -1,9 +1,11 @@
 <?php
 
-//! @file Time.php
-//! @brief This file contains the Time class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file Time.php
+ * @brief This file contains the Time class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Helper;
@@ -12,17 +14,22 @@ namespace PitPress\Helper;
 use ElephantOnCouch\Helper\TimeHelper;
 
 
-//! @brief This class extends the ElephantOnCouch TimeHelper, adding new methods.
+/**
+ * @brief This class extends the ElephantOnCouch TimeHelper, adding new methods.
+ * @nosubgrouping
+ */
 class Time extends TimeHelper {
 
   private static $periods = ['sempre', 'anno', 'trimestre', 'mese', 'settimana', '24-ore'];
 
 
-  //! @brief Returns a measure of the time passed since the provided timestamp. In case is passed more than a day,
-  //! returns a human readable date.
-  //! @param[in] string $timestamp A timestamp in seconds.
-  //! @param[in] bool $showTime When `true` returns also the time passed in case of an event occurred in the past.
-  //! @return string
+  /**
+   * @brief Returns a measure of the time passed since the provided timestamp. In case is passed more than a day,
+   * returns a human readable date.
+   * @param[in] string $timestamp A timestamp in seconds.
+   * @param[in] bool $showTime When `true` returns also the time passed in case of an event occurred in the past.
+   * @return string
+   */
   public static function when($timestamp, $showtime = TRUE) {
     $today = date('Ymd');
 
@@ -52,25 +59,31 @@ class Time extends TimeHelper {
   }
 
 
-  //! @brief Returns an array of periods.
-  //! @param[in] integer $count The number of periods from left to right.
-  //! @return array
+  /**
+   * @brief Returns an array of periods.
+   * @param[in] integer $count The number of periods from left to right.
+   * @return array
+   */
   public static function periods($number = NULL) {
     return array_slice(self::$periods, 0, $number, TRUE);
   }
 
 
-  //! @brief Given a period as string, returns the position in periods array.
-  //! @param[in] string $period A period of time.
-  //! @return integer
+  /**
+   * @brief Given a period as string, returns the position in periods array.
+   * @param[in] string $period A period of time.
+   * @return integer
+   */
   public static function periodIndex($period) {
     return array_flip(self::$periods)[$period];
   }
 
 
-  //! @brief Given a period as string, returns a timestamp since now in the past.
-  //! @param[in] string $period A period of time.
-  //! @return integer
+  /**
+   * @brief Given a period as string, returns a timestamp since now in the past.
+   * @param[in] string $period A period of time.
+   * @return integer
+   */
   public static function timestamp($period) {
     switch ($period) {
       case '24-ore':
