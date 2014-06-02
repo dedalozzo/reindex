@@ -1,7 +1,7 @@
 #! /usr/bin/php
 <?php
 
-/**
+/*
  * @file pit.php
  * @brief The PitPress Console application.
  * @details
@@ -49,8 +49,6 @@ try {
   require $root."/services/redis.php";
   require $root."/services/mysql.php";
   require $root."/services/markdown.php";
-
-  //Couch::useCurl();
 
   // Creates the application object.
   $console = new PitPressConsole('PitPress Console', '0.1.0');
