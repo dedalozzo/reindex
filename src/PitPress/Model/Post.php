@@ -1,9 +1,11 @@
 <?php
 
-//! @file Post.php
-//! @brief This file contains the Post class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file Post.php
+ * @brief This file contains the Post class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Model;
@@ -16,13 +18,18 @@ use ElephantOnCouch\Helper\ArrayHelper;
 use PitPress\Extension;
 
 
-//! @brief This class is used to represent a generic entry, a content created by a user.
-//! @details Every post is versioned into the database, has tags and also a owner, who created the entry.
-//! @nosubgrouping
+/**
+ * @brief This class is used to represent a generic entry, a content created by a user.
+ * @details Every post is versioned into the database, has tags and also a owner, who created the entry.
+ * @nosubgrouping
+ */
 abstract class Post extends Item implements Extension\ICount, Extension\IStar, Extension\IVote, Extension\ISubscribe {
   use Extension\TCount, Extension\TStar, Extension\TVote, Extension\TSubscribe;
 
 
+  /**
+   * @copydoc
+   */
   public function save() {
     $this->meta['supertype'] = 'post';
     $this->meta['section'] = $this->getSection();
@@ -38,8 +45,10 @@ abstract class Post extends Item implements Extension\ICount, Extension\IStar, E
   }
 
 
-  //! @brief Gets the post slug.
-  //! @return string
+  /**
+   * @brief Gets the post slug.
+   * @return string
+   */
   public function getSlug() {
     $title = preg_replace('~[^\\pL\d]+~u', '-', $this->title);
     $title = trim($title, '-');
@@ -49,39 +58,49 @@ abstract class Post extends Item implements Extension\ICount, Extension\IStar, E
   }
 
 
-  //! @brief Gets the resource permanent link.
-  //! @return string
+  /**
+   * @brief Gets the resource permanent link.
+   * @return string
+   */
   public function getPermalink() {
     return "/".$this->id;
   }
 
 
-  //! @brief Gets the post URL.
-  //! @return string
+  /**
+   * @brief Gets the post URL.
+   * @return string
+   */
   public function getHref() {
     return "/".date("Y/m/d", $this->publishingDate)."/".$this->getSlug();
   }
 
 
-  //! @brief The post belongs to this section.
-  //! @return string
+  /**
+   * @brief The post belongs to this section.
+   * @return string
+   */
   abstract public function getSection();
 
 
-  //! @brief Gets the publishing type.
-  //! @return string
+  /**
+   * @brief Gets the publishing type.
+   * @return string
+   */
   abstract public function getPublishingType();
 
 
-  //! @name Replaying Methods
-  // @{
+  /** @name Replaying Methods */
+  //!@{
 
 
-  //! @brief Get the post replays, answers, in case of a question, else comments
+  /**
+   * @brief Get the post replays, answers, in case of a question, else comments
+   */
   public function getReplies() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(20)->reverseOrderOfResults()->setStartKey([$this->id, new \stdClass()])->setEndKey([$this->id])->includeDocs();
-    $rows = $this->couch->queryView("replies", "newestPerPost", NULL, $opts)['rows'];
+    $rows = $this->couch->queryView("replies", "newestPerPost", NULL, $opts);
 
     $replies = [];
     foreach ($rows as $row) {
@@ -94,45 +113,53 @@ abstract class Post extends Item implements Extension\ICount, Extension\IStar, E
   }
 
 
-  //! @brief Gets the number of the answer or comments.
+  /**
+   * @brief Gets the number of the answer or comments.
+   */
   public function getRepliesCount() {
     $opts = new ViewQueryOpts();
     $opts->groupResults();
-    $replies = $this->couch->queryView("replies", "perPost", [$this->id], $opts)['rows'];
-
-    return empty($replies) ? 0 : $replies[0]['value'];
+    return $this->couch->queryView("replies", "perPost", [$this->id], $opts)->getReducedValue();
   }
 
-  //@}
+  //!@}
 
 
-  //! @name Tagging Methods
+  /** @name Tagging Methods */
   // @{
 
-  //! @brief Removes all tags.
+  /**
+   * @brief Removes all tags.
+   */
   public function resetTags() {
 
   }
 
 
-  //! @brief Adds the specified tag to the tags list.
+  /**
+   * @brief Adds the specified tag to the tags list.
+   */
   public function addTag() {
 
   }
 
 
-  //! @brief Adds many tags at once to the tags list.
+  /**
+   * @brief Adds many tags at once to the tags list.
+   */
   public function addMultipleTagsAtOnce() {
 
   }
 
 
-  //! @brief Gets the associated tags list.
+  /**
+   * @brief Gets the associated tags list.
+   */
   public function getTags() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setKey($this->id);
 
-    $classifications = $this->couch->queryView("classifications", "perPost", NULL, $opts)['rows'];
+    $classifications = $this->couch->queryView("classifications", "perPost", NULL, $opts);
 
     $keys = [];
     foreach ($classifications as $classification)
@@ -141,10 +168,10 @@ abstract class Post extends Item implements Extension\ICount, Extension\IStar, E
     $opts->reset();
     $opts->doNotReduce();
 
-    return $this->couch->queryView("tags", "allNames", $keys, $opts)['rows']; // Tags.
+    return $this->couch->queryView("tags", "allNames", $keys, $opts); // Tags.
   }
 
-  //@}
+  //!@}
 
 
   //! @cond HIDDEN_SYMBOLS

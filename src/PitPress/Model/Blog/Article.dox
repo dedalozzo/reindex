@@ -6,11 +6,11 @@ namespace PitPress\Model\Blog;
 
 class Article {
 
-  //! @name Properties
-  //@{
+  /** @name Properties */
+  //!@{
   public string $excerpt; //!< A short extract from the body.
   public string $body; //!< A general text field where store text.
   public string $html; //!< The body HTML version.
-  //@}
+  //!@}
 
 }

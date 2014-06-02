@@ -1,9 +1,11 @@
 <?php
 
-//! @file Vote.php
-//! @brief This file contains the Vote class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file Vote.php
+ * @brief This file contains the Vote class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Model\Accessory;
@@ -12,17 +14,21 @@ namespace PitPress\Model\Accessory;
 use ElephantOnCouch\Doc\Doc;
 
 
-//! @brief This class is used to keep trace of the user votes.
-//! @nosubgrouping
+/**
+ * @brief This class is used to keep trace of the user votes.
+ * @nosubgrouping
+ */
 class Vote extends Doc {
 
-  //! @brief Creates an instance of Vote class. This parameter is not required, you can provide NULL.
-  //! @param[in] $postType The post type.
-  //! @param[in] $postSection The post section.
-  //! @param[in] $postId The post identifier. Can be also an item.
-  //! @param[in] $userId The identifier of the user who has voted.
-  //! @param[in] $value The value of the vote.
-  //! @return An instance of Vote class.
+  /**
+   * @brief Creates an instance of Vote class. This parameter is not required, you can provide NULL.
+   * @param[in] $postType The post type.
+   * @param[in] $postSection The post section.
+   * @param[in] $postId The post identifier. Can be also an item.
+   * @param[in] $userId The identifier of the user who has voted.
+   * @param[in] $value The value of the vote.
+   * @return An instance of Vote class.
+   */
   public static function create($postType, $postSection, $postId, $userId, $value) {
     $instance = new self();
 
@@ -37,14 +43,18 @@ class Vote extends Doc {
   }
 
 
-  //! @brief Returns `true`if the vote has been recorded by the PitPress daemon.
-  //! @return boolean
+  /**
+   * @brief Returns `true`if the vote has been recorded by the PitPress daemon.
+   * @return boolean
+   */
   public function hasBeenRecorded() {
     return $this->meta["recorded"];
   }
 
 
-  //! @brief Marks the vote has recorded.
+  /**
+   * @brief Marks the vote has recorded.
+   */
   public function markAsRecorded() {
     $this->meta["recorded"] = TRUE;
   }

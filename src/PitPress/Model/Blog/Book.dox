@@ -6,8 +6,8 @@ namespace PitPress\Model\Blog;
 
 class Book {
 
-  //! @name Properties
-  //@{
+  /** @name Properties */
+  //!@{
   public string $isbn; //!< ISBN.
   public string $authors; //!< Authors.
   public string $publisher; //!< Publisher.
@@ -17,6 +17,6 @@ class Book {
   public string $attachments; //!< Attachments: CD, DVD, etc.
   public string $positive; //!< Positive aspects.
   public string $negative; //!< Negative aspects.
-  //@}
+  //!@}
 
 }

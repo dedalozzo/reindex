@@ -6,10 +6,10 @@ namespace PitPress\Model\Forum;
 
 class Question  {
 
-  //! @name Properties
-  //@{
+  /** @name Properties */
+  //!@{
   string $excerpt; //!< A short extract from the content.
   string $body; //!< Content.
-  //@}
+  //!@}
 
 }

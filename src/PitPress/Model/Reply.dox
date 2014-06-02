@@ -6,9 +6,9 @@ namespace PitPress\Model;
 
 class Reply {
 
-  //! @name Properties
-  //@{
+  /** @name Properties */
+  //!@{
   public string $postId; //!< The post id the replay is related.
-  //@}
+  //!@}
 
 }

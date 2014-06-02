@@ -1,9 +1,11 @@
 <?php
 
-//! @file User.php
-//! @brief This file contains the User class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file User.php
+ * @brief This file contains the User class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Model\User;
@@ -15,22 +17,28 @@ use PitPress\Model\Storable;
 use PitPress\Extension;
 
 
-//! @brief This class is used to represent a registered user.
-//! @nosubgrouping
+/**
+ * @brief This class is used to represent a registered user.
+ * @nosubgrouping
+ */
 class User extends Storable implements Extension\ICount {
   use Extension\TCount;
 
 
-  //! @brief Given a e-mail, returns the gravatar URL for the corresponding user.
-  //! @param[in] string $email The user e-mail.
-  //! @return string
+  /**
+   * @brief Given a e-mail, returns the gravatar URL for the corresponding user.
+   * @param[in] string $email The user e-mail.
+   * @return string
+   */
   public static function getGravatar($email) {
     return 'http://gravatar.com/avatar/'.md5(strtolower($email)).'?d=identicon';
   }
 
 
-  //! @brief Returns the actual user's age based on his birthday, `null`in case a the user's birthday is not available.
-  //! @return byte|null
+  /**
+   * @brief Returns the actual user's age based on his birthday, `null`in case a the user's birthday is not available.
+   * @return byte|null
+   */
   public function getAge() {
     if ($this->issetBirthday()) {
       $now = new \DateTime();
@@ -43,8 +51,10 @@ class User extends Storable implements Extension\ICount {
   }
 
 
-  //! @brief Last time the user has logged in.
-  //! @return string The time expressed as `3 Aprile, 2013` or an empty string.
+  /**
+   * @brief Last time the user has logged in.
+   * @return string The time expressed as `3 Aprile, 2013` or an empty string.
+   */
   public function getLastVisit() {
     if (isset($this->meta['lastVisit']))
       return strftime('%e %B, %Y', $this->meta['lastVisit']);
@@ -53,15 +63,19 @@ class User extends Storable implements Extension\ICount {
   }
 
 
-  //! @brief Returns the elapsed time since the user registration.
-  //! @return string
+  /**
+   * @brief Returns the elapsed time since the user registration.
+   * @return string
+   */
   public function getElapsedTimeSinceRegistration() {
     return strftime('%e %B, %Y', $this->getCreationDate());
   }
 
 
-  //! @brief Returns the user's reputation.
-  //! @return integer
+  /**
+   * @brief Returns the user's reputation.
+   * @return integer
+   */
   public function getReputation() {
     $opts = new ViewQueryOpts();
     $opts->setKey([$this->id]);
@@ -75,101 +89,125 @@ class User extends Storable implements Extension\ICount {
   }
 
 
-  //! @brief Returns the list of badges rewarded to the user.
-  //! @param[in] string $metal Specify the metal used for building badges: `gold`, `silver` or `bronze`.
-  //! @return associative array
+  /**
+   * @brief Returns the list of badges rewarded to the user.
+   * @param[in] string $metal Specify the metal used for building badges: `gold`, `silver` or `bronze`.
+   * @return associative array
+   */
   public function getBadges($metal = NULL) {
 
   }
 
 
-  //! @name Confirmation Methods
-  // @{
+  /** @name Confirmation Methods */
+  //!@{
 
-  //! @brief Confirm the user.
+  /**
+   * @brief Confirm the user.
+   */
   public function confirm() {
-    $this->meta['confirmed'] = "true";
+    $this->meta['confirmed'] = TRUE;
   }
 
 
-  //! @brief Returns `true` if the user has been confirmed.
+  /**
+   * @brief Returns `true` if the user has been confirmed.
+   */
   public function isConfirmed() {
     return isset($this->meta['confirmed']);
   }
 
-  //@}
+  //!@}
 
 
-  //! @name Access Control Management Methods
-  // @{
+  /** @name Access Control Management Methods */
+  //!@{
 
-  //! @brief Promotes the user to administrator.
+  /**
+   * @brief Promotes the user to administrator.
+   */
   public function setAsAdmin() {
     $this->unsetAsModerator();
-    $this->meta['admin'] = "true";
+    $this->meta['admin'] = TRUE;
   }
 
 
-  //! @brief Reverts the administrator to a normal user.
+  /**
+   * @brief Reverts the administrator to a normal user.
+   */
   public function unsetAsAdmin() {
     if ($this->isMetadataPresent('admin'))
       unset($this->meta['admin']);
   }
 
 
-  //! @brief Returns `true` in case the user is an administrator.
+  /**
+   * @brief Returns `true` in case the user is an administrator.
+   */
   public function isAdmin() {
     return isset($this->meta['admin']);
   }
 
 
-  //! @brief Promotes the user to moderator.
+  /**
+   * @brief Promotes the user to moderator.
+   */
   public function setAsModerator() {
     if (!$this->isAdmin())
-      $this->meta['moderator'] = "true";
+      $this->meta['moderator'] = TRUE;
   }
 
 
-  //! @brief Reverts the moderator to a normal user.
+  /**
+   * @brief Reverts the moderator to a normal user.
+   */
   public function unsetAsModerator() {
     if ($this->isMetadataPresent('moderator'))
       unset($this->meta['moderator']);
   }
 
 
-  //! @brief Returns `true` in case the user is a moderator.
+  /**
+   * @brief Returns `true` in case the user is a moderator.
+   */
   public function isModerator() {
     return isset($this->meta['moderator']);
   }
 
-  //@}
+  //!@}
 
 
-  //! @name Ban Management Methods
-  // @{
+  /** @name Ban Management Methods */
+  //!@{
 
-  //! @brief Bans the user.
-  //! @param[in] integer $days The ban duration in days.
+  /**
+   * @brief Bans the user.
+   * @param[in] integer $days The ban duration in days.
+   */
   public function ban($days) {
     $this->meta['bannedOn'] = time();
     $this->meta['bannedFor'] = $days;
-    $this->meta['banned'] = "true";
+    $this->meta['banned'] = TRUE;
   }
 
 
-  //! @brief Removes the ban.
+  /**
+   * @brief Removes the ban.
+   */
   public function unban() {
     if ($this->isMetadataPresent('banned'))
       unset($this->meta['banned']);
   }
 
 
-  //! @brief Returns `true` if the user has been banned.
+  /**
+   * @brief Returns `true` if the user has been banned.
+   */
   public function isBanned() {
     return isset($this->meta['banned']);
   }
 
-  //@}
+  //!@}
 
 
   //! @cond HIDDEN_SYMBOLS

@@ -1,9 +1,9 @@
 <?php
 
-//! @file Aggregate.php
-//! @brief This file contains the Aggregate class.
-//! @details
-//! @author Filippo F. Fadda
+ * @file Aggregate.php
+ * @brief This file contains the Aggregate class.
+ * @details
+ * @author Filippo F. Fadda
 
 
 namespace PitPress\Model;
@@ -12,8 +12,8 @@ namespace PitPress\Model;
 use PitPress\Property;
 
 
-//! @brief This class represents an aggregate of posts.
-//! @nosubgrouping
+ * @brief This class represents an aggregate of posts.
+ * @nosubgrouping
 abstract class Aggregate extends Post {
   use Property\TExcerpt;
 
@@ -24,19 +24,19 @@ abstract class Aggregate extends Post {
   }
 
 
-  //! @name Posts Management Methods
+   * @name Posts Management Methods
   //@{
 
-  //! @brief Removes all posts.
+   * @brief Removes all posts.
   public function clear() {
     unset($this->meta['posts']);
     $this->meta['posts'] = [];
   }
 
 
-  //! Adds a post to the aggregate.
-  //! @param[in] string $postId The post id.
-  //! @param[in] integer $index (optional) Used to order the position of the post inside the aggregate.
+   * Adds a post to the aggregate.
+   * @param[in] string $postId The post id.
+   * @param[in] integer $index (optional) Used to order the position of the post inside the aggregate.
   public function addPost($postId, $index = NULL) {
     if (!in_array($postId, $this->meta['posts']))
       if (is_null($index) or $index > (count($this->meta['posts']) - 1))
@@ -50,7 +50,7 @@ abstract class Aggregate extends Post {
   }
 
 
-  //! Removes a post from the aggregate.
+   * Removes a post from the aggregate.
   public function removePost($postId) {
     $index = array_search($postId, $this->meta[$postId]);
 
@@ -59,9 +59,9 @@ abstract class Aggregate extends Post {
   }
 
 
-  //! Changes the position of the post inside the aggregate.
-  //! @param[in] string $postId The post id.
-  //! @param[in] integer $index (optional) Used to order the position of the post inside the aggregate.
+   * Changes the position of the post inside the aggregate.
+   * @param[in] string $postId The post id.
+   * @param[in] integer $index (optional) Used to order the position of the post inside the aggregate.
   public function movePost($postId, $index = NULL) {
     $this->removePost($postId);
     $this->addPost($postId, $index);
