@@ -1,10 +1,12 @@
 #! /usr/bin/php
 <?php
 
-//! @file pit.php
-//! @brief The PitPress Console application.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file pit.php
+ * @brief The PitPress Console application.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 use PitPress\Console\Console as PitPressConsole;

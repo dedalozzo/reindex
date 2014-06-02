@@ -1,10 +1,13 @@
 #! /usr/bin/php
 <?php
 
-//! @file pitd.php
-//! @brief The PitPress daemon.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file pitd.php
+ * @brief The PitPress daemon.
+ * @details
+ * @author Filippo F. Fadda
+ */
+
 
 use Phalcon\Config\Adapter\Ini as IniReader;
 use Phalcon\DI\FactoryDefault\CLI as DependencyInjector;
