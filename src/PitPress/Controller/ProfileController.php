@@ -1,9 +1,11 @@
 <?php
 
-//! @file ProfileController.php
-//! @brief This file contains the ProfileController class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file ProfileController.php
+ * @brief This file contains the ProfileController class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Controller;
@@ -15,8 +17,11 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use Phalcon\Mvc\View;
 
-//! @brief User's profile controller.
-//! @nosubgrouping
+
+/**
+ * @brief User's profile controller.
+ * @nosubgrouping
+ */
 class ProfileController extends ListController {
 
   // Stores the typology sub-menu definition.
@@ -24,7 +29,9 @@ class ProfileController extends ListController {
   protected static $typologyCorrespondence = ['guide' => 'tutorial', 'libri' => 'book', 'articoli' => 'article', 'domande' => 'question', 'links' => 'link'];
 
 
-  //! @brief Displays the newest user's updates.
+  /**
+   * @brief Displays the newest user's updates.
+   */
   public function timelineAction($id, $type = NULL) {
     // If no user id is provided, shows all the users.
     if (empty($id))

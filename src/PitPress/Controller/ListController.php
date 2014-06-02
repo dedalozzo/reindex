@@ -1,9 +1,11 @@
 <?php
 
-//! @file ListController.php
-//! @brief This file contains the ListController class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file ListController.php
+ * @brief This file contains the ListController class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Controller;
@@ -17,12 +19,16 @@ use PitPress\Model\User\User;
 use Phalcon\Mvc\View;
 
 
-//! @brief Ancestor controller for any controller displaying posts.
-//! @nosubgrouping
+/*
+ * @brief Ancestor controller for any controller displaying posts.
+ * @nosubgrouping
+ */
 abstract class ListController extends BaseController {
 
 
-  //! @brief Gets a list of tags recently updated.
+  /**
+   * @brief Gets a list of tags recently updated.
+   */
   protected function getRecentTags() {
     // todo Change this part, getting the classification of the last week, grouped by tagId.
     $opts = new ViewQueryOpts();
@@ -46,14 +52,18 @@ abstract class ListController extends BaseController {
   }
 
 
-  //! @brief Builds the post url, given its section, publishing date and slug.
-  //! @return string The complete url of the post.
+  /**
+   * @brief Builds the post url, given its section, publishing date and slug.
+   * @return string The complete url of the post.
+   */
   protected function buildUrl($section, $publishingDate, $slug) {
     return "http://".$section.".".$this->domainName.date('/Y/m/d/', $publishingDate).$slug;
   }
 
 
-  //! @brief Given a set of keys, retrieves entries.
+  /**
+   * @brief Given a set of keys, retrieves entries.
+   */
   protected function getEntries($keys) {
     if (empty($keys))
       return [];

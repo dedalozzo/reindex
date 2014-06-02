@@ -1,9 +1,11 @@
 <?php
 
-//! @file IndexController.php
-//! @brief This file contains the IndexController class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file IndexController.php
+ * @brief This file contains the IndexController class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Controller;
@@ -17,12 +19,16 @@ use PitPress\Helper\Stat;
 use Phalcon\Mvc\View;
 
 
-//! @brief Controller of Index actions.
-//! @nosubgrouping
+/**
+ * @brief Controller of Index actions.
+ * @nosubgrouping
+ */
 class IndexController extends ListController {
 
 
-  //! @brief Gets the newest posts per type.
+  /*
+   * @brief Gets the newest posts per type.
+   */
   protected function getNewestPostsPerType($viewName, $type, $count = 20) {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit($count)->reverseOrderOfResults()->setStartKey([$type, new \stdClass()])->setEndKey([$type]);
@@ -78,7 +84,9 @@ class IndexController extends ListController {
   }
 
 
-  //! @brief Displays the newest updates.
+  /**
+   * @brief Displays the newest updates.
+   */
   public function newestAction() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->reverseOrderOfResults()->setLimit(30);
@@ -88,7 +96,9 @@ class IndexController extends ListController {
   }
 
 
-  //! @brief Displays the most popular updates for the provided period.
+  /**
+   * @brief Displays the most popular updates for the provided period.
+   */
   public function popularAction($period = '24-ore') {
     if (empty($period))
       $period = '24-ore';
@@ -103,17 +113,23 @@ class IndexController extends ListController {
   }
 
 
-  //! @brief Displays the last updated entries.
+  /**
+   * @brief Displays the last updated entries.
+   */
   public function updatedAction() {
   }
 
 
-  //! @brief Displays the newest updates based on my tags.
+  /**
+   * @brief Displays the newest updates based on my tags.
+   */
   public function interestingAction() {
   }
 
 
-  //! @brief Displays the tour page.
+  /**
+   * @brief Displays the tour page.
+   */
   public function tourAction() {
     phpinfo();
 
@@ -121,37 +137,49 @@ class IndexController extends ListController {
   }
 
 
-  //! @brief Displays the help page.
+  /**
+   * @brief Displays the help page.
+   */
   public function helpAction() {
 
   }
 
 
-  //! @brief Displays a page with the legal info.
+  /**
+   * @brief Displays a page with the legal info.
+   */
   public function legalAction() {
 
   }
 
 
-  //! @brief Displays the privacy page.
+  /**
+   * @brief Displays the privacy page.
+   */
   public function privacyAction() {
 
   }
 
 
-  //! @brief Displays the career page.
+  /**
+   * @brief Displays the career page.
+   */
   public function careerAction() {
 
   }
 
 
-  //! @brief Displays the advertising page.
+  /**
+   * @brief Displays the advertising page.
+   */
   public function advertisingAction() {
 
   }
 
 
-  //! @brief Displays the contacts page.
+  /**
+   * @brief Displays the contacts page.
+   */
   public function contactAction() {
 
   }

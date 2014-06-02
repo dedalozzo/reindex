@@ -1,9 +1,11 @@
 <?php
 
-//! @file BlogController.php
-//! @brief Controller of Blog actions.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file BlogController.php
+ * @brief Controller of Blog actions.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Controller;
@@ -18,9 +20,11 @@ use PitPress\Helper\Stat;
 use Phalcon\Mvc\View;
 
 
-//! @brief Controller of Blog actions.
-//! @nosubgrouping
-//! @bug
+/**
+ * @brief Controller of Blog actions.
+ * @nosubgrouping
+ * @bug
+ */
 class BlogController extends ListController {
 
 
@@ -38,7 +42,9 @@ class BlogController extends ListController {
   }
 
 
-  //! @brief Displays the blog post.
+  /**
+   * @brief Displays the blog post.
+   */
   public function showAction($year, $month, $day, $slug) {
     $opts = new ViewQueryOpts();
     $opts->setKey(['blog', $year, $month, $day, $slug])->setLimit(1);
@@ -82,7 +88,9 @@ class BlogController extends ListController {
   }
 
 
-  //! @brief Displays the newest blog entries.
+  /**
+   * @brief Displays the newest blog entries.
+   */
   public function newestAction() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey(['blog', new \stdClass()])->setEndKey(['blog']);
@@ -95,7 +103,9 @@ class BlogController extends ListController {
   }
 
 
-  //! @brief Displays the most popular blog entries.
+  /**
+   * @brief Displays the most popular blog entries.
+   */
   public function popularAction($period = "settimana") {
     if (empty($period))
       $period = 'settimana';
@@ -113,7 +123,9 @@ class BlogController extends ListController {
   }
 
 
-  //! @brief Displays the last updated blog entries.
+  /**
+   * @brief Displays the last updated blog entries.
+   */
   public function updatedAction() {
     //$this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'id')));
 
@@ -122,7 +134,9 @@ class BlogController extends ListController {
   }
 
 
-  //! @brief Displays the newest blog entries based on my tags.
+  /**
+   * @brief Displays the newest blog entries based on my tags.
+   */
   public function interestingAction() {
     //$this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'id')));
 
@@ -131,7 +145,9 @@ class BlogController extends ListController {
   }
 
 
-  //! @brief Displays the newest articles.
+  /**
+   * @brief Displays the newest articles.
+   */
   public function articlesAction($period) {
     if (empty($period))
       $period = 'trimestre';
@@ -146,7 +162,9 @@ class BlogController extends ListController {
   }
 
 
-  //! @brief Displays the newest tutorials.
+  /**
+   * @brief Displays the newest tutorials.
+   */
   public function tutorialsAction($period) {
     if (empty($period))
       $period = 'sempre';
@@ -161,7 +179,9 @@ class BlogController extends ListController {
   }
 
 
-  //! @brief Displays the newest books.
+  /**
+   * @brief Displays the newest books.
+   */
   public function booksAction($period) {
     if (empty($period))
       $period = 'trimestre';
@@ -176,7 +196,9 @@ class BlogController extends ListController {
   }
 
 
-  //! @brief Displays the rss of the newest blog entries.
+  /**
+   * @brief Displays the rss of the newest blog entries.
+   */
   public function rssAction() {
   }
 
