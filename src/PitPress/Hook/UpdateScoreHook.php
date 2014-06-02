@@ -1,12 +1,14 @@
 <?php
 
-//! @file UpdateScoreHook.php
-//! @brief This file contains the UpdateScoreHook class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file UpdateScoreHook.php
+ * @brief This file contains the UpdateScoreHook class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
-//! @brief This is the hooks namespace.
+//! This is the hooks namespace.
 namespace PitPress\Hook;
 
 use Phalcon\CLI\Console\Exception;
@@ -21,7 +23,10 @@ use PitPress\Model\Accessory\Vote;
 use PitPress\Model\Accessory\Score;
 
 
-//! @brief This class calculates the score for every single post.
+/**
+ * @brief This class calculates the score for every single post.
+ * @nosubgrouping
+ */
 class UpdateScoreHook implements ChunkHook, InjectionAwareInterface {
 
   private $di;
@@ -38,8 +43,10 @@ class UpdateScoreHook implements ChunkHook, InjectionAwareInterface {
   private $lastChunkRead = FALSE;
 
 
-  //! @brief Reduces the votes.
-  //! @return int The sum of the votes.
+  /**
+   * @brief Reduces the votes.
+   * @return int The sum of the votes.
+   */
   private function reduce() {
     $reductions = [];
     foreach ($this->votes as $vote) {
@@ -56,7 +63,9 @@ class UpdateScoreHook implements ChunkHook, InjectionAwareInterface {
   }
 
 
-  //! @brief Processes the chunk.
+  /**
+   * @brief Processes the chunk.
+   */
   public function process($chunk) {
     $chunk = trim($chunk, ",\r\n");
 
@@ -121,7 +130,9 @@ class UpdateScoreHook implements ChunkHook, InjectionAwareInterface {
   }
 
 
-  //! @brief Sets the Dependency Injector.
+  /**
+   * @brief Sets the Dependency Injector.
+   */
   public function setDi($di) {
     $this->di = $di;
     $this->config = $this->di['config'];
@@ -133,7 +144,9 @@ class UpdateScoreHook implements ChunkHook, InjectionAwareInterface {
   }
 
 
-  //! @brief Gets the Dependency Injector.
+  /**
+   * @brief Gets the Dependency Injector.
+   */
   public function getDi() {
     return $this->di;
   }
