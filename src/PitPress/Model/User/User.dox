@@ -6,8 +6,8 @@ namespace PitPress\Model\User;
 
 class User  {
 
-  //! @name Properties
-  //@{
+  /** @name Properties */
+  //!@{
   string $firstName; //!< First name.
   string $lastName; //!< Last surname.
   string $displayName; //!< The name to be displayed on the site.
@@ -28,6 +28,6 @@ class User  {
   // boolean $termsOfService;
   // boolean $privacyPolicy;
   // boolean $cookiePolicy;
-  //@}
+  //!@}
 
 }

@@ -6,11 +6,11 @@ namespace PitPress\Model;
 
 class Item {
 
-  //! @name Properties
-  //@{
+  /** @name Properties */
+  //!@{
   public string $username; //!< Sometime the user id is missing, so we display the username.
   public string $userId; //!< The user id who created the content.
   public string $publishingDate; //!< The publishing date.
-  //@}
+  //!@}
 
 }

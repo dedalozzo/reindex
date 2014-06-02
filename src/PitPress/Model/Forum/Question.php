@@ -1,9 +1,11 @@
 <?php
 
-//! @file Question.php
-//! @brief This file contains the Item class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file Question.php
+ * @brief This file contains the Item class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Model\Forum;
@@ -12,8 +14,10 @@ namespace PitPress\Model\Forum;
 use PitPress\Model\Post;
 
 
-//! @brief A question asked by a user.
-//! @nosubgrouping
+/**
+ * @brief A question asked by a user.
+ * @nosubgrouping
+ */
 class Question extends Post {
 
 
@@ -27,7 +31,9 @@ class Question extends Post {
   }
 
 
-  //! @brief Gets the related answers.
+  /**
+   * @brief Gets the related answers.
+   */
   public function getAnswers() {
 
   }

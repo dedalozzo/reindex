@@ -1,16 +1,20 @@
 <?php
 
-//! @file Book.php
-//! @brief This file contains the Book class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file Book.php
+ * @brief This file contains the Book class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Model\Blog;
 
 
-//! @brief This class represents a book review.
-//! @nosubgrouping
+/**
+ * @brief This class represents a book review.
+ * @nosubgrouping
+ */
 class Book extends Article {
 
 

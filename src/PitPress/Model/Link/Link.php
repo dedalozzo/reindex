@@ -1,11 +1,14 @@
 <?php
 
-//! @file Link.php
-//! @brief This file contains the Link class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file Link.php
+ * @brief This file contains the Link class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
+//! PitPress blog entries namespace.
 namespace PitPress\Model\Link;
 
 
@@ -13,8 +16,10 @@ use PitPress\Model\Post;
 use PitPress\Property;
 
 
-//! @brief
-//! @nosubgrouping
+/*
+ * @brief
+ * @nosubgrouping
+ */
 class Link extends Post {
   use Property\TExcerpt;
 

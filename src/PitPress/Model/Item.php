@@ -1,9 +1,11 @@
 <?php
 
-//! @file Item.php
-//! @brief This file contains the Item class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file Item.php
+ * @brief This file contains the Item class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Model;
@@ -15,12 +17,17 @@ use PitPress\Extension;
 use PitPress\Helper\Time;
 
 
-//! @brief A generic content created by a user.
-//! @nosubgrouping
+/**
+ * @brief A generic content created by a user.
+ * @nosubgrouping
+ */
 abstract class Item extends Storable {
   use Extension\TVersion;
 
 
+  /**
+   * @copydoc Storable.save
+   */
   public function save() {
     // Put your code here.
 
@@ -28,33 +35,39 @@ abstract class Item extends Storable {
   }
 
 
-  //! @brief Returns a measure of the time passed since the publishing date. In case is passed more than a day, returns
-  //! a human readable date.
-  //! @return string
+  /**
+   * @brief Returns a measure of the time passed since the publishing date. In case is passed more than a day, returns
+   * a human readable date.
+   * @return string
+   */
   public function whenHasBeenPublished() {
     return Time::when($this->publishingDate);
   }
 
 
-  //! @brief Returns the author name.
+  /**
+   * @brief Returns the author name.
+   */
   public function getDisplayName() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setKey($this->userId);
-    return $this->couch->queryView("users", "allNames", NULL, $opts)['rows'][0]['value'][0];
+    return $this->couch->queryView("users", "allNames", NULL, $opts)[0]['value'][0];
   }
 
 
-  //! @brief Builds the gravatar uri.
-  //! @return string
+  /**
+   * @brief Builds the gravatar uri.
+   * @return string
+   */
   public function getGravatar() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setKey($this->userId);
-    $email = $this->couch->queryView("users", "allNames", NULL, $opts)['rows'][0]['value'][1];
+    $email = $this->couch->queryView("users", "allNames", NULL, $opts)[0]['value'][1];
     return 'http://gravatar.com/avatar/'.md5(strtolower($email)).'?d=identicon';
   }
 
 
-  //! @cond HIDDEN_SYMBOLS
+ //! @cond HIDDEN_SYMBOLS
 
   public function getUserId() {
     return $this->meta["userId"];

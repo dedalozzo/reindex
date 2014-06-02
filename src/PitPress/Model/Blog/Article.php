@@ -1,12 +1,14 @@
 <?php
 
-//! @file Article.php
-//! @brief This file contains the Article class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file Article.php
+ * @brief This file contains the Article class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
-//! @brief PitPress blog entries namespace.
+//! PitPress blog blog namespace.
 namespace PitPress\Model\Blog;
 
 
@@ -15,8 +17,10 @@ use PitPress\Extension;
 use PitPress\Property;
 
 
-//! @brief This class represents a blog article.
-//! @nosubgrouping
+/**
+ * @brief This class represents a blog article.
+ * @nosubgrouping
+ */
 class Article extends Post implements Extension\IModerate {
   use Extension\TModerate;
   use Property\TExcerpt;

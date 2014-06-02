@@ -1,15 +1,19 @@
 <?php
 
-//! @file Synonym.php
-//! @brief This file contains the Synonym class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file Synonym.php
+ * @brief This file contains the Synonym class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Model\Tag;
 
 
-//! This class represents a synonym of a tag.
+/**
+ * @brief This class represents a synonym of a tag.
+ */
 class Synonym {
 
 } 

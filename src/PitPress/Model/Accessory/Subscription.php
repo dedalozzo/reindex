@@ -1,9 +1,11 @@
 <?php
 
-//! @file Subscription.php
-//! @brief This file contains the Subscription class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file Subscription.php
+ * @brief This file contains the Subscription class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Model\Accessory;
@@ -12,11 +14,15 @@ namespace PitPress\Model\Accessory;
 use ElephantOnCouch\Doc\Doc;
 
 
-//! @brief This class is used to keep trace of the user subscriptions.
-//! @nosubgrouping
+/**
+ * @brief This class is used to keep trace of the user subscriptions.
+ * @nosubgrouping
+ */
 class Subscription extends Doc {
 
-  //! @brief Creates an instance of Star class.
+  /**
+   * @brief Creates an instance of Star class.
+   */
   public static function create($userId, $itemId, $timestamp = NULL) {
     $instance = new self();
 

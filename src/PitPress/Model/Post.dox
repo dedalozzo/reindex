@@ -6,9 +6,9 @@ namespace PitPress\Model;
 
 class Post {
 
-  //! @name Properties
-  //@{
+  /** @name Properties */
+  //!@{
   string $title; //!< Title.
-  //@}
+  //!@}
 
 }

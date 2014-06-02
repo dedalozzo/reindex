@@ -1,9 +1,11 @@
 <?php
 
-//! @file Answer.php
-//! @brief This file contains the Answer class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file Answer.php
+ * @brief This file contains the Answer class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Model\Forum;
@@ -12,11 +14,15 @@ namespace PitPress\Model\Forum;
 use PitPress\Model\Reply;
 
 
-//! @brief A user's answer to a question.
-//! @nosubgrouping
+/**
+ * @brief A user's answer to a question.
+ * @nosubgrouping
+ */
 class Answer extends Reply {
 
-  //! @brief Marks the item as duplicate of another item.
+  /**
+   * @brief Marks the item as duplicate of another item.
+   */
   public function markAsDuplicate() {
 
   }
