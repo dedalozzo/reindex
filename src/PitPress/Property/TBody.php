@@ -1,9 +1,11 @@
 <?php
 
-//! @file TBody.php
-//! @brief This file contains the TBody trait.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file TBody.php
+ * @brief This file contains the TBody trait.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Property;

@@ -1,9 +1,11 @@
 <?php
 
-//! @file TExcerpt.php
-//! @brief This file contains the TExcerpt trait.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file TExcerpt.php
+ * @brief This file contains the TExcerpt trait.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Property;
