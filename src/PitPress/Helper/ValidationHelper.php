@@ -1,9 +1,11 @@
 <?php
 
-//! @file ValidationHelper.php
-//! @brief This file contains the ValidationHelper class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file ValidationHelper.php
+ * @brief This file contains the ValidationHelper class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Helper;
@@ -12,10 +14,15 @@ namespace PitPress\Helper;
 use Phalcon\Validation;
 
 
-//! @brief This class extends the Phalcon Validation, adding new methods.
+/**
+ * @brief This class extends the Phalcon Validation, adding new methods.
+ * @nosubgrouping
+ */
 class ValidationHelper extends Validation {
 
-  //! @brief Returns the first error message for the specified field.
+  /**
+   * @brief Returns the first error message for the specified field.
+   */
   public function first($field) {
 
     $group = $this->getMessages();
