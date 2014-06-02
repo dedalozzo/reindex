@@ -14,7 +14,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.4.0",
-        "3f/elephantoncouch": "dev-master",
+        "3f/eoc-client": "dev-master",
         "3f/pygmentize": "dev-master",
         "3f/converter": "dev-master",
         "symfony/console": "2.4.*@dev",
