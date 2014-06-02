@@ -1,16 +1,20 @@
 <?php
 
-//! @file PostState.php
-//! @brief This file contains the PostState enumerator.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file PostState.php
+ * @brief This file contains the PostState enumerator.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
-//! @brief Enumerators namespace.
+//! Enumerators namespace.
 namespace PitPress\Enum;
 
 
-//! @brief Different states a post may assume.
+/**
+ * @brief Different states a post may assume.
+ */
 class PostState {
   const DRAFT_STATE = "draft"; //!< The post can eventually be saved as draft.
   const SUBMITTED = "submitted"; //!< The item has been submitted for publishing.
