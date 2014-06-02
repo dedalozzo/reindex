@@ -1,9 +1,11 @@
 <?php
 
-//! @file QueryCommand.php
-//! @brief This file contains the QueryCommand class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file QueryCommand.php
+ * @brief This file contains the QueryCommand class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Console\Command;
@@ -17,13 +19,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
 
-//! @brief Query a view and outputs the result.
-//! @nosubgrouping
-//! todo Fix a bug when read map and reduce from file.
+/**
+ * @brief Query a view and outputs the result.
+ * @nosubgrouping
+ * @todo Fix a bug when read map and reduce from file.
+ */
 class QueryCommand extends AbstractCommand {
 
 
-  //! @brief Configures the command.
+  /**
+   * @brief Configures the command.
+   */
   protected function configure() {
     $this->setName("query");
     $this->setDescription("Query a view and outputs the result.");
@@ -148,8 +154,10 @@ class QueryCommand extends AbstractCommand {
   }
 
 
-  //! @brief Executes the command.
-  //! @bug https://github.com/dedalozzo/pit-press/issues/1
+  /**
+   * @brief Executes the command.
+   * @bug https://github.com/dedalozzo/pit-press/issues/1
+   */
   protected function execute(InputInterface $input, OutputInterface $output) {
     $couch = $this->di['couchdb'];
 

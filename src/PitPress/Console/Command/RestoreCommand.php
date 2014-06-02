@@ -1,35 +1,39 @@
 <?php
 
-//! @file RestoreCommand.php
-//! @brief This file contains the RestoreCommand class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file RestoreCommand.php
+ * @brief This file contains the RestoreCommand class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Console\Command;
 
 
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use ElephantOnCouch\Generator\UUID;
 
-
-//! @brief Restores Programmazione.it v6.4 MySQL database.
-//! @nosubgrouping
+/**
+ * @brief Restores Programmazione.it v6.4 MySQL database.
+ * @nosubgrouping
+ */
 class RestoreCommand  extends AbstractCommand {
 
 
-  //! @brief Configures the command.
+  /**
+   * @brief Configures the command.
+   */
   protected function configure() {
     $this->setName("restore");
     $this->setDescription("Restores Programmazione.it v6.4 MySQL database.");
   }
 
 
-  //! @brief Executes the command.
+  /**
+   * @brief Executes the command.
+   */
   protected function execute(InputInterface $input, OutputInterface $output) {
     $mysql = $this->di['mysql'];
 

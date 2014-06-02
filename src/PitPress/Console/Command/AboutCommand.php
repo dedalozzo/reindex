@@ -1,9 +1,11 @@
 <?php
 
-//! @file AboutCommand.php
-//! @brief This file contains the AboutCommand class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file AboutCommand.php
+ * @brief This file contains the AboutCommand class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Console\Command;
@@ -13,19 +15,28 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
-//! @brief Displays information about PitPress, like version, database, etc.
-//! @nosubgrouping
+/**
+ * @brief Displays information about PitPress, like version, database, etc.
+ * @nosubgrouping
+ */
 class AboutCommand extends AbstractCommand {
 
 
-    //! @brief Configures the command.
+  /**
+   * @brief Configures the command.
+   */
   protected function configure() {
     $this->setName("about");
     $this->setDescription("Displays information about PitPress, like version, database, etc.");
   }
 
 
-  //! @brief Executes the command.
+  /**
+   * @brief Executes the command.
+   * @param[in] InputInterface $input The input interface
+   * @param[in] OutputInterface $output The output interface
+   * @return string Information about CouchDB's client, server and the PitPress database.
+   */
   protected function execute(InputInterface $input, OutputInterface $output) {
     $couch = $this->di['couchdb'];
 

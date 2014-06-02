@@ -1,9 +1,11 @@
 <?php
 
-//! @file InitCommand.php
-//! @brief This file contains the InitCommand class.
-//! @details
-//! @author Filippo F. Fadda
+/*
+ * @file InitCommand.php
+ * @brief This file contains the InitCommand class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Console\Command;
@@ -17,15 +19,19 @@ use ElephantOnCouch\Doc\DesignDoc;
 use ElephantOnCouch\Handler\ViewHandler;
 
 
-//! @brief Initializes the PitPress database, adding the required design documents.
-//! @nosubgrouping
+/**
+ * @brief Initializes the PitPress database, adding the required design documents.
+ * @nosubgrouping
+ */
 class InitCommand extends AbstractCommand {
 
   protected $mysql;
   protected $couch;
 
 
-  //! @brief Insert all design documents.
+  /**
+   * @brief Insert all design documents.
+   */
   private function initAll() {
     $this->initPosts();
     $this->initTags();
@@ -872,7 +878,9 @@ MAP;
   }
 
 
-  //! @brief Configures the command.
+  /**
+   * @brief Configures the command.
+   */
   protected function configure() {
     $this->setName("init");
     $this->setDescription("Initializes the PitPress database, adding the required design documents.");
@@ -884,7 +892,9 @@ MAP;
   }
 
 
-  //! @brief Executes the command.
+  /**
+   * @brief Executes the command.
+   */
   protected function execute(InputInterface $input, OutputInterface $output) {
 
     $this->mysql = $this->di['mysql'];

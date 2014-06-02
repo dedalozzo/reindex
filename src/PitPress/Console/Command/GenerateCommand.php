@@ -1,9 +1,11 @@
 <?php
 
-//! @file GenerateCommand.php
-//! @brief This file contains the GenerateCommand class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file GenerateCommand.php
+ * @brief This file contains the GenerateCommand class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Console\Command;
@@ -21,8 +23,10 @@ use PitPress\Model\Link\Link;
 use PitPress\Helper\Text;
 
 
-//! @brief Generates fake documents for testing purpose.
-//! @nosubgrouping
+/**
+ * @brief Generates fake documents for testing purpose.
+ * @nosubgrouping
+ */
 class GenerateCommand extends AbstractCommand {
 
   const ARTICLE = 2;
@@ -32,7 +36,9 @@ class GenerateCommand extends AbstractCommand {
   private $couch;
 
 
-  //! @brief Generates fake votes.
+  /**
+   * @brief Generates fake votes.
+   */
   private function generateVotes(InputInterface $input, OutputInterface $output) {
     $output->writeln("Generate votes...");
 
@@ -90,7 +96,9 @@ class GenerateCommand extends AbstractCommand {
   }
 
 
-  //! @brief Consumes a site feed and generate a link for every item.
+  /*
+   * @brief Consumes a site feed and generate a link for every item.
+   */
   private function generateLinks(InputInterface $input, OutputInterface $output) {
     $output->writeln("Generate links...");
 
@@ -121,7 +129,9 @@ class GenerateCommand extends AbstractCommand {
   }
 
 
-  //! @brief Configures the command.
+  /**
+   * @brief Configures the command.
+   */
   protected function configure() {
     $this->setName("generate");
     $this->setDescription("Generates fake documents.");
@@ -150,7 +160,9 @@ class GenerateCommand extends AbstractCommand {
   }
 
 
-  //! @brief Executes the command.
+  /**
+   * @brief Executes the command.
+   */
   protected function execute(InputInterface $input, OutputInterface $output) {
     $this->input = $input;
     $this->output = $output;

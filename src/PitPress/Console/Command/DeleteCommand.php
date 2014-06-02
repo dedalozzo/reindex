@@ -1,9 +1,11 @@
 <?php
 
-//! @file DeleteCommand.php
-//! @brief This file contains the DeleteCommand class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file DeleteCommand.php
+ * @brief This file contains the DeleteCommand class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Console\Command;
@@ -16,19 +18,25 @@ use ElephantOnCouch\Couch;
 use ElephantOnCouch\Adapter\NativeAdapter;
 
 
-//! @brief Deletes the PitPress database.
-//! @nosubgrouping
+/**
+ * @brief Deletes the PitPress database.
+ * @nosubgrouping
+ */
 class DeleteCommand extends AbstractCommand {
 
 
-  //! @brief Configures the command.
+  /**
+   * @brief Configures the command.
+   */
   protected function configure() {
     $this->setName("delete");
     $this->setDescription("Deletes the PitPress database.");
   }
 
 
-  //! @brief Executes the command.
+  /**
+   * @brief Executes the command.
+   */
   protected function execute(InputInterface $input, OutputInterface $output) {
     $dialog = $this->getHelperSet()->get('dialog');
     $confirm = $dialog->ask($output, 'Are you sure you want delete the PitPress database? [Y/n]'.PHP_EOL, 'n');

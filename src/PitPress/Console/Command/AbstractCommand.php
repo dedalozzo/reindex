@@ -1,12 +1,14 @@
 <?php
 
-//! @file AbstractCommand.php
-//! @brief This file contains the AbstractCommand class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file AbstractCommand.php
+ * @brief This file contains the AbstractCommand class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
-//! @brief This is the Commands namespace.
+//! This is the Commands namespace.
 namespace PitPress\Console\Command;
 
 
@@ -16,17 +18,21 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Application;
 
 
-//! @brief This class represents an abstract command that implements the InjectionAwareInterface to automatic set the
-//! Phalcon Dependency Injector and make it available to every subclasses.
-//! @nosubgrouping
+/**
+ * @brief This class represents an abstract command that implements the InjectionAwareInterface to automatic set the
+ * Phalcon Dependency Injector and make it available to every subclasses.
+ * @nosubgrouping
+ */
 abstract class AbstractCommand extends Command implements InjectionAwareInterface {
 
   protected $di;
   protected $monolog;
 
 
-  //! @brief Returns `true` in case `$arg` seems to be the string representation of an array, `false` otherwise.
-  //! @param[in] $arg The command line argument.
+  /**
+   * @brief Returns `true` in case `$arg` seems to be the string representation of an array, `false` otherwise.
+   * @param[in] $arg The command line argument.
+   */
   protected function isArray($arg) {
     if (preg_match('/\A[\[]([^\[\]]+)[\]]\z/i', $arg, $matches))
       return TRUE;
@@ -35,9 +41,11 @@ abstract class AbstractCommand extends Command implements InjectionAwareInterfac
   }
 
 
-  //! @brief Returns `true` in case `$arg` is enclosed between paired delimiters ('' or ""), `false` otherwise.
-  //! @details In case the argument is a string, paired delimiters are removed.
-  //! @param[in|out] $arg The command line argument.
+  /**
+   * @brief Returns `true` in case `$arg` is enclosed between paired delimiters ('' or ""), `false` otherwise.
+   * @details In case the argument is a string, paired delimiters are removed.
+   * @param[in|out] $arg The command line argument.
+   */
   protected function isString(&$arg) {
     if (preg_match('/\A[\'"]([^\'"]+)[\'"]\z/i', $arg, $matches)) {
       $arg = $matches[1];
@@ -48,9 +56,12 @@ abstract class AbstractCommand extends Command implements InjectionAwareInterfac
   }
 
 
-  //! @brief Casts the argument to the right format and jsonify it when necessary.
-  //! @param[in] $arg The command line argument.
-  //! @param[in] boolean $encode (optional) JSON encodes `$arg`.
+
+  /**
+   * @brief Casts the argument to the right format and jsonify it when necessary.
+   * @param[in] $arg The command line argument.
+   * @param[in] boolean $encode (optional) JSON encodes `$arg`.
+   */
   protected function castArg($arg, $encode = TRUE) {
     if ($this->isArray($arg))
       return $arg;
@@ -65,7 +76,9 @@ abstract class AbstractCommand extends Command implements InjectionAwareInterfac
   }
 
 
-  //! @brief Overrides this method to set the Dependency Injector.
+  /**
+   * @brief Overrides this method to set the Dependency Injector.
+   */
   public function setApplication(Application $application = null) {
     parent::setApplication($application);
 
@@ -74,14 +87,18 @@ abstract class AbstractCommand extends Command implements InjectionAwareInterfac
   }
 
 
-  //! @brief Sets the Dependency Injector.
+  /**
+   * @brief Sets the Dependency Injector.
+   */
   public function setDi($di) {
     $this->di = $di;
     $this->monolog = $this->di['monolog'];
   }
 
 
-  //! @brief Gets the Dependency Injector.
+  /**
+   * @brief Gets the Dependency Injector.
+   */
   public function getDi() {
     return $this->di;
   }

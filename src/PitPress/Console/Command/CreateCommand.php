@@ -1,9 +1,11 @@
 <?php
 
-//! @file CreateCommand.php
-//! @brief This file contains the CreateCommand class.
-//! @details
-//! @author Filippo F. Fadda
+/*
+ * @file CreateCommand.php
+ * @brief This file contains the CreateCommand class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Console\Command;
@@ -16,19 +18,25 @@ use ElephantOnCouch\Couch;
 use ElephantOnCouch\Adapter\NativeAdapter;
 
 
-//! @brief Creates a new PitPress database.
-//! @nosubgrouping
+/**
+ * @brief Creates a new PitPress database.
+ * @nosubgrouping
+ */
 class CreateCommand extends AbstractCommand {
 
 
-  //! @brief Configures the command.
+  /**
+   * @brief Configures the command.
+   */
   protected function configure() {
     $this->setName("create");
     $this->setDescription("Creates a new database.");
   }
 
 
-  //! @brief Executes the command.
+  /**
+   * @brief Executes the command.
+   */
   protected function execute(InputInterface $input, OutputInterface $output) {
     $config = $this->di['config'];
 

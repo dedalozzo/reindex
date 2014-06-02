@@ -1,34 +1,40 @@
 <?php
 
-//! @file InstallCommand.php
-//! @brief This file contains the InstallCommand class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file InstallCommand.php
+ * @brief This file contains the InstallCommand class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Console\Command;
 
 
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 
 
-//! @brief Executes the following commands: create, prepare, import, init.
-//! @nosubgrouping
+/**
+ * @brief Executes the following commands: create, prepare, import, init.
+ * @nosubgrouping
+ */
 class InstallCommand extends AbstractCommand {
 
 
-  //! @brief Configures the command.
+  /**
+   * @brief Configures the command.
+   */
   protected function configure() {
     $this->setName("install");
     $this->setDescription("Executes the following commands: create, prepare, import all, init all.");
   }
 
 
-  //! @brief Executes the command.
+  /**
+   * @brief Executes the command.
+   */
   protected function execute(InputInterface $input, OutputInterface $output) {
 
     // create
