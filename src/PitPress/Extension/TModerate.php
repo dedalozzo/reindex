@@ -1,9 +1,11 @@
 <?php
 
+/*
  * @file TModerate.php
  * @brief This file contains the TModerate trait.
  * @details
  * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Extension;
@@ -12,7 +14,9 @@ namespace PitPress\Extension;
 use PitPress\Enum\PostState;
 
 
+/*
  * @brief Implements the IModerate interface.
+ */
 trait TModerate {
 
   public function getState() {
