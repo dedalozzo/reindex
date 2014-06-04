@@ -17,14 +17,36 @@ namespace PitPress\Controller;
  */
 class BadgesController extends ListController {
 
+  protected $badgeLoader;
+
+
   // Stores the typology sub-menu definition.
   protected static $typologySubMenu = ['bronzo', 'argento', 'oro', 'tutti'];
+
+
+  /**
+   * @brief Initializes the controller.
+   */
+  public function initialize() {
+    $this->badgeLoader = $this->di['badgeloader'];
+
+    parent::initialize();
+  }
 
 
   /**
    * @brief Displays all badges.
    */
   public function allAction() {
+    $badges = $this->badgeLoader->scanForBadges();
+
+    foreach ($badges as $badge) {
+      $name = basename($badge->getFilename(), '.php');
+
+      $this->monolog->addDebug($name);
+      $path = $badge->getPathname();
+      $this->monolog->addDebug($path);
+    }
   }
 
 
