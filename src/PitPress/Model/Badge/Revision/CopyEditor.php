@@ -8,7 +8,7 @@
  */
 
 
-namespace PitPress\Model\Badge\Moderation;
+namespace PitPress\Model\Badge\Revision;
 
 
 use PitPress\Model\Badge\Silver;
