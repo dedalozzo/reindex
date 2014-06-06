@@ -12,18 +12,27 @@
 namespace PitPress\Filter;
 
 
-use PitPress\Model\Badge\Badge;
+use PitPress\Helper;
 
 
 /**
- * @brief
- * @details
+ * @brief A custom filter to retrieves only the badges.
+ * @details Badges are all the classes defined under the namespace PitPress\Model\Badge (and sub-namespaces), derived
+ * from Gold, Silver or Bronze classes.
  * @nosubgrouping
  */
 class BadgeRecursiveFilterIterator extends \RecursiveFilterIterator {
-  protected static $badges = ['Badge\Gold', 'Badge\Silver', 'Badge\Bronze'];
+  protected static $ancestors = [
+      'PitPress\\Model\\Badge\\Gold',
+      'PitPress\\Model\\Badge\\Silver',
+      'PitPress\\Model\\Badge\\Bronze'
+    ];
 
 
+  /**
+   * @brief Checks whether the current element of the iterator is acceptable.
+   * @return bool
+   */
   public function accept() {
     $item  = $this->current();
 
@@ -34,16 +43,17 @@ class BadgeRecursiveFilterIterator extends \RecursiveFilterIterator {
     if ($item->isDir())
       return TRUE;
 
-    if ($item->getExtension() === "php") {
-      $pathname = $item->getPathname();
-      $class = preg_replace('/\.php\z/i', '', "\\".basename(str_replace("/", "\\", substr($pathname, stripos($pathname, "PitPress")))));
+    if ($item->getExtension() === "php") {      ;
+      $parents = class_parents(Helper\ClassHelper::getClass($item->getPathname()));
 
-      //$class = basename($item->getFilename(), '.php');
+      $found = FALSE;
+      foreach (static::$ancestors as $class)
+        if (array_key_exists($class, $parents)) {
+          $found = TRUE;
+          break;
+        }
 
-
-      if (in_array(class_parents($class), static::$badges))
-        return TRUE;
-
+      return $found;
     }
     else
       return FALSE;
