@@ -8,7 +8,10 @@
  */
 
 
-namespace PitPress\Model\Badge;
+namespace PitPress\Model\Badge\Revision;
+
+
+use PitPress\Model\Badge\Bronze;
 
 
 /**
