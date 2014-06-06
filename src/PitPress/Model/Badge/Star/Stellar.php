@@ -8,7 +8,10 @@
  */
 
 
-namespace PitPress\Model\Badge;
+namespace PitPress\Model\Badge\Star;
+
+
+use PitPress\Model\Badge\Gold;
 
 
 /**
