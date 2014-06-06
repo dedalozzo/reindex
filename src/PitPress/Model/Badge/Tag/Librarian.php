@@ -1,31 +1,31 @@
 <?php
 
 /**
- * @file Guru.php
- * @brief This file contains the Guru class.
+ * @file Librarian.php
+ * @brief This file contains the Librarian class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-namespace PitPress\Model\Badge\Answer;
+namespace PitPress\Model\Badge\Moderation;
 
 
-use PitPress\Model\Badge\Silver;
+use PitPress\Model\Badge\Gold;
 
 
 /**
- * @brief Accepted answer and score of 40 or more.
- * @details Awarded multiple times.
+ * @brief Edited 20 tag descriptions.
+ * @details Awarded once.
  */
-class Guru extends Silver {
+class Librarian extends Gold {
 
 
   /**
    * @copydoc Badge::getName()
    */
   public function getName() {
-    return "Guru";
+    return "Bibliotecario";
   }
 
 

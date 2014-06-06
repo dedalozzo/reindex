@@ -1,31 +1,31 @@
 <?php
 
 /**
- * @file Guru.php
- * @brief This file contains the Guru class.
+ * @file Famous.php
+ * @brief This file contains the Famous class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-namespace PitPress\Model\Badge\Answer;
+namespace PitPress\Model\Badge\Hit;
 
 
-use PitPress\Model\Badge\Silver;
+use PitPress\Model\Badge\Gold;
 
 
 /**
- * @brief Accepted answer and score of 40 or more.
+ * @brief Wrote a post with 20.000 views.
  * @details Awarded multiple times.
  */
-class Guru extends Silver {
+class Famous extends Gold {
 
 
   /**
    * @copydoc Badge::getName()
    */
   public function getName() {
-    return "Guru";
+    return "Famoso";
   }
 
 
@@ -64,4 +64,4 @@ DESC;
 
   }
 
-} 
+}

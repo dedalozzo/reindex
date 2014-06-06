@@ -1,31 +1,31 @@
 <?php
 
 /**
- * @file Guru.php
- * @brief This file contains the Guru class.
+ * @file Proofreader.php
+ * @brief This file contains the Proofreader class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-namespace PitPress\Model\Badge\Answer;
+namespace PitPress\Model\Badge\Moderation;
 
 
 use PitPress\Model\Badge\Silver;
 
 
 /**
- * @brief Accepted answer and score of 40 or more.
- * @details Awarded multiple times.
+ * @brief Approved or rejected 100 suggested edits.
+ * @details Awarded once.
  */
-class Guru extends Silver {
+class Proofreader extends Silver {
 
 
   /**
    * @copydoc Badge::getName()
    */
   public function getName() {
-    return "Guru";
+    return "Correttore di bozze";
   }
 
 

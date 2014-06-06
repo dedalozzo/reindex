@@ -1,31 +1,31 @@
 <?php
 
 /**
- * @file Guru.php
- * @brief This file contains the Guru class.
+ * @file Columnlist.php
+ * @brief This file contains the Columnlist class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-namespace PitPress\Model\Badge\Answer;
+namespace PitPress\Model\Badge\Post;
 
 
 use PitPress\Model\Badge\Silver;
 
 
 /**
- * @brief Accepted answer and score of 40 or more.
+ * @brief Wrote at least 10 articles on the same tag.
  * @details Awarded multiple times.
  */
-class Guru extends Silver {
+class Columnlist extends Silver {
 
 
   /**
    * @copydoc Badge::getName()
    */
   public function getName() {
-    return "Guru";
+    return "Articolista tecnico";
   }
 
 
@@ -64,4 +64,4 @@ DESC;
 
   }
 
-} 
+}

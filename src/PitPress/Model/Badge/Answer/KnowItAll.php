@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file Tenacious.php
- * @brief This file contains the Tenacious class.
+ * @file KnowItAll.php
+ * @brief This file contains the KnowItAll class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -15,17 +15,17 @@ use PitPress\Model\Badge\Silver;
 
 
 /**
- * @brief Zero score accepted answers: more than 5 and 20% of total.
+ * @brief Provided answers of 15 total score in 20 of top 40 tags.
  * @details Awarded once.
  */
-class Tenacious extends Silver {
+class KnowItAll extends Silver {
 
 
   /**
    * @copydoc Badge::getName()
    */
   public function getName() {
-    return "Tenace";
+    return "Tuttologo";
   }
 
 
@@ -33,7 +33,7 @@ class Tenacious extends Silver {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda; risposta accetatta con punteggio di 10.";
+    return "Fornito risposte con un punteggio di 15 in almeno la metà dei 40 tag più popolari .";
   }
 
 
@@ -42,9 +42,8 @@ class Tenacious extends Silver {
    */
   public function getDetails() {
     return <<<'DESC'
-Sei la prima persona a rispondere ad una domanda e totalizzare un punteggio pari a 10 per la risposta. Quest'ultima deve
-essere accettata dall'autore della domanda. Il badge viene assegnato soltanto nel caso in cui l'autore della domanda non
-risponda alla sua stessa domanda. Assegnato più volte.
+Assegnato a chi risponde
+risponda alla sua stessa domanda. Assegnato solo una volta.
 DESC;
   }
 

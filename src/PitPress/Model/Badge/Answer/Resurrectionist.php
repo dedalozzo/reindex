@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file Guru.php
- * @brief This file contains the Guru class.
+ * @file Resurrectionist.php
+ * @brief This file contains the Resurrectionist class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -11,21 +11,21 @@
 namespace PitPress\Model\Badge\Answer;
 
 
-use PitPress\Model\Badge\Silver;
+use PitPress\Model\Badge\Bronze;
 
 
 /**
- * @brief Accepted answer and score of 40 or more.
+ * @brief Answered more than 30 days later as first answer scoring 2 or more.
  * @details Awarded multiple times.
  */
-class Guru extends Silver {
+class Resurrectionist extends Bronze {
 
 
   /**
    * @copydoc Badge::getName()
    */
   public function getName() {
-    return "Guru";
+    return "Risurrezionista";
   }
 
 
