@@ -28,7 +28,7 @@ abstract class Badge extends Storable {
 
   /*
    * @brief Creates an instance of the badge.
-   * @details This function is used internally
+   * @details This function is used internally.
    */
   public static function create(Activity $subject) {
     $obj = new static();
@@ -38,11 +38,24 @@ abstract class Badge extends Storable {
 
 
   /*
-   * @brief Returns the complete class name, including his namespace.
+   * @brief Returns the badge's name.
+   * @return string
    */
-  public static function getClass() {
-    return __CLASS__;
-  }
+  abstract public function getName();
+
+
+  /*
+   * @brief Returns a brief description of the badge.
+   * @return string
+   */
+  abstract public function getBrief();
+
+
+  /*
+   * @brief Returns a detailed description of the badge.
+   * @return string
+   */
+  abstract public function getDetails();
 
 
   /*
