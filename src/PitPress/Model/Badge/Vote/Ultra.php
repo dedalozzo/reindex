@@ -1,31 +1,31 @@
 <?php
 
 /**
- * @file Guru.php
- * @brief This file contains the Guru class.
+ * @file Ultra.php
+ * @brief This file contains the Ultra class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-namespace PitPress\Model\Badge\Answer;
+namespace PitPress\Model\Badge\Vote;
 
 
-use PitPress\Model\Badge\Silver;
+use PitPress\Model\Badge\Bronze;
 
 
 /**
- * @brief Accepted answer and score of 40 or more.
- * @details Awarded multiple times.
+ * @brief Used the maximum 50 votes in a day.
+ * @details Awarded once.
  */
-class Guru extends Silver {
+class Ultra extends Bronze {
 
 
   /**
    * @copydoc Badge::getName()
    */
   public function getName() {
-    return "Guru";
+    return "Ultrà";
   }
 
 

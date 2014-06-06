@@ -1,31 +1,31 @@
 <?php
 
 /**
- * @file Guru.php
- * @brief This file contains the Guru class.
+ * @file Commentator.php
+ * @brief This file contains the Commentator class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-namespace PitPress\Model\Badge\Answer;
+namespace PitPress\Model\Badge\Participation;
 
 
-use PitPress\Model\Badge\Silver;
+use PitPress\Model\Badge\Bronze;
 
 
 /**
- * @brief Accepted answer and score of 40 or more.
- * @details Awarded multiple times.
+ * @brief Wrote 10 comments.
+ * @details Awarded once.
  */
-class Guru extends Silver {
+class Commentator extends Bronze {
 
 
   /**
    * @copydoc Badge::getName()
    */
   public function getName() {
-    return "Guru";
+    return "Commentatore";
   }
 
 

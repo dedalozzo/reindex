@@ -1,31 +1,31 @@
 <?php
 
 /**
- * @file Guru.php
- * @brief This file contains the Guru class.
+ * @file Investor.php
+ * @brief This file contains the Investor class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-namespace PitPress\Model\Badge\Answer;
+namespace PitPress\Model\Badge\Bounty;
 
 
-use PitPress\Model\Badge\Silver;
+use PitPress\Model\Badge\Bronze;
 
 
 /**
- * @brief Accepted answer and score of 40 or more.
- * @details Awarded multiple times.
+ * @brief First bounty offered on another user's question.
+ * @details Awarded once.
  */
-class Guru extends Silver {
+class Investor extends Bronze {
 
 
   /**
    * @copydoc Badge::getName()
    */
   public function getName() {
-    return "Guru";
+    return "Investitore";
   }
 
 

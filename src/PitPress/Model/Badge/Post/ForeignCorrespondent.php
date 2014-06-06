@@ -1,31 +1,31 @@
 <?php
 
 /**
- * @file Guru.php
- * @brief This file contains the Guru class.
+ * @file ForeignCorrespondent.php
+ * @brief This file contains the ForeignCorrespondent class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-namespace PitPress\Model\Badge\Answer;
+namespace PitPress\Model\Badge\Post;
 
 
 use PitPress\Model\Badge\Silver;
 
 
 /**
- * @brief Accepted answer and score of 40 or more.
- * @details Awarded multiple times.
+ * @brief Reported 25 links in english.
+ * @details Awarded once.
  */
-class Guru extends Silver {
+class ForeignCorrespondent extends Silver {
 
 
   /**
    * @copydoc Badge::getName()
    */
   public function getName() {
-    return "Guru";
+    return "Illuminato";
   }
 
 
@@ -64,4 +64,4 @@ DESC;
 
   }
 
-} 
+}

@@ -1,31 +1,28 @@
 <?php
 
 /**
- * @file Guru.php
- * @brief This file contains the Guru class.
+ * @file Stellar.php
+ * @brief This file contains the Stellar class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-namespace PitPress\Model\Badge\Answer;
-
-
-use PitPress\Model\Badge\Silver;
+namespace PitPress\Model\Badge;
 
 
 /**
- * @brief Accepted answer and score of 40 or more.
+ * @brief Wrote a post starred by 50 users.
  * @details Awarded multiple times.
  */
-class Guru extends Silver {
+class Stellar extends Gold {
 
 
   /**
    * @copydoc Badge::getName()
    */
   public function getName() {
-    return "Guru";
+    return "Stellare";
   }
 
 

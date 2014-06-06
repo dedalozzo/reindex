@@ -1,31 +1,31 @@
 <?php
 
 /**
- * @file Guru.php
- * @brief This file contains the Guru class.
+ * @file Sportsmanship.php
+ * @brief This file contains the Sportsmanship class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-namespace PitPress\Model\Badge\Answer;
+namespace PitPress\Model\Badge\Vote;
 
 
 use PitPress\Model\Badge\Silver;
 
 
 /**
- * @brief Accepted answer and score of 40 or more.
- * @details Awarded multiple times.
+ * @brief Voted 100 answers on questions where an answer of yours has a positive score.
+ * @details Awarded once.
  */
-class Guru extends Silver {
+class Sportsmanship extends Silver {
 
 
   /**
    * @copydoc Badge::getName()
    */
   public function getName() {
-    return "Guru";
+    return "Sportivo";
   }
 
 

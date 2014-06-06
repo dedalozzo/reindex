@@ -1,31 +1,31 @@
 <?php
 
 /**
- * @file Guru.php
- * @brief This file contains the Guru class.
+ * @file GitHubber.php
+ * @brief This file contains the GitHubber class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-namespace PitPress\Model\Badge\Answer;
+namespace PitPress\Model\Badge\User;
 
 
-use PitPress\Model\Badge\Silver;
+use PitPress\Model\Badge\Bronze;
 
 
 /**
- * @brief Accepted answer and score of 40 or more.
+ * @brief The user has activated his profile.
  * @details Awarded multiple times.
  */
-class Guru extends Silver {
+class Active extends Bronze {
 
 
   /**
    * @copydoc Badge::getName()
    */
   public function getName() {
-    return "Guru";
+    return "Attivo";
   }
 
 
