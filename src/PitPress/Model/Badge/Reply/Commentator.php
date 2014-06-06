@@ -8,7 +8,7 @@
  */
 
 
-namespace PitPress\Model\Badge\Participation;
+namespace PitPress\Model\Badge\Reply;
 
 
 use PitPress\Model\Badge\Bronze;
