@@ -33,7 +33,7 @@ class KnowItAll extends Silver {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Fornito risposte con un punteggio di 15 in almeno la metà dei 40 tag più popolari .";
+    return "Fornito risposte con un punteggio di 15 in almeno la metà.";
   }
 
 

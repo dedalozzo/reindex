@@ -19,7 +19,7 @@ abstract class Bronze extends Badge {
 
   //! @copydoc Badge::getMetal()
   public function getMetal() {
-    return "silver";
+    return "bronze";
   }
 
 } 
