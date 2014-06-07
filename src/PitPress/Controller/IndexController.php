@@ -77,7 +77,6 @@ class IndexController extends ListController {
 
     $this->view->setVar('articles', $this->getNewestPostsPerType('newestPerType', 'article'));
     $this->view->setVar('books', $this->getNewestPostsPerType('newestPerType', 'book'));
-    $this->view->setVar('tutorials', $this->getNewestPostsPerType('newestPerType', 'tutorial'));
 
     $stat = new Stat();
     $this->view->setVar('entriesCount', $stat->getUpdatesCount());
