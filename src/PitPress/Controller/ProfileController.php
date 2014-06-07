@@ -25,8 +25,8 @@ use Phalcon\Mvc\View;
 class ProfileController extends ListController {
 
   // Stores the typology sub-menu definition.
-  protected static $typologySubMenu = ['guide', 'libri', 'articoli', 'domande', 'links', 'tutti'];
-  protected static $typologyCorrespondence = ['guide' => 'tutorial', 'libri' => 'book', 'articoli' => 'article', 'domande' => 'question', 'links' => 'link'];
+  protected static $typologySubMenu = ['libri', 'articoli', 'domande', 'links', 'tutti'];
+  protected static $typologyCorrespondence = ['libri' => 'book', 'articoli' => 'article', 'domande' => 'question', 'links' => 'link'];
 
 
   /**
