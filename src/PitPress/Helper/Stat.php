@@ -82,17 +82,6 @@ class Stat {
 
 
   /**
-   * @brief Gets the total number of tutorials.
-   */
-  public function getTutorialsCount() {
-    $opts = new ViewQueryOpts();
-    $opts->setStartKey(['tutorial'])->setEndKey(['tutorial', new \stdClass()]);
-    $count = $this->couch->queryView('posts', 'newestPerType', NULL, $opts)->getReducedValue();
-    return $this->formatNumber($count);
-  }
-
-
-  /**
    * @brief Gets the total number of links.
    */
   public function getLinksCount() {
