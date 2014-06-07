@@ -20,7 +20,6 @@ use PitPress\Model\Blog\Article;
 use PitPress\Model\Blog\Book;
 use PitPress\Model\Tag\Tag;
 use PitPress\Model\User\User;
-use PitPress\Model\Blog\Tutorial;
 use PitPress\Model\Reply;
 use PitPress\Model\Accessory\Star;
 use PitPress\Model\Accessory\Classification;
@@ -192,14 +191,16 @@ class ImportCommand extends AbstractCommand {
     mysqli_free_result($result);
 
     $progress->finish();
+
+    $this->mergeArticles();
   }
 
 
   /**
-   * @brief Imports tutorials.
+   * @brief Merge articles with multiple pages.
    */
-  private function importTutorials() {
-    $this->output->writeln("Importing tutorials...");
+  private function mergeArticles() {
+    $this->output->writeln("Merging article with multiple pages...");
 
     $sql = "SELECT correlationCode, title, UNIX_TIMESTAMP(date) AS unixTime, contributorName, id AS userId FROM Item WHERE (stereotype = ".self::ARTICLE.") GROUP BY correlationCode HAVING COUNT(correlationCode) > 1 ORDER BY date ASC";
     $sql .= $this->limit;
@@ -211,23 +212,23 @@ class ImportCommand extends AbstractCommand {
     $progress->start($this->output, $rows);
 
     while ($item = mysqli_fetch_object($result)) {
-      $tutorial = new Tutorial();
+      $article = new Article();
 
-      $tutorial->id = UUID::generate(UUID::UUID_RANDOM, UUID::FMT_STRING);
-      $tutorial->publishingDate = (int)$item->unixTime;
-      $tutorial->title = iconv('LATIN1', 'UTF-8', rtrim(stripslashes($item->title), '()/123456789 \t\n\r\0\x0B'));
+      $article->id = UUID::generate(UUID::UUID_RANDOM, UUID::FMT_STRING);
+      $article->publishingDate = (int)$item->unixTime;
+      $article->title = iconv('LATIN1', 'UTF-8', rtrim(stripslashes($item->title), '()/123456789 \t\n\r\0\x0B'));
 
       if (isset($item->userId)) {
-        $tutorial->userId = $item->userId;
-        $tutorial->username = NULL;
+        $article->userId = $item->userId;
+        $article->username = NULL;
       }
       elseif (!empty($item->contributorName)) {
-        $tutorial->userId = NULL;
-        $tutorial->username = iconv('LATIN1', 'UTF-8', stripslashes($item->contributorName));
+        $article->userId = NULL;
+        $article->username = iconv('LATIN1', 'UTF-8', stripslashes($item->contributorName));
       }
       else {
-        $tutorial->userId = NULL;
-        $tutorial->username = NULL;
+        $article->userId = NULL;
+        $article->username = NULL;
       }
 
       $sql = "SELECT id, UNIX_TIMESTAMP(date) AS unixTime, hitNum FROM Item WHERE correlationCode = '".$item->correlationCode."' ORDER BY date ASC";
@@ -235,11 +236,11 @@ class ImportCommand extends AbstractCommand {
       $related = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
 
       $i = 0;
-      while ($article = mysqli_fetch_object($related)) {
-        $tutorial->addPost($article->id, $i);
+      while ($page = mysqli_fetch_object($related)) {
+        $article->addPost($page->id, $i);
 
         // We update the total tutorial views.
-        $this->redis->hIncrBy($tutorial->id, 'hits', $article->hitNum);
+        $this->redis->hIncrBy($article->id, 'hits', $page->hitNum);
 
         $i++;
       }
@@ -247,11 +248,11 @@ class ImportCommand extends AbstractCommand {
       // We finally save the tutorial.
       try {
         //$this->couch->saveDoc($article);
-        $tutorial->save();
+        $article->save();
       }
       catch(\Exception $e) {
         $this->monolog->addCritical($e);
-        $this->monolog->addCritical(sprintf("Invalid JSON: %d - %s", $item->idItem, $tutorial->title));
+        $this->monolog->addCritical(sprintf("Invalid JSON: %d - %s", $item->idItem, $article->title));
       }
 
       $progress->advance();
@@ -582,7 +583,6 @@ class ImportCommand extends AbstractCommand {
     $this->importTags();
     $this->importClassifications();
     $this->importFavorites();
-    $this->importTutorials();
     $this->importSubscriptions();
     $this->importReplies();
   }
@@ -598,7 +598,7 @@ class ImportCommand extends AbstractCommand {
         InputArgument::IS_ARRAY | InputArgument::REQUIRED,
         "The entities you want import. Use 'all' if you want import all the entities, 'users' if you want just import the
         users or separate multiple entities with a space. The available entities are: users, articles, books, tags,
-        classifications, favorites, tutorials, subscriptions.");
+        classifications, favorites, subscriptions.");
     $this->addOption("limit",
         NULL,
         InputOption::VALUE_OPTIONAL,
@@ -655,10 +655,6 @@ class ImportCommand extends AbstractCommand {
 
           case 'favorites':
             $this->importFavorites();
-            break;
-
-          case 'tutorials':
-            $this->importTutorials();
             break;
 
           case 'subscriptions':
