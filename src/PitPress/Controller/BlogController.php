@@ -163,23 +163,6 @@ class BlogController extends ListController {
 
 
   /**
-   * @brief Displays the newest tutorials.
-   */
-  public function tutorialsAction($period) {
-    if (empty($period))
-      $period = 'sempre';
-
-    $this->view->setVar('subsectionMenu', Time::periods(3));
-    $this->view->setVar('subsectionIndex', Time::periodIndex($period));
-
-    $this->newestInPeriod('tutorial', $period);
-
-    $stat = new Stat();
-    $this->view->setVar('entriesCount', $stat->getTutorialsCount());
-  }
-
-
-  /**
    * @brief Displays the newest books.
    */
   public function booksAction($period) {
