@@ -33,7 +33,7 @@ class Autobiographer extends Bronze {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda; risposta accetatta con punteggio di 10.";
+    return "Primo a rispondere ad una domanda.";
   }
 
 
