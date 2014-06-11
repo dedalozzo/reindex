@@ -1,0 +1,6 @@
+pit remove article
+pit remove book
+pit remove subscription
+pit remove star
+pit remove classification
+pit remove reply
