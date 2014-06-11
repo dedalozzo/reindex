@@ -39,8 +39,6 @@ use ElephantOnCouch\Generator\UUID;
  * @todo: Save attachments.
  * @todo: Convert [center][/center] to Markdown.
  * @todo: Convert quotes.
- * @todo: Import questions.
- * @todo: Import answers.
  */
 class ImportCommand extends AbstractCommand {
 
@@ -69,308 +67,159 @@ class ImportCommand extends AbstractCommand {
 
 
   /**
-   * @brief Imports users.
+   * @brief Removes from the title the page number.
    */
-  private function importUsers() {
-    $this->output->writeln("Importing users...");
-
-    //$sql = "SELECT idMember, name AS firstName, surname AS lastName, nickName AS displayName, email, password, sex, birthDate AS birthday, ipAddress, confirmHash AS confirmationHash, confirmed AS authenticated, regDate AS creationDate, lastUpdate, avatarData, avatarType, realNamePcy FROM Member";
-    $sql = "SELECT id, name AS firstName, surname AS lastName, nickName AS displayName, email, password, sex, UNIX_TIMESTAMP(birthDate) AS birthday, ipAddress, confirmHash AS confirmationHash, confirmed, UNIX_TIMESTAMP(regDate) AS creationDate, lastUpdate, realNamePcy FROM Member";
-    $sql .= $this->limit;
-
-    $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
-
-    $rows = mysqli_num_rows($result);
-    $progress = $this->getApplication()->getHelperSet()->get('progress');
-    $progress->start($this->output, $rows);
-
-    while ($item = mysqli_fetch_object($result)) {
-      $user = new User();
-
-      $user->id = $item->id;
-      $user->firstName = iconv('LATIN1', 'UTF-8', stripslashes($item->firstName));
-      $user->lastName = iconv('LATIN1', 'UTF-8', stripslashes($item->lastName));
-      $user->displayName = iconv('LATIN1', 'UTF-8', stripslashes($item->displayName));
-      $user->email = iconv('LATIN1', 'UTF-8', $item->email);
-      $user->password = iconv('LATIN1', 'UTF-8', $item->password);
-      $user->birthday = (int)$item->birthday;
-      $user->sex = $item->sex;
-      $user->internetProtocolAddress = iconv('LATIN1', 'UTF-8', $item->ipAddress);
-      $user->creationDate = (int)$item->creationDate;
-      $user->confirmationHash = iconv('LATIN1', 'UTF-8', $item->confirmationHash);
-
-      if ($item->confirmed == 1)
-        $user->confirm();
-
-      $this->couch->saveDoc($user);
-
-      $progress->advance();
-    }
-
-    mysqli_free_result($result);
-
-    $progress->finish();
+  private function purgeTitle($title) {
+    return Text::convertCharset(rtrim(preg_replace('%\(\d*/\d*\)%iu', '', stripslashes($title)), '\t\n\r\0\x0B'));
   }
 
 
   /**
-   * @brief Imports articles.
+   * @brief Get everything after the `: ` sequence of characters.
    */
-  private function importArticles() {
-    $this->output->writeln("Importing articles...");
-
-    $sql = "SELECT idItem, I.id AS id, M.id AS userId, contributorName, I.title, body, UNIX_TIMESTAMP(date) AS unixTime, hitNum, downloadNum, locked FROM Item I LEFT OUTER JOIN Member M USING (idMember) WHERE (stereotype = ".self::ARTICLE.") ORDER BY date DESC";
-    $sql .= $this->limit;
-
-    $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
-
-    $rows = mysqli_num_rows($result);
-    $progress = $this->getApplication()->getHelperSet()->get('progress');
-    $progress->start($this->output, $rows);
-
-    while ($item = mysqli_fetch_object($result)) {
-      $article = new Article();
-
-      $article->id = $item->id;
-      $article->publishingDate = (int)$item->unixTime;
-      $article->title = iconv('LATIN1', 'UTF-8', stripslashes($item->title));
-
-      if (isset($item->userId)) {
-        $article->userId = $item->userId;
-        $article->username = NULL;
-      }
-      elseif (!empty($item->contributorName)) {
-        $article->userId = NULL;
-        $article->username = iconv('LATIN1', 'UTF-8', stripslashes($item->contributorName));
-      }
-      else {
-        $article->userId = NULL;
-        $article->username = NULL;
-      }
-
-      $article->body = iconv('LATIN1', 'UTF-8', stripslashes($item->body));
-
-      // Converts from HTML to BBCode!
-      $converter = new HTMLConverter($article->body, $item->id);
-      $article->body = $converter->toBBCode();
-
-      // Converts from BBCode to Markdown!
-      $converter = new BBCodeConverter($article->body, $item->id);
-      $article->body = $converter->toMarkdown();
-
-      try {
-        $article->html = $this->markdown->parse($article->body);
-      }
-      catch(\Exception $e) {
-        $this->monolog->addCritical(sprintf(" %d - %s", $item->idItem, $article->title));
-      }
-
-      $purged = Text::purge($article->html);
-      $article->excerpt = Text::truncate($purged);
-
-      // We finally save the article.
-      try {
-        //$this->couch->saveDoc($article);
-        $article->save();
-      }
-      catch(\Exception $e) {
-        $this->monolog->addCritical($e);
-        $this->monolog->addCritical(sprintf("Invalid JSON: %d - %s", $item->idItem, $article->title));
-      }
-
-      // We update the article views.
-      $this->redis->hSet($article->id, 'hits', $item->hitNum);
-
-      // We update the article downloads.
-      if ($item->downloadNum > 0)
-        $this->redis->hSet($article->id, 'downloads', $item->downloadNum);
-
-      $progress->advance();
-    }
-
-    mysqli_free_result($result);
-
-    $progress->finish();
-
-    $this->mergeArticles();
+  private function getSubtitle($title) {
+    if (preg_match('/: (.*)/iu', $title, $matches))
+      return rtrim($matches[1]);
+    else
+      return "";
   }
 
 
   /**
-   * @brief Merge articles with multiple pages.
+   * @brief Converts the text to utf8, then bbcode and finally markdown.
+   * @param[in] string $text The text to convert.
+   * @param[in] integer $id An identifier to be used in case an error occurs.
+   * @return string The converted text.
    */
-  private function mergeArticles() {
-    $this->output->writeln("Merging article with multiple pages...");
-
-    $sql = "SELECT correlationCode, title, UNIX_TIMESTAMP(date) AS unixTime, contributorName, id AS userId FROM Item WHERE (stereotype = ".self::ARTICLE.") GROUP BY correlationCode HAVING COUNT(correlationCode) > 1 ORDER BY date ASC";
-    $sql .= $this->limit;
-
-    $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
-
-    $rows = mysqli_num_rows($result);
-    $progress = $this->getApplication()->getHelperSet()->get('progress');
-    $progress->start($this->output, $rows);
-
-    while ($item = mysqli_fetch_object($result)) {
-      $article = new Article();
-
-      $article->id = UUID::generate(UUID::UUID_RANDOM, UUID::FMT_STRING);
-      $article->publishingDate = (int)$item->unixTime;
-      $article->title = iconv('LATIN1', 'UTF-8', rtrim(stripslashes($item->title), '()/123456789 \t\n\r\0\x0B'));
-
-      if (isset($item->userId)) {
-        $article->userId = $item->userId;
-        $article->username = NULL;
-      }
-      elseif (!empty($item->contributorName)) {
-        $article->userId = NULL;
-        $article->username = iconv('LATIN1', 'UTF-8', stripslashes($item->contributorName));
-      }
-      else {
-        $article->userId = NULL;
-        $article->username = NULL;
-      }
-
-      $sql = "SELECT id, UNIX_TIMESTAMP(date) AS unixTime, hitNum FROM Item WHERE correlationCode = '".$item->correlationCode."' ORDER BY date ASC";
-
-      $related = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
-
-      $i = 0;
-      while ($page = mysqli_fetch_object($related)) {
-        $article->addPost($page->id, $i);
-
-        // We update the total tutorial views.
-        $this->redis->hIncrBy($article->id, 'hits', $page->hitNum);
-
-        $i++;
-      }
-
-      // We finally save the tutorial.
-      try {
-        //$this->couch->saveDoc($article);
-        $article->save();
-      }
-      catch(\Exception $e) {
-        $this->monolog->addCritical($e);
-        $this->monolog->addCritical(sprintf("Invalid JSON: %d - %s", $item->idItem, $article->title));
-      }
-
-      $progress->advance();
-    }
-
-    mysqli_free_result($result);
-
-    $progress->finish();
+  private function convertText($text, $id) {
+    $utf8 = Text::convertCharset($text);
+    $bbcode = Text::htmlToBBCode($utf8, $id);
+    return Text::bbcodeToMarkdown($bbcode, $id);
   }
 
 
-  /**
-   * @brief Imports books.
-   */
-  private function importBooks() {
-    $this->output->writeln("Importing books...");
-
-    $sql = "SELECT idItem, I.id AS id, M.id AS userId, contributorName, I.title, body, UNIX_TIMESTAMP(date) AS unixTime, hitNum, locked FROM Item I LEFT OUTER JOIN Member M USING (idMember) WHERE (stereotype = ".self::BOOK.") ORDER BY date DESC";
-    $sql .= $this->limit;
-
-    $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
-
-    $rows = mysqli_num_rows($result);
-    $progress = $this->getApplication()->getHelperSet()->get('progress');
-    $progress->start($this->output, $rows);
-
-    while ($item = mysqli_fetch_object($result)) {
-      $book = new Book();
-
-      $book->id = $item->id;
-      $book->publishingDate = (int)$item->unixTime;
-      $book->title = iconv('LATIN1', 'UTF-8', stripslashes($item->title));
-
-      if (!is_null($item->userId)) {
-        $book->userId = $item->userId;
-        $book->username = NULL;
-      }
-      elseif (!empty($item->contributorName)) {
-        $book->userId = NULL;
-        $book->username = iconv('LATIN1', 'UTF-8', stripslashes($item->contributorName));
-      }
-      else {
-        $book->userId = NULL;
-        $book->username = NULL;
-      }
-
-      $item->body = stripslashes($item->body);
-
-      if (preg_match('/\\[isbn\\](.*?)\\[\/isbn\\]/s', $item->body, $matches))
-        $book->isbn = iconv('LATIN1', 'UTF-8', $matches[1]);
-      if (preg_match('/\\[authors\\](.*?)\\[\/authors\\]/s', $item->body, $matches))
-        $book->authors = iconv('LATIN1', 'UTF-8', $matches[1]);
-      if (preg_match('/\\[publisher\\](.*?)\\[\/publisher\\]/s', $item->body, $matches))
-        $book->publisher = iconv('LATIN1', 'UTF-8', $matches[1]);
-      if (preg_match('/\\[language\\](.*?)\\[\/language\\]/s', $item->body, $matches))
-        $book->language = iconv('LATIN1', 'UTF-8', $matches[1]);
-      if (preg_match('/\\[year\\](.*?)\\[\/year\\]/s', $item->body, $matches))
-        $book->year = $matches[1];
-      if (preg_match('/\\[pages\\](.*?)\\[\/pages\\]/s', $item->body, $matches))
-        $book->pages = $matches[1];
-      if (preg_match('/\\[attachments\\](.*?)\\[\/attachments\\]/s', $item->body, $matches) && !empty($matches[1]))
-        $book->attachments = iconv('LATIN1', 'UTF-8', $matches[1]);
-      if (preg_match('/\\[review\\](.*?)\\[\/review\\]/s', $item->body, $matches))
-        $review = iconv('LATIN1', 'UTF-8', $matches[1]);
-      if (preg_match('/\\[positive\\](.*?)\\[\/positive\\]/s', $item->body, $matches))
-        $positive = iconv('LATIN1', 'UTF-8', $matches[1]);
-      if (preg_match('/\\[negative\\](.*?)\\[\/negative\\]/s', $item->body, $matches))
-        $negative = iconv('LATIN1', 'UTF-8', $matches[1]);
-
-      if (preg_match('/\\[vendorLink\\](.*?)\\[\/vendorLink\\]/s', $item->body, $matches) && !empty($matches[1]))
-        $book->link = iconv('LATIN1', 'UTF-8', $matches[1]);
+  private function importRelated($postId) {
+    $this->importClassifications($postId);
+    $this->importReplies($postId);
+    $this->importFavorites($postId);
+    $this->importSubscriptions($postId);
+  }
 
 
-      // Converts from BBCode to Markdown!
-      $converter = new BBCodeConverter($review, $item->id);
-      $book->body = $converter->toMarkdown();
+  private function processArticle($item) {
+    $article = new Article();
 
-      try {
-        $book->html = $this->markdown->parse($book->body);
-      }
-      catch(\Exception $e) {
-        $this->monolog->addCritical(sprintf(" %d - %s", $item->idItem, $book->title));
-      }
+    $article->id = $item->id;
+    $article->publishingDate = (int)$item->unixTime;
+    $article->title = Text::convertCharset($item->title, TRUE);
 
-      $purged = Text::purge($book->html);
-      $book->excerpt = Text::truncate($purged);
+    if (isset($item->userId))
+      $article->userId = $item->userId;
 
-      $converter = new BBCodeConverter($positive, $item->id);
-      $book->positive = $converter->toMarkdown();
+    $article->body = $this->convertText($item->body, $item->idItem);
 
-      $converter = new BBCodeConverter($negative, $item->id);
-      $book->negative = $converter->toMarkdown();
-
-      // We finally save the book.
-      try {
-        //$this->couch->saveDoc($book);
-        $book->save();
-      }
-      catch(\Exception $e) {
-        $this->monolog->addCritical(sprintf("Invalid JSON: %d - %s", $item->idItem, $book->title));
-      }
-
-      // We update the book views.
-      $this->redis->hSet($book->id, 'hits', $item->hitNum);
-
-      $progress->advance();
+    try {
+      $article->html = $this->markdown->parse($article->body);
+    }
+    catch(\Exception $e) {
+      $this->monolog->addCritical(sprintf(" %d - %s", $item->idItem, $article->title));
     }
 
-    mysqli_free_result($result);
+    $purged = Text::purge($article->html);
+    $article->excerpt = Text::truncate($purged);
 
-    $progress->finish();
+    // We finally save the article.
+    try {
+      //$this->couch->saveDoc($article);
+      $article->save();
+    }
+    catch(\Exception $e) {
+      $this->monolog->addCritical($e);
+      $this->monolog->addCritical(sprintf("Invalid JSON: %d - %s", $item->idItem, $article->title));
+    }
+
+    // We update the article views.
+    $this->redis->hSet($article->id, 'hits', $item->hitNum);
+
+    // We update the article downloads.
+    if ($item->downloadNum > 0)
+      $this->redis->hSet($article->id, 'downloads', $item->downloadNum);
+
+    $this->importRelated($article->id);
+  }
+
+
+  private function processBook($item) {
+    $book = new Book();
+
+    $book->id = $item->id;
+    $book->publishingDate = (int)$item->unixTime;
+    $book->title = Text::convertCharset($item->title, TRUE);
+
+    if (isset($item->userId))
+      $book->userId = $item->userId;
+
+    $body = stripslashes($item->body);
+
+    if (preg_match('/\\[isbn\\](.*?)\\[\/isbn\\]/s', $body, $matches))
+      $book->isbn = Text::convertCharset($matches[1]);
+    if (preg_match('/\\[authors\\](.*?)\\[\/authors\\]/s', $body, $matches))
+      $book->authors = Text::convertCharset($matches[1]);
+    if (preg_match('/\\[publisher\\](.*?)\\[\/publisher\\]/s', $body, $matches))
+      $book->publisher = Text::convertCharset($matches[1]);
+    if (preg_match('/\\[language\\](.*?)\\[\/language\\]/s', $body, $matches))
+      $book->language = Text::convertCharset($matches[1]);
+    if (preg_match('/\\[year\\](.*?)\\[\/year\\]/s', $body, $matches))
+      $book->year = $matches[1];
+    if (preg_match('/\\[pages\\](.*?)\\[\/pages\\]/s', $body, $matches))
+      $book->pages = $matches[1];
+    if (preg_match('/\\[attachments\\](.*?)\\[\/attachments\\]/s', $body, $matches) && !empty($matches[1]))
+      $book->attachments = Text::convertCharset($matches[1]);
+    if (preg_match('/\\[review\\](.*?)\\[\/review\\]/s', $body, $matches))
+      $review = Text::convertCharset($matches[1]);
+    if (preg_match('/\\[positive\\](.*?)\\[\/positive\\]/s', $body, $matches))
+      $positive = Text::convertCharset($matches[1]);
+    if (preg_match('/\\[negative\\](.*?)\\[\/negative\\]/s', $body, $matches))
+      $negative = Text::convertCharset($matches[1]);
+
+    if (preg_match('/\\[vendorLink\\](.*?)\\[\/vendorLink\\]/s', $body, $matches) && !empty($matches[1]))
+      $book->link = Text::convertCharset($matches[1]);
+
+    $book->body = Text::bbcodeToMarkdown($review, $item->id);
+
+    try {
+      $book->html = $this->markdown->parse($book->body);
+    }
+    catch(\Exception $e) {
+      $this->monolog->addCritical(sprintf(" %d - %s", $item->idItem, $book->title));
+    }
+
+    $purged = Text::purge($book->html);
+    $book->excerpt = Text::truncate($purged);
+
+    $book->positive = Text::bbcodeToMarkdown($positive, $item->id);
+    $book->negative = Text::bbcodeToMarkdown($negative, $item->id);
+
+    // We finally save the book.
+    try {
+      //$this->couch->saveDoc($book);
+      $book->save();
+    }
+    catch(\Exception $e) {
+      $this->monolog->addCritical(sprintf("Invalid JSON: %d - %s", $item->idItem, $book->title));
+    }
+
+    // We update the book views.
+    $this->redis->hSet($book->id, 'hits', $item->hitNum);
+
+    $this->importRelated($book->id);
   }
 
 
   /**
    * @brief Imports tags.
    */
-  private function importTags() {
+  protected function importTags() {
     $this->output->writeln("Importing tags...");
 
     $sql = "SELECT id FROM Member WHERE idMember = 1";
@@ -392,7 +241,7 @@ class ImportCommand extends AbstractCommand {
 
       $tag->id = $item->id;
       $tag->publishingDate = (int)$item->unixTime;
-      $tag->name = iconv('LATIN1', 'UTF-8', strtolower(str_replace(" ", "-", stripslashes($item->name))));
+      $tag->name = Text::convertCharset(strtolower(str_replace(" ", "-", stripslashes($item->name))));
       $tag->userId = $userId;
 
       $this->couch->saveDoc($tag);
@@ -409,17 +258,10 @@ class ImportCommand extends AbstractCommand {
   /**
    * @brief Imports classifications.
    */
-  private function importClassifications() {
-    $this->output->writeln("Importing classifications...");
-
-    $sql = "SELECT I.id AS itemId, C.id AS tagId, I.stereotype AS stereotype, UNIX_TIMESTAMP(I.date) AS unixTime FROM Item I, Category C, ItemsXCategory X WHERE I.idItem = X.idItem AND C.idCategory = X.idCategory AND (I.stereotype = 2 OR I.stereotype = 11)";
-    $sql .= $this->limit;
+  protected function importClassifications($postId) {
+    $sql = "SELECT I.id AS postId, C.id AS tagId, I.stereotype AS stereotype, UNIX_TIMESTAMP(I.date) AS unixTime FROM Item I, Category C, ItemsXCategory X WHERE I.idItem = X.idItem AND C.idCategory = X.idCategory AND I.id = '".$postId."'";
 
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
-
-    $rows = mysqli_num_rows($result);
-    $progress = $this->getApplication()->getHelperSet()->get('progress');
-    $progress->start($this->output, $rows);
 
     while ($item = mysqli_fetch_object($result)) {
 
@@ -428,38 +270,27 @@ class ImportCommand extends AbstractCommand {
       else
         $postType = 'book';
 
-      $doc = Classification::create($item->itemId, $postType, 'blog', $item->tagId, (int)$item->unixTime);
+      $doc = Classification::create($item->postId, $postType, 'blog', $item->tagId, (int)$item->unixTime);
 
       $this->couch->saveDoc($doc);
-
-      $progress->advance();
     }
 
     mysqli_free_result($result);
-
-    $progress->finish();
   }
 
 
   /**
-   * @brief Imports favourites.
+   * @brief Imports favorites.
    */
-  private function importFavorites() {
-    $this->output->writeln("Importing favorites...");
-
-    $sql = "SELECT I.id AS itemId, I.stereotype, M.id AS userId, UNIX_TIMESTAMP(F.date) as timestamp FROM Item I, Member M, Favourite F WHERE I.idItem = F.idItem AND M.idMember = F.idMember AND (I.stereotype = 2 OR I.stereotype = 11) ";
-    $sql .= $this->limit;
+  protected function importFavorites($postId) {
+    $sql = "SELECT I.id AS itemId, I.stereotype as stereotype, M.id AS userId, UNIX_TIMESTAMP(F.date) AS timestamp FROM Item I, Member M, Favourite F WHERE I.idItem = F.idItem AND M.idMember = F.idMember AND I.id = '".$postId."'";
 
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
-
-    $rows = mysqli_num_rows($result);
-    $progress = $this->getApplication()->getHelperSet()->get('progress');
-    $progress->start($this->output, $rows);
 
     while ($item = mysqli_fetch_object($result)) {
       $timestamp = (int)$item->timestamp;
 
-      if ($item->stereotype == 2)
+      if ($item->stereotype == self::ARTICLE)
         $itemType = 'article';
       else
         $itemType = 'book';
@@ -470,30 +301,19 @@ class ImportCommand extends AbstractCommand {
         $doc = Star::create($item->userId, $item->itemId, $itemType);
 
       $this->couch->saveDoc($doc);
-
-      $progress->advance();
     }
 
     mysqli_free_result($result);
-
-    $progress->finish();
   }
 
 
   /**
    * @brief Imports subscriptions.
    */
-  private function importSubscriptions() {
-    $this->output->writeln("Importing subscriptions...");
-
-    $sql = "SELECT I.id AS itemId, M.id AS userId, UNIX_TIMESTAMP(T.creationTime) as timestamp FROM Item I, Member M, Thread T WHERE I.idItem = T.idItem AND M.idMember = T.idMember";
-    $sql .= $this->limit;
+  protected function importSubscriptions($postId) {
+    $sql = "SELECT I.id AS itemId, M.id AS userId, UNIX_TIMESTAMP(T.creationTime) AS timestamp FROM Item I, Member M, Thread T WHERE I.idItem = T.idItem AND M.idMember = T.idMember AND I.id = '".$postId."'";
 
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
-
-    $rows = mysqli_num_rows($result);
-    $progress = $this->getApplication()->getHelperSet()->get('progress');
-    $progress->start($this->output, $rows);
 
     while ($item = mysqli_fetch_object($result)) {
       $timestamp = (int)$item->timestamp;
@@ -504,6 +324,193 @@ class ImportCommand extends AbstractCommand {
         $doc = Subscription::create($item->itemId, $item->userId);
 
       $this->couch->saveDoc($doc);
+    }
+
+    mysqli_free_result($result);
+  }
+
+
+  /**
+   * @brief Imports comments.
+   */
+  protected function importReplies($postId) {
+    $sql = "SELECT C.idComment, I.id AS postId, M.id AS userId, UNIX_TIMESTAMP(C.date) AS unixTime, C.body FROM Comment C, Item I, Member M WHERE C.idItem = I.idItem AND C.idMember = M.idMember AND I.id = '".$postId."' ORDER BY C.date DESC, idComment DESC";
+
+    $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
+
+    while ($item = mysqli_fetch_object($result)) {
+      try {
+        $replay = new Reply();
+
+        $replay->id = UUID::generate(UUID::UUID_RANDOM, UUID::FMT_STRING);
+        $replay->publishingDate = (int)$item->unixTime;
+        $replay->postId = $item->postId;
+        $replay->userId = $item->userId;
+
+        $utf8 = Text::convertCharset($item->body, TRUE);
+        $bbcode = Text::htmlToBBCode($utf8, $item->idComment);
+        $replay->body = Text::bbcodeToMarkdown($bbcode, $item->idComment);
+
+        $replay->html = $this->markdown->parse($replay->body);
+      }
+      catch(\Exception $e) {
+        $this->monolog->addCritical(sprintf(" Commento %d - Item %d", $item->idComment, $item->postId));
+      }
+
+      // We finally save the comment.
+      try {
+          //$this->couch->saveDoc($article);
+          $replay->save();
+      }
+      catch(\Exception $e) {
+        $this->monolog->addCritical($e);
+        $this->monolog->addCritical(sprintf("Invalid JSON: %d", $item->idComment));
+      }
+    }
+
+    mysqli_free_result($result);
+  }
+
+
+  private function mergeArticles($correlationCode) {
+    $article = new Article();
+
+    // To avoid a stupid notice.
+    $article->body = "";
+
+    $sql = "SELECT idItem, I.id AS id, M.id AS userId, contributorName, I.title, I.body, UNIX_TIMESTAMP(date) AS unixTime, hitNum, downloadNum, locked FROM Item I LEFT OUTER JOIN Member M USING (idMember) WHERE correlationCode = '".$correlationCode."' ORDER BY date ASC, idItem ASC";
+
+    $pages = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
+
+    $paragraphTitle = "";
+    $importedArticles = [];
+    while ($page = mysqli_fetch_object($pages)) {
+      $pageBody = $this->convertText($page->body, $page->idItem);
+      $title = $this->purgeTitle($page->title);
+      $subtitle = $this->getSubtitle($title);
+
+      if ($page->id == 'fae33062-6cbf-448f-a601-11a549428f4a') {
+        $this->monolog->addNotice("PRIMA DELLA TRASFORMAZIONE");
+        $this->monolog->addNotice(sprintf("%s", $page->body));
+        $this->monolog->addNotice("DOPO LA TRASFORMAZIONE");
+        $this->monolog->addNotice(sprintf("%s", $pageBody));
+      }
+
+      if (empty($article->body)) {
+        $article->id = $page->id;
+        $article->publishingDate = (int)$page->unixTime;
+
+        if (isset($page->userId))
+          $article->userId = $page->userId;
+
+        if (!empty($subtitle))
+          $article->title = rtrim(strstr($title, $subtitle, TRUE), ": \t\n\r\0\x0B");
+        else
+          $article->title = $title;
+
+        $this->redis->hSet($article->id, 'hits', $page->hitNum);
+
+        $this->importRelated($page->id);
+      }
+      else {
+        $article->body .= PHP_EOL.PHP_EOL;
+
+        $this->redis->hIncrBy($article->id, 'hits', $page->hitNum);
+      }
+
+      if (!empty($subtitle) && $subtitle != $paragraphTitle) {
+        $article->body .= Text::capitalize($subtitle).PHP_EOL;
+        $article->body .= str_repeat("-", mb_strlen($subtitle)).PHP_EOL.PHP_EOL;
+      }
+
+      $article->body .= $pageBody;
+
+      $paragraphTitle = $subtitle;
+      $importedArticles[$page->id] = NULL;
+    }
+
+    try {
+      $article->html = $this->markdown->parse($article->body);
+    }
+    catch(\Exception $e) {
+      $this->monolog->addCritical(sprintf(" %d - %s", $page->idItem, $article->title));
+    }
+
+    // We finally save the article.
+    try {
+      $purged = Text::purge($article->html);
+      $article->excerpt = Text::truncate($purged);
+
+      //$this->couch->saveDoc($article);
+      $article->save();
+    }
+    catch(\Exception $e) {
+      $this->monolog->addCritical($e);
+      $this->monolog->addCritical(sprintf("Invalid JSON: %d - %s", $page->idItem, $article->title));
+    }
+
+    return $importedArticles;
+  }
+
+
+  /**
+   * @brief Imports multi-page articles.
+   */
+  protected function importMultiPageArticles() {
+    $this->output->writeln("Importing multi-page articles...");
+
+    $sql = "SELECT correlationCode FROM Item WHERE (stereotype = ".self::ARTICLE.") GROUP BY correlationCode HAVING COUNT(correlationCode) > 1 ORDER BY date ASC, idItem ASC";
+    $sql .= $this->limit;
+
+    $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
+
+    $rows = mysqli_num_rows($result);
+    $progress = $this->getApplication()->getHelperSet()->get('progress');
+    $progress->start($this->output, $rows);
+
+    $imported = [];
+    while ($correlationCode = mysqli_fetch_assoc($result)['correlationCode']) {
+      $imported = $imported + $this->mergeArticles($correlationCode);
+
+      $progress->advance();
+    }
+
+    mysqli_free_result($result);
+
+    $progress->finish();
+
+    return $imported;
+  }
+
+
+  /**
+   * @brief Imports items (articles and books).
+   */
+  protected function importItems() {
+    $importedItems = $this->importMultiPageArticles();
+
+    $this->output->writeln("Importing single-page articles and books...");
+
+    $sql = "SELECT I.stereotype, idItem, I.id AS id, M.id AS userId, contributorName, I.title, body, UNIX_TIMESTAMP(date) AS unixTime, hitNum, downloadNum, locked FROM Item I LEFT OUTER JOIN Member M USING (idMember) WHERE (stereotype = 2) OR (stereotype = 11) ORDER BY unixTime ASC, idItem ASC";
+    $sql .= $this->limit;
+
+    $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
+
+    $rows = mysqli_num_rows($result);
+    $progress = $this->getApplication()->getHelperSet()->get('progress');
+    $progress->start($this->output, $rows);
+
+    while ($item = mysqli_fetch_object($result)) {
+      // Checks if the article has already been imported.
+      if (array_key_exists($item->id, $importedItems)) {
+        $progress->advance();
+        continue;
+      }
+
+      if ($item->stereotype == self::ARTICLE)
+        $this->processArticle($item);
+      else
+        $this->processBook($item);
 
       $progress->advance();
     }
@@ -515,12 +522,13 @@ class ImportCommand extends AbstractCommand {
 
 
   /**
-   * @brief Imports comments.
+   * @brief Imports users.
    */
-  private function importReplies() {
-    $this->output->writeln("Importing comments...");
+  protected function importUsers() {
+    $this->output->writeln("Importing users...");
 
-    $sql = "SELECT C.idComment AS id, I.id AS postId, M.id AS userId, UNIX_TIMESTAMP(C.date) AS unixTime, C.body FROM Comment C, Item I, Member M WHERE C.idItem = I.idItem AND C.idMember = M.idMember ORDER BY C.date DESC";
+    //$sql = "SELECT idMember, name AS firstName, surname AS lastName, nickName AS displayName, email, password, sex, birthDate AS birthday, ipAddress, confirmHash AS confirmationHash, confirmed AS authenticated, regDate AS creationDate, lastUpdate, avatarData, avatarType, realNamePcy FROM Member";
+    $sql = "SELECT id, name AS firstName, surname AS lastName, nickName AS displayName, email, password, sex, UNIX_TIMESTAMP(birthDate) AS birthday, ipAddress, confirmHash AS confirmationHash, confirmed, UNIX_TIMESTAMP(regDate) AS creationDate, lastUpdate, realNamePcy FROM Member";
     $sql .= $this->limit;
 
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
@@ -530,39 +538,24 @@ class ImportCommand extends AbstractCommand {
     $progress->start($this->output, $rows);
 
     while ($item = mysqli_fetch_object($result)) {
-      $comment = new Reply();
+      $user = new User();
 
-      $comment->id = UUID::generate(UUID::UUID_RANDOM, UUID::FMT_STRING);
-      $comment->publishingDate = (int)$item->unixTime;
-      $comment->postId = $item->postId;
-      $comment->userId = $item->userId;
+      $user->id = $item->id;
+      $user->firstName = Text::convertCharset($item->firstName, TRUE);
+      $user->lastName = Text::convertCharset($item->lastName, TRUE);
+      $user->displayName = Text::convertCharset($item->displayName, TRUE);
+      $user->email = Text::convertCharset($item->email);
+      $user->password = Text::convertCharset($item->password);
+      $user->birthday = (int)$item->birthday;
+      $user->sex = $item->sex;
+      $user->internetProtocolAddress = Text::convertCharset($item->ipAddress);
+      $user->creationDate = (int)$item->creationDate;
+      $user->confirmationHash = Text::convertCharset($item->confirmationHash);
 
-      $comment->body = iconv('LATIN1', 'UTF-8', stripslashes($item->body));
+      if ($item->confirmed == 1)
+        $user->confirm();
 
-      // Converts from HTML to BBCode!
-      $converter = new HTMLConverter($comment->body, $item->id);
-      $comment->body = $converter->toBBCode();
-
-      // Converts from BBCode to Markdown!
-      $converter = new BBCodeConverter($comment->body, $item->id);
-      $comment->body = $converter->toMarkdown();
-
-      try {
-        $comment->html = $this->markdown->parse($comment->body);
-      }
-      catch(\Exception $e) {
-        $this->monolog->addCritical(sprintf(" Commento %d - Item %d", $item->id, $item->postId));
-      }
-
-      // We finally save the comment.
-      try {
-        //$this->couch->saveDoc($article);
-        $comment->save();
-      }
-      catch(\Exception $e) {
-        $this->monolog->addCritical($e);
-        $this->monolog->addCritical(sprintf("Invalid JSON: %d", $item->id));
-      }
+      $this->couch->saveDoc($user);
 
       $progress->advance();
     }
@@ -578,13 +571,8 @@ class ImportCommand extends AbstractCommand {
    */
   private function importAll() {
     $this->importUsers();
-    $this->importArticles();
-    $this->importBooks();
     $this->importTags();
-    $this->importClassifications();
-    $this->importFavorites();
-    $this->importSubscriptions();
-    $this->importReplies();
+    $this->importItems();
   }
 
 
@@ -597,8 +585,7 @@ class ImportCommand extends AbstractCommand {
     $this->addArgument("entities",
         InputArgument::IS_ARRAY | InputArgument::REQUIRED,
         "The entities you want import. Use 'all' if you want import all the entities, 'users' if you want just import the
-        users or separate multiple entities with a space. The available entities are: users, articles, books, tags,
-        classifications, favorites, subscriptions.");
+        users or separate multiple entities with a space. The available entities are: users, tags, items.");
     $this->addOption("limit",
         NULL,
         InputOption::VALUE_OPTIONAL,
@@ -621,13 +608,13 @@ class ImportCommand extends AbstractCommand {
     $entities = $input->getArgument('entities');
     $limit = (int)$input->getOption('limit');
 
-    if ($limit > 0)
+    // Checks if the argument 'all' is provided.
+    $index = array_search("all", $entities);
+
+    if ($limit > 0 && $index === FALSE)
       $this->limit = " LIMIT ".(string)$limit;
     else
       $this->limit = "";
-
-    // Checks if the argument 'all' is provided.
-    $index = array_search("all", $entities);
 
     if ($index === FALSE) {
 
@@ -637,32 +624,12 @@ class ImportCommand extends AbstractCommand {
             $this->importUsers();
             break;
 
-          case 'articles':
-            $this->importArticles();
-            break;
-
-          case 'books':
-            $this->importBooks();
-            break;
-
           case 'tags':
             $this->importTags();
             break;
 
-          case 'classifications':
-            $this->importClassifications();
-            break;
-
-          case 'favorites':
-            $this->importFavorites();
-            break;
-
-          case 'subscriptions':
-            $this->importSubscriptions();
-            break;
-
-          case 'replies':
-            $this->importReplies();
+          case 'items':
+            $this->importItems();
             break;
         }
 
