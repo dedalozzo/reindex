@@ -1,7 +1,6 @@
 {% set sectionLabel = 'PUBBLICAZIONI' %}
 {% set sectionMenu = [
   ['name': 'books', 'path': '/libri/', 'label': 'LIBRI', 'title': 'Libri'],
-  ['name': 'tutorials', 'path': '/guide/', 'label': 'GUIDE', 'title': 'Guide'],
   ['name': 'articles', 'path': '/articoli/', 'label': 'ARTICOLI', 'title': 'Articoli'],
   ['name': 'interesting', 'path': '/pubblicazioni/interessanti/', 'label': 'INTERESSANTI', 'title': 'Pubblicazioni interessanti'],
   ['name': 'updated', 'path': '/pubblicazioni/aggiornate/', 'label': 'AGGIORNATE', 'title': 'Pubblicazioni modificate di recente'],
