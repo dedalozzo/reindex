@@ -33,6 +33,7 @@ class InitCommand extends AbstractCommand {
    * @brief Insert all design documents.
    */
   private function initAll() {
+    $this->initDocs();
     $this->initPosts();
     $this->initTags();
     $this->initVotes();
