@@ -2,6 +2,7 @@
 {% set userUrl = usersBaseUrl~doc.userId %}
 {% set hitsCount = doc.getHitsCount() %}
 {% set repliesCount = doc.getRepliesCount() %}
+{% set postType = doc.type %}
 {% if currentUser is defined %}
   {% set liked = doc.didUserVote(currentUser) %}
 {% else %}
@@ -9,16 +10,17 @@
 {% endif %}
 {% set score = doc.getScore() %}
 
-{% if doc.type == 'question' %}
+{% if postType == 'question' %}
   {% set label = 'formulata' %}
-{% elseif doc.type == 'link' %}
+{% elseif postType == 'link' %}
   {% set label = 'inserito' %}
-{% elseif doc.type == 'article' %}
+{% elseif postType == 'article' %}
   {% set label = 'scritto' %}
 {% else %}
   {% set label = 'recensito' %}
 {% endif %}
 
+{% include "partials/helpers/tag.volt" %}
 <div id="page-title"><a href="#" title="Aggiungi ai preferiti"><i class="icon-star-empty"></i></a> {{ doc.title }}</div>
 <hr class="fade-long">
 <div class="column-left">
@@ -52,7 +54,7 @@
       </li>
     </ul> -->
 
-    {% if doc.type == 'book' %}
+    {% if postType == 'book' %}
     <div class="item-meta">
       <img class="img-polaroid" src="//programmazione.it/picture.php?idItem=48456&amp;id=52558c0458cae" alt="Copertina">
       <span>ISBN: </span>{{ doc.isbn }}<br>
@@ -67,7 +69,7 @@
     {% endif %}
     <section class="item-body">
       {{ doc.html }}
-      {% if doc.type == 'book' %}
+      {% if postType == 'book' %}
       <div class="positive">
         {{ markdown.parse(doc.positive) }}
       </div>
@@ -78,7 +80,7 @@
     </section>
     <div class="ghost gutter">
       <ul class="list item-tags">
-        <li><span class="tag {{ doc.type }}">{{ doc.getPublishingType() }}</span></li>
+        <li><a class="tag {{ postType }}" href="{{ sectionUrl }}">{{ section }}</a></li>
         {% set tags = doc.getTags() %}
         {% for tag in tags %}
         <li><a class="tag" href="/tag/">{{ tag['value'] }}</a></li>
