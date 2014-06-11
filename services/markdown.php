@@ -50,7 +50,6 @@ $di->setShared('markdown',
           Hoedown::UNDERLINE => TRUE,
           Hoedown::HIGHLIGHT => TRUE,
           Hoedown::SKIP_HTML => TRUE,
-          Hoedown::SKIP_STYLE => TRUE,
           Hoedown::NO_INTRA_EMPHASIS => FALSE
         ]
     );
