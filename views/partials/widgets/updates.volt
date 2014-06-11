@@ -1,7 +1,6 @@
 <section class="notebook" id="updates">
   <ul class="list tabs no-gutter">
     <li class="active"><a href="#articles" data-toggle="tab">ARTICOLI</a></li>
-    <li><a href="#tutorials" data-toggle="tab">GUIDE</a></li>
     <li><a href="#books" data-toggle="tab">LIBRI</a></li>
   </ul>
   {% if articles is defined %}
@@ -19,22 +18,7 @@
     </ul>
   </div>
   {% endif %}
-  {% if tutorials is defined %}
-  <div class="notebook-page" id="tutorials">
-    <ul class="items">
-      {% for tutorial in tutorials %}
-        <li>
-          <a href="{{ tutorial.url }}">
-            <div><i class="icon-thumbs-up"></i>&nbsp;{{ tutorial.score }}&nbsp;&nbsp;<i class="icon-comments"></i>&nbsp;{{ tutorial.repliesCount }}</div>
-            <div>{{ tutorial.whenHasBeenPublished }}</div>
-            {{ tutorial.title }}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
-  </div>
-  {% endif %}
-  {% if tutorials is defined %}
+  {% if books is defined %}
   <div class="notebook-page" id="books">
     <ul class="items">
       {% for book in books %}
