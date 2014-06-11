@@ -38,15 +38,14 @@ class BadgesController extends ListController {
    * @brief Displays all badges.
    */
   public function allAction() {
-    $badges = $this->badgeLoader->scanForBadges();
+    $this->badgeLoader->scanForBadges();
+    $badges = $this->badgeLoader->getAllBadges();
 
     foreach ($badges as $badge) {
-      $name = basename($badge->getFilename(), '.php');
-
-      $this->monolog->addDebug($name);
-      $path = $badge->getPathname();
-      $this->monolog->addDebug($path);
+      $this->monolog->addDebug("badge", $badge);
     }
+
+    $this->view->setVar('badges', $badges);
   }
 
 
