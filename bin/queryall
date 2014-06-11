@@ -5,7 +5,7 @@ pit query stars/perItem &
 pit query subscriptions/perItem --limit=1 &
 pit query classifications/perPost &
 pit query reputation/perUser &
-pit query favorites/lastAdded --limit=1 
-pit query users/allNames &
+pit query favorites/lastAdded --limit=1 &
+pit query users/allNames --limit=1 &
 pit query replies/newestPerPost &
 pit query scores/perSection &
