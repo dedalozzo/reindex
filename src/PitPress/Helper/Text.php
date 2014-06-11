@@ -24,14 +24,25 @@ class Text {
 
   /**
    * @brief Converts a string from a charset to another one.
-   * @details The default conversion is from `LATIN1` to `UTF-8`.
+   * @details The default conversion is from `Windows-1252` to `UTF-8`. `Windows-1252` or `CP-1252` is a character
+   * encoding of the Latin alphabet, used by default in the legacy components of Microsoft Windows in English and some
+   * other Western languages. This character encoding is a superset of `ISO-8859-1`, but it differs from it by using
+   * displayable characters rather than control characters in the 80 to 9F (hex) range.
    * @param[in] string $text The input string.
    * @param[in] bool $stripslashes (optional) If `true` strip all the slashes before converting the text.
    * @param[in] string $fromCharset (optional) The origin charset.
    * @param[in] string $toCharset (optional) The target charset.
    * @return string
+   * @attention Doesn't matter if the varchar fields of your MySQL tables are encoded in `LATIN1`, in fact, if someone
+   * ever posted a document from Windows Word containing smart characters, like curly quotes or smart apostrophes, the
+   * real charset use is `Windows-1252`.
+   * @warning This function doesn't use `LATIN1` or `ISO-8859-1` as default, because `Windows-1251` and `Windows-1252`
+   * will only succeed if the entire string consists of high-byte characters in a certain range. That means you'll never
+   * get the right conversion because the text will appear as `ISO-8859-1` even if it is `Windows-1252`. See the bug
+   * section.
+   * @bug https://bugs.php.net/bug.php?id=64667
    */
-  public static function convertCharset($text, $stripslashes = FALSE, $fromCharset = 'LATIN1', $toCharset = 'UTF-8') {
+  public static function convertCharset($text, $stripslashes = FALSE, $fromCharset = 'Windows-1252', $toCharset = 'UTF-8') {
     if ($stripslashes)
       return iconv($fromCharset, $toCharset, stripslashes($text));
     else
