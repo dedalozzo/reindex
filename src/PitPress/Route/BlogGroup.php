@@ -39,7 +39,6 @@ class BlogGroup extends Group {
     $this->addGet('/{id}/modifica/', ['action' => 'edit']);
 
     $this->addGet('/articoli/{period}', ['action' => 'articles']);
-    $this->addGet('/guide/{period}', ['action' => 'tutorials']);
     $this->addGet('/libri/{period}', ['action' => 'books']);
 
     // All the following routes start with /pubblicazioni.
