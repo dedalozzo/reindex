@@ -187,7 +187,7 @@ abstract class Post extends Item implements Extension\ICount, Extension\IStar, E
 
 
   public function setTitle($value) {
-    $this->meta['title'] = $value;
+    $this->meta['title'] = trim($value);
   }
 
 
