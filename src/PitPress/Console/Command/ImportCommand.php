@@ -376,7 +376,7 @@ class ImportCommand extends AbstractCommand {
     $article = new Article();
 
     // To avoid a stupid notice.
-    $article->body = "";
+    $body = "";
 
     $sql = "SELECT idItem, I.id AS id, M.id AS userId, contributorName, I.title, I.body, UNIX_TIMESTAMP(date) AS unixTime, hitNum, downloadNum, locked FROM Item I LEFT OUTER JOIN Member M USING (idMember) WHERE correlationCode = '".$correlationCode."' ORDER BY date ASC, idItem ASC";
 
@@ -389,14 +389,26 @@ class ImportCommand extends AbstractCommand {
       $title = $this->purgeTitle($page->title);
       $subtitle = $this->getSubtitle($title);
 
+      /*
+      $encodings = [
+        'Windows-1252',
+        'LATIN1',
+        'UTF-8'
+      ];
+      $encoding = mb_detect_encoding($page->body, $encodings);
+      $this->monolog->addNotice(sprintf("Encodig: %s", $encoding));
+      */
+
+      /*
       if ($page->id == 'fae33062-6cbf-448f-a601-11a549428f4a') {
         $this->monolog->addNotice("PRIMA DELLA TRASFORMAZIONE");
         $this->monolog->addNotice(sprintf("%s", $page->body));
         $this->monolog->addNotice("DOPO LA TRASFORMAZIONE");
         $this->monolog->addNotice(sprintf("%s", $pageBody));
       }
+      */
 
-      if (empty($article->body)) {
+      if (empty($body)) {
         $article->id = $page->id;
         $article->publishingDate = (int)$page->unixTime;
 
@@ -413,21 +425,23 @@ class ImportCommand extends AbstractCommand {
         $this->importRelated($page->id);
       }
       else {
-        $article->body .= PHP_EOL.PHP_EOL;
+        $body .= PHP_EOL.PHP_EOL;
 
         $this->redis->hIncrBy($article->id, 'hits', $page->hitNum);
       }
 
       if (!empty($subtitle) && $subtitle != $paragraphTitle) {
-        $article->body .= Text::capitalize($subtitle).PHP_EOL;
-        $article->body .= str_repeat("-", mb_strlen($subtitle)).PHP_EOL.PHP_EOL;
+        $body .= Text::capitalize($subtitle).PHP_EOL;
+        $body .= str_repeat("-", mb_strlen($subtitle)).PHP_EOL.PHP_EOL;
       }
 
-      $article->body .= $pageBody;
+      $body .= $pageBody;
 
       $paragraphTitle = $subtitle;
       $importedArticles[$page->id] = NULL;
     }
+
+    $article->body = $body;
 
     try {
       $article->html = $this->markdown->parse($article->body);
