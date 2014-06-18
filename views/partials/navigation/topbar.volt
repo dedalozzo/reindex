@@ -28,7 +28,6 @@
               <li><button><i class="icon-question"></i>Fai una domanda</button></li>
               <li class="dropdown-divider"></li>
               <li><button><i class="icon-pencil"></i>Scrivi un articolo</button></li>
-              <li><button><i class="icon-pencil"></i>Scrivi una guida</button></li>
               <li><button><i class="icon-pencil"></i>Recensisci un libro</button></li>
               <li class="dropdown-divider"></li>
               <li><button><i class="icon-tag"></i>Aggiungi un tag</button></li>
