@@ -25,7 +25,7 @@ trait TBody {
 
 
   public function setBody($value) {
-    $this->meta["body"] = $value;
+    $this->meta["body"] = trim($value);
   }
 
 
