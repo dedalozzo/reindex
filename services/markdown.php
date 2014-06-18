@@ -8,49 +8,46 @@
  */
 
 
-//use PitPress\Render\SyntaxHighlighter;
 use Pygmentize\Pygmentize;
 
 
 // Creates an instance of Redis client and return it.
 $di->setShared('markdown',
+
   function() use ($config) {
-    // We no longer need the SyntaxHighlighter class, because Hoedown uses a closure.
 
-    /*
-    $render = new SyntaxHighlighter(
-        [
-          'filter_html' => TRUE,
-          'hard_wrap' => TRUE
-        ]
-    );
-    */
-
-    /*
-     $markdown = new Sundown\Markdown($render,
-        [
-          'no_intra_emphasis' => TRUE,
-          'tables' => TRUE,
-          'fenced_code_blocks' => TRUE,
-          'autolink' => TRUE,
-          'strikethrough' => TRUE,
-          'lax_html_blocks' => TRUE,
-          'space_after_headers' => TRUE,
-          'superscript' => TRUE
-        ]
-    );
-    */
-
-    // Replaced Sundown with Hoedown.
     // For a description of the predefined constants see: https://github.com/kjdev/php-ext-hoedown#predefined-constants.
     $hoedown = new Hoedown(
         [
-          Hoedown::SPACE_HEADERS => TRUE,
-          Hoedown::SUPERSCRIPT => TRUE,
-          Hoedown::UNDERLINE => TRUE,
-          Hoedown::HIGHLIGHT => TRUE,
-          Hoedown::SKIP_HTML => TRUE,
-          Hoedown::NO_INTRA_EMPHASIS => FALSE
+          Hoedown::RENDERER_HTML => TRUE, // Render HTML.
+          Hoedown::RENDERER_TOC	=> FALSE, // Render the Table of Contents in HTML.
+          Hoedown::SKIP_HTML => TRUE, // Strip all HTML tags.
+          Hoedown::SAFELINK	=> FALSE, // Only allow links to safe protocols.
+          Hoedown::HARD_WRAP => FALSE, //	Render each linebreak as <br>.
+          Hoedown::USE_XHTML => FALSE, // Render XHTML.
+          Hoedown::ESCAPE => FALSE, // Escape all HTML.
+          Hoedown::TASK_LIST => FALSE, // Render task lists.
+          Hoedown::LINE_CONTINUE => FALSE, // Render line continue.
+          Hoedown::HEADER_ID =>	FALSE, // Render header id.
+          Hoedown::TABLES => TRUE, // Parse PHP-Markdown style tables.
+          Hoedown::FENCED_CODE => TRUE, // Parse fenced code blocks.
+          Hoedown::FOOTNOTES => FALSE, // Parse footnotes.
+          Hoedown::AUTOLINK => TRUE, // Automatically turn URLs into links.
+          Hoedown::STRIKETHROUGH => TRUE, // Parse ~~strikethrough~~ spans.
+          Hoedown::UNDERLINE => TRUE, // Parse _underline_ instead of emphasis.
+          Hoedown::HIGHLIGHT => TRUE, // Parse ==hightlight== spans.
+          Hoedown::QUOTE => FALSE, // Render "quotes" as <q>.
+          Hoedown::SUPERSCRIPT => TRUE, // Parse super^script.
+          Hoedown::NO_INTRA_EMPHASIS => FALSE, // Disable emphasis_between_words.
+          Hoedown::SPACE_HEADERS => TRUE, // Require a space after '#' in headers.
+          Hoedown::DISABLE_INDENTED_CODE => FALSE, // Don't parse indented code blocks.
+          Hoedown::SPECIAL_ATTRIBUTE => FALSE, // Parse special attributes.
+          Hoedown::TOC => FALSE, // Produce links to the Table of Contents.
+          Hoedown::TOC_BEGIN => 0, // Begin level for headers included in the TOC.
+          Hoedown::TOC_END => 6, // End level for headers included in the TOC.
+          Hoedown::TOC_ESCAPE => TRUE, // Escape int the TOC.
+          Hoedown::TOC_HEADER => "", // Render header in the TOC.
+          Hoedown::TOC_FOOTER => "" // Render footer in the TOC.
         ]
     );
 
