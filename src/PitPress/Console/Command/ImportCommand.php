@@ -70,14 +70,26 @@ class ImportCommand extends AbstractCommand {
    * @brief Removes from the title the page number.
    */
   private function purgeTitle($title) {
-    return Text::convertCharset(rtrim(preg_replace('%\(\d*/\d*\)%iu', '', stripslashes($title)), '\t\n\r\0\x0B'));
+    $temp = Text::convertCharset(rtrim($title, '\t\n\r\0\x0B'), TRUE);
+    return preg_replace('%\(\d*/\d*\)%iu', '', $temp);
   }
 
 
   /**
-   * @brief Get everything after the `: ` sequence of characters.
+   * @brief Removes the subtitle from the title.
    */
-  private function getSubtitle($title) {
+  private function pruneTitle($title, $subtitle = "") {
+    if (!empty($subtitle))
+      return rtrim(mb_strstr($title, $subtitle, TRUE, "UTF-8"), ": \t\n\r\0\x0B");
+    else
+      return $title;
+  }
+
+
+  /**
+   * @brief Gets everything after the `: ` sequence of characters.
+   */
+  private function extractSubtitle($title) {
     if (preg_match('/: (.*)/iu', $title, $matches))
       return rtrim($matches[1]);
     else
@@ -92,7 +104,7 @@ class ImportCommand extends AbstractCommand {
    * @return string The converted text.
    */
   private function convertText($text, $id) {
-    $utf8 = Text::convertCharset($text);
+    $utf8 = Text::convertCharset($text, TRUE);
     $bbcode = Text::htmlToBBCode($utf8, $id);
     return Text::bbcodeToMarkdown($bbcode, $id);
   }
@@ -122,7 +134,8 @@ class ImportCommand extends AbstractCommand {
       $article->html = $this->markdown->parse($article->body);
     }
     catch(\Exception $e) {
-      $this->monolog->addCritical(sprintf(" %d - %s", $item->idItem, $article->title));
+      $this->monolog->addCritical($e);
+      $this->monolog->addCritical(sprintf("Invalid Markdown: %s - %s", $article->id, $article->title));
     }
 
     $purged = Text::purge($article->html);
@@ -130,12 +143,10 @@ class ImportCommand extends AbstractCommand {
 
     // We finally save the article.
     try {
-      //$this->couch->saveDoc($article);
       $article->save();
     }
     catch(\Exception $e) {
-      $this->monolog->addCritical($e);
-      $this->monolog->addCritical(sprintf("Invalid JSON: %d - %s", $item->idItem, $article->title));
+      $this->monolog->addCritical(sprintf("Invalid JSON: %s - %s", $article->id, $article->title));
     }
 
     // We update the article views.
@@ -145,7 +156,7 @@ class ImportCommand extends AbstractCommand {
     if ($item->downloadNum > 0)
       $this->redis->hSet($article->id, 'downloads', $item->downloadNum);
 
-    $this->importRelated($article->id);
+    //$this->importRelated($article->id);
   }
 
 
@@ -191,7 +202,8 @@ class ImportCommand extends AbstractCommand {
       $book->html = $this->markdown->parse($book->body);
     }
     catch(\Exception $e) {
-      $this->monolog->addCritical(sprintf(" %d - %s", $item->idItem, $book->title));
+      $this->monolog->addCritical($e);
+      $this->monolog->addCritical(sprintf("Invalid Markdown: %s - %s", $book->id, $book->title));
     }
 
     $purged = Text::purge($book->html);
@@ -206,7 +218,7 @@ class ImportCommand extends AbstractCommand {
       $book->save();
     }
     catch(\Exception $e) {
-      $this->monolog->addCritical(sprintf("Invalid JSON: %d - %s", $item->idItem, $book->title));
+      $this->monolog->addCritical(sprintf("Invalid JSON: %s - %s", $book->id, $book->title));
     }
 
     // We update the book views.
@@ -334,7 +346,7 @@ class ImportCommand extends AbstractCommand {
    * @brief Imports comments.
    */
   protected function importReplies($postId) {
-    $sql = "SELECT C.idComment, I.id AS postId, M.id AS userId, UNIX_TIMESTAMP(C.date) AS unixTime, C.body FROM Comment C, Item I, Member M WHERE C.idItem = I.idItem AND C.idMember = M.idMember AND I.id = '".$postId."' ORDER BY C.date DESC, idComment DESC";
+    $sql = "SELECT C.idComment, I.idItem, I.id AS postId, M.id AS userId, UNIX_TIMESTAMP(C.date) AS unixTime, C.body FROM Comment C, Item I, Member M WHERE C.idItem = I.idItem AND C.idMember = M.idMember AND I.id = '".$postId."' ORDER BY C.date DESC, idComment DESC";
 
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
 
@@ -354,17 +366,16 @@ class ImportCommand extends AbstractCommand {
         $replay->html = $this->markdown->parse($replay->body);
       }
       catch(\Exception $e) {
-        $this->monolog->addCritical(sprintf(" Commento %d - Item %d", $item->idComment, $item->postId));
+        $this->monolog->addCritical($e);
+        $this->monolog->addCritical(sprintf("Invalid Markdown: Comment %s - Item %s", $item->idComment, $item->idItem));
       }
 
       // We finally save the comment.
       try {
-          //$this->couch->saveDoc($article);
           $replay->save();
       }
       catch(\Exception $e) {
-        $this->monolog->addCritical($e);
-        $this->monolog->addCritical(sprintf("Invalid JSON: %d", $item->idComment));
+        $this->monolog->addCritical(sprintf("Invalid JSON: Comment %s - Item %s", $item->idComment, $item->idItem));
       }
     }
 
@@ -387,7 +398,7 @@ class ImportCommand extends AbstractCommand {
     while ($page = mysqli_fetch_object($pages)) {
       $pageBody = $this->convertText($page->body, $page->idItem);
       $title = $this->purgeTitle($page->title);
-      $subtitle = $this->getSubtitle($title);
+      $subtitle = $this->extractSubtitle($title);
 
       /*
       $encodings = [
@@ -399,40 +410,26 @@ class ImportCommand extends AbstractCommand {
       $this->monolog->addNotice(sprintf("Encodig: %s", $encoding));
       */
 
-      /*
-      if ($page->id == 'fae33062-6cbf-448f-a601-11a549428f4a') {
-        $this->monolog->addNotice("PRIMA DELLA TRASFORMAZIONE");
-        $this->monolog->addNotice(sprintf("%s", $page->body));
-        $this->monolog->addNotice("DOPO LA TRASFORMAZIONE");
-        $this->monolog->addNotice(sprintf("%s", $pageBody));
-      }
-      */
-
+      // This is the first page, so we set many properties.
       if (empty($body)) {
         $article->id = $page->id;
         $article->publishingDate = (int)$page->unixTime;
+        $article->title = $this->pruneTitle($title, $subtitle);
 
         if (isset($page->userId))
           $article->userId = $page->userId;
 
-        if (!empty($subtitle))
-          $article->title = rtrim(strstr($title, $subtitle, TRUE), ": \t\n\r\0\x0B");
-        else
-          $article->title = $title;
-
         $this->redis->hSet($article->id, 'hits', $page->hitNum);
-
         $this->importRelated($page->id);
       }
       else {
-        $body .= PHP_EOL.PHP_EOL;
-
+        //$body .= PHP_EOL.PHP_EOL;
         $this->redis->hIncrBy($article->id, 'hits', $page->hitNum);
       }
 
       if (!empty($subtitle) && $subtitle != $paragraphTitle) {
-        $body .= Text::capitalize($subtitle).PHP_EOL;
-        $body .= str_repeat("-", mb_strlen($subtitle)).PHP_EOL.PHP_EOL;
+        //$body .= Text::capitalize($subtitle).PHP_EOL;
+        //$body .= str_repeat("-", mb_strlen($subtitle)).PHP_EOL.PHP_EOL;
       }
 
       $body .= $pageBody;
@@ -447,7 +444,8 @@ class ImportCommand extends AbstractCommand {
       $article->html = $this->markdown->parse($article->body);
     }
     catch(\Exception $e) {
-      $this->monolog->addCritical(sprintf(" %d - %s", $page->idItem, $article->title));
+      $this->monolog->addCritical($e);
+      $this->monolog->addCritical(sprintf("Invalid Markdown: %s - %s", $article->id, $article->title));
     }
 
     // We finally save the article.
@@ -455,12 +453,10 @@ class ImportCommand extends AbstractCommand {
       $purged = Text::purge($article->html);
       $article->excerpt = Text::truncate($purged);
 
-      //$this->couch->saveDoc($article);
       $article->save();
     }
     catch(\Exception $e) {
-      $this->monolog->addCritical($e);
-      $this->monolog->addCritical(sprintf("Invalid JSON: %d - %s", $page->idItem, $article->title));
+      $this->monolog->addCritical(sprintf("Invalid JSON: %s - %s", $article->id, $article->title));
     }
 
     return $importedArticles;
