@@ -156,7 +156,7 @@ class ImportCommand extends AbstractCommand {
     if ($item->downloadNum > 0)
       $this->redis->hSet($article->id, 'downloads', $item->downloadNum);
 
-    //$this->importRelated($article->id);
+    $this->importRelated($article->id);
   }
 
 
