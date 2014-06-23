@@ -99,7 +99,7 @@ abstract class Post extends Item implements Extension\ICount, Extension\IStar, E
    */
   public function getReplies() {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(20)->reverseOrderOfResults()->setStartKey([$this->id, new \stdClass()])->setEndKey([$this->id])->includeDocs();
+    $opts->doNotReduce()->reverseOrderOfResults()->setStartKey([$this->id, new \stdClass()])->setEndKey([$this->id])->includeDocs();
     $rows = $this->couch->queryView("replies", "newestPerPost", NULL, $opts);
 
     $replies = [];
