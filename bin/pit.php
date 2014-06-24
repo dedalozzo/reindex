@@ -20,8 +20,6 @@ use Monolog\ErrorHandler;
 use Monolog\Handler\StreamHandler;
 
 
-$start = microtime(true);
-
 try {
   $root = realpath(__DIR__."/../");
 
