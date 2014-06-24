@@ -43,6 +43,8 @@ class CreateCommand extends AbstractCommand {
     $couch = new Couch(new NativeAdapter(NativeAdapter::DEFAULT_SERVER, $config->couchdb->user, $config->couchdb->password));
 
     $couch->createDb($config->couchdb->database);
+
+    parent::execute($input, $output);
   }
 
 }

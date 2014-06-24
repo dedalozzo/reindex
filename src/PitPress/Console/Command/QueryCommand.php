@@ -275,6 +275,7 @@ class QueryCommand extends AbstractCommand {
         throw new \InvalidArgumentException("You have to specify design-doc/view-name.");
     }
 
+    parent::execute($input, $output);
   }
 
 }

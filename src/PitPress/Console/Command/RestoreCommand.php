@@ -60,6 +60,8 @@ class RestoreCommand  extends AbstractCommand {
     mysqli_real_query($mysql, $sql) or die(mysqli_error($mysql));
     $sql = "ALTER TABLE Category DROP id";
     mysqli_real_query($mysql, $sql) or die(mysqli_error($mysql));
+
+    parent::execute($input, $output);
   }
 
 }

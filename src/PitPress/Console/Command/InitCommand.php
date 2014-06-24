@@ -966,6 +966,8 @@ MAP;
     }
     else
       $this->initAll();
+
+    parent::execute($input, $output);
   }
 
 }

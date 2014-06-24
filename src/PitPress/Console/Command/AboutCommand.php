@@ -48,6 +48,8 @@ class AboutCommand extends AbstractCommand {
     echo PHP_EOL;
     echo "[database]".PHP_EOL.PHP_EOL;
     echo $couch->getDbInfo();
+
+    parent::execute($input, $output);
   }
 
 }
