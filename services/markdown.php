@@ -43,7 +43,7 @@ $di->setShared('markdown',
           Hoedown::QUOTE => FALSE, // Render "quotes" as <q>.
           Hoedown::SUPERSCRIPT => TRUE, // Parse super^script.
           //Hoedown::LAX_SPACING => FALSE, // todo
-          Hoedown::NO_INTRA_EMPHASIS => TRUE, // Disable emphasis_between_words.
+          Hoedown::NO_INTRA_EMPHASIS => FALSE, // Disable emphasis_between_words.
           Hoedown::SPACE_HEADERS => TRUE, // Require a space after '#' in headers.
           Hoedown::DISABLE_INDENTED_CODE => FALSE, // Don't parse indented code blocks.
           Hoedown::SPECIAL_ATTRIBUTE => TRUE, // Parse special attributes.
