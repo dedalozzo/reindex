@@ -26,9 +26,6 @@ use PitPress\Model\Accessory\Classification;
 use PitPress\Model\Accessory\Subscription;
 use PitPress\Helper\Text;
 
-use Converter\BBCodeConverter;
-use Converter\HTMLConverter;
-
 use ElephantOnCouch\Generator\UUID;
 
 
@@ -87,13 +84,21 @@ class ImportCommand extends AbstractCommand {
 
 
   /**
-   * @brief Gets everything after the `: ` sequence of characters.
+   * @brief Gets everything after the `,` or `: ` sequence of characters.
    */
   private function extractSubtitle($title) {
-    if (preg_match('/: (.*)/iu', $title, $matches))
+    if (preg_match('/(?::|,) (.*)/miu', $title, $matches))
       return rtrim($matches[1]);
     else
       return "";
+  }
+
+
+  /**
+   * @brief Left trim and capitalize the subtitle.
+   */
+  private function formatSubtitle($subtitle) {
+    return Text::capitalize(ltrim($subtitle));
   }
 
 
@@ -359,7 +364,7 @@ class ImportCommand extends AbstractCommand {
         $replay->postId = $item->postId;
         $replay->userId = $item->userId;
 
-        $utf8 = Text::convertCharset($item->body, TRUE);
+        $utf8 = Text::convertCharset($item->body);
         $bbcode = Text::htmlToBBCode($utf8, $item->idComment);
         $replay->body = Text::bbcodeToMarkdown($bbcode, $item->idComment);
 
@@ -415,6 +420,7 @@ class ImportCommand extends AbstractCommand {
         $article->id = $page->id;
         $article->publishingDate = (int)$page->unixTime;
         $article->title = $this->pruneTitle($title, $subtitle);
+        //$this->monolog->addNotice(sprintf("%s", $article->title));
 
         if (isset($page->userId))
           $article->userId = $page->userId;
@@ -423,13 +429,16 @@ class ImportCommand extends AbstractCommand {
         $this->importRelated($page->id);
       }
       else {
-        //$body .= PHP_EOL.PHP_EOL;
+        $body .= PHP_EOL.PHP_EOL;
         $this->redis->hIncrBy($article->id, 'hits', $page->hitNum);
       }
 
       if (!empty($subtitle) && $subtitle != $paragraphTitle) {
-        //$body .= Text::capitalize($subtitle).PHP_EOL;
-        //$body .= str_repeat("-", mb_strlen($subtitle)).PHP_EOL.PHP_EOL;
+        $sub = $this->formatSubtitle($subtitle);
+        //$this->monolog->addNotice(sprintf("        %s", $sub));
+        $body .= $sub.PHP_EOL;
+        $line = str_repeat("-", mb_strlen($sub, "UTF-8"));
+        $body .= $line.PHP_EOL.PHP_EOL;
       }
 
       $body .= $pageBody;
@@ -452,6 +461,11 @@ class ImportCommand extends AbstractCommand {
     try {
       $purged = Text::purge($article->html);
       $article->excerpt = Text::truncate($purged);
+
+      // We remove temporary the HTML, because it raises a JSON error trying to save it in CouchDB.
+      // I don't know why, a double PHP_EOL is required, otherwise any subtitles containing the `à` character will
+      // generate a JSON conversion error. Maybe it is a CouchDB bug or maybe it's an Hoedown bug. todo
+      $article->html = "";
 
       $article->save();
     }
@@ -648,6 +662,8 @@ class ImportCommand extends AbstractCommand {
       $this->importAll();
 
     $this->couch->ensureFullCommit();
+
+    parent::execute($input, $output);
   }
 
 }
