@@ -66,7 +66,7 @@ class Text {
       return '';
 
     if (mb_strlen($text) > $length) {
-      $length -= min($length, mb_strlen($etc));
+      $length -= min($length, mb_strlen($etc, $charset));
 
       if (!$breakWords && !$middle)
         $text = preg_replace('/\s+?(\S+)?$/u', '', mb_substr($text, 0, $length+1, $charset));
@@ -74,7 +74,7 @@ class Text {
       if(!$middle)
         return mb_substr($text, 0, $length, $charset) . $etc;
       else
-        return mb_substr($text, 0, $length/2, $charset) . $etc . mb_substr($text, -$length/2, (mb_strlen($text)-$length/2), $charset);
+        return mb_substr($text, 0, $length/2, $charset) . $etc . mb_substr($text, -$length/2, (mb_strlen($text, $charset) - $length/2), $charset);
     }
     else
       return $text;
@@ -89,7 +89,7 @@ class Text {
    * @warning This function works with UTF-8 strings.
    */
   public static function capitalize($text, $charset = 'UTF-8') {
-    return mb_strtoupper(mb_substr($text, 0, 1, $charset), $charset) . mb_strtolower(mb_substr($text, 1, mb_strlen($text), $charset), $charset);
+    return mb_strtoupper(mb_substr($text, 0, 1, $charset), $charset) . mb_strtolower(mb_substr($text, 1, mb_strlen($text, $charset), $charset), $charset);
   }
 
 
