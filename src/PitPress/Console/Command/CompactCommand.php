@@ -40,6 +40,8 @@ class CompactCommand extends AbstractCommand {
     $couch = $this->di['couchdb'];
 
     $couch->compactDb();
+
+    parent::execute($input, $output);
   }
 
 }

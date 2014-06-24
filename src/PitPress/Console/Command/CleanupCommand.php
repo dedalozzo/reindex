@@ -38,6 +38,8 @@ class CleanupCommand extends AbstractCommand {
     $couch = $this->di['couchdb'];
 
     $couch->cleanupViews();
+
+    parent::execute($input, $output);
   }
 
 }

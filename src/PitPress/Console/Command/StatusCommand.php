@@ -39,6 +39,8 @@ class StatusCommand extends AbstractCommand {
     $this->couch = $this->di['couchdb'];
 
     print_r($this->couch->getActiveTasks());
+
+    parent::execute($input, $output);
   }
 
 }

@@ -117,6 +117,8 @@ class RemoveCommand extends AbstractCommand {
     }
     else
       $this->removeAll();
+
+    parent::execute($input, $output);
   }
 
 }

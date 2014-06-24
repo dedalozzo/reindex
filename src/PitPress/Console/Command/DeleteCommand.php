@@ -50,6 +50,8 @@ class DeleteCommand extends AbstractCommand {
 
       $redis = $this->di['redis'];
       $redis->flushDB();
+
+      parent::execute($input, $output);
     }
   }
 

@@ -180,6 +180,8 @@ class GenerateCommand extends AbstractCommand {
         $this->generateLinks($input, $output);
         break;
     }
+
+    parent::execute($input, $output);
   }
 
 }

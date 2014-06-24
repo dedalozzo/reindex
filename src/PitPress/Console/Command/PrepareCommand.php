@@ -99,6 +99,8 @@ class PrepareCommand extends AbstractCommand {
     }
 
     mysqli_free_result($result);
+
+    parent::execute($input, $output);
   }
 
 }
