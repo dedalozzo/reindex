@@ -16,6 +16,10 @@ use Phalcon\DI\InjectionAwareInterface;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
+use ElephantOnCouch\Helper\TimeHelper;
 
 
 /**
@@ -27,6 +31,18 @@ abstract class AbstractCommand extends Command implements InjectionAwareInterfac
 
   protected $di;
   protected $monolog;
+
+  protected $start;
+
+
+  /**
+   * @brief Creates an instance of the command.
+   */
+  public function __construct() {
+    parent::__construct();
+
+    $this->start = time();
+  }
 
 
   /**
@@ -73,6 +89,15 @@ abstract class AbstractCommand extends Command implements InjectionAwareInterfac
     }
     else
       return $arg + 0;
+  }
+
+
+  /**
+   * @brief Executes the command.
+   */
+  protected function execute(InputInterface $input, OutputInterface $output) {
+    $time = TimeHelper::since($this->start);
+    $output->writeln(PHP_EOL.sprintf("%d days, %d hours, %d minutes, %d seconds", $time['days'], $time['hours'], $time['minutes'], $time['seconds']));
   }
 
 
