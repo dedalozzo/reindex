@@ -22,6 +22,8 @@ use PitPress\Model\Accessory\Vote;
 use PitPress\Model\Link\Link;
 use PitPress\Helper\Text;
 
+use ElephantOnCouch\Opt\ViewQueryOpts;
+
 
 /**
  * @brief Generates fake documents for testing purpose.
@@ -102,6 +104,16 @@ class GenerateCommand extends AbstractCommand {
   private function generateLinks(InputInterface $input, OutputInterface $output) {
     $output->writeln("Generate links...");
 
+    $opts = new ViewQueryOpts();
+    $opts->setKey('redazione')->setLimit(1);
+    $result = $this->couch->queryView("users", "byUsername", NULL, $opts);
+
+    // If the user doesn't exist, raise an exception.
+    if ($result->isEmpty())
+      throw new \RuntimeException('User not found.');
+    else
+      $userId = $result[0]['value'];
+
     // Consume the feed.
     $feed = new SimplePie();
     $feed->set_feed_url($input->getOption('feed'));
@@ -118,7 +130,7 @@ class GenerateCommand extends AbstractCommand {
       $link->excerpt = Text::truncate($purged);
 
       $link->url = $item->get_link();
-      $link->userId = '60de120d-d2ae-4919-a19f-4eec233f22f0';
+      $link->userId = $userId;
       $link->publishingDate = time();
       $link->save();
 
