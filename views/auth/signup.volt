@@ -5,17 +5,17 @@
 <div class="ghost gutter-plus">
   <p>Se possiedi già un'utenza su uno dei seguenti social network, clicca il banner corrispondente per registrarti.</p>
   <ul class="list social">
-    <li><a id="facebook-btn" rel="facebook" href="{{ baseUri }}/accedi/facebook/"><span class="logo"></span>Facebook</a></li>
-    <li><a id="google-btn" rel="google" href="{{ baseUri }}/accedi/google/"><span class="logo"></span>Google+</a></li>
-    <li><a id="linkedin-btn" rel="linkedin" href="{{ baseUri }}/accedi/linkedin/"><span class="logo"></span>LinkedIn</a></li>
-    <li><a id="github-btn" rel="github" href="{{ baseUri }}/accedi/github/"><span class="logo"></span>GitHub</a></li>
+    <li><a id="facebook-btn" rel="facebook" href="//{{ serverName }}/accedi/facebook/"><span class="logo"></span>Facebook</a></li>
+    <li><a id="google-btn" rel="google" href="//{{ serverName }}/accedi/google/"><span class="logo"></span>Google+</a></li>
+    <li><a id="linkedin-btn" rel="linkedin" href="//{{ serverName }}/accedi/linkedin/"><span class="logo"></span>LinkedIn</a></li>
+    <li><a id="github-btn" rel="github" href="//{{ serverName }}/accedi/github/"><span class="logo"></span>GitHub</a></li>
     <li class="space"></li>
   </ul>
 </div>
 
 <div class="ghost">
   <p>In alternativa puoi registrarti su {{ serverName|capitalize }} semplicemente inserendo i dati richiesti qui di seguito.</p>
-  <form action="{{ baseUri }}/registrati/" id="signinform" name="signinform" method="post" role="form">
+  <form action="//{{ serverName }}/registrati/" id="signinform" name="signinform" method="post" role="form">
     <ul class="list vertical mbottom10">
       <li>{{ text_field("username", "placeholder": "Nome utente") }}</li>
       <li>{{ email_field("email", "placeholder": "E-mail") }}</li>
