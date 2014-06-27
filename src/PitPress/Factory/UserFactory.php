@@ -17,6 +17,7 @@ use PitPress\Model\User;
 use Phalcon\DI;
 
 use ElephantOnCouch\Couch;
+use ElephantOnCouch\Opt\ViewQueryOpts;
 
 
 /**
@@ -58,6 +59,27 @@ class UserFactory {
     }
     else
       return NULL;
+  }
+
+
+  /**
+   * @brief Returns `true` in case exist a user registered with specified username, `false` otherwise.
+   * @param[in] string $username The username.
+   * @return bool
+   */
+  public static function isUsernameTaken($username) {
+    $di = DI::getDefault();
+    $couch = $di['couchdb'];
+
+    $opts = new ViewQueryOpts();
+    $opts->setLimit(1)->setKey($username);
+
+    $result = $couch->queryView("users", "byUsername", NULL, $opts);
+
+    if ($result->isEmpty())
+      return FALSE;
+    else
+      return TRUE;
   }
 
 }
