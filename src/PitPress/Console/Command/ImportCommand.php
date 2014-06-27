@@ -127,12 +127,9 @@ class ImportCommand extends AbstractCommand {
     $article = new Article();
 
     $article->id = $item->id;
+    $article->userId = $item->userId;
     $article->publishingDate = (int)$item->unixTime;
     $article->title = Text::convertCharset($item->title, TRUE);
-
-    if (isset($item->userId))
-      $article->userId = $item->userId;
-
     $article->body = $this->convertText($item->body, $item->idItem);
 
     try {
@@ -169,11 +166,9 @@ class ImportCommand extends AbstractCommand {
     $book = new Book();
 
     $book->id = $item->id;
+    $book->userId = $item->userId;
     $book->publishingDate = (int)$item->unixTime;
     $book->title = Text::convertCharset($item->title, TRUE);
-
-    if (isset($item->userId))
-      $book->userId = $item->userId;
 
     $body = stripslashes($item->body);
 
@@ -418,12 +413,10 @@ class ImportCommand extends AbstractCommand {
       // This is the first page, so we set many properties.
       if (empty($body)) {
         $article->id = $page->id;
+        $article->userId = $page->userId;
         $article->publishingDate = (int)$page->unixTime;
         $article->title = $this->pruneTitle($title, $subtitle);
         //$this->monolog->addNotice(sprintf("%s", $article->title));
-
-        if (isset($page->userId))
-          $article->userId = $page->userId;
 
         $this->redis->hSet($article->id, 'hits', $page->hitNum);
         $this->importRelated($page->id);
@@ -551,8 +544,8 @@ class ImportCommand extends AbstractCommand {
   protected function importUsers() {
     $this->output->writeln("Importing users...");
 
-    //$sql = "SELECT idMember, name AS firstName, surname AS lastName, nickName AS displayName, email, password, sex, birthDate AS birthday, ipAddress, confirmHash AS confirmationHash, confirmed AS authenticated, regDate AS creationDate, lastUpdate, avatarData, avatarType, realNamePcy FROM Member";
-    $sql = "SELECT id, name AS firstName, surname AS lastName, nickName AS displayName, email, password, sex, UNIX_TIMESTAMP(birthDate) AS birthday, ipAddress, confirmHash AS confirmationHash, confirmed, UNIX_TIMESTAMP(regDate) AS creationDate, lastUpdate, realNamePcy FROM Member";
+    //$sql = "SELECT idMember, name AS firstName, surname AS lastName, nickName AS username, email, password, sex, birthDate AS birthday, ipAddress, confirmHash AS confirmationHash, confirmed AS authenticated, regDate AS creationDate, lastUpdate, avatarData, avatarType, realNamePcy FROM Member";
+    $sql = "SELECT id, name AS firstName, surname AS lastName, nickName AS username, email, password, sex, UNIX_TIMESTAMP(birthDate) AS birthday, ipAddress, confirmHash AS confirmationHash, confirmed, UNIX_TIMESTAMP(regDate) AS creationDate, lastUpdate, realNamePcy FROM Member";
     $sql .= $this->limit;
 
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
@@ -567,7 +560,7 @@ class ImportCommand extends AbstractCommand {
       $user->id = $item->id;
       $user->firstName = Text::convertCharset($item->firstName, TRUE);
       $user->lastName = Text::convertCharset($item->lastName, TRUE);
-      $user->displayName = Text::convertCharset($item->displayName, TRUE);
+      $user->username = mb_strtolower(preg_replace('/\s+/u', '_', Text::convertCharset($item->username, TRUE)), 'utf-8');
       $user->email = Text::convertCharset($item->email);
       $user->password = Text::convertCharset($item->password);
       $user->birthday = (int)$item->birthday;
