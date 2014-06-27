@@ -38,17 +38,6 @@ class KnowItAll extends Silver {
 
 
   /**
-   * @copydoc Badge::getDetails()
-   */
-  public function getDetails() {
-    return <<<'DESC'
-Assegnato a chi risponde
-risponda alla sua stessa domanda. Assegnato solo una volta.
-DESC;
-  }
-
-
-  /**
    * @copydoc Badge::award()
    */
   public function award() {
