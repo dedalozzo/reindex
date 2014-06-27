@@ -2,10 +2,17 @@
 {% if titles[actionName] is defined %}
   {% set title = titles[actionName] %}
 {% endif %}
+
+{% if resourceName is defined %}
+  {% set resourcePath = resourceName~'/' %}
+{% else %}
+  {% set resourcePath = '' %}
+{% endif %}
+
 <ul class="list tabs">
   <li><span><b>{{ sectionLabel }}</b></span></li>
   <li class="pull-right icon"><a href="http://programmazione.it/rss" class="icon-rss icon-large"></a></li>
   {% for item in sectionMenu %}
-    <li{{ (item['name'] == actionName) ? ' class="active pull-right"' : ' class="pull-right"' }}><a href="//{{ serverName~displayName~item['path'] }}">{{ item['label'] }}</a></li>
+    <li{{ (item['name'] == actionName) ? ' class="active pull-right"' : ' class="pull-right"' }}><a href="//{{ serverName~resourcePath~item['path'] }}">{{ item['label'] }}</a></li>
   {% endfor %}
 </ul>
