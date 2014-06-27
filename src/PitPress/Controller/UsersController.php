@@ -47,7 +47,7 @@ class UsersController extends BaseController {
     for ($i = 0; $i < $usersCount; $i++) {
       $user = new \stdClass();
       $user->id = $result[$i]['id'];
-      $user->displayName = $result[$i]['value'][0];
+      $user->username = $result[$i]['value'][0];
       $user->gravatar = User::getGravatar($result[$i]['value'][1]);
       $user->when = Time::when($result[$i]['value'][2], false);
 
@@ -88,7 +88,7 @@ class UsersController extends BaseController {
   public function byNameAction() {
     $opts = new ViewQueryOpts();
     $opts->setLimit(40);
-    $users = $this->couch->queryView("users", "byDisplayName", NULL, $opts);
+    $users = $this->couch->queryView("users", "byUsername", NULL, $opts);
 
     $this->view->setVar('users', $this->getUsers(array_column($users->asArray(), 'id')));
   }
