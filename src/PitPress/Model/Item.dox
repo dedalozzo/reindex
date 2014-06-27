@@ -8,7 +8,7 @@ class Item {
 
   /** @name Properties */
   //!@{
-  public string $username; //!< Sometime the user id is missing, so we display the username.
+  public string $username; //!< The author username.
   public string $userId; //!< The user id who created the content.
   public string $publishingDate; //!< The publishing date.
   //!@}
