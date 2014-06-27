@@ -97,7 +97,7 @@ abstract class ListController extends BaseController {
       $entry->id = $posts[$i]['id'];
       $entry->url = $this->buildUrl($entry->section, $entry->publishingDate, $entry->slug);
       $entry->whenHasBeenPublished = Time::when($entry->publishingDate);
-      $entry->displayName = $users[$i]['value'][0];
+      $entry->username = $users[$i]['value'][0];
       $entry->gravatar = User::getGravatar($users[$i]['value'][1]);
       $entry->hitsCount = $this->redis->hGet($entry->id, 'hits');
       $entry->score = is_null($scores[$i]['value']) ? 0 : $scores[$i]['value'];
