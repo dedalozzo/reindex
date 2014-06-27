@@ -10,7 +10,7 @@ class User  {
   //!@{
   string $firstName; //!< First name.
   string $lastName; //!< Last surname.
-  string $displayName; //!< The name to be displayed on the site.
+  string $username; //!< The username.
 
   string $email; //!< E-mail.
   string $password; //!< Password chosen by the user.
