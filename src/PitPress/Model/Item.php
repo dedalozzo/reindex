@@ -46,9 +46,9 @@ abstract class Item extends Storable {
 
 
   /**
-   * @brief Returns the author name.
+   * @brief Returns the author's username.
    */
-  public function getDisplayName() {
+  public function getUsername() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setKey($this->userId);
     return $this->couch->queryView("users", "allNames", NULL, $opts)[0]['value'][0];
@@ -87,27 +87,6 @@ abstract class Item extends Storable {
   public function unsetUserId() {
     if ($this->isMetadataPresent('userId'))
       unset($this->meta['userId']);
-  }
-
-
-  public function getUsername() {
-    return $this->meta['username'];
-  }
-
-
-  public function issetUsername() {
-    return isset($this->meta['username']);
-  }
-
-
-  public function setUsername($value) {
-    $this->meta['username'] = $value;
-  }
-
-
-  public function unsetUsername() {
-    if ($this->isMetadataPresent('username'))
-      unset($this->meta['username']);
   }
 
 
