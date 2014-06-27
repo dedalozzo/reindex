@@ -38,7 +38,6 @@ class BadgesController extends ListController {
    * @brief Displays all badges.
    */
   public function allAction() {
-    $this->badgeLoader->scanForBadges();
     $badges = $this->badgeLoader->getAllBadges();
 
     foreach ($badges as $badge) {
@@ -67,6 +66,10 @@ class BadgesController extends ListController {
    * @brief Displays the gold badges.
    */
   public function goldAction() {
+    $badges = $this->badgeLoader->filterByMetal($this->badgeLoader->getAllBadges(), 'gold');
+    $this->view->setVar('badges', $badges);
+
+    $this->monolog->addNotice("Filtered", $badges);
   }
 
 
@@ -74,6 +77,8 @@ class BadgesController extends ListController {
    * @brief Displays the silver badges.
    */
   public function silverAction() {
+    $badges = $this->badgeLoader->filterByMetal($this->badgeLoader->getAllBadges(), 'silver');
+    $this->view->setVar('badges', $badges);
   }
 
 
@@ -81,6 +86,8 @@ class BadgesController extends ListController {
    * @brief Displays the bronze badges.
    */
   public function bronzeAction() {
+    $badges = $this->badgeLoader->filterByMetal($this->badgeLoader->getAllBadges(), 'bronze');
+    $this->view->setVar('badges', $badges);
   }
 
 
