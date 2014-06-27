@@ -32,9 +32,9 @@ class ProfileController extends ListController {
   /**
    * @brief Displays the newest user's updates.
    */
-  public function timelineAction($id, $type = NULL) {
-    // If no user id is provided, shows all the users.
-    if (empty($id))
+  public function timelineAction($username, $type = NULL) {
+    // If no username is provided, shows all the users.
+    if (empty($username))
       return $this->dispatcher->forward(
         [
           'controller' => 'users',
@@ -42,22 +42,22 @@ class ProfileController extends ListController {
         ]);
 
     $opts = new ViewQueryOpts();
-    $opts->setKey($id)->setLimit(1);
-    $rows = $this->couch->queryView("users", "allNames", NULL, $opts);
+    $opts->setKey($username)->setLimit(1);
+    $result = $this->couch->queryView("users", "byUsername", NULL, $opts);
 
     // If the user doesn't exist, forward to 404.
-    if (empty($rows))
+    if ($result->isEmpty())
       return $this->dispatcher->forward(
         [
           'controller' => 'error',
           'action' => 'show404'
         ]);
 
-    $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $id);
+    $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $result[0]['value']);
     $doc->incHits();
     $this->view->setVar('doc', $doc);
 
-    $this->view->setVar('title', $doc->displayName);
+    $this->view->setVar('title', $doc->username);
 
     if (empty($type))
       $type = 'tutti';
@@ -88,19 +88,19 @@ class ProfileController extends ListController {
   }
 
 
-  public function connectionsAction($id) {
+  public function connectionsAction($username) {
 
   }
 
 
-  public function badgesAction($id) {
+  public function badgesAction($username) {
 
   }
 
 
-  public function favoritesAction($id, $type = NULL) {
+  public function favoritesAction($username, $type = NULL) {
     // If no user id is provided, shows all the users.
-    if (empty($id))
+    if (empty($username))
       return $this->dispatcher->forward(
         [
           'controller' => 'users',
@@ -108,21 +108,21 @@ class ProfileController extends ListController {
         ]);
 
     $opts = new ViewQueryOpts();
-    $opts->setKey($id)->setLimit(1);
-    $rows = $this->couch->queryView("users", "allNames", NULL, $opts);
+    $opts->setKey($username)->setLimit(1);
+    $result = $this->couch->queryView("users", "allNames", NULL, $opts);
 
     // If the user doesn't exist, forward to 404.
-    if (empty($rows))
+    if ($result->isEmpty())
       return $this->dispatcher->forward(
         [
           'controller' => 'error',
           'action' => 'show404'
         ]);
 
-    $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $id);
+    $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $result[0]['value']);
     $this->view->setVar('doc', $doc);
 
-    $this->view->setVar('title', $doc->displayName);
+    $this->view->setVar('title', $doc->username);
 
     if (empty($type))
       $type = 'tutti';
@@ -152,27 +152,27 @@ class ProfileController extends ListController {
   }
 
 
-  public function tagsAction($id) {
+  public function tagsAction($username) {
 
   }
 
 
-  public function reputationAction($id) {
+  public function reputationAction($username) {
 
   }
 
 
-  public function activitiesAction($id) {
+  public function activitiesAction($username) {
 
   }
 
 
-  public function bountiesAction($id) {
+  public function bountiesAction($username) {
 
   }
 
 
-  public function projectsAction($id) {
+  public function projectsAction($username) {
 
   }
 
