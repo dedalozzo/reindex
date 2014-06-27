@@ -52,13 +52,6 @@ abstract class Badge extends Storable {
 
 
   /*
-   * @brief Returns a detailed description of the badge.
-   * @return string
-   */
-  abstract public function getDetails();
-
-
-  /*
    * @brief The badge is made by the returned metal.
    * @return string
    */
@@ -91,7 +84,7 @@ abstract class Badge extends Storable {
 
   public function save() {
     $this->meta['supertype'] = 'badge';
-    $this->meta['section'] = $this->getMetal();
+    $this->meta['metal'] = $this->getMetal();
 
     parent::save();
   }
