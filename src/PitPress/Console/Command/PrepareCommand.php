@@ -40,7 +40,7 @@ class PrepareCommand extends AbstractCommand {
     $mysql = $this->di['mysql'];
 
     // Creates a new 'Redazione' user and assigns to every item and tag where idMember is null.
-    $sql = "INSERT INTO Member (idMember, nickName, email, password, regDate) VALUES (1, 'Redazione', 'redazione@programmazione.it', MD5('chid0rmen0npigliap3sci'), NOW())";
+    $sql = "INSERT INTO Member (idMember, nickName, email, password, regDate) VALUES (1, 'redazione', 'redazione@programmazione.it', MD5('chid0rmen0npigliap3sci'), NOW())";
     mysqli_real_query($mysql, $sql) or die(mysqli_error($mysql));
     $sql = "UPDATE Item SET idMember = 1 WHERE idMember IS NULL";
     mysqli_real_query($mysql, $sql) or die(mysqli_error($mysql));
