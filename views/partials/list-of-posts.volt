@@ -1,7 +1,7 @@
 {% set usersBaseUrl = '//utenti.'~domainName~'/' %}
 {% if entries is defined %}
   {% for entry in entries %}
-    {% set userUrl = usersBaseUrl~entry.userId %}
+    {% set userUrl = usersBaseUrl~entry.username %}
     {% set postType = entry.type %}
     {% include "partials/helpers/tag.volt" %}
     <hr class="fade-short">
@@ -31,7 +31,7 @@
               <tr><td><span class="badges"><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 14<i class="icon-certificate bronze"></i> 122</span></td></tr>
             </table>
           </div>
-          <a class="username" href="{{ userUrl }}">{{ entry.displayName }}</a>
+          <a class="username" href="{{ userUrl }}">{{ entry.username }}</a>
         </section>
         {% endif %}
       </div>
