@@ -1,5 +1,5 @@
 {% set usersBaseUrl = '//utenti.'~domainName~'/' %}
-{% set userUrl = usersBaseUrl~doc.userId %}
+{% set userUrl = usersBaseUrl~doc.username %}
 {% set hitsCount = doc.getHitsCount() %}
 {% set repliesCount = doc.getRepliesCount() %}
 {% set postType = doc.type %}
@@ -95,7 +95,7 @@
             <tr><td><span class="badges"><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 14<i class="icon-certificate bronze"></i> 122</span></td></tr>
           </table>
         </div>
-        <a class="username" href="{{ userUrl }}">{{ doc.getDisplayName() }}</a>
+        <a class="username" href="{{ userUrl }}">{{ doc.username }}</a>
       </section>
     </div>
     <ul class="list item-buttons gutter">
@@ -137,7 +137,7 @@
     <ul class="list item-actors">
       {% set usersHaveVoted = doc.getUsersHaveVoted() %}
       {% for userHasVoted in usersHaveVoted %}
-      <li><a href="{{ usersBaseUrl~userHasVoted.id }}"><img class="img-polaroid" title="{{ userHasVoted.displayName }}" src="{{ userHasVoted.gravatar }}&s=20" /></a></li>
+      <li><a href="{{ usersBaseUrl~userHasVoted.id }}"><img class="img-polaroid" title="{{ userHasVoted.username }}" src="{{ userHasVoted.gravatar }}&s=20" /></a></li>
       {% endfor  %}
     </ul>
   </section>
@@ -149,7 +149,8 @@
   </ul>
 
   {% for reply in replies %}
-  {% set userUrl = usersBaseUrl~reply.userId %}
+  {% set username = reply.username %}
+  {% set userUrl = usersBaseUrl~username %}
 
   {% if not loop.first %}
   {% endif %}
@@ -170,7 +171,7 @@
             <tr><td><span class="badges"><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 14<i class="icon-certificate bronze"></i> 122</span></td></tr>
           </table>
         </div>
-        <a class="username" href="{{ userUrl }}">{{ reply.getDisplayName() }}</a>
+        <a class="username" href="{{ userUrl }}">{{ username }}</a>
       </section>
     </div>
     <ul class="list item-buttons gutter">
