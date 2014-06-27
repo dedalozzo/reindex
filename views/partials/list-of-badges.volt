@@ -1,20 +1,20 @@
-{% set badgesBaseUrl = '//badges.'~domainName~'/' %}
 {% if badges is defined %}
 <table class="pluto gutter">
   <thead>
     <tr>
-      <th colspan="2">Nome</th>
+      <th>Nome</th>
       <th>Descrizione</th>
       <th>Assegnati</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
-  {% for badge in badges %}
+  {% for name, badge in badges %}
     <tr>
-      <td><i class="icon-ok"></i>&nbsp;</td>
-      <td><a href="//{{ serverName~'/'~badge['name']|lower }}" class="badge"><i class="icon-certificate {{ badge['metal'] }}"></i> {{ badge['name'] }}</td>
+      <td><a href="//{{ serverName~'/'~name|lower }}" class="badge"><i class="icon-certificate {{ badge['metal'] }}"></i> {{ name }}</td>
       <td>{{ badge['brief'] }}</td>
-      <td style="text-align: center;">0</td>
+      <td>0</td>
+      <td><i class="icon-ok icon-large"></i>&nbsp;</td>
     </tr>
   {% elsefor %}
     <div class="alert alert-info">Siamo spiacenti, la ricerca non ha prodotto alcun risultato.</div>
