@@ -57,8 +57,8 @@
           </div>
         </li>
         {% else %}
-        <li><a href="{{ baseUri }}/accedi/">Accedi</a></li>
-        <li><a href="{{ baseUri }}/registrati/">Registrati</a></li>
+        <li><a href="//utenti.{{ domainName }}/accedi/">Accedi</a></li>
+        <li><a href="//utenti.{{ domainName }}/registrati/">Registrati</a></li>
         {% endif %}
 
 
