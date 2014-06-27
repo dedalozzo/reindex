@@ -104,7 +104,7 @@ trait TVote {
       $entry->id = $user['id'];
 
       // We just need the e-mail to get the Gravatar link.
-      $entry->displayName = $user['value'][0];
+      $entry->username = $user['value'][0];
       $entry->gravatar = User::getGravatar($user['value'][1]);
 
       $entries[] = $entry;
