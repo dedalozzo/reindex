@@ -31,7 +31,7 @@ class User extends Storable implements Extension\ICount {
    * @return string
    */
   public static function getGravatar($email) {
-    return 'http://gravatar.com/avatar/'.md5(strtolower($email)).'?d=identicon';
+    return 'http://gravatar.com/avatar/'.md5(mb_strtolower($email, 'utf-8')).'?d=identicon';
   }
 
 
@@ -86,16 +86,6 @@ class User extends Storable implements Extension\ICount {
       return $reputation;
     else
       return 1;
-  }
-
-
-  /**
-   * @brief Returns the list of badges rewarded to the user.
-   * @param[in] string $metal Specify the metal used for building badges: `gold`, `silver` or `bronze`.
-   * @return associative array
-   */
-  public function getBadges($metal = NULL) {
-
   }
 
 
@@ -242,18 +232,18 @@ class User extends Storable implements Extension\ICount {
   }
 
 
-  public function getDisplayName() {
-    return $this->meta['displayName'];
+  public function getUsername() {
+    return $this->meta['username'];
   }
 
 
-  public function issetDisplayName() {
-    return isset($this->meta['displayName']);
+  public function issetUsername() {
+    return isset($this->meta['username']);
   }
 
 
-  public function setDisplayName($value) {
-    $this->meta['displayName'] = $value;
+  public function setUsername($value) {
+    $this->meta['username'] = $value;
   }
 
 
