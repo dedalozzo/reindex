@@ -1,7 +1,6 @@
 {% extends "templates/structure/single-column.volt" %}
 
 {% block sectionMenu %}
-  {% set displayName = '' %}
   {% include "partials/navigation/sections/users.volt" %}
 {% endblock %}
 
@@ -16,7 +15,7 @@
 {% if users is defined %}
   {% for user in users %}
     {% set modulus = loop.index % 4 %}
-    {% set url = '//utenti.'~domainName~'/'~user.id %}
+    {% set url = '//'~serverName~'/'~user.username %}
     {% if loop.first %}
     <ul class="list gutter">
     {% endif %}
@@ -30,7 +29,7 @@
               <tr><td><span class="badges"><i class="icon-certificate gold"></i> 12<i class="icon-certificate silver"></i> 14<i class="icon-certificate bronze"></i> 122</span></td></tr>
             </table>
           </div>
-          <a class="username" href="{{ url }}">{{ user.displayName }}</a>
+          <a class="username" href="{{ url }}">{{ user.username }}</a>
         </section>
       </li>
     {% if loop.last %}
