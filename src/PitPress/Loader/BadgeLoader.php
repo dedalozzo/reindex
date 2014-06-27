@@ -30,6 +30,7 @@ class BadgeLoader {
 
   public function __construct($folder) {
     $this->folder = $folder;
+    $this->scanForBadges();
   }
 
 
@@ -38,7 +39,7 @@ class BadgeLoader {
   }
 
 
-  public function scanForBadges() {
+  protected function scanForBadges() {
     $dir = new \RecursiveDirectoryIterator($this->folder);
     $filter = new BadgeRecursiveFilterIterator($dir);
     $iterator = new \RecursiveIteratorIterator($filter);
@@ -47,52 +48,72 @@ class BadgeLoader {
       $class = Helper\ClassHelper::getClass($item->getPathname());
       $badge = new $class();
 
-      $this->badges[$class]['category'] = basename($item->getPath());
-      $this->badges[$class]['name'] = $badge->name;
-      $this->badges[$class]['brief'] = $badge->brief;
-      $this->badges[$class]['metal'] = $badge->metal;
+      $this->badges[$badge->name]['class'] = $class;
+      $this->badges[$badge->name]['metal'] = $badge->metal;
+      $this->badges[$badge->name]['category'] = basename($item->getPath());
+      $this->badges[$badge->name]['brief'] = $badge->brief;
     }
+
+    ksort($this->badges);
   }
 
 
-  // tutti, ottenuti, non ottenuti, oro, argento, bronzo, per tag
+  protected function filterBadges($badges, $filterName, $filterValue) {
+    $filtered = [];
+    foreach ($badges as $key => $value)
+
+      if ($value[$filterName] == $filterValue)
+        $filtered[$key] = $value;
+
+    return $filtered;
+  }
+
+
+  /**
+   * @brief Returns the list of all badges.
+   * @return array An associative array.
+   */
   public function getAllBadges() {
     return $this->badges;
-
-    //$this->filterByNamespace();
-
-    //alfabeticOrder
-
   }
 
 
-  public function getBronzeBadges() {
 
-  }
-
-
-  public function getSilverBadges() {
-
-  }
-
-
-  public function getGoldBadges() {
-
-  }
-
-
+  /**
+   * @brief Returns the list of badges rewarded to the user.
+   * @return array An associative array.
+   */
   public function getEarnedBadges() {
 
   }
 
 
+  /**
+   * @brief Returns the list of badges not rewarded to the user.
+   * @return array An associative array.
+   */
   public function getUnearnedBadges() {
 
   }
 
 
-  public function filterByNamespace() {
+  /**
+   * @brief Returns the list of badges filtered by metal.
+   * @param[in] string $metal Specify the metal used for building badges: `gold`, `silver` or `bronze`.
+   * @return array An associative array.
+   */
+  public function filterByMetal($badges, $metal) {
+    return $this->filterBadges($badges, 'metal', $metal);
+  }
 
+
+  /**
+   * @brief Returns the list of badges filtered by category.
+   * @param[in] string $category Specify the category to which the badges belong.
+   * @return array An associative array.
+   */
+  public function filterByCategory($badges, $category) {
+    return $this->filterBadges($badges, 'category', $category);
   }
 
 } 
