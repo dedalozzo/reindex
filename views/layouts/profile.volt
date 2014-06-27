@@ -28,7 +28,7 @@
       </div>
     </div>
 
-    {% set displayName = '/'~doc.id %}
+    {% set resourceName = doc.username %}
     {% include "partials/navigation/sections/profile.volt" %}
     {% include "partials/navigation/section-menu.volt" %}
     {% include "partials/navigation/subsection-menu.volt" %}
@@ -61,7 +61,7 @@
         {% if doc.firstName is defined %}
           Mi chiamo {{ doc.firstName|upper }} {{ doc.lastName|upper }}.
         {% else %}
-          {{ doc.displayName }}
+          {{ doc.username }}
         {% endif %}
         {% if doc.birthday is defined %}
           Ho {{ doc.getAge() }} anni.
