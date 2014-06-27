@@ -32,7 +32,7 @@ class InitCommand extends AbstractCommand {
   /**
    * @brief Insert all design documents.
    */
-  private function initAll() {
+  protected function initAll() {
     $this->initDocs();
     $this->initPosts();
     $this->initTags();
@@ -49,7 +49,7 @@ class InitCommand extends AbstractCommand {
   }
 
 
-  private function initDocs() {
+  protected function initDocs() {
     $doc = DesignDoc::create('docs');
 
     function docsByType() {
@@ -72,7 +72,7 @@ MAP;
   }
 
 
-  private function initPosts() {
+  protected function initPosts() {
     $doc = DesignDoc::create('posts');
 
 
@@ -89,8 +89,7 @@ function($doc) use ($emit) {
        'section' => $doc->section,
        'publishingType' => $doc->publishingType,
        'publishingDate' => $doc->publishingDate,
-       'userId' => $doc->userId,
-       'username' => $doc->username
+       'userId' => $doc->userId
      ]);
 };
 MAP;
@@ -240,7 +239,7 @@ MAP;
   }
 
 
-  private function initTags() {
+  protected function initTags() {
     $doc = DesignDoc::create('tags');
 
 
@@ -317,7 +316,7 @@ MAP;
   }
 
 
-  private function initVotes() {
+  protected function initVotes() {
     $doc = DesignDoc::create('votes');
 
 
@@ -439,7 +438,7 @@ MAP;
   }
 
 
-  private function initScores() {
+  protected function initScores() {
     $doc = DesignDoc::create('scores');
 
 
@@ -501,7 +500,7 @@ MAP;
   }
 
 
-  private function initStars() {
+  protected function initStars() {
     $doc = DesignDoc::create('stars');
 
 
@@ -529,7 +528,7 @@ MAP;
   }
 
 
-  private function initSubscriptions() {
+  protected function initSubscriptions() {
     $doc = DesignDoc::create('subscriptions');
 
 
@@ -556,7 +555,7 @@ MAP;
   }
 
 
-  private function initClassifications() {
+  protected function initClassifications() {
     $doc = DesignDoc::create('classifications');
 
 
@@ -622,11 +621,34 @@ MAP;
   }
 
 
-  private function initBadges() {
+  protected function initBadges() {
+    $doc = DesignDoc::create('badges');
+
+
+    // @params class, userId
+    function badgesPerClass() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) && $doc->supertype == 'badge')
+    $emit([$doc->class, $doc->userId]);
+};
+MAP;
+
+      $handler = new ViewHandler("perClass");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
+
+      return $handler;
+    }
+
+    $doc->addHandler(badgesPerClass());
+
+
+    $this->couch->saveDoc($doc);
   }
 
 
-  private function initReputation() {
+  protected function initReputation() {
     $doc = DesignDoc::create('reputation');
 
 
@@ -654,7 +676,7 @@ MAP;
   }
 
 
-  private function initFavorites() {
+  protected function initFavorites() {
     $doc = DesignDoc::create('favorites');
 
 
@@ -700,7 +722,7 @@ MAP;
   }
 
 
-  private function initUsers() {
+  protected function initUsers() {
     $doc = DesignDoc::create('users');
 
 
@@ -709,7 +731,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'user')
-    $emit($doc->_id, [$doc->displayName, $doc->email, $doc->creationDate]);
+    $emit($doc->_id, [$doc->username, $doc->email, $doc->creationDate]);
 };
 MAP;
 
@@ -728,7 +750,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'user')
-    $emit($doc->_id, [$doc->displayName, $doc->email]);
+    $emit($doc->_id, [$doc->username, $doc->email]);
 };
 MAP;
 
@@ -758,21 +780,21 @@ MAP;
     $doc->addHandler(newestUsers());
 
 
-    function usersByDisplayName() {
+    function usersByUsername() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'user')
-    $emit($doc->displayName);
+    $emit($doc->username, $doc->_id);
 };
 MAP;
 
-      $handler = new ViewHandler("byDisplayName");
+      $handler = new ViewHandler("byUsername");
       $handler->mapFn = $map;
 
       return $handler;
     }
 
-    $doc->addHandler(usersByDisplayName());
+    $doc->addHandler(usersByUsername());
 
 
     function usersByEmail() {
@@ -814,7 +836,7 @@ MAP;
   }
 
 
-  private function initReplies() {
+  protected function initReplies() {
     $doc = DesignDoc::create('replies');
 
 
