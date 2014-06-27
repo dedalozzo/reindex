@@ -1,5 +1,5 @@
 {% if badges is defined %}
-<table class="pluto gutter">
+<table class="badges gutter">
   <thead>
     <tr>
       <th>Nome</th>
