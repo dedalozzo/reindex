@@ -9,7 +9,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <link rel="shortcut icon" href="{{ baseUri }}/favicon.ico" type="image/x-icon">
+  <link rel="shortcut icon" href="//{{ domainName }}/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="//{{ serverName }}/pit-bootstrap/dist/css/bootstrap.css">
   <!-- <link rel="stylesheet" href="//{{ serverName }}/pit-bootstrap/css/selectize.bootstrap3.css"> -->
 
@@ -28,7 +28,7 @@
 
   <style>
     body {
-      background-image: url({{ baseUri }}/pit-bootstrap/dist/img/backgrounds/bg_px.png);
+      background-image: url(//{{ domainName }}/pit-bootstrap/dist/img/backgrounds/bg_px.png);
       background-repeat: repeat;
     }
   </style>

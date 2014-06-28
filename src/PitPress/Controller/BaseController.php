@@ -14,7 +14,6 @@ namespace PitPress\Controller;
 
 use Phalcon\Mvc\Controller;
 use PitPress\Version;
-use PitPress\Factory\UserFactory;
 
 
 /**
@@ -26,8 +25,8 @@ abstract class BaseController extends Controller {
   protected $redis;
   protected $monolog;
 
-  protected $baseUri;
   protected $domainName;
+  protected $serverName;
   protected $controllerName;
   protected $actionName;
 
@@ -48,7 +47,7 @@ abstract class BaseController extends Controller {
    */
   protected function redirect($uri = "") {
     if (empty($uri))
-      return $this->response->redirect($this->baseUri, TRUE);
+      return $this->response->redirect("//".$this->domainName, TRUE);
     else
       return $this->response->redirect($uri, TRUE);
   }
@@ -62,12 +61,14 @@ abstract class BaseController extends Controller {
     $this->redis = $this->di['redis'];
     $this->monolog = $this->di['monolog'];
 
-    // Used in subclasses also.
+    $this->guardian = $this->di['guardian'];
+    $this->user = $this->guardian->getCurrentUser();
+
+    // It is just the primary domain, for example: `programmazione.it`.
     $this->domainName = $this->di['config']['application']['domainName'];
 
-    $this->baseUri = "//".$this->domainName;
-
-    $this->user = UserFactory::getFromCookie();
+    // Includes the subdomain if any, for example: `blog.programmazione.it`.
+    $this->serverName = $_SERVER['SERVER_NAME'];
   }
 
 
@@ -85,11 +86,9 @@ abstract class BaseController extends Controller {
     $this->view->setVar('version', Version::getNumber());
 
     $this->view->setVar('domainName', $this->domainName);
-    $this->view->setVar('serverName', $_SERVER['SERVER_NAME']);
+    $this->view->setVar('serverName', $this->serverName);
     $this->view->setVar('controllerName', $this->dispatcher->getControllerName());
     $this->view->setVar('actionName', $this->dispatcher->getActionName());
-
-    $this->view->setVar('baseUri', $this->baseUri);
 
     if (isset($this->user))
       $this->view->setVar('currentUser', $this->user);
