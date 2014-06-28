@@ -9,3 +9,4 @@ pit query favorites/lastAdded --limit=1 &
 pit query users/allNames --limit=1 &
 pit query replies/newestPerPost &
 pit query scores/perSection &
+pit query badges/perClass &
