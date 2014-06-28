@@ -166,8 +166,6 @@ class QueryCommand extends AbstractCommand {
     if ($input->getArgument('keys')) {
       $args = $input->getArgument('keys');
 
-      echo PHP_EOL.$args.PHP_EOL;
-
       $keys = [];
       foreach ($args as $key)
         $keys[] = $this->castArg($key, FALSE);
