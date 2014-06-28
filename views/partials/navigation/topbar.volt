@@ -1,15 +1,15 @@
 {% include "partials/navigation/main-menu.volt" %}
 <nav class="topbar">
   <ul class="list">
-    <li><a class="topbar-brand-logo" href="{{ baseUri }}">&#62<blink>&#95</blink></a></li>
+    <li><a class="topbar-brand-logo" href="//{{ domainName }}">&#62<blink>&#95</blink></a></li>
     <li><a class="topbar-brand-name" href="//{{ domainName }}">PROGRAMMAZIONE.IT</a></li>
     <li>
       <ul class="list pills no-gutter">
         {% for item in mainMenu %}
           <li{{ (item['name'] == sectionName) ? ' class="active"' : '' }}><a href="//{{ item['path']~domainName }}"><i class="icon-{{ item['icon'] }}" ></i>&nbsp;{{ item['label'] }}</a></li>
         {% endfor %}
-        <!-- <li><a href="{{ baseUri }}/tour/">Tour</a></li>
-        <li><a href="{{ baseUri }}/aiuto/">Aiuto</a></li> -->
+        <!-- <li><a href="//{{ domainName }}/tour/">Tour</a></li>
+        <li><a href="//{{ domainName }}/aiuto/">Aiuto</a></li> -->
 
         <!-- <li class="icon"><a href="http://twitter.com/prg_it"><i class="icon-twitter icon-large"></i></a></li>
         <li class="icon"><a href="http://facebook.com/programmazione.it"><i class="icon-facebook icon-large"></i></a></li>
@@ -52,7 +52,7 @@
               <li><button><i class="icon-wrench"></i>Impostazioni</button></li>
               <li><button><i class="icon-gears"></i>Amministrazione</button></li>
               <li class="dropdown-divider"></li>
-              <li><a href="{{ baseUri }}/disconnetti/"><i class="icon-signout"></i>Disconnetti</a></li>
+              <li><a href="//{{ domainName }}/disconnetti/"><i class="icon-signout"></i>Disconnetti</a></li>
             </ul>
           </div>
         </li>

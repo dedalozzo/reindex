@@ -1,12 +1,12 @@
     <footer id="footer">
       <ul class="list">
-        <li><a href="{{ baseUri }}/tour/">CHI SIAMO</a></li>
-        <li><a href="{{ baseUri }}/aiuto/">AIUTO</a></li>
-        <li><a href="{{ baseUri }}/legale/">LEGALE</a></li>
-        <li><a href="{{ baseUri }}/privacy/">PRIVACY</a></li>
-        <li><a href="{{ baseUri }}/lavoro/">LAVORO</a></li>
-        <li><a href="{{ baseUri }}/pubblicita/">PUBBLICITÀ</a></li>
-        <li><a href="{{ baseUri }}/contatti/">CONTATTI</a></li>
+        <li><a href="//{{ domainName }}/tour/">CHI SIAMO</a></li>
+        <li><a href="//{{ domainName }}/aiuto/">AIUTO</a></li>
+        <li><a href="//{{ domainName }}/legale/">LEGALE</a></li>
+        <li><a href="//{{ domainName }}/privacy/">PRIVACY</a></li>
+        <li><a href="//{{ domainName }}/lavoro/">LAVORO</a></li>
+        <li><a href="//{{ domainName }}/pubblicita/">PUBBLICITÀ</a></li>
+        <li><a href="//{{ domainName }}/contatti/">CONTATTI</a></li>
         <li class="space"></li>
         <li><a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/it/"><img alt="Licenza Creative Commons" style="border-width:0" src="http://i.creativecommons.org/l/by-sa/3.0/it/80x15.png" /></a></li>
       </ul>
