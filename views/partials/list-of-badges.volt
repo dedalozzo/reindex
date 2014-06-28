@@ -1,4 +1,3 @@
-{% if badges is defined %}
 <table class="badges gutter">
   <thead>
     <tr>
@@ -11,7 +10,7 @@
   <tbody>
   {% for name, badge in badges %}
     <tr>
-      <td><a href="//{{ serverName~'/'~name|lower }}" class="badge"><i class="icon-certificate {{ badge['metal'] }}"></i> {{ name }}</td>
+      <td><a href="//{{ serverName~'/'~badge['name']|lower }}" class="badge"><i class="icon-certificate {{ badge['metal'] }}"></i> {{ badge['name'] }}</td>
       <td>{{ badge['brief'] }}</td>
       <td>0</td>
       <td><i class="icon-ok icon-large"></i>&nbsp;</td>
@@ -21,4 +20,3 @@
   {% endfor %}
   </tbody>
 </table>
-{% endif %}
