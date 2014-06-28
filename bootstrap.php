@@ -59,6 +59,7 @@ require $root."/services/redis.php";
 require $root."/services/markdown.php";
 require $root."/services/crypt.php";
 require $root."/services/flash.php";
+require $root."/services/guardian.php";
 require $root."/services/badgeloader.php";
 
 /*
