@@ -4,7 +4,7 @@
 
   <div id="page-title">{{ doc.title }}</div>
 
-  <form class="frm-stacked" action="{{ baseUri }}/accedi/" id="signinform" name="signinform" method="post" role="form">
+  <form class="frm-stacked" action="//{{ domainName }}/accedi/" id="signinform" name="signinform" method="post" role="form">
     <fieldset>
       <label for="revision">Revisione: </label>
       <select name="revision" id="select-nation" placeholder="Nazione...">
