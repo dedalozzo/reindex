@@ -65,12 +65,11 @@ abstract class AbstractCommand extends Command implements InjectionAwareInterfac
   protected function isString(&$arg) {
     if (preg_match('/\A[\'"]([^\'"]+)[\'"]\z/i', $arg, $matches)) {
       $arg = $matches[1];
-      return true;
+      return TRUE;
     }
     else
-      return false;
+      return FALSE;
   }
-
 
 
   /**
