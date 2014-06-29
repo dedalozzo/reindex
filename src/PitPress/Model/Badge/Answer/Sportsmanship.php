@@ -8,7 +8,7 @@
  */
 
 
-namespace PitPress\Model\Badge\Vote;
+namespace PitPress\Model\Badge\Answer;
 
 
 use PitPress\Model\Badge\Silver;
@@ -33,7 +33,9 @@ class Sportsmanship extends Silver {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai votato 100 risposte su domande dove una delle tue risposte ha almeno un punto. Assegnato una sola volta.
+DESC;
   }
 
 

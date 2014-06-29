@@ -8,7 +8,7 @@
  */
 
 
-namespace PitPress\Model\Badge\Post;
+namespace PitPress\Model\Badge\Link;
 
 
 use PitPress\Model\Badge\Silver;
@@ -33,7 +33,9 @@ class Reporter extends Silver {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai segnalato almeno 25 links. Assegnato una sola volta.
+DESC;
   }
 
 
