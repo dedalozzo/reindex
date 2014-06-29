@@ -33,7 +33,9 @@ class Critic extends Bronze {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai lasciato il tuo primo commento. Assegnato una sola volta.
+DESC;
   }
 
 

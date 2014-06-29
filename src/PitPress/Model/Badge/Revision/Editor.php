@@ -33,7 +33,9 @@ class Editor extends Gold {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai modificato 100 contributi. Assegnato una sola volta.
+DESC;
   }
 
 

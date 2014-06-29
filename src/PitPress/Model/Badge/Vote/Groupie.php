@@ -33,7 +33,9 @@ class Groupie extends Gold {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai votato almeno 500 volte. Assegnato una sola volta.
+DESC;
   }
 
 

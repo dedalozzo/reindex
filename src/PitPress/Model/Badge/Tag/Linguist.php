@@ -33,7 +33,9 @@ class Linguist extends Bronze {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Per la prima volta un sinonimo da te inserito è stato approvato. Assegnato una sola volta.
+DESC;
   }
 
 

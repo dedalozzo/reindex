@@ -33,7 +33,9 @@ class Blogger extends Silver {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai scritto almeno 5 articoli sulla tua timeline. Assegnato una sola volta.
+DESC;
   }
 
 

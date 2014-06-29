@@ -25,7 +25,7 @@ class Philanthropist extends Gold {
    * @copydoc Badge::getName()
    */
   public function getName() {
-    return "Formidabile";
+    return "Filantropo";
   }
 
 
@@ -33,7 +33,9 @@ class Philanthropist extends Gold {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai fatto una donazione di almeno 100 €. Assegnato più volte.
+DESC;
   }
 
 

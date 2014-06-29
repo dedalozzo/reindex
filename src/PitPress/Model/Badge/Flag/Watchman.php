@@ -33,7 +33,9 @@ class Watchman extends Bronze {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai segnalato un problema alla redazione. Assegnato una sola volta.
+DESC;
   }
 
 

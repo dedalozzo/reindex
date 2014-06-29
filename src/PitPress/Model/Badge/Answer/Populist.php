@@ -33,7 +33,10 @@ class Populist extends Gold {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai fornito una risposta ad una domanda per la quale già esiste una risposta accettata con un punteggio pari o superiore
+a 10, e la tua risposta ha ottenuto almeno il doppio dei punti. Assegnato più volte.
+DESC;
   }
 
 

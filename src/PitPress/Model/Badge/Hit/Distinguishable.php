@@ -15,7 +15,7 @@ use PitPress\Model\Badge\Silver;
 
 
 /**
- * @brief Wrote a post with 5.000 views.
+ * @brief Wrote a post with 10.000 views.
  * @details Awarded multiple times.
  */
 class Distinguishable extends Silver {
@@ -33,7 +33,9 @@ class Distinguishable extends Silver {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai scritto un articolo o formulato una domanda con almeno 10.000 visualizzazioni. Assegnato più volte.
+DESC;
   }
 
 

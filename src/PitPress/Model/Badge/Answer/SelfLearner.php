@@ -33,7 +33,9 @@ class SelfLearner extends Bronze {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai risposto ad una tua stessa domanda e la tua risposta ha totalizzato almeno 3 punti. Assegnato una sola volta.
+DESC;
   }
 
 

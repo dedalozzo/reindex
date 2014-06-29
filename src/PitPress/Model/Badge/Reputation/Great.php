@@ -33,7 +33,9 @@ class Great extends Bronze {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai ottenuto 200 punti di reputazione in un solo giorno. Assegnato una sola volta.
+DESC;
   }
 
 

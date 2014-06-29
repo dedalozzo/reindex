@@ -33,7 +33,10 @@ class Necromancer extends Silver {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai risposta ad una domanda formulata almeno 2 mesi prima; la tua risposta ha ottenuto almeno 5 punti. Assegnato più
+volte.
+DESC;
   }
 
 

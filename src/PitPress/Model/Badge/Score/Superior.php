@@ -33,7 +33,9 @@ class Superior extends Bronze {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai fornito un contributo (articolo, domanda, recensione, link) che ha ottenuto 30 punti. Assegnato più volte.
+DESC;
   }
 
 

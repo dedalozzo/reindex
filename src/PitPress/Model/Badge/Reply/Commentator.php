@@ -33,7 +33,9 @@ class Commentator extends Bronze {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai scritto 10 commenti. Assegnato una sola volta.
+DESC;
   }
 
 

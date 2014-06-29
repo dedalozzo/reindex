@@ -33,7 +33,9 @@ class Taxonomist extends Silver {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai creato un tag utilizzato da almeno 50 contributi. Assegnato una sola volta.
+DESC;
   }
 
 

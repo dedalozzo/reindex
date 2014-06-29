@@ -33,7 +33,9 @@ class Historian extends Bronze {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai modificato un contributo che è stato inattivo per 6 mesi. Assegnato una sola volta.
+DESC;
   }
 
 

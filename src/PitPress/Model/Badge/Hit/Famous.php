@@ -15,7 +15,7 @@ use PitPress\Model\Badge\Gold;
 
 
 /**
- * @brief Wrote a post with 20.000 views.
+ * @brief Wrote a post with 30.000 views.
  * @details Awarded multiple times.
  */
 class Famous extends Gold {
@@ -33,7 +33,9 @@ class Famous extends Gold {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai scritto un articolo o formulato una domanda con almeno 30.000 visualizzazioni. Assegnato più volte.
+DESC;
   }
 
 

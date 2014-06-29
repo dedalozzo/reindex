@@ -33,7 +33,9 @@ class Legendary extends Gold {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai ottenuto 200 punti di reputazione per 150 volte. Assegnato una sola volta.
+DESC;
   }
 
 

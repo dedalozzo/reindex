@@ -33,7 +33,10 @@ class Resurrectionist extends Bronze {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai risposto, per primo, ad una domanda formulata almeno un mese prima, e la tua risposta ha totalizzato almeno 2 punti.
+Assegnato più volte.
+DESC;
   }
 
 

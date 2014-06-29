@@ -33,7 +33,9 @@ class Moderator extends Gold {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Sei stato moderatore del sito per almeno un anno. Assegnato una sola volta.
+DESC;
   }
 
 

@@ -15,7 +15,7 @@ use PitPress\Model\Badge\Silver;
 
 
 /**
- * @brief Raised 80 helpful flags.
+ * @brief Raised 50 helpful flags.
  * @details Awarded once.
  */
 class Doorman extends Silver {
@@ -33,7 +33,9 @@ class Doorman extends Silver {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai segnalato almeno 50 problemi alla redazione. Assegnato una sola volta.
+DESC;
   }
 
 

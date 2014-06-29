@@ -33,7 +33,10 @@ class Tenacious extends Silver {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai fornito più di 5 risposte con punteggio pari a 0, che rappresentano almeno il 20% delle tue risposte. Assegnato una
+sola volta.
+DESC;
   }
 
 

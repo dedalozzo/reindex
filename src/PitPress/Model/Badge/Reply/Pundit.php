@@ -33,7 +33,9 @@ class Pundit extends Silver {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai lasciato 10 commenti con almeno 5 punti ciascuno. Assegnato una sola volta.
+DESC;
   }
 
 
