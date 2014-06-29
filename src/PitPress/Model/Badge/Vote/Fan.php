@@ -33,7 +33,9 @@ class Fan extends Silver {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai votato 250 o più volte. Assegnato una sola volta.
+DESC;
   }
 
 

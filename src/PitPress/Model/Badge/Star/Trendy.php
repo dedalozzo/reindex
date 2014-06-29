@@ -33,7 +33,9 @@ class Trendy extends Bronze {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai fornito un contributo (articolo, domanda, recensione, link) aggiunto ai preferiti 25 volte. Assegnato più volte.
+DESC;
   }
 
 

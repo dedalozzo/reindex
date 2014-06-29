@@ -33,7 +33,9 @@ class KnowItAll extends Silver {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Fornito risposte con un punteggio di 15 in almeno la metà.";
+    return <<<'DESC'
+Hai fornito risposte con almeno 15 punti, in 20 dei 40 tag più attivi. Assegnato una sola volta.
+DESC;
   }
 
 

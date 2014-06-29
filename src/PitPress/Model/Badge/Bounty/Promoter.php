@@ -33,7 +33,9 @@ class Promoter extends Bronze {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai offerto il tuo primo bounty su di una tua stessa domanda. Assegnato una sola volta.
+DESC;
   }
 
 

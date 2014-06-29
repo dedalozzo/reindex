@@ -33,7 +33,10 @@ class Assistant extends Bronze {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+E' la prima volta che editi un contributo, sia esso un articolo, una domanda, una risposta, ecc. Assegnato una sola
+volta.
+DESC;
   }
 
 

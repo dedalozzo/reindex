@@ -33,7 +33,10 @@ class Guru extends Silver {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+La tua risposta è stata accettata dall'autore e ha totalizzato 40 punti. Assegnato più volte.
+DESC;
+
   }
 
 

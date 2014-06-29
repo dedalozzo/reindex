@@ -33,7 +33,9 @@ class Supporter extends Silver {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai fatto una donazione a tuo piacimento. Assegnato più volte.
+DESC;
   }
 
 

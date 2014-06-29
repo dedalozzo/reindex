@@ -33,7 +33,9 @@ class Student extends Bronze {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Per la prima volta una tua domanda totalizza almeno un punto. Assegnato una sola volta.
+DESC;
   }
 
 

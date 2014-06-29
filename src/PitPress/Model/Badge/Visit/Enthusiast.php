@@ -33,7 +33,9 @@ class Enthusiast extends Silver {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai visitato il sito per 30 giorni consecutivi. Assegnato una sola volta.
+DESC;
   }
 
 

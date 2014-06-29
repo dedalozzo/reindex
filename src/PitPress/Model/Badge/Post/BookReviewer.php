@@ -33,7 +33,9 @@ class BookReviewer extends Silver {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai scritto almeno 2 recensioni, che sono poi state pubblicate sul blog principale. Assegnato una sola volta.
+DESC;
   }
 
 

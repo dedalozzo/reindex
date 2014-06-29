@@ -33,7 +33,9 @@ class Scholar extends Bronze {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai formulato la tua prima domanda e hai accettato una risposta. Assegnato una sola volta.
+DESC;
   }
 
 

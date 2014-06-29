@@ -33,7 +33,9 @@ class Tagger extends Bronze {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Per la prima volta hai modificato la descrizione di un tag. Assegnato una sola volta.
+DESC;
   }
 
 

@@ -33,7 +33,9 @@ class Librarian extends Gold {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai modificato la descrizione di 20 tags. Assegnato una sola volta.
+DESC;
   }
 
 

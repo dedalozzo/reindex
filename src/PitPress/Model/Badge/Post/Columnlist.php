@@ -33,7 +33,9 @@ class Columnlist extends Silver {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai scritto almeno 10 articoli associati ad un particolare tag. Assegnato più volte.
+DESC;
   }
 
 

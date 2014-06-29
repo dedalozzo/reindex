@@ -33,7 +33,9 @@ class Contributor extends Silver {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai scritto il tuo primo articolo sulla tua timeline. Assegnato una sola volta.
+DESC;
   }
 
 

@@ -33,7 +33,10 @@ class Archaeologist extends Silver {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai modificato 100 contributi (articoli, domande, ecc.) che sono stati inattivi per almeno 6 mesi. Assegnato una sola
+volta.
+DESC;
   }
 
 

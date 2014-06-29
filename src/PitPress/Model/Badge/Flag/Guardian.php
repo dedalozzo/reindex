@@ -33,7 +33,9 @@ class Guardian extends Gold {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai segnalato almeno 500 problemi alla redazione. Assegnato una sola volta.
+DESC;
   }
 
 

@@ -33,7 +33,9 @@ class Attendee extends Bronze {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai votato 10 volte in un giorno. Assegnato una sola volta.
+DESC;
   }
 
 

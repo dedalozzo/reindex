@@ -33,7 +33,9 @@ class Autobiographer extends Bronze {
    * @copydoc Badge::getBrief()
    */
   public function getBrief() {
-    return "Primo a rispondere ad una domanda.";
+    return <<<'DESC'
+Hai completato in ogni sua parte il tuo profilo. Assegnato una sola volta.
+DESC;
   }
 
 
