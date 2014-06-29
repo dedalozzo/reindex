@@ -38,13 +38,7 @@ class BadgesController extends ListController {
    * @brief Displays all badges.
    */
   public function allAction() {
-    $badges = $this->badgeLoader->getAllBadges();
-
-    foreach ($badges as $badge) {
-      $this->monolog->addDebug("badge", $badge);
-    }
-
-    $this->view->setVar('badges', $badges);
+    $this->view->setVar('badges', $this->badgeLoader->getAllBadges());
   }
 
 
@@ -52,6 +46,7 @@ class BadgesController extends ListController {
    * @brief Displays the achieved badges.
    */
   public function achieveAction() {
+    $this->view->setVar('badges', $this->badgeLoader->getEarnedBadges());
   }
 
 
@@ -59,6 +54,7 @@ class BadgesController extends ListController {
    * @brief Displays the not achieved badges.
    */
   public function notAchieveAction() {
+    $this->view->setVar('badges', $this->badgeLoader->getUnearnedBadges());
   }
 
 
@@ -66,10 +62,7 @@ class BadgesController extends ListController {
    * @brief Displays the gold badges.
    */
   public function goldAction() {
-    $badges = $this->badgeLoader->filterByMetal($this->badgeLoader->getAllBadges(), 'gold');
-    $this->view->setVar('badges', $badges);
-
-    $this->monolog->addNotice("Filtered", $badges);
+    $this->view->setVar('badges', $this->badgeLoader->filterByMetal($this->badgeLoader->getAllBadges(), 'gold'));
   }
 
 
@@ -77,8 +70,7 @@ class BadgesController extends ListController {
    * @brief Displays the silver badges.
    */
   public function silverAction() {
-    $badges = $this->badgeLoader->filterByMetal($this->badgeLoader->getAllBadges(), 'silver');
-    $this->view->setVar('badges', $badges);
+    $this->view->setVar('badges', $this->badgeLoader->filterByMetal($this->badgeLoader->getAllBadges(), 'silver'));
   }
 
 
@@ -86,8 +78,7 @@ class BadgesController extends ListController {
    * @brief Displays the bronze badges.
    */
   public function bronzeAction() {
-    $badges = $this->badgeLoader->filterByMetal($this->badgeLoader->getAllBadges(), 'bronze');
-    $this->view->setVar('badges', $badges);
+    $this->view->setVar('badges', $this->badgeLoader->filterByMetal($this->badgeLoader->getAllBadges(), 'bronze'));
   }
 
 
