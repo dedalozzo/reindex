@@ -15,6 +15,8 @@ namespace PitPress\Loader;
 use PitPress\Filter\BadgeRecursiveFilterIterator;
 use PitPress\Helper;
 
+use ElephantOnCouch\Opt\ViewQueryOpts;
+
 
 /**
  * @brief
@@ -22,20 +24,53 @@ use PitPress\Helper;
  * @nosubgrouping
  */
 class BadgeLoader {
-
+  protected $guardian;
+  protected $couch;
+  protected $monolog;
   protected $folder;
-
   protected $badges = [];
 
 
-  public function __construct($folder) {
+  public function __construct($di, $folder) {
+    $this->guardian = $di['guardian'];
+    $this->couch = $di['couchdb'];
+    $this->monolog = $di['monolog'];
     $this->folder = $folder;
     $this->scanForBadges();
   }
 
 
-  protected function setAwardedCount() {
+  private function setAwardedCount($forCurrentUser = FALSE) {
+    $opts = new ViewQueryOpts();
+    $opts->reset();
+    $opts->includeMissingKeys()->groupResults();
 
+    $classes = array_column($this->badges, 'class');
+
+    if ($forCurrentUser) {
+      $field = 'earned';
+
+      $keys = [];
+      foreach ($classes as $class)
+        $keys[] = [$class, $this->guardian->getCurrentUser()->id];
+
+      $result = $this->couch->queryView("badges", "perClassAndUser", $keys, $opts);
+    }
+    else {
+      $field = 'awarded';
+
+      $result = $this->couch->queryView("badges", "perClass", $classes, $opts);
+    }
+
+    $badgesCount = count($result);
+    for ($i = 0; $i < $badgesCount; $i++)
+      $this->badges[$i][$field] = is_null($result[$i]['value']) ? 0 : $result[$i]['value'];
+  }
+
+
+  private function setEarnedCount() {
+    if (!is_null($this->guardian->getCurrentUser()))
+      $this->setAwardedCount(TRUE);
   }
 
 
@@ -44,26 +79,44 @@ class BadgeLoader {
     $filter = new BadgeRecursiveFilterIterator($dir);
     $iterator = new \RecursiveIteratorIterator($filter);
 
-    foreach ($iterator as $item) {
-      $class = Helper\ClassHelper::getClass($item->getPathname());
+    $i = 0;
+    foreach ($iterator as $fileInfo) {
+      $class = Helper\ClassHelper::getClass($fileInfo->getPathname());
       $badge = new $class();
 
-      $this->badges[$badge->name]['class'] = $class;
-      $this->badges[$badge->name]['metal'] = $badge->metal;
-      $this->badges[$badge->name]['category'] = basename($item->getPath());
-      $this->badges[$badge->name]['brief'] = $badge->brief;
+      $this->badges[$i]['class'] = $class;
+      $this->badges[$i]['name'] = $badge->name;
+      $this->badges[$i]['metal'] = $badge->metal;
+      $this->badges[$i]['category'] = basename($fileInfo->getPath());
+      $this->badges[$i]['brief'] = $badge->brief;
+      $this->badges[$i]['awarded'] = 0;
+      $this->badges[$i]['earned'] = 0;
+
+      $i++;
     }
 
-    ksort($this->badges);
+    $this->sortBadges($this->badges, 'name');
+
+    $this->setAwardedCount();
+    $this->setEarnedCount();
+  }
+
+
+  protected function sortBadges(&$badges, $field) {
+    $func = function($a, $b) use ($field) {
+      return strcmp($a[$field], $b[$field]);
+    };
+
+    usort($badges, $func);
   }
 
 
   protected function filterBadges($badges, $filterName, $filterValue) {
     $filtered = [];
-    foreach ($badges as $key => $value)
+    foreach ($badges as $badge)
 
-      if ($value[$filterName] == $filterValue)
-        $filtered[$key] = $value;
+      if ($badge[$filterName] == $filterValue)
+        $filtered[] = $badge;
 
     return $filtered;
   }
@@ -78,13 +131,19 @@ class BadgeLoader {
   }
 
 
-
   /**
    * @brief Returns the list of badges rewarded to the user.
    * @return array An associative array.
    */
   public function getEarnedBadges() {
+    $func = function($value) {
+      if ($value['earned'] > 0)
+        return TRUE;
+      else
+        return FALSE;
+    };
 
+    return array_filter($this->badges, $func);
   }
 
 
@@ -93,7 +152,14 @@ class BadgeLoader {
    * @return array An associative array.
    */
   public function getUnearnedBadges() {
+    $func = function($value) {
+      if ($value['earned'] === 0)
+        return TRUE;
+      else
+        return FALSE;
+    };
 
+    return array_filter($this->badges, $func);
   }
 
 
