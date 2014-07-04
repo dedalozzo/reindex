@@ -182,7 +182,7 @@ class AuthController extends BaseController {
 
     //$this->url->setBaseUri('http://utenti.programmazione.me/');
     $this->view->disable();
-    $redirectUri = "http://utenti.".$this->domainName."/".$this->user->id;
+    $redirectUri = "http://utenti.".$this->domainName."/".$this->user->username;
     return $this->redirect($redirectUri);
 
     //exit;
