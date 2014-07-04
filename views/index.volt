@@ -10,14 +10,14 @@
   <meta name="author" content="">
 
   <link rel="shortcut icon" href="//{{ domainName }}/favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="//{{ serverName }}/pit-bootstrap/dist/css/bootstrap.css">
-  <!-- <link rel="stylesheet" href="//{{ serverName }}/pit-bootstrap/css/selectize.bootstrap3.css"> -->
+  <link rel="stylesheet" href="//{{ serverName }}/pit-bootstrap/dist/css/pit.css">
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
   <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-scrollTo/1.4.11/jquery.scrollTo.min.js"></script> -->
   <script src="//{{ serverName }}/pit-bootstrap/dist/js/tab.min.js"></script>
   <script src="//{{ serverName }}/pit-bootstrap/dist/js/dropdown.min.js"></script>
   <script src="//{{ serverName }}/pit-bootstrap/dist/js/selectize.min.js"></script>
+  <script src="//{{ serverName }}/pit-bootstrap/dist/js/pit.min.js"></script>
 
 {% include "partials/codemirror.volt" %}
 
