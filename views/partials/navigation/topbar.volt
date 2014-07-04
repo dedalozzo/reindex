@@ -35,7 +35,7 @@
           </div>
         </li>
         {% if currentUser is defined %}
-          {% set userUri = '//utenti.'~domainName~'/'~currentUser.id %}
+          {% set userUri = '//utenti.'~domainName~'/'~currentUser.username %}
         <li><button class="btn btn-icon blue" title="messaggi e notifiche" data-dropdown="#dropdown-inbox"><i class="icon-inbox icon-large"></i></button></li>
         <li>
           <button class="btn btn-icon blue" data-dropdown="#dropdown-user"><img class="gravatar" src="{{ currentUser.getGravatar(currentUser.email) }}&s=20"></button>
@@ -43,16 +43,16 @@
             <ul class="dropdown-menu">
               <li><a href="{{ userUri }}"><i class="icon-home"></i>Timeline</a></li>
               <li class="dropdown-divider"></li>
-              <li><a href="{{ userUri }}"><i class="icon-user"></i>Profilo</a></li>
-              <li><a href="{{ userUri }}"><i class="icon-group"></i>Connessioni</a></li>
-              <li><a href="{{ userUri }}"><i class="icon-star"></i>Preferiti</a></li>
-              <li><a href="{{ userUri }}"><i class="icon-github"></i>Progetti</a></li>
-              <li><a href="{{ userUri }}"><i class="icon-tasks"></i>Attività</a></li>
+              <li><a href="{{ userUri }}/profilo/"><i class="icon-user"></i>Profilo</a></li>
+              <li><a href="{{ userUri }}/connessioni/"><i class="icon-group"></i>Connessioni</a></li>
+              <li><a href="{{ userUri }}/preferiti/"><i class="icon-star"></i>Preferiti</a></li>
+              <li><a href="{{ userUri }}/progetti/"><i class="icon-github"></i>Progetti</a></li>
+              <li><a href="{{ userUri }}/attivita/"><i class="icon-tasks"></i>Attività</a></li>
               <li class="dropdown-divider"></li>
               <li><button><i class="icon-wrench"></i>Impostazioni</button></li>
               <li><button><i class="icon-gears"></i>Amministrazione</button></li>
               <li class="dropdown-divider"></li>
-              <li><a href="//{{ domainName }}/disconnetti/"><i class="icon-signout"></i>Disconnetti</a></li>
+              <li><a href="//utenti.{{ domainName }}/disconnetti/"><i class="icon-signout"></i>Disconnetti</a></li>
             </ul>
           </div>
         </li>
