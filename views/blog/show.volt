@@ -27,32 +27,6 @@
 
   <section class="item-content">
     <div class="item-time">{{ doc.whenHasBeenPublished() }}</div>
-    <!-- <ul class="list toolbar">
-      <li class="toolgroup break">
-        <a href="#" title="Mi piace"><i class="icon-heart"></i></a>
-        <span>{{ doc.getScore() }}</span>
-      </li>
-      <li class="toolgroup">
-        <a href="#" title="Aggiungi ai preferiti"><i class="icon-star-empty"></i></a>
-        <span>{{ doc.getStarsCount() }}</span>
-      </li>
-      <li class="toolgroup break">
-        <a href="#" title="Sottoscrivi la discussione"><i class="icon-eye-open"></i></a>
-        <span>{{ doc.getSubscribersCount() }}</span>
-      </li>
-      <li class="toolgroup">
-        <a href="#" title="Condividi su Twitter"><i class="icon-twitter"></i></a>
-        <span>{{ doc.getStarsCount() }}</span>
-      </li>
-      <li class="toolgroup">
-        <a href="#" title="Condividi su Facebook"><i class="icon-facebook"></i></a>
-        <span>{{ doc.getStarsCount() }}</span>
-      </li>
-      <li class="toolgroup break">
-        <a href="#" title="Condividi su Google+"><i class="icon-google-plus"></i></a>
-        <span>{{ doc.getStarsCount() }}</span>
-      </li>
-    </ul> -->
 
     {% if postType == 'book' %}
     <div class="item-meta">
