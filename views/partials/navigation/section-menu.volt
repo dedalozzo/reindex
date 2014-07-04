@@ -4,7 +4,7 @@
 {% endif %}
 
 {% if resourceName is defined %}
-  {% set resourcePath = resourceName~'/' %}
+  {% set resourcePath = '/'~resourceName %}
 {% else %}
   {% set resourcePath = '' %}
 {% endif %}
