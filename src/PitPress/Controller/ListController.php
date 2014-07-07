@@ -74,6 +74,18 @@ abstract class ListController extends BaseController {
     $opts->doNotReduce();
     $posts = $this->couch->queryView("posts", "all", $keys, $opts);
 
+    // Likes.
+    if (isset($this->user)) {
+      $opts->reset();
+      $opts->doNotReduce()->includeMissingKeys();
+
+      $complex = [];
+      foreach ($keys as $postId)
+        $complex[] = [$postId, $this->user->id];
+
+      $likes = $this->couch->queryView("votes", "perPostAndUser", $complex, $opts);
+    }
+
     // Scores.
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
@@ -102,6 +114,7 @@ abstract class ListController extends BaseController {
       $entry->hitsCount = $this->redis->hGet($entry->id, 'hits');
       $entry->score = is_null($scores[$i]['value']) ? 0 : $scores[$i]['value'];
       $entry->repliesCount = is_null($replies[$i]['value']) ? 0 : $replies[$i]['value'];
+      $entry->liked = is_null($this->user) || is_null($likes[$i]['value']) ? FALSE : TRUE;
 
       // Tags.
       $opts->reset();
