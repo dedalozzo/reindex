@@ -32,16 +32,8 @@ class AjaxGroup extends Group {
 
     $this->setHostName('ajax.'.DI::getDefault()['config']['application']['domainName']);
 
-    $this->addGet('/registrati/', ['action' => 'signUp']);
-
-    // All the following routes start with /accedi.
-    $this->setPrefix('/accedi');
-
-    $this->add('/', ['action' => 'signIn'], ['GET', 'POST']);
-    $this->addGet('/facebook/', ['action' => 'facebook']);
-    $this->addGet('/google/', ['action' => 'google']);
-    $this->addGet('/linkedin/', ['action' => 'linkedin']);
-    $this->addGet('/github/', ['action' => 'github']);
+    $this->addPost('/vota/', ['action' => 'vote']);
+    $this->addGet('/pippo/{id}', ['action' => 'pippo']);
   }
 
 }
