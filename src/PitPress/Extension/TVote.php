@@ -60,6 +60,9 @@ trait TVote {
 
 
   public function didUserVote(User $user, &$voteId = NULL) {
+    if (is_null($user))
+      throw new \RuntimeException("Per votare devi fare il login.");
+
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $user->id]);
 
