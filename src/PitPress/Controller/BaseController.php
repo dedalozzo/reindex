@@ -75,9 +75,9 @@ abstract class BaseController extends Controller {
   /**
    * @brief This method is executed before the initialize. In my opinion it's a bug.
    * @details Cannot log inside this method using the monolog instance.
+   * @warning Do not use it!
    */
-  public function beforeExecuteRoute() {
-  }
+  public function beforeExecuteRoute() {}
 
 
   public function afterExecuteRoute() {
