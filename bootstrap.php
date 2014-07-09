@@ -65,6 +65,7 @@ require $root."/services/flash.php";
 require $root."/services/guardian.php";
 require $root."/services/badgeloader.php";
 
+
 /*
 // USE THE FOLLOWING CODE FOR DEBUG PURPOSE ONLY
 
@@ -114,6 +115,7 @@ $response->sendHeaders();
 // Prints the response.
 echo $response->getContent();
 */
+
 
 // Creates the application object.
 $application = new Application();
