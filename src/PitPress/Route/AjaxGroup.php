@@ -33,7 +33,6 @@ class AjaxGroup extends Group {
     $this->setHostName('ajax.'.DI::getDefault()['config']['application']['domainName']);
 
     $this->addPost('/vota/', ['action' => 'vote']);
-    $this->addGet('/pippo/{id}', ['action' => 'pippo']);
   }
 
 }
