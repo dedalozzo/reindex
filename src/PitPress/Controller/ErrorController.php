@@ -2,7 +2,7 @@
 
 /**
  * @file ErrorController.php
- * @brief This file contains the ${CLASS_NAME} class.
+ * @brief This file contains the ErrorController class.
  * @details
  * @author Filippo F. Fadda
  */
