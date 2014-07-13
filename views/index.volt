@@ -28,7 +28,7 @@
 
   <style>
     body {
-      background-image: url(//{{ domainName }}/pit-bootstrap/dist/img/backgrounds/bg_px.png);
+      background-image: url(//{{ domainName }}/pit-bootstrap/dist/img/bg/bg_px.png);
       background-repeat: repeat;
     }
   </style>
