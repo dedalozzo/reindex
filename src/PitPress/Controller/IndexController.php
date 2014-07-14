@@ -78,8 +78,7 @@ class IndexController extends ListController {
     $this->view->setVar('articles', $this->getNewestPostsPerType('newestPerType', 'article'));
     $this->view->setVar('books', $this->getNewestPostsPerType('newestPerType', 'book'));
 
-    $stat = new Stat();
-    $this->view->setVar('entriesCount', $stat->getUpdatesCount());
+    $this->stats('getUpdatesCount', 'aggiornamenti');
   }
 
 
@@ -106,9 +105,6 @@ class IndexController extends ListController {
     $this->view->setVar('subsectionIndex', Time::periodIndex($period));
 
     $this->popularEver(new \stdClass(), $period);
-
-    $stat = new Stat();
-    $this->view->setVar('entriesCount', $stat->getBlogEntriesCount());
   }
 
 
