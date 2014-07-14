@@ -22,6 +22,21 @@ class Time extends TimeHelper {
 
   private static $periods = ['sempre', 'anno', 'trimestre', 'mese', 'settimana', '24-ore'];
 
+  private static $months = [
+    'gennaio',
+    'febbraio',
+    'marzo',
+    'aprile',
+    'maggio',
+    'giugno',
+    'luglio',
+    'agosto',
+    'settembre',
+    'ottobre',
+    'novembre',
+    'dicembre'
+  ];
+
 
   /**
    * @brief Returns a measure of the time passed since the provided timestamp. In case is passed more than a day,
@@ -76,6 +91,25 @@ class Time extends TimeHelper {
    */
   public static function periodIndex($period) {
     return array_flip(self::$periods)[$period];
+  }
+
+
+  /**
+   * @brief Returns all the months in a year in reverse order.
+   * @return array
+   */
+  public static function months() {
+    return array_reverse(self::$months);
+  }
+
+
+  /**
+   * @brief Given a month as string, returns the his number as string. For example, given `maggio` it returns `05`.
+   * @param[in] string $month A month.
+   * @return string
+   */
+  public static function monthIndex($month) {
+    return sprintf("%02s", array_flip(self::$months)[$month]);
   }
 
 
