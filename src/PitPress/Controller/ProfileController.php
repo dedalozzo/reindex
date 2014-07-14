@@ -77,11 +77,10 @@ class ProfileController extends ListController {
 
     $this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'id')));
 
-    $stat = new Stat();
-    $this->view->setVar('entriesCount', $stat->getUpdatesCount());
-
     $this->view->setVar('subsectionMenu', self::$typologySubMenu);
     $this->view->setVar('subsectionIndex', array_flip(self::$typologySubMenu)[$type]);
+
+    $this->stats('getUpdatesCount', 'aggiornamenti');
 
     $this->view->disableLevel(View::LEVEL_MAIN_LAYOUT);
     //$this->view->disableLevel(View::LEVEL_LAYOUT);
@@ -142,11 +141,10 @@ class ProfileController extends ListController {
 
     $this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'value')));
 
-    $stat = new Stat();
-    $this->view->setVar('entriesCount', $stat->getUpdatesCount());
-
     $this->view->setVar('subsectionMenu', self::$typologySubMenu);
     $this->view->setVar('subsectionIndex', array_flip(self::$typologySubMenu)[$type]);
+
+    $this->stats('getUpdatesCount', 'aggiornamenti');
 
     $this->view->disableLevel(View::LEVEL_MAIN_LAYOUT);
   }
