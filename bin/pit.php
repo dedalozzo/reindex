@@ -50,7 +50,7 @@ try {
 
   // Creates the application object.
   $console = new PitPressConsole('PitPress Console', '0.1.0');
-  $console->setCatchExceptions(FALSE);
+  //$console->setCatchExceptions(FALSE);
 
   // Sets the dependency injector component.
   $console->setDI($di);
