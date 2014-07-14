@@ -16,15 +16,13 @@ use PitPress\Route;
 // Creates a router instance and return it.
 $di->setShared('router',
   function () {
-    $router = new Router();
+    $router = new Router(FALSE);
 
-    //$router->setDefaultController("index");
-    //$router->setDefaultAction("recents");
-
-    $router->add('/',
+    $router->notFound(
       [
-        'controller' => 'index',
-        'action' => 'index'
+        'namespace' => 'PitPress\Controller',
+        "controller" => "error",
+        "action" => "show404"
       ]
     );
 
