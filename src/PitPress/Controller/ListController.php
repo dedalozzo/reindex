@@ -14,6 +14,7 @@ namespace PitPress\Controller;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Helper\Time;
+use PitPress\Helper\Stat;
 use PitPress\Model\User\User;
 
 use Phalcon\Mvc\View;
@@ -24,6 +25,18 @@ use Phalcon\Mvc\View;
  * @nosubgrouping
  */
 abstract class ListController extends BaseController {
+
+
+  /**
+   * @brief Sets the entries count and the relative label to be displayed on the right column.
+   * @param[in] string $method The method name to be called on an instance of the `Stat` class.
+   * @param[in] string $label The label to be displayed below the entries count.
+   */
+  protected function stats($method, $label) {
+    $stat = new Stat();
+    $this->view->setVar('entriesCount', call_user_func(array($stat, $method)));
+    $this->view->setVar('entriesLabel', $label);
+  }
 
 
   /**
@@ -134,6 +147,26 @@ abstract class ListController extends BaseController {
     }
 
     return $entries;
+  }
+
+
+  /**
+   * @brief Displays the entries per date and type.
+   */
+  protected function perDate($type, $year, $month, $day) {
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults();
+
+    if (!empty($day))
+      $opts->setStartKey([$type, $year, $month, $day, new \stdClass()])->setEndKey(['blog', $year, $month, $day]);
+    elseif (!empty($month))
+      $opts->setStartKey([$type, $year, $month, new \stdClass()])->setEndKey(['blog', $year, $month]);
+    else
+      $opts->setStartKey([$type, $year, new \stdClass()])->setEndKey(['blog', $year]);
+
+    $rows = $this->couch->queryView("posts", "byUrl", NULL, $opts);
+
+    $this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'id')));
   }
 
 
