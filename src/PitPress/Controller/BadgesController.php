@@ -38,7 +38,10 @@ class BadgesController extends ListController {
    * @brief Displays all badges.
    */
   public function allAction() {
-    $this->view->setVar('badges', $this->badgeLoader->getAllBadges());
+    $badges = $this->badgeLoader->getAllBadges();
+    $this->view->setVar('badges', $badges);
+    $this->view->setVar('entriesCount', count($badges));
+    $this->view->setVar('entriesLabel', 'badges disponibili');
   }
 
 
@@ -46,7 +49,10 @@ class BadgesController extends ListController {
    * @brief Displays the achieved badges.
    */
   public function achieveAction() {
-    $this->view->setVar('badges', $this->badgeLoader->getEarnedBadges());
+    $badges = $this->badgeLoader->getEarnedBadges();
+    $this->view->setVar('badges', $badges);
+    $this->view->setVar('entriesCount', count($badges));
+    $this->view->setVar('entriesLabel', 'badges ottenuti');
   }
 
 
@@ -54,7 +60,10 @@ class BadgesController extends ListController {
    * @brief Displays the not achieved badges.
    */
   public function notAchieveAction() {
-    $this->view->setVar('badges', $this->badgeLoader->getUnearnedBadges());
+    $badges = $this->badgeLoader->getUnearnedBadges();
+    $this->view->setVar('badges', $badges);
+    $this->view->setVar('entriesCount', count($badges));
+    $this->view->setVar('entriesLabel', 'badges non ottenuti');
   }
 
 
@@ -62,7 +71,10 @@ class BadgesController extends ListController {
    * @brief Displays the gold badges.
    */
   public function goldAction() {
-    $this->view->setVar('badges', $this->badgeLoader->filterByMetal($this->badgeLoader->getAllBadges(), 'gold'));
+    $badges =  $this->badgeLoader->filterByMetal($this->badgeLoader->getAllBadges(), 'gold');
+    $this->view->setVar('badges', $badges);
+    $this->view->setVar('entriesCount', count($badges));
+    $this->view->setVar('entriesLabel', "badges d'oro");
   }
 
 
@@ -70,7 +82,10 @@ class BadgesController extends ListController {
    * @brief Displays the silver badges.
    */
   public function silverAction() {
-    $this->view->setVar('badges', $this->badgeLoader->filterByMetal($this->badgeLoader->getAllBadges(), 'silver'));
+    $badges = $this->badgeLoader->filterByMetal($this->badgeLoader->getAllBadges(), 'silver');
+    $this->view->setVar('badges', $badges);
+    $this->view->setVar('entriesCount', count($badges));
+    $this->view->setVar('entriesLabel', "badges d'argento");
   }
 
 
@@ -78,7 +93,10 @@ class BadgesController extends ListController {
    * @brief Displays the bronze badges.
    */
   public function bronzeAction() {
-    $this->view->setVar('badges', $this->badgeLoader->filterByMetal($this->badgeLoader->getAllBadges(), 'bronze'));
+    $badges = $this->badgeLoader->filterByMetal($this->badgeLoader->getAllBadges(), 'bronze');
+    $this->view->setVar('badges', $badges);
+    $this->view->setVar('entriesCount', count($badges));
+    $this->view->setVar('entriesLabel', 'badges di bronzo');
   }
 
 
