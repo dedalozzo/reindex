@@ -50,15 +50,39 @@ class BlogController extends ListController {
     $opts->setKey(['blog', $year, $month, $day, $slug])->setLimit(1);
     $rows = $this->couch->queryView("posts", "byUrl", NULL, $opts);
 
-    if (empty($rows))
+    if ($rows->isEmpty()) {
       $this->dispatcher->forward(
         [
           'controller' => 'error',
           'action' => 'show404'
         ]);
+      return FALSE;
+    }
 
     $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $rows[0]['id']);
     $doc->incHits();
+
+
+    /*
+     DEBUG CODE!!!!!
+    */
+    /*
+    $config = $this->di['config'];
+    $mysql = mysqli_connect('localhost', $config->mysql->user, $config->mysql->password) or die(mysqli_error($mysql));
+    //mysqli_set_charset($mysql, 'LATIN1');
+    mysqli_select_db($mysql, $config->mysql->database) or die(mysql_error());
+    $sql = "SELECT body FROM Item WHERE id = '".$doc->id."'";
+    $result = mysqli_query($mysql, $sql) or die(mysqli_error($mysql));
+    //$temp = Text::convertCharset(mysqli_fetch_assoc($result)['body']);
+    $doc->html = iconv('Windows-1252', 'UTF-8', mysqli_fetch_assoc($result)['body']);
+    //$doc->html = htmlentities($temp, ENT_COMPAT, "UTF-8");
+    */
+    /*
+     * END DEBUG!!!!
+     */
+    $doc->html = $this->markdown->parse($doc->body);
+
+
     $this->view->setVar('doc', $doc);
     $this->view->setVar('replies', $doc->getReplies());
 
