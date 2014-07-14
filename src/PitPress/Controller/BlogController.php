@@ -28,7 +28,7 @@ use Phalcon\Mvc\View;
 class BlogController extends ListController {
 
 
-  private function newestInPeriod($type, $period) {
+  protected function newestInPeriod($type, $period) {
     $opts = new ViewQueryOpts();
 
     if ($period != 'sempre')
@@ -39,6 +39,17 @@ class BlogController extends ListController {
     $rows = $this->couch->queryView('posts', 'newestPerType', NULL, $opts);
 
     $this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'id')));
+    $this->stats('getBlogEntriesCount', 'pubblicazioni');
+  }
+
+
+  /**
+   * @brief Displays the blog entries per date.
+   */
+  public function perDateAction($year, $month, $day) {
+    $this->perDate('blog', $year, $month, $day);
+    $this->view->setVar('title', 'Pubblicazioni per data');
+    $this->stats('getBlogEntriesCount', 'pubblicazioni');
   }
 
 
@@ -121,9 +132,7 @@ class BlogController extends ListController {
     $rows = $this->couch->queryView("posts", "newestPerSection", NULL, $opts);
 
     $this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'id')));
-
-    $stat = new Stat();
-    $this->view->setVar('entriesCount', $stat->getBlogEntriesCount());
+    $this->stats('getBlogEntriesCount', 'pubblicazioni');
   }
 
 
@@ -137,13 +146,8 @@ class BlogController extends ListController {
     $this->view->setVar('subsectionMenu', Time::periods(5));
     $this->view->setVar('subsectionIndex', Time::periodIndex($period));
 
-    $this->monolog->addDebug("sub:", Time::periods(5));
-    $this->monolog->addDebug("subIndex: ".Time::periodIndex($period));
-
     $this->popularEver('blog');
-
-    $stat = new Stat();
-    $this->view->setVar('entriesCount', $stat->getBlogEntriesCount());
+    $this->stats('getBlogEntriesCount', 'pubblicazioni');
   }
 
 
@@ -152,9 +156,7 @@ class BlogController extends ListController {
    */
   public function updatedAction() {
     //$this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'id')));
-
-    $stat = new Stat();
-    $this->view->setVar('entriesCount', $stat->getBlogEntriesCount());
+    $this->stats('getBlogEntriesCount', 'pubblicazioni');
   }
 
 
@@ -163,9 +165,7 @@ class BlogController extends ListController {
    */
   public function interestingAction() {
     //$this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'id')));
-
-    $stat = new Stat();
-    $this->view->setVar('entriesCount', $stat->getBlogEntriesCount());
+    $this->stats('getBlogEntriesCount', 'pubblicazioni');
   }
 
 
@@ -180,9 +180,7 @@ class BlogController extends ListController {
     $this->view->setVar('subsectionIndex', Time::periodIndex($period));
 
     $this->newestInPeriod('article', $period);
-
-    $stat = new Stat();
-    $this->view->setVar('entriesCount', $stat->getArticlesCount());
+    $this->stats('getArticlesCount', 'articoli');
   }
 
 
@@ -197,9 +195,7 @@ class BlogController extends ListController {
     $this->view->setVar('subsectionIndex', Time::periodIndex($period));
 
     $this->newestInPeriod('book', $period);
-
-    $stat = new Stat();
-    $this->view->setVar('entriesCount', $stat->getBooksCount());
+    $this->stats('getBooksCount', 'libri');
   }
 
 
