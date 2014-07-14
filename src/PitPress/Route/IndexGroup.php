@@ -33,7 +33,7 @@ class IndexGroup extends Group {
 
     $this->setHostName(DI::getDefault()['config']['application']['domainName']);
 
-    $this->addGet('/', ['action' => 'popular']);
+    $this->addGet('/', ['action' => 'newest']);
 
     $this->addGet('/tour/', ['action' => 'tour']);
     $this->addGet('/aiuto/', ['action' => 'help']);
