@@ -26,9 +26,16 @@ class LinksController extends ListController {
 
   public function afterExecuteRoute() {
     parent::afterExecuteRoute();
+    $this->stats('getLinksCount', 'links');
+  }
 
-    $stat = new Stat();
-    $this->view->setVar('entriesCount', $stat->getLinksCount());
+
+  /**
+   * @brief Displays the links per date.
+   */
+  public function perDateAction($year, $month, $day) {
+    $this->perDate('link', $year, $month, $day);
+    $this->view->setVar('title', 'Links per data');
   }
 
 
@@ -41,9 +48,6 @@ class LinksController extends ListController {
     $result = $this->couch->queryView("posts", "newestPerSection", NULL, $opts);
 
     $this->view->setVar('entries', $this->getEntries(array_column($result->asArray(), 'id')));
-
-    $stat = new Stat();
-    $this->view->setVar('entriesCount', $stat->getLinksCount());
   }
 
 
