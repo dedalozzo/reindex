@@ -1,1 +1,1 @@
-<div id="counter"><div>{{ entriesCount }}</div> {{ sectionLabel }}</div>
+<div id="counter"><div>{{ entriesCount }}</div> {{ entriesLabel }}</div>
