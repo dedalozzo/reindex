@@ -34,7 +34,7 @@ class BlogGroup extends Group {
 
     $this->addGet('/', ['action' => 'newest']);
 
-    $this->addGet('/{year}/{month}/{day}/{slug}', ['action' => 'show']);
+    $this->addGet('/{year:[0-9]{4}}/{month:[0-9]{2}}/{day:[0-9]{2}}/{slug:[\da-z-]+}', ['action' => 'show']);
 
     $this->addGet('/{id}/modifica/', ['action' => 'edit']);
 
