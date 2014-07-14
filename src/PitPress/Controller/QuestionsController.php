@@ -29,9 +29,16 @@ class QuestionsController extends ListController {
 
   public function afterExecuteRoute() {
     parent::afterExecuteRoute();
+    $this->stats('getQuestionsCount', 'domande');
+  }
 
-    $stat = new Stat();
-    $this->view->setVar('entriesCount', $stat->getQuestionsCount());
+
+  /**
+   * @brief Displays the questions per date.
+   */
+  public function perDateAction($year, $month, $day) {
+    $this->perDate('question', $year, $month, $day);
+    $this->view->setVar('title', 'Domande per data');
   }
 
 
@@ -51,9 +58,6 @@ class QuestionsController extends ListController {
     $rows = $this->couch->queryView("posts", "newestPerSection", NULL, $opts);
 
     $this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'id')));
-
-    $stat = new Stat();
-    $this->view->setVar('entriesCount', $stat->getQuestionsCount());
   }
 
 
