@@ -9,6 +9,7 @@
 {% endblock %}
 
 {% block columnRight %}
+  {% include "partials/widgets/counter.volt" %}
   <ul class="list vertical gutter even">
     <li><a class="badge" href="//{{ serverName }}/bronzo/"><i class="icon-certificate bronze"></i> Bronzo</a></li>
     <li>Servono ad incoraggiare gli utenti a provare nuove funzionalità del sito. Sono facili da ottenere se vuoi tentare!</li>
