@@ -38,14 +38,21 @@ use PitPress\Exception\WrongPasswordException;
  */
 class AuthController extends BaseController {
 
+
   /**
    * @brief Redirects to the referer page if any.
    */
-  protected function referer() {
+  protected function referer($user = NULL) {
     if ($this->session->has("referer"))
       return $this->response->redirect($this->session->get("referer"), TRUE);
+    elseif (isset($user))
+      return $this->redirect("http://utenti." . $this->domainName . "/" . $user->username);
     else
-      return $this->redirect();
+      return $this->dispatcher->forward(
+        [
+          'controller' => 'error',
+          'action' => 'show404'
+        ]);
   }
 
 
@@ -54,7 +61,11 @@ class AuthController extends BaseController {
    */
   public function signInAction() {
     if (isset($this->user))
-      return $this->referer($this->user->id);
+      return $this->dispatcher->forward(
+        [
+          'controller' => 'error',
+          'action' => 'show404'
+        ]);
 
     // The validation object must be created in any case.
     $validation = new ValidationHelper();
@@ -125,7 +136,7 @@ class AuthController extends BaseController {
 
         $user->save();
 
-        return $this->referer();
+        return $this->referer($user);
       }
       catch (\Exception $e) {
         // To avoid Internet Explorer 6.x implementation issues.
@@ -141,19 +152,23 @@ class AuthController extends BaseController {
       }
     }
     else {
-      // Sets the HTTP Referer to be able to return to the previous page.
       $requestUri = "//".$this->domainName.$_SERVER['REQUEST_URI'];
-      $refererUri = $_SERVER['HTTP_REFERER'];
 
-      if ($requestUri != $refererUri)
+      // Sets the HTTP Referer to be able to return to the previous page.
+      if (isset($_SERVER['HTTP_REFERER']))
+        $refererUri = $_SERVER['HTTP_REFERER'];
+      else
+        $refererUri = "";
+
+      if (!empty($refererUri) && ($requestUri != $refererUri))
         $this->session->set("referer", $refererUri);
       else
         $this->session->remove("referer");
     }
 
-    $this->view->setVar('title', 'Accedi');
+    $this->view->setVar('title', 'Unisciti al più grande social network italiano di sviluppatori');
 
-    $this->view->disableLevel(View::LEVEL_LAYOUT);
+    $this->view->disableLevel(View::LEVEL_MAIN_LAYOUT);
   }
 
 
@@ -176,28 +191,9 @@ class AuthController extends BaseController {
     // Displays the error message.
     $this->flash->success("Disconnessione avvenuta con successo.");
 
-    //$userId = $this->user->id;
-    //$this->user = NULL;
-    //$this->view->setVar('user', NULL);
-
-    //$this->url->setBaseUri('http://utenti.programmazione.me/');
     $this->view->disable();
-    $redirectUri = "http://utenti.".$this->domainName."/".$this->user->username;
-    return $this->redirect($redirectUri);
 
-    //exit;
-
-
-    //$this->redirect($this->user->id);
-
-    /*
-    return $this->dispatcher->forward(
-      [
-        'controller' => 'users',
-        'action' => 'show',
-        'params' => [$userId]
-      ]);
-    */
+    return $this->redirect();
   }
 
 
@@ -345,7 +341,7 @@ class AuthController extends BaseController {
       $result = json_decode($service->request('/people/~?format=json'), true);
 
       // Show some of the resultant data
-      echo 'Your linkedin first name is ' . $result['firstName'] . ' and your last name is ' . $result['lastName'];
+      echo 'Your linkedIn first name is ' . $result['firstName'] . ' and your last name is ' . $result['lastName'];
 
     }
     else {
