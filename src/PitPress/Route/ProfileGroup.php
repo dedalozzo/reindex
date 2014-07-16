@@ -32,14 +32,14 @@ class ProfileGroup extends Group {
 
     $this->setHostName('utenti.'.DI::getDefault()['config']['application']['domainName']);
 
-    $this->addGet('/{id}', ['action' => 'timeline']);
-    $this->addGet('/{id}/timeline/{type}', ['action' => 'timeline']);
-    $this->addGet('/{id}/connessioni/{type}', ['action' => 'connections']);
-    $this->addGet('/{id}/preferiti/{type}', ['action' => 'favorites']);
-    $this->addGet('/{id}/reputatione/{type}', ['action' => 'reputation']);
-    $this->addGet('/{id}/attivita/{type}', ['action' => 'activities']);
-    $this->addGet('/{id}/ricompense/{type}', ['action' => 'bounties']);
-    $this->addGet('/{id}/progetti/{type}', ['action' => 'projects']);
+    $this->addGet('/{username:[\da-z_]{5,20}}', ['action' => 'timeline']);
+    $this->addGet('/{username:[\da-z_]{5,20}}/timeline/{type}', ['action' => 'timeline']);
+    $this->addGet('/{username:[\da-z_]{5,20}}/connessioni/{type}', ['action' => 'connections']);
+    $this->addGet('/{username:[\da-z_]{5,20}}/preferiti/{type}', ['action' => 'favorites']);
+    $this->addGet('/{username:[\da-z_]{5,20}}/reputatione/{type}', ['action' => 'reputation']);
+    $this->addGet('/{username:[\da-z_]{5,20}}/attivita/{type}', ['action' => 'activities']);
+    $this->addGet('/{username:[\da-z_]{5,20}}/ricompense/{type}', ['action' => 'bounties']);
+    $this->addGet('/{username:[\da-z_]{5,20}}/progetti/{type}', ['action' => 'projects']);
   }
 
 }
