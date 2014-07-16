@@ -1,8 +1,7 @@
 {% include "partials/navigation/main-menu.volt" %}
 <nav class="topbar">
   <ul class="list">
-    <li><a class="topbar-brand-logo" href="//{{ domainName }}">&#62<blink>&#95</blink></a></li>
-    <li><a class="topbar-brand-name" href="//{{ domainName }}">PROGRAMMAZIONE.IT</a></li>
+    {% include "partials/brand.volt" %}
     <li>
       <ul class="list pills no-gutter">
         {% for item in mainMenu %}
@@ -17,6 +16,7 @@
       </ul>
     </li>
     <li class="space"></li>
+    {% if currentUser is defined %}
     <li>
       <ul class="list">
         <li><button class="btn btn-icon blue" title="cerca" data-dropdown="#dropdown-search"><i class="icon-search icon-large"></i></button></li>
@@ -34,7 +34,6 @@
             </ul>
           </div>
         </li>
-        {% if currentUser is defined %}
           {% set userUri = '//utenti.'~domainName~'/'~currentUser.username %}
         <li><button class="btn btn-icon blue" title="messaggi e notifiche" data-dropdown="#dropdown-inbox"><i class="icon-inbox icon-large"></i></button></li>
         <li>
@@ -52,16 +51,11 @@
               <li><button><i class="icon-wrench"></i>Impostazioni</button></li>
               <li><button><i class="icon-gears"></i>Amministrazione</button></li>
               <li class="dropdown-divider"></li>
-              <li><a href="//utenti.{{ domainName }}/disconnetti/"><i class="icon-signout"></i>Disconnetti</a></li>
+              <li><a href="//{{ domainName }}/disconnetti/"><i class="icon-signout"></i>Disconnetti</a></li>
             </ul>
           </div>
         </li>
-        {% else %}
-        <li><a href="//utenti.{{ domainName }}/accedi/">Accedi</a></li>
-        <li><a href="//utenti.{{ domainName }}/registrati/">Registrati</a></li>
         {% endif %}
-
-
       </ul>
     </li>
   </ul>
