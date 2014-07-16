@@ -14,7 +14,7 @@
       <div style="position: relative;">
         <img id="avatar" class="img-polaroid pull-left" src="{{ doc.getGravatar(doc.email) }}&s=160">
         {% if currentUser is defined and doc.id == currentUser.id %}
-        <a class="change-avatar" href="#"><i class="icon-camera"></i>CAMBIA FOTO</a>
+        <a class="change-avatar" href="http://it.gravatar.com/"><i class="icon-camera"></i>CAMBIA FOTO</a>
         {% endif %}
       </div>
       <div class="pippo">{{ doc.firstName }} {{ doc.lastName }}</div>
