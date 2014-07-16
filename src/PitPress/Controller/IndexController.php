@@ -83,6 +83,25 @@ class IndexController extends ListController {
 
 
   /**
+   * @brief Page index.
+   */
+  public function indexAction() {
+    if (isset($this->user))
+      return $this->dispatcher->forward(
+        [
+          'controller' => 'index',
+          'action' => 'newest'
+        ]);
+    else
+      return $this->dispatcher->forward(
+        [
+          'controller' => 'auth',
+          'action' => 'signin'
+        ]);
+  }
+
+
+  /**
    * @brief Displays the newest updates.
    */
   public function newestAction() {
