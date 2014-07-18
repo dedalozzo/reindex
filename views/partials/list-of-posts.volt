@@ -8,8 +8,8 @@
     <article id="{{ entry.id }}">
       <div class="item-time">{{ entry.whenHasBeenPublished }}</div>
       <div class="item-tools">
-        <a{% if entry.liked %} class="active"{% endif %} title="mi piace"><i class="icon-thumbs-up icon-large"></i></a>{{ entry.score }}
-        <a href="{{ entry.url }}#comments"><i class="icon-comments icon-large"></i></a>{{ entry.repliesCount }}
+        <a{% if entry.liked %} class="active"{% endif %} title="mi piace"><i class="icon-thumbs-up icon-large"></i></a><span>{{ entry.score }}</span>
+        <a href="{{ entry.url }}#comments"><i class="icon-comments icon-large"></i></a><span>{{ entry.repliesCount }}</span>
       </div>
       <section class="item-content shift">
         <a class="item-title" href="{{ entry.url }}">{{ entry.title }}</a>
