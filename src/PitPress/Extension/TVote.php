@@ -26,7 +26,37 @@ use Phalcon\DI;
 trait TVote {
 
 
+  /**
+   * @brief Returns `true` if the user has voted else otherwise.
+   * @param[in] User $user The current user logged in.
+   * @param[out] string $voteId The vote ID.
+   * @return bool
+   */
+  protected function didUserVote(User $user, &$voteId = NULL) {
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $user->id]);
+
+    $result = $this->couch->queryView("votes", "perPostAndUser", NULL, $opts);
+
+    if ($result->isEmpty())
+      return FALSE;
+    else {
+      $voteId = $result[0]['id'];
+      return TRUE;
+    }
+  }
+
+
+  /**
+   * @brief Registers, replaces or deletes the vote.
+   * @param[in] User $user The current user logged in.
+   * @param[in] string $value The vote.
+   * @return int The voting status.
+   */
   protected function vote(User $user, $value) {
+    if (is_null($user))
+      return IVote::NO_USER_LOGGED_IN;
+
     $voted = $this->didUserVote($user, $voteId);
 
     if ($voted) {
@@ -80,24 +110,6 @@ trait TVote {
   }
 
 
-  public function didUserVote(User $user, &$voteId = NULL) {
-    if (is_null($user))
-      throw new \RuntimeException("Per votare devi fare il login.");
-
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $user->id]);
-
-    $result = $this->couch->queryView("votes", "perPostAndUser", NULL, $opts);
-
-    if ($result->isEmpty())
-      return FALSE;
-    else {
-      $voteId = $result[0]['id'];
-      return TRUE;
-    }
-  }
-
-
   public function getScore() {
     $opts = new ViewQueryOpts();
     $opts->setKey($this->id);
@@ -135,11 +147,6 @@ trait TVote {
     }
 
     return $entries;
-  }
-
-
-  public function getThumbsDirection(User $user) {
-    return $this->redis->hGet($user->id, $this->id);
   }
 
 }
