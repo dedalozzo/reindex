@@ -24,7 +24,7 @@ use Phalcon\DI;
  * @brief Implements the IVote interface.
  */
 trait TVote {
-  
+
 
   protected function vote(User $user, $value) {
     $voted = $this->didUserVote($user, $voteId);
@@ -34,17 +34,17 @@ trait TVote {
       $vote = $this->couch->getDoc(Couch::STD_DOC_PATH, $voteId);
 
       // Calculates difference in seconds.
-      $seconds = floor(time() / $vote->getTimestamp());
+      $seconds = time() - $vote->getTimestamp();
 
       $di = DI::getDefault();
       $votingGracePeriod = $di['config']['application']['votingGracePeriod'];
 
-      // The user has 5 minutes to change or undo his vote.
+      // The user has a grace period to change or undo his vote.
       if ($seconds <= $votingGracePeriod && !$vote->hasBeenRecorded()) {
 
         // The user clicked twice on the same button to undo his vote (or like).
         if ($vote->value === $value) {
-          $this->couch->deleteDoc(Couch::STD_DOC_PATH, $voteId);
+          $this->couch->deleteDoc(Couch::STD_DOC_PATH, $voteId, $vote->rev);
           return IVote::DELETED;
         }
         else {
