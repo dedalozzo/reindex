@@ -33,17 +33,9 @@ interface IVote {
   //!@{
 
   /**
-   * @brief Vote a post.
-   * @param[in] User $user The current user logged in.
-   * @param[in] int $value The vote.
-   * @return int The voting status.
-   */
-  public function vote(User $user, $value, $undo = FALSE);
-
-
-  /**
    * @brief Likes a post.
    * @param[in] User $user The current user logged in.
+   * @return int The voting status.
    */
   public function like(User $user);
 
@@ -51,6 +43,7 @@ interface IVote {
   /**
    * @brief Vote up a post.
    * @param[in] User $user The current user logged in.
+   * @return int The voting status.
    */
   public function voteUp(User $user);
 
@@ -58,6 +51,7 @@ interface IVote {
   /**
    * @brief Vote down a post.
    * @param[in] User $user The current user logged in.
+   * @return int The voting status.
    */
   public function voteDown(User $user);
 
