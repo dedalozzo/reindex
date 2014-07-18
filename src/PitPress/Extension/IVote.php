@@ -22,10 +22,11 @@ interface IVote {
 
   /** @name Voting Status */
   //!@{
-  const DELETED = -1; //!< The vote has been deleted. For example you do a like then you unlike.
-  const REPLACED = 2; //!< The vote has been replaced. For example you do a vote up, then you vote down.
+  const NO_USER_LOGGED_IN = -1; //!< No user logged in. The user is a guest.
   const UNCHANGED = 0; //!< The vote hasn't changed. You tried to replace the vote too late.
   const REGISTERED = 1; //!< The vote has been registered. You never voted before, so there is nothing to undo or replace.
+  const DELETED = 2; //!< The vote has been deleted. For example you do a like then you unlike.
+  const REPLACED = 3; //!< The vote has been replaced. For example you do a vote up, then you vote down.
   //!@}
 
 
@@ -57,17 +58,8 @@ interface IVote {
 
 
   /**
-   * @brief Returns `true` if the user has voted else otherwise.
-   * @param[in] User $user The current user logged in.
-   * @param[out] string $voteId The vote ID.
-   * @return bool
-   */
-  public function didUserVote(User $user, &$voteId = NULL);
-
-
-  /**
    * @brief Returns the arithmetic sum of each each vote.
-   * @return integer
+   * @return int
    */
   public function getScore();
 
@@ -77,14 +69,6 @@ interface IVote {
    * @return array An associative array.
    */
   public function getUsersHaveVoted();
-
-
-  /**
-   * @brief Returns the thumbs state expressed by the current user in relation to the current post.
-   * @param[in] User $user The current user logged in.
-   * @return string|boolean Returns `false` in case the user never voted, '+' for thumbs up and '-' for thumbs down.
-   */
-  public function getThumbsDirection(User $user);
 
   //!@}
 
