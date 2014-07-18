@@ -17,13 +17,16 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
 use PitPress\Model\Accessory\Vote;
 use PitPress\Model\User\User;
 
+use Phalcon\DI;
+
 
 /**
  * @brief Implements the IVote interface.
  */
 trait TVote {
+  
 
-  private function vote(User $user, $value) {
+  protected function vote(User $user, $value) {
     $voted = $this->didUserVote($user, $voteId);
 
     if ($voted) {
@@ -33,29 +36,47 @@ trait TVote {
       // Calculates difference in seconds.
       $seconds = floor(time() / $vote->getTimestamp());
 
-      // The user has 5 minutes to change his vote.
-      if ($seconds < 300 && !$vote->hasBeenRecorded()) {
-        $vote->setValue($value);
-        $this->couch-saveDoc($vote);
+      $di = DI::getDefault();
+      $votingGracePeriod = $di['config']['application']['votingGracePeriod'];
+
+      // The user has 5 minutes to change or undo his vote.
+      if ($seconds <= $votingGracePeriod && !$vote->hasBeenRecorded()) {
+
+        // The user clicked twice on the same button to undo his vote (or like).
+        if ($vote->value === $value) {
+          $this->couch->deleteDoc(Couch::STD_DOC_PATH, $voteId);
+          return IVote::DELETED;
+        }
+        else {
+          $vote->setValue($value);
+          $this->couch->saveDoc($vote);
+          return IVote::REPLACED;
+        }
+
       }
       else
-        throw new \RuntimeException("Trascorsi 5 minuti non è più possibile rettificare il proprio voto.");
+        return IVote::UNCHANGED;
     }
     else {
-      $vote = Vote::create($this->postType, $this->postSection, $this->id, $user->id, $value);
+      $vote = Vote::create($this->getType(), $this->getSection(), $this->id, $user->id, $value);
       $this->couch->saveDoc($vote);
+      return IVote::REGISTERED;
     }
   }
 
 
   public function voteUp(User $user) {
-    $this->vote($user, 1);
+    return $this->vote($user, 1);
   }
 
 
-
   public function voteDown(User $user) {
-    $this->vote($user, -1);
+    return $this->vote($user, -1);
+  }
+
+
+  public function like(User $user) {
+    return $this->vote($user, 1);
   }
 
 
