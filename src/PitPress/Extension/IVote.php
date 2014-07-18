@@ -20,18 +20,43 @@ use PitPress\Model\User\User;
  */
 interface IVote {
 
+  /** @name Voting Status */
+  //!@{
+  const DELETED = -1; //!< The vote has been deleted. For example you do a like then you unlike.
+  const REPLACED = 2; //!< The vote has been replaced. For example you do a vote up, then you vote down.
+  const UNCHANGED = 0; //!< The vote hasn't changed. You tried to replace the vote too late.
+  const REGISTERED = 1; //!< The vote has been registered. You never voted before, so there is nothing to undo or replace.
+  //!@}
+
+
   /** @name Voting Methods */
   //!@{
 
   /**
-   * @brief Likes an post.
+   * @brief Vote a post.
+   * @param[in] User $user The current user logged in.
+   * @param[in] int $value The vote.
+   * @return int The voting status.
+   */
+  public function vote(User $user, $value, $undo = FALSE);
+
+
+  /**
+   * @brief Likes a post.
+   * @param[in] User $user The current user logged in.
+   */
+  public function like(User $user);
+
+
+  /**
+   * @brief Vote up a post.
    * @param[in] User $user The current user logged in.
    */
   public function voteUp(User $user);
 
 
   /**
-   * @brief Unlikes a post.
+   * @brief Vote down a post.
    * @param[in] User $user The current user logged in.
    */
   public function voteDown(User $user);
@@ -40,6 +65,7 @@ interface IVote {
   /**
    * @brief Returns `true` if the user has voted else otherwise.
    * @param[in] User $user The current user logged in.
+   * @param[out] string $voteId The vote ID.
    * @return bool
    */
   public function didUserVote(User $user, &$voteId = NULL);
