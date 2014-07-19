@@ -27,27 +27,6 @@ trait TVote {
 
 
   /**
-   * @brief Returns `true` if the user has voted else otherwise.
-   * @param[in] User $user The current user logged in.
-   * @param[out] string $voteId The vote ID.
-   * @return bool
-   */
-  protected function didUserVote(User $user, &$voteId = NULL) {
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $user->id]);
-
-    $result = $this->couch->queryView("votes", "perPostAndUser", NULL, $opts);
-
-    if ($result->isEmpty())
-      return FALSE;
-    else {
-      $voteId = $result[0]['id'];
-      return TRUE;
-    }
-  }
-
-
-  /**
    * @brief Registers, replaces or deletes the vote.
    * @param[in] User $user The current user logged in.
    * @param[in] string $value The vote.
@@ -107,6 +86,25 @@ trait TVote {
 
   public function like(User $user) {
     return $this->vote($user, 1);
+  }
+
+
+  public function didUserVote(User $user, &$voteId = NULL) {
+    // In case there is no user logged in returns false.
+    if (is_null($user))
+      return FALSE;
+
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $user->id]);
+
+    $result = $this->couch->queryView("votes", "perPostAndUser", NULL, $opts);
+
+    if ($result->isEmpty())
+      return FALSE;
+    else {
+      $voteId = $result[0]['id'];
+      return TRUE;
+    }
   }
 
 

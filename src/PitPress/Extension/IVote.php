@@ -58,6 +58,15 @@ interface IVote {
 
 
   /**
+   * @brief Returns `true` if the user has voted else otherwise.
+   * @param[in] User $user The current user logged in.
+   * @param[out] string $voteId The vote ID.
+   * @return bool
+   */
+  public function didUserVote(User $user, &$voteId = NULL);
+
+
+  /**
    * @brief Returns the arithmetic sum of each each vote.
    * @return int
    */
