@@ -6,25 +6,43 @@
   <title>{{ title }} - {{ domainName|capitalize }}</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="">
+
+  {#
   <meta name="author" content="">
+  <meta name="keywords" content="words">
+  <meta name="description" content="{{ description }}">
+  #}
+
+  {# opengroup
+  <meta property="og:description" content="{{ description }}">
+  <meta property="og:title" content="{{ title }}">
+  <meta property="og:type" content="{{ type }}">
+  <meta property="og:url" content="{{ canonical }}">
+  #}
+
+  {# robots
+    <meta name="robots" content="selection">
+    <meta name="revisit-after" content="period">
+    <meta name="googlebot" content="noodp">
+  #}
 
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="//{{ serverName }}/pit-bootstrap/dist/css/pit.css">
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-  <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-scrollTo/1.4.11/jquery.scrollTo.min.js"></script> -->
-  <script src="//{{ serverName }}/pit-bootstrap/dist/js/tab.min.js"></script>
-  <script src="//{{ serverName }}/pit-bootstrap/dist/js/dropdown.min.js"></script>
-  <script src="//{{ serverName }}/pit-bootstrap/dist/js/selectize.min.js"></script>
-  <script src="//{{ serverName }}/pit-bootstrap/dist/js/pit.min.js"></script>
-
-{% include "partials/codemirror.volt" %}
-
-  <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+  {# HTML5 shim, for IE6-8 support of HTML5 elements #}
   <!--[if lt IE 9]>
   <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
+
+  {% block js %}
+  <script src="//{{ serverName }}/pit-bootstrap/dist/js/dropdown.min.js"></script>
+  <script src="//{{ serverName }}/pit-bootstrap/dist/js/selectize.min.js"></script>
+  <script src="//{{ serverName }}/pit-bootstrap/dist/js/tab.min.js"></script>
+  <script src="//{{ serverName }}/pit-bootstrap/dist/js/pit.min.js"></script>
+  {% endblock %}
+
+  {% include "partials/codemirror.volt" %}
 
   <style>
     body {
@@ -40,26 +58,31 @@
     {% include "partials/navigation/topbar.volt" %}
   {% endblock %}
 
-  <a id="skin" href="#"></a>
-
-  {% block scrollable %}
-  <div id="scrollable">
-    <div class="banner"><a href="#"><img src="/img/970x180.jpg" /></a></div>
-
-    <div id="content">
-      {{ content() }}
-    </div> <!-- /content -->
-
-    {% include "partials/navigation/footer.volt" %}
-
-  </div> <!-- /scrollable -->
+  {% block skin %}
+    <a id="skin" href="#"></a>
   {% endblock %}
 
-  <script>
-    $(function () {
-      $('#myTab a:last').tab('show');
-    });
-  </script>
+  <div id="{% block container %}scrollable{% endblock %}">
+    {% block billboard %}
+      <div class="banner"><a href="#"><img src="/img/970x180.jpg" /></a></div>
+    {% endblock %}
+
+    {% block header %}
+    {% endblock %}
+
+    {% block content %}
+      <div id="content">
+        {{ content() }}
+      </div> <!-- /content -->
+    {% endblock %}
+
+    {% block footer %}
+      {% include "partials/navigation/footer.volt" %}
+    {% endblock %}
+  </div>
+
+  {% block script %}
+  {% endblock %}
 
 </body>
 </html>
