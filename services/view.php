@@ -15,11 +15,9 @@ use Phalcon\Mvc\View;
 $di->setShared('view',
   function() use ($root, $config) {
     $view = new View();
-
     $view->setViewsDir($root.$config->application->viewsDir);
-
     $view->registerEngines(['.volt' => 'volt']);
-
+    //$view->disableLevel(View::LEVEL_MAIN_LAYOUT);
     return $view;
   }
 );
