@@ -54,6 +54,7 @@ require $root."/services/config.php";
 require $root."/services/monolog.php";
 require $root."/services/dispatcher.php";
 require $root."/services/router.php";
+require $root."/services/assets.php";
 require $root."/services/view.php";
 require $root."/services/volt.php";
 require $root."/services/session.php";

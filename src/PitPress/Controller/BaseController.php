@@ -25,6 +25,7 @@ abstract class BaseController extends Controller {
   protected $couch;
   protected $redis;
   protected $monolog;
+  protected $assets;
 
   protected $domainName;
   protected $serverName;
@@ -61,6 +62,7 @@ abstract class BaseController extends Controller {
     $this->couch = $this->di['couchdb'];
     $this->redis = $this->di['redis'];
     $this->monolog = $this->di['monolog'];
+    $this->assets = $this->di['assets'];
 
     $this->guardian = $this->di['guardian'];
     $this->user = $this->guardian->getCurrentUser();
