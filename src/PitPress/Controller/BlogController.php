@@ -96,6 +96,22 @@ class BlogController extends ListController {
     $this->view->setVar('title', $doc->title);
 
     $this->view->disableLevel(View::LEVEL_LAYOUT);
+
+    // Adds Selectize Plugin files.
+    $this->assets->addJs("/pit-bootstrap/dist/js/selectize.min.js", FALSE);
+
+    // Adds CodeMirror Editor files.
+    $codeMirrorPath = "//cdnjs.cloudflare.com/ajax/libs/codemirror/".$this->di['config']['assets']['codeMirrorVersion'];
+    $this->assets->addCss($codeMirrorPath."/codemirror.min.css", FALSE);
+    $this->assets->addJs($codeMirrorPath."/codemirror.min.js", FALSE);
+    $this->assets->addJs($codeMirrorPath."/addon/mode/overlay.min.js", FALSE);
+    $this->assets->addJs($codeMirrorPath."/mode/xml/xml.min.js", FALSE);
+    $this->assets->addJs($codeMirrorPath."/mode/markdown/markdown.min.js", FALSE);
+    $this->assets->addJs($codeMirrorPath."/mode/gfm/gfm.min.js", FALSE);
+    $this->assets->addJs($codeMirrorPath."/mode/javascript/javascript.min.js", FALSE);
+    $this->assets->addJs($codeMirrorPath."/mode/css/css.min.js", FALSE);
+    $this->assets->addJs($codeMirrorPath."/mode/htmlmixed/htmlmixed.min.js", FALSE);
+    $this->assets->addJs($codeMirrorPath."/mode/clike/clike.min.js", FALSE);
   }
 
 
