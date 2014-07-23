@@ -72,6 +72,13 @@ class IndexController extends ListController {
   }
 
 
+  public function initialize() {
+    parent::initialize();
+
+    $this->assets->addJs("/pit-bootstrap/dist/js/tab.min.js", FALSE);
+  }
+
+
   public function afterExecuteRoute() {
     parent::afterExecuteRoute();
 
