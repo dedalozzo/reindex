@@ -27,22 +27,15 @@
   #}
 
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="//{{ serverName }}/pit-bootstrap/dist/css/pit.css">
 
-  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+  {{ assets.outputCss() }}
+
   {# HTML5 shim, for IE6-8 support of HTML5 elements #}
   <!--[if lt IE 9]>
   <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
 
-  {% block js %}
-  <script src="//{{ serverName }}/pit-bootstrap/dist/js/dropdown.min.js"></script>
-  <script src="//{{ serverName }}/pit-bootstrap/dist/js/selectize.min.js"></script>
-  <script src="//{{ serverName }}/pit-bootstrap/dist/js/tab.min.js"></script>
-  <script src="//{{ serverName }}/pit-bootstrap/dist/js/pit.min.js"></script>
-  {% endblock %}
-
-  {% include "partials/codemirror.volt" %}
+  {{ assets.outputJs() }}
 
   <style>
     body {
