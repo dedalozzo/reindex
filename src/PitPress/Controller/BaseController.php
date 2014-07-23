@@ -72,6 +72,14 @@ abstract class BaseController extends Controller {
 
     // Includes the subdomain if any, for example: `blog.programmazione.it`.
     $this->serverName = $_SERVER['SERVER_NAME'];
+
+    // Includes the assets.
+    $this->assets->addCss("/pit-bootstrap/dist/css/pit.css", FALSE);
+    $this->assets->addJs("//cdnjs.cloudflare.com/ajax/libs/jquery/".$this->di['config']['assets']['jQueryVersion']."/jquery.min.js", FALSE);
+    $this->assets->addJs("/pit-bootstrap/dist/js/dropdown.min.js", FALSE);
+
+    // todo To be removed from here.
+    $this->assets->addJs("/pit-bootstrap/dist/js/pit.min.js", FALSE);
   }
 
 
