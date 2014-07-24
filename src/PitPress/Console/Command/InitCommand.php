@@ -86,8 +86,6 @@ function($doc) use ($emit) {
        'title' => $doc->title,
        'excerpt' => $doc->excerpt,
        'slug' => $doc->slug,
-       'section' => $doc->section,
-       'publishingType' => $doc->publishingType,
        'publishingDate' => $doc->publishingDate,
        'userId' => $doc->userId
      ]);
@@ -104,12 +102,12 @@ MAP;
     $doc->addHandler(allPosts());
 
 
-    // @params: section, year, month, day, slug
+    // @params: year, month, day, slug
     function postsByUrl() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if (isset($doc->supertype) and $doc->supertype == 'post')
-    $emit([$doc->section, $doc->year, $doc->month, $doc->day, $doc->slug]);
+    $emit([$doc->year, $doc->month, $doc->day, $doc->slug]);
 };
 MAP;
 
@@ -177,25 +175,6 @@ MAP;
     }
 
     $doc->addHandler(newestPostsPerType());
-
-
-    // @params: section
-    function newestPostsPerSection() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if (isset($doc->section))
-    $emit([$doc->section, $doc->publishingDate]);
-};
-MAP;
-
-      $handler = new ViewHandler("newestPerSection");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
-
-      return $handler;
-    }
-
-    $doc->addHandler(newestPostsPerSection());
 
 
     // @params: NONE
@@ -396,25 +375,6 @@ MAP;
     $doc->addHandler(votesPerType());
 
 
-    // @params: section, postId
-    function votesPerSection() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'vote')
-    $emit([$doc->section, $doc->postId], $doc->value);
-};
-MAP;
-
-      $handler = new ViewHandler("perSection");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnSum(); // Used to count the votes.
-
-      return $handler;
-    }
-
-    $doc->addHandler(votesPerSection());
-
-
     // @params: timestamp
     function votesNotRecorded() {
       $map = <<<'MAP'
@@ -476,24 +436,6 @@ MAP;
     }
 
     $doc->addHandler(scoresPerType());
-
-
-    // @params: section
-    function scoresPerSection() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'score')
-    $emit([$doc->postSection, $doc->points], $doc->postId);
-};
-MAP;
-
-      $handler = new ViewHandler("perSection");
-      $handler->mapFn = $map;
-
-      return $handler;
-    }
-
-    $doc->addHandler(scoresPerSection());
 
 
     $this->couch->saveDoc($doc);
