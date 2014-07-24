@@ -26,19 +26,4 @@ class Article extends Post implements Extension\IModerate {
   use Property\TExcerpt;
   use Property\TBody;
 
-
-  public function getSection() {
-    return 'blog';
-  }
-
-
-  public function getPublishingType() {
-    return 'ARTICOLO';
-  }
-
-
-  public function getPages() {
-
-  }
-
 }
