@@ -18,11 +18,6 @@ namespace PitPress\Model\Blog;
 class Book extends Article {
 
 
-  public function getPublishingType() {
-    return 'LIBRO';
-  }
-
-
   public function getCover() {
   }
 
