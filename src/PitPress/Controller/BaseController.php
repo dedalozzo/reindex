@@ -77,9 +77,6 @@ abstract class BaseController extends Controller {
     $this->assets->addCss("/pit-bootstrap/dist/css/pit.css", FALSE);
     $this->assets->addJs("//cdnjs.cloudflare.com/ajax/libs/jquery/".$this->di['config']['assets']['jQueryVersion']."/jquery.min.js", FALSE);
     $this->assets->addJs("/pit-bootstrap/dist/js/dropdown.min.js", FALSE);
-
-    // todo To be removed from here.
-    $this->assets->addJs("/pit-bootstrap/dist/js/pit.min.js", FALSE);
   }
 
 
