@@ -107,42 +107,6 @@ class UsersController extends BaseController {
 
 
   /**
-   * @brief Displays the users have edited most posts.
-   */
-  public function editorsAction($period) {
-    if (empty($period))
-      $period = 'settimana';
-
-    $this->view->setVar('subsectionMenu', Time::periods(5));
-    $this->view->setVar('subsectionIndex', Time::periodIndex($period));
-  }
-
-
-  /**
-   * @brief Displays the users have added more links.
-   */
-  public function reportersAction($period) {
-    if (empty($period))
-      $period = 'settimana';
-
-    $this->view->setVar('subsectionMenu', Time::periods(5));
-    $this->view->setVar('subsectionIndex', Time::periodIndex($period));
-  }
-
-
-  /**
-   * @brief Displays the users have written more posts.
-   */
-  public function bloggersAction($period) {
-    if (empty($period))
-      $period = 'settimana';
-
-    $this->view->setVar('subsectionMenu', Time::periods(5));
-    $this->view->setVar('subsectionIndex', Time::periodIndex($period));
-  }
-
-
-  /**
    * @brief Displays the most popular tags.
    */
   public function moderatorsAction() {
