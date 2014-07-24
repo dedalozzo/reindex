@@ -111,6 +111,16 @@ class Text {
 
 
   /**
+   * @brief Formats the number replacing the thousand separator.
+   * @param[in] string $number The input number.
+   * @return string
+   */
+  public static function formatNumber($number) {
+    return number_format($number, 0, ",", ".");
+  }
+
+
+  /**
    * @brief Removes unwanted MS Word smart characters from a string.
    * @param[in] string $text The text to be sanitized.
    * @return string The sanitized text.
