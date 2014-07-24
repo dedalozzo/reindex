@@ -166,6 +166,6 @@
 </div> <!-- /column-left -->
 
 <aside class="column-right">
-  <div id="counter"><div>{{ doc.hitsCount }}</div>{% if hitsCount == 1 %} VISUALIZZAZIONE{% else %} VISUALIZZAZIONI{% endif %}</div>
+  <div id="stats"><div>{{ doc.hitsCount }}</div>{% if hitsCount == 1 %} VISUALIZZAZIONE{% else %} VISUALIZZAZIONI{% endif %}</div>
   <div class="banner"><a href="#"><img src="/img/300x250cro.jpeg" /></a></div>
 </aside> <!-- /column-right -->
