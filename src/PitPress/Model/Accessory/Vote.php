@@ -23,17 +23,15 @@ class Vote extends Doc {
   /**
    * @brief Creates an instance of Vote class. This parameter is not required, you can provide NULL.
    * @param[in] $postType The post type.
-   * @param[in] $postSection The post section.
    * @param[in] $postId The post identifier. Can be also an item.
    * @param[in] $userId The identifier of the user who has voted.
    * @param[in] $value The value of the vote.
    * @return An instance of Vote class.
    */
-  public static function create($postType, $postSection, $postId, $userId, $value) {
+  public static function create($postType, $postId, $userId, $value) {
     $instance = new self();
 
     $instance->meta["postType"] = $postType;
-    $instance->meta["postSection"] = $postSection;
     $instance->meta["postId"] = $postId;
     $instance->meta["userId"] = $userId;
     $instance->meta["recorded"] = FALSE;
@@ -64,11 +62,6 @@ class Vote extends Doc {
 
   public function getPostId() {
     return $this->meta["postId"];
-  }
-
-
-  public function getPostSection() {
-    return $this->meta["section"];
   }
 
 
