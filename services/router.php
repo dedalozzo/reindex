@@ -27,16 +27,13 @@ $di->setShared('router',
     );
 
     $router->mount(new Route\IndexGroup());
-    $router->mount(new Route\BlogGroup());
-    $router->mount(new Route\QuestionsGroup());
-    $router->mount(new Route\LinksGroup());
+    $router->mount(new Route\PostGroup());
     $router->mount(new Route\TagsGroup());
     $router->mount(new Route\BadgesGroup());
     $router->mount(new Route\UsersGroup());
     $router->mount(new Route\AuthGroup());
     $router->mount(new Route\ProfileGroup());
     $router->mount(new Route\AjaxGroup());
-    $router->mount(new Route\ErrorGroup());
 
     return $router;
   }
