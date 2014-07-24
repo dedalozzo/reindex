@@ -40,7 +40,6 @@ class AuthGroup extends Group {
 
     // All the following routes start with /accedi.
     $this->setPrefix('/accedi');
-
     $this->add('/', ['action' => 'signIn'], ['GET', 'POST']);
     $this->addGet('/facebook/', ['action' => 'facebook']);
     $this->addGet('/google/', ['action' => 'google']);
