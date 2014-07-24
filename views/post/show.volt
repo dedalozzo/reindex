@@ -10,17 +10,10 @@
 {% endif %}
 {% set score = doc.getScore() %}
 
-{% if postType == 'question' %}
-  {% set label = 'formulata' %}
-{% elseif postType == 'link' %}
-  {% set label = 'inserito' %}
-{% elseif postType == 'article' %}
-  {% set label = 'scritto' %}
-{% else %}
-  {% set label = 'recensito' %}
-{% endif %}
+{% include "partials/navigation/categories.volt" %}
+{% set tagPaths = arraycolumn(categories, 'path', 'filter') %}
+{% set tagLabels = arraycolumn(categories, 'label', 'filter') %}
 
-{% include "partials/helpers/tag.volt" %}
 <div id="page-title"><a href="#" title="Aggiungi ai preferiti"><i class="icon-star-empty"></i></a> {{ doc.title }}</div>
 <hr class="fade-long">
 <div class="column-left">
@@ -54,7 +47,7 @@
     </section>
     <div class="ghost gutter">
       <ul class="list item-tags">
-        <li><a class="tag {{ postType }}" href="{{ sectionUrl }}">{{ section }}</a></li>
+        <li><a class="tag {{ postType }}" href="//{{ domainName~tagPaths[postType] }}">{{ tagLabels[postType] }}</a></li>
         {% set tags = doc.getTags() %}
         {% for tag in tags %}
         <li><a class="tag" href="/tag/">{{ tag['value'] }}</a></li>
