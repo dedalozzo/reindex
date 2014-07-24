@@ -1,14 +1,15 @@
 {% extends "templates/structure/double-column.volt" %}
 
 {% block sectionMenu %}
-  {% include "partials/navigation/sections/index.volt" %}
+  {% include "partials/navigation/categories.volt" %}
+  {{ partial("partials/navigation/sections/index/"~arraycolumn(categories, 'section', 'filter')[filter]) }}
 {% endblock %}
 
 {% block columnRight %}
 
   <div class="banner"><a href="#"><img src="/img/300x250.gif" /></a></div>
 
-  {% include "partials/widgets/counter.volt" %}
+  {% include "partials/widgets/stats.volt" %}
 
   {% include "partials/widgets/updates.volt" %}
 
