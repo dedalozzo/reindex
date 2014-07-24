@@ -4,6 +4,6 @@
 
 {% include "partials/navigation/main-menu.volt" %}
 {% include "partials/navigation/section-menu.volt" %}
-{% include "partials/navigation/subsection-menu.volt" %}
+{% include "partials/navigation/section-submenu.volt" %}
 
 {% block column %}{% endblock %}
