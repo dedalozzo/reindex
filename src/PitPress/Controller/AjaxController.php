@@ -71,6 +71,11 @@ class AjaxController extends BaseController {
   }
 
 
+  /**
+   * @brief Likes a post.
+   * @param[in] $url The URL.
+   * @return string
+   */
   public function likeAction() {
     if ($this->request->hasPost('id')) {
       $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
