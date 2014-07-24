@@ -80,7 +80,7 @@ class GenerateCommand extends AbstractCommand {
 
           $postType = ($item->stereotype == self::ARTICLE) ? 'article' : 'book';
 
-          $vote = Vote::create($postType, 'blog', $item->id, $userId, $value);
+          $vote = Vote::create($postType, $item->id, $userId, $value);
           $this->couch->saveDoc($vote);
         }
 
