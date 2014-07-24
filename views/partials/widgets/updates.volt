@@ -3,6 +3,21 @@
     <li class="active"><a href="#articles" data-toggle="tab">ARTICOLI</a></li>
     <li><a href="#books" data-toggle="tab">LIBRI</a></li>
   </ul>
+  {% if questions is defined %}
+    <div class="notebook-page" id="questions">
+      <ul class="items">
+        {% for question in questions %}
+          <li>
+            <a href="{{ question.url }}">
+              <div><i class="icon-thumbs-up"></i>&nbsp;{{ question.score }}&nbsp;&nbsp;<i class="icon-comments"></i>&nbsp;{{ question.repliesCount }}</div>
+              <div>{{ question.whenHasBeenPublished }}</div>
+              {{ question.title }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
   {% if articles is defined %}
   <div class="notebook-page active" id="articles">
     <ul class="items">
