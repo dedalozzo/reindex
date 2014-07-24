@@ -1,9 +1,10 @@
-{% set usersBaseUrl = '//utenti.'~domainName~'/' %}
 {% if entries is defined %}
+  {% set usersBaseUrl = '//utenti.'~domainName~'/' %}
+  {% set tagPaths = arraycolumn(categories, 'path', 'filter') %}
+  {% set tagLabels = arraycolumn(categories, 'label', 'filter') %}
   {% for entry in entries %}
     {% set userUrl = usersBaseUrl~entry.username %}
     {% set postType = entry.type %}
-    {% include "partials/helpers/tag.volt" %}
     <hr class="fade-short">
     <article id="{{ entry.id }}">
       <div class="item-time">{{ entry.whenHasBeenPublished }}</div>
@@ -16,7 +17,7 @@
         <div class="item-excerpt">{{ entry.excerpt }}</div>
         <div class="ghost gutter">
           <ul class="list item-tags">
-            <li><a class="tag {{ entry.type }}" href="{{ sectionUrl }}">{{ section }}</a></li>
+            <li><a class="tag {{ entry.type }}" href="//{{ domainName~tagPaths[entry.type] }}">{{ tagLabels[entry.type] }}</a></li>
             {% set tags = entry.tags %}
             {% for tag in tags %}
               <li><a class="tag" href="/tag/">{{ tag['value'] }}</a></li>
