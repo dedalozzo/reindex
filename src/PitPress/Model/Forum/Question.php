@@ -2,7 +2,7 @@
 
 /**
  * @file Question.php
- * @brief This file contains the Item class.
+ * @brief This file contains the Question class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -19,16 +19,6 @@ use PitPress\Model\Post;
  * @nosubgrouping
  */
 class Question extends Post {
-
-
-  public function getSection() {
-    return 'forum';
-  }
-
-
-  public function getPublishingType() {
-    return 'DOMANDA';
-  }
 
 
   /**
