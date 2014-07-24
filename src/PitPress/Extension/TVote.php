@@ -67,7 +67,7 @@ trait TVote {
         return IVote::UNCHANGED;
     }
     else {
-      $vote = Vote::create($this->getType(), $this->getSection(), $this->id, $user->id, $value);
+      $vote = Vote::create($this->getType(), $this->id, $user->id, $value);
       $this->couch->saveDoc($vote);
       return IVote::REGISTERED;
     }
