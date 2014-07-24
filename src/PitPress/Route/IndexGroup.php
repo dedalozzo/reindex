@@ -35,21 +35,23 @@ class IndexGroup extends Group {
 
     $this->addGet('/', ['action' => 'index']);
 
-    $this->addGet('/tour/', ['action' => 'tour']);
-    $this->addGet('/aiuto/', ['action' => 'help']);
-    $this->addGet('/legale/', ['action' => 'legal']);
-    $this->addGet('/privacy/', ['action' => 'privacy']);
-    $this->addGet('/lavoro/', ['action' => 'career']);
-    $this->addGet('/pubblicita/', ['action' => 'advertising']);
-    $this->addGet('/contatti/', ['action' => 'contact']);
-
-    // All the following routes start with /aggiornamenti.
-    $this->setPrefix('/aggiornamenti');
-
+    $this->setPrefix('/{filter:[a-z]{0,20}}');
+    $this->addGet('/', ['action' => 'newest']);
+    $this->addGet('/{year:[0-9]{4}}/{month:[0-9]{2}}/{day:[0-9]{2}}/', ['action' => 'perDate']);
     $this->addGet('/nuovi/', ['action' => 'newest']);
     $this->addGet('/popolari/{period}', ['action' => 'popular']);
-    $this->addGet('/attivi/', ['action' => 'updated']);
+    $this->addGet('/attivi/', ['action' => 'active']);
     $this->addGet('/interessanti/', ['action' => 'interesting']);
+
+    // All the following routes start with /domande.
+    $this->setPrefix('/domande');
+    $this->addGet('/', ['action' => 'important']);
+    $this->addGet('/nuove/', ['action' => 'newest']);
+    $this->addGet('/popolari/{period}', ['action' => 'popular']);
+    $this->addGet('/attive/', ['action' => 'active']);
+    $this->addGet('/interessanti/', ['action' => 'interesting']);
+    $this->addGet('/importanti/', ['action' => 'important']);
+    $this->addGet('/aperte/{type}', ['action' => 'open']);
 
     //$this->addGet('/rss', ['action' => 'rss']);
   }
