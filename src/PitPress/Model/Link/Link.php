@@ -29,16 +29,6 @@ class Link extends Post {
   }
 
 
-  public function getSection() {
-    return 'links';
-  }
-
-
-  public function getPublishingType() {
-    return 'LINK';
-  }
-
-
   //! @cond HIDDEN_SYMBOLS
 
   public function getLanguage() {
