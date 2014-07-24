@@ -24,14 +24,11 @@ class Score extends Doc {
   /**
    * @brief Creates an instance of Vote class.
    */
-  public static function create($postSection, $postType, $postId, $postPublishingDate, $points) {
+  public static function create($postType, $postId, $postPublishingDate, $points) {
     $instance = new self();
-
-    $instance->meta["postSection"] = $postSection;
     $instance->meta["postType"] = $postType;
     $instance->meta["postId"] = $postId;
     $instance->meta["postPublishingDate"] = $postPublishingDate;
-
     $instance->meta["points"] = $points;
 
     return $instance;
