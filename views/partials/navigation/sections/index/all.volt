@@ -1,4 +1,3 @@
-{% set sectionLabel = 'AGGIORNAMENTI' %}
 {% set sectionMenu = [
   ['name': 'interesting', 'path': '/aggiornamenti/interessanti/', 'label': 'INTERESSANTI', 'title': 'Aggiornamenti interessanti'],
   ['name': 'updated', 'path': '/aggiornamenti/attivi/', 'label': 'ATTIVI', 'title': 'Contributi modificati'],
