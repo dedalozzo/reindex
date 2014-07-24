@@ -9,7 +9,6 @@ class Vote {
   /** @name Properties */
   //!@{
   public string $postType; //!< [readonly] Post type.
-  public string $postSection; //!< [readonly] Post section.
   public string $postId; //!< [readonly] Post id.
   public string $userId; //!< [readonly] User id.
   public string $timestamp; //!< [readonly] Timestamp.
