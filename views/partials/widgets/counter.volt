@@ -1,1 +1,0 @@
-<div id="counter"><div>{{ entriesCount }}</div> {{ entriesLabel }}</div>
