@@ -5,7 +5,7 @@
     <li>
       <ul class="list pills no-gutter">
         {% for item in mainMenu %}
-          <li{{ (item['name'] == sectionName) ? ' class="active"' : '' }}><a href="//{{ item['path']~domainName }}"><i class="icon-{{ item['icon'] }}" ></i>&nbsp;{{ item['label'] }}</a></li>
+          <li{{ (item['name'] == sectionName) ? ' class="active"' : '' }}><a href="//{{ item['path']~domainName }}"><i class="icon-{{ item['icon'] }}"></i>&nbsp;{{ item['label'] }}</a></li>
         {% endfor %}
         <!-- <li><a href="//{{ domainName }}/tour/">Tour</a></li>
         <li><a href="//{{ domainName }}/aiuto/">Aiuto</a></li> -->
