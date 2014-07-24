@@ -11,11 +11,10 @@
 namespace PitPress\Model;
 
 
-use ElephantOnCouch\Couch;
 use ElephantOnCouch\Opt\ViewQueryOpts;
-use ElephantOnCouch\Helper\ArrayHelper;
 
 use PitPress\Extension;
+use PitPress\Property;
 
 
 /**
@@ -25,6 +24,7 @@ use PitPress\Extension;
  */
 abstract class Post extends Item implements Extension\ICount, Extension\IStar, Extension\IVote, Extension\ISubscribe {
   use Extension\TCount, Extension\TStar, Extension\TVote, Extension\TSubscribe;
+  use Property\TDescription;
 
 
   /**
@@ -32,8 +32,6 @@ abstract class Post extends Item implements Extension\ICount, Extension\IStar, E
    */
   public function save() {
     $this->meta['supertype'] = 'post';
-    $this->meta['section'] = $this->getSection();
-    $this->meta['publishingType'] = $this->getPublishingType();
     $this->meta['slug'] = $this->getSlug();
 
     // Used to group by year, month and day.
@@ -76,23 +74,8 @@ abstract class Post extends Item implements Extension\ICount, Extension\IStar, E
   }
 
 
-  /**
-   * @brief The post belongs to this section.
-   * @return string
-   */
-  abstract public function getSection();
-
-
-  /**
-   * @brief Gets the publishing type.
-   * @return string
-   */
-  abstract public function getPublishingType();
-
-
   /** @name Replaying Methods */
   //!@{
-
 
   /**
    * @brief Get the post replays, answers, in case of a question, else comments
