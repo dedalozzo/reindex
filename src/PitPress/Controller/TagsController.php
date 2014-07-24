@@ -13,8 +13,7 @@ namespace PitPress\Controller;
 
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
-use PitPress\Helper\Time;
-use PitPress\Helper\Stat;
+use PitPress\Helper;
 
 
 /**
@@ -48,13 +47,22 @@ class TagsController extends BaseController {
       $entry->id = $tags[$i]['id'];
       $entry->name = $tags[$i]['value'][0];
       $entry->excerpt = $tags[$i]['value'][1];
-      $entry->whenHasBeenPublished = Time::when($tags[$i]['value'][2]);
+      $entry->whenHasBeenPublished = Helper\Time::when($tags[$i]['value'][2]);
       $entry->postsCount = is_null($classifications[$i]['value']) ? 0 : $classifications[$i]['value'];
 
       $entries[] = $entry;
     }
 
     return $entries;
+  }
+
+
+  /**
+   * @brief Gets the total number of tags.
+   */
+  protected function getEntriesCount() {
+    $count = $this->couch->queryView("tags", "all")->getReducedValue();
+    return Helper\Text::formatNumber($count);
   }
 
 
@@ -77,9 +85,7 @@ class TagsController extends BaseController {
     $tags = $this->couch->queryView("tags", "byName", NULL, $opts)->asArray();
 
     $this->view->setVar('entries', $this->getEntries(array_column($tags, 'id')));
-
-    $stat = new Stat();
-    $this->view->setVar('entriesCount', $stat->getTagsCount());
+    $this->view->setVar('entriesCount', $this->getEntriesCount());
   }
 
 
