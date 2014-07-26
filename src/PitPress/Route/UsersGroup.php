@@ -30,8 +30,10 @@ class UsersGroup extends Group {
         'controller' => 'users'
       ]);
 
-    $this->setHostName('utenti.'.DI::getDefault()['config']['application']['domainName']);
+    $this->setHostName(DI::getDefault()['config']['application']['domainName']);
 
+    // All the following routes start with /utenti.
+    $this->setPrefix('/utenti');
     $this->addGet('/', ['action' => 'newest']);
     $this->addGet('/reputazione/{period}', ['action' => 'reputation']);
     $this->addGet('/nuovi/', ['action' => 'newest']);
