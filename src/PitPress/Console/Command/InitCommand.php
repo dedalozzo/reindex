@@ -197,21 +197,21 @@ MAP;
 
 
     // @params: NONE
-    function postsPerDate() {
+    function postsPerDateAndType() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if (isset($doc->supertype) and $doc->supertype == 'post')
-    $emit([$doc->year, $doc->month, $doc->day]);
+    $emit([$doc->publishingDate, $doc->type]);
 };
 MAP;
 
-      $handler = new ViewHandler("perDate");
+      $handler = new ViewHandler("perDateAndType");
       $handler->mapFn = $map;
 
       return $handler;
     }
 
-    $doc->addHandler(postsPerDate());
+    $doc->addHandler(postsPerDateAndType());
 
 
     $this->couch->saveDoc($doc);
