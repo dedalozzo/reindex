@@ -15,7 +15,7 @@
   <li>
     <ul class="list categories no-gutter">
       {% for item in categories %}
-        <li><a class="tag {{ item['filter'] }}" href="//{{ domainName~item['path'] }}">{{ item['label'] }}</a></li>
+        <li><a class="tag {{ item['type'] }}" href="//{{ domainName~item['path'] }}">{{ item['label'] }}</a></li>
       {% endfor %}
     </ul>
   </li>
