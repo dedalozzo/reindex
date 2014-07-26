@@ -1,10 +1,8 @@
 {% if entries is defined %}
-  {% set usersBaseUrl = '//utenti.'~domainName~'/' %}
-  {% set tagPaths = arraycolumn(categories, 'path', 'filter') %}
-  {% set tagLabels = arraycolumn(categories, 'label', 'filter') %}
+  {% set tagPaths = arraycolumn(categories, 'path', 'type') %}
+  {% set tagLabels = arraycolumn(categories, 'label', 'type') %}
   {% for entry in entries %}
-    {% set userUrl = usersBaseUrl~entry.username %}
-    {% set postType = entry.type %}
+    {% set userUrl = '//'~domainName~'/utenti/'~entry.username %}
     <hr class="fade-short">
     <article id="{{ entry.id }}">
       <div class="item-time">{{ entry.whenHasBeenPublished }}</div>
