@@ -29,8 +29,10 @@ class BadgesGroup extends Group {
         'controller' => 'badges'
       ]);
 
-    $this->setHostName('badges.'.DI::getDefault()['config']['application']['domainName']);
+    $this->setHostName(DI::getDefault()['config']['application']['domainName']);
 
+    // All the following routes start with /badges.
+    $this->setPrefix('/badges');
     $this->addGet('/', ['action' => 'all']);
     $this->addGet('/tutti/', ['action' => 'all']);
     $this->addGet('/ottenuti/', ['action' => 'achieve']);
