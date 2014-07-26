@@ -30,8 +30,10 @@ class TagsGroup extends Group {
         'controller' => 'tags'
       ]);
 
-    $this->setHostName('tags.'.DI::getDefault()['config']['application']['domainName']);
+    $this->setHostName(DI::getDefault()['config']['application']['domainName']);
 
+    // All the following routes start with /tags.
+    $this->setPrefix('/tags');
     $this->addGet('/', ['action' => 'newest']);
     $this->addGet('/popolari/', ['action' => 'popular']);
     $this->addGet('/per-nome/', ['action' => 'byName']);
