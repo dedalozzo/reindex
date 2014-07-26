@@ -2,7 +2,6 @@
 {% set userUrl = usersBaseUrl~doc.username %}
 {% set hitsCount = doc.getHitsCount() %}
 {% set repliesCount = doc.getRepliesCount() %}
-{% set postType = doc.type %}
 {% if currentUser is defined %}
   {% set liked = doc.didUserVote(currentUser) %}
 {% else %}
@@ -11,8 +10,8 @@
 {% set score = doc.getScore() %}
 
 {% include "partials/navigation/categories.volt" %}
-{% set tagPaths = arraycolumn(categories, 'path', 'filter') %}
-{% set tagLabels = arraycolumn(categories, 'label', 'filter') %}
+{% set tagPaths = arraycolumn(categories, 'path', 'type') %}
+{% set tagLabels = arraycolumn(categories, 'label', 'type') %}
 
 <div id="page-title"><a href="#" title="Aggiungi ai preferiti"><i class="icon-star-empty"></i></a> {{ doc.title }}</div>
 <hr class="fade-long">
@@ -21,7 +20,7 @@
   <section class="item-content">
     <div class="item-time">{{ doc.whenHasBeenPublished() }}</div>
 
-    {% if postType == 'book' %}
+    {% if doc.type == 'book' %}
     <div class="item-meta">
       <img class="img-polaroid" src="//programmazione.it/picture.php?idItem=48456&amp;id=52558c0458cae" alt="Copertina">
       <span>ISBN: </span>{{ doc.isbn }}<br>
@@ -36,7 +35,7 @@
     {% endif %}
     <section class="item-body">
       {{ doc.html }}
-      {% if postType == 'book' %}
+      {% if doc.type == 'book' %}
       <div class="positive">
         {{ markdown.parse(doc.positive) }}
       </div>
@@ -47,7 +46,7 @@
     </section>
     <div class="ghost gutter">
       <ul class="list item-tags">
-        <li><a class="tag {{ postType }}" href="//{{ domainName~tagPaths[postType] }}">{{ tagLabels[postType] }}</a></li>
+        <li><a class="tag {{ doc.type }}" href="//{{ domainName~tagPaths[doc.type] }}">{{ tagLabels[doc.type] }}</a></li>
         {% set tags = doc.getTags() %}
         {% for tag in tags %}
         <li><a class="tag" href="/tag/">{{ tag['value'] }}</a></li>
