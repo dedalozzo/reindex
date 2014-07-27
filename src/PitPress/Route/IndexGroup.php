@@ -35,23 +35,31 @@ class IndexGroup extends Group {
 
     $this->addGet('/', ['action' => 'index']);
 
-    $this->setPrefix('/{filter:[a-z]{0,20}}');
-    $this->addGet('/', ['action' => 'newest']);
-    $this->addGet('/{year:[0-9]{4}}/{month:[0-9]{2}}/{day:[0-9]{2}}/', ['action' => 'perDate']);
-    $this->addGet('/nuovi/', ['action' => 'newest']);
-    $this->addGet('/popolari/{period}', ['action' => 'popular']);
-    $this->addGet('/attivi/', ['action' => 'active']);
-    $this->addGet('/interessanti/', ['action' => 'interesting']);
+    // perDate
+    $this->addGet('/([0-9]{4})/', ['action' => 'perDate', 'year' => 1]);
+    $this->addGet('/([0-9]{4})/([0-9]{2})/', ['action' => 'perDate', 'year' => 1, 'month' => 2]);
+    $this->addGet('/([0-9]{4})/([0-9]{2})/([0-9]{2})/', ['action' => 'perDate', 'year' => 1, 'month' => 2, 'day' => 3]);
+    //$this->addGet('/([0-9]{4})/(?:([0-9]{2})/(?:([0-9]{2})/){0,1}){0,1}', ['action' => 'perDate', 'year' => 1, 'month' => 2, 'day' => 3]);
+
+    // All the following routes start with /something.
+    $this->setPrefix('/([a-z]{0,20})');
+    $this->addGet('/', ['action' => 'newest', 'filter' => 1]);
+    $this->addGet('/nuov[ie]/', ['action' => 'newest', 'filter' => 1]);
+    $this->addGet('/popolari/', ['action' => 'popular', 'filter' => 1]);
+    $this->addGet('/popolari/{period}/', ['action' => 'popular', 'filter' => 1]);
+    $this->addGet('/attiv[ie]/', ['action' => 'active', 'filter' => 1]);
+    $this->addGet('/interessanti/', ['action' => 'interesting', 'filter' => 1]);
+
+    // perDateByType
+    $this->addGet('/([0-9]{4})/', ['action' => 'perDateByType', 'filter' => 1, 'year' => 2]);
+    $this->addGet('/([0-9]{4})/([0-9]{2})/', ['action' => 'perDateByType', 'filter' => 1, 'year' => 2, 'month' => 3]);
+    $this->addGet('/([0-9]{4})/([0-9]{2})/([0-9]{2})/', ['action' => 'perDateByType', 'filter' => 1, 'year' => 2, 'month' => 3, 'day' => 4]);
 
     // All the following routes start with /domande.
     $this->setPrefix('/domande');
-    $this->addGet('/', ['action' => 'important']);
-    $this->addGet('/nuove/', ['action' => 'newest']);
-    $this->addGet('/popolari/{period}', ['action' => 'popular']);
-    $this->addGet('/attive/', ['action' => 'active']);
-    $this->addGet('/interessanti/', ['action' => 'interesting']);
     $this->addGet('/importanti/', ['action' => 'important']);
-    $this->addGet('/aperte/{type}', ['action' => 'open']);
+    $this->addGet('/aperte/', ['action' => 'open']);
+    $this->addGet('/aperte/{filter}/', ['action' => 'open']);
 
     //$this->addGet('/rss', ['action' => 'rss']);
   }
