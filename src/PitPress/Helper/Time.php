@@ -87,10 +87,15 @@ class Time extends TimeHelper {
   /**
    * @brief Given a period as string, returns the position in periods array.
    * @param[in] string $period A period of time.
-   * @return integer
+   * @return int|bool The position or `false` in case the period doesn't exist.
    */
   public static function periodIndex($period) {
-    return array_flip(self::$periods)[$period];
+    $temp = array_flip(self::$periods);
+
+    if (array_key_exists($period, $temp))
+      return $temp[$period];
+    else
+      return FALSE;
   }
 
 
@@ -106,17 +111,23 @@ class Time extends TimeHelper {
   /**
    * @brief Given a month as string, returns the his number as string. For example, given `maggio` it returns `05`.
    * @param[in] string $month A month.
-   * @return string
+   * @return string|bool A double digit month number as string or `false` in case the month doesn't exist.
    */
   public static function monthIndex($month) {
-    return sprintf("%02s", array_flip(self::$months)[$month]);
+
+    $temp = array_flip(self::$months);
+
+    if (array_key_exists($month, $temp))
+      return sprintf("%02s", $temp[$month]);
+    else
+      return FALSE;
   }
 
 
   /**
    * @brief Given a period as string, returns a timestamp since now in the past.
    * @param[in] string $period A period of time.
-   * @return integer
+   * @return int
    */
   public static function timestamp($period) {
     switch ($period) {
