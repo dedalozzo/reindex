@@ -15,7 +15,7 @@
 {% if users is defined %}
   {% for user in users %}
     {% set modulus = loop.index % 4 %}
-    {% set url = '//'~serverName~'/'~user.username %}
+    {% set url = '//'~domainName~'/utenti/'~user.username %}
     {% if loop.first %}
     <ul class="list gutter">
     {% endif %}
