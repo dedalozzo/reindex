@@ -120,65 +120,8 @@ MAP;
     $doc->addHandler(postsByUrl());
 
 
-    // @params: userId
-    function newestPostsByUser() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if (isset($doc->supertype) and $doc->supertype == 'post')
-    $emit([$doc->userId, $doc->publishingDate]);
-};
-MAP;
-
-      $handler = new ViewHandler("newestByUser");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
-
-      return $handler;
-    }
-
-    $doc->addHandler(newestPostsByUser());
-
-
-    // @params: userId, type
-    function newestPostsByUserPerType() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if (isset($doc->supertype) and $doc->supertype == 'post')
-    $emit([$doc->userId, $doc->type, $doc->publishingDate]);
-};
-MAP;
-
-      $handler = new ViewHandler("newestByUserPerType");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
-
-      return $handler;
-    }
-
-    $doc->addHandler(newestPostsByUserPerType());
-
-
-    // @params: type
-    function newestPostsPerType() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if (isset($doc->supertype) and $doc->supertype == 'post')
-    $emit([$doc->type, $doc->publishingDate]);
-};
-MAP;
-
-      $handler = new ViewHandler("newestPerType");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
-
-      return $handler;
-    }
-
-    $doc->addHandler(newestPostsPerType());
-
-
     // @params: NONE
-    function newestPosts() {
+    function postsPerDate() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if (isset($doc->supertype) and $doc->supertype == 'post')
@@ -186,32 +129,71 @@ function($doc) use ($emit) {
 };
 MAP;
 
-      $handler = new ViewHandler("newest");
+      $handler = new ViewHandler("perDate");
       $handler->mapFn = $map;
       $handler->useBuiltInReduceFnCount(); // Used to count the posts.
 
       return $handler;
     }
 
-    $doc->addHandler(newestPosts());
+    $doc->addHandler(postsPerDate());
 
 
-    // @params: NONE
-    function postsPerDateAndType() {
+    // @params: type
+    function postsPerDateByType() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if (isset($doc->supertype) and $doc->supertype == 'post')
-    $emit([$doc->publishingDate, $doc->type]);
+    $emit([$doc->type, $doc->publishingDate]);
 };
 MAP;
 
-      $handler = new ViewHandler("perDateAndType");
+      $handler = new ViewHandler("perDateByType");
       $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
 
       return $handler;
     }
 
-    $doc->addHandler(postsPerDateAndType());
+    $doc->addHandler(postsPerDateByType());
+
+
+    // @params: userId
+    function postsPerDateByUser() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) and $doc->supertype == 'post')
+    $emit([$doc->userId, $doc->publishingDate]);
+};
+MAP;
+
+      $handler = new ViewHandler("perDateByUser");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
+
+      return $handler;
+    }
+
+    $doc->addHandler(postsPerDateByUser());
+
+
+    // @params: userId, type
+    function postsPerDateByUserAndType() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) and $doc->supertype == 'post')
+    $emit([$doc->userId, $doc->type, $doc->publishingDate]);
+};
+MAP;
+
+      $handler = new ViewHandler("perDateByUserAndType");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
+
+      return $handler;
+    }
+
+    $doc->addHandler(postsPerDateByUserAndType());
 
 
     $this->couch->saveDoc($doc);
