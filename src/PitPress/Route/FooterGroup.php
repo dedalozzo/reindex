@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file IndexGroup.php
- * @brief Group of Updates routes.
+ * @file FooterGroup.php
+ * @brief This file contains the FooterGroup class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -17,23 +17,20 @@ use Phalcon\DI;
 
 
 /**
- * @brief Group of index routes.
+ * @brief Group of Footer routes.
  * @nosubgrouping
  */
-class IndexGroup extends Group {
-
+class FooterGroup extends Group {
 
   public function initialize() {
     // Sets the default controller for the following routes.
     $this->setPaths(
       [
         'namespace' => 'PitPress\Controller',
-        'controller' => 'index'
+        'controller' => 'footer'
       ]);
 
     $this->setHostName(DI::getDefault()['config']['application']['domainName']);
-
-    $this->addGet('/', ['action' => 'index']);
 
     $this->addGet('/tour/', ['action' => 'tour']);
     $this->addGet('/aiuto/', ['action' => 'help']);
@@ -42,16 +39,6 @@ class IndexGroup extends Group {
     $this->addGet('/lavoro/', ['action' => 'career']);
     $this->addGet('/pubblicita/', ['action' => 'advertising']);
     $this->addGet('/contatti/', ['action' => 'contact']);
-
-    // All the following routes start with /aggiornamenti.
-    $this->setPrefix('/aggiornamenti');
-
-    $this->addGet('/nuovi/', ['action' => 'newest']);
-    $this->addGet('/popolari/{period}', ['action' => 'popular']);
-    $this->addGet('/attivi/', ['action' => 'updated']);
-    $this->addGet('/interessanti/', ['action' => 'interesting']);
-
-    //$this->addGet('/rss', ['action' => 'rss']);
   }
 
 }
