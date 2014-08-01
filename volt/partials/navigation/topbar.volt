@@ -1,18 +1,24 @@
-{% include "partials/navigation/main-menu.volt" %}
 <nav class="topbar">
   <ul class="list">
     {% include "partials/brand.volt" %}
     <li>
       <ul class="list pills no-gutter">
-        {% for item in mainMenu %}
-          <li{{ (item['name'] == sectionName) ? ' class="active"' : '' }}><a href="//{{ domainName~item['path'] }}"><i class="icon-{{ item['icon'] }}"></i>&nbsp;{{ item['label'] }}</a></li>
+        {% set sections = [
+        'home': ['path': '/', 'label': 'home', 'icon': 'home'],
+        'tag': ['path': '/tags/', 'label': 'tags', 'icon': 'tags'],
+        'badge': ['path': '/badges/', 'label': 'badges', 'icon': 'certificate'],
+        'user': ['path': '/utenti/', 'label': 'utenti', 'icon': 'group']
+        ] %}
+        {% for name, item in sections %}
+          <li{{ (name == sectionName) ? ' class="active"' : '' }}><a href="//{{ domainName~item['path'] }}"><i class="icon-{{ item['icon'] }}"></i>&nbsp;{{ item['label'] }}</a></li>
         {% endfor %}
-        <!-- <li><a href="//{{ domainName }}/tour/">Tour</a></li>
-        <li><a href="//{{ domainName }}/aiuto/">Aiuto</a></li> -->
-
-        <!-- <li class="icon"><a href="http://twitter.com/prg_it"><i class="icon-twitter icon-large"></i></a></li>
+        {#
+        <li><a href="//{{ domainName }}/tour/">Tour</a></li>
+        <li><a href="//{{ domainName }}/aiuto/">Aiuto</a></li>
+        <li class="icon"><a href="http://twitter.com/prg_it"><i class="icon-twitter icon-large"></i></a></li>
         <li class="icon"><a href="http://facebook.com/programmazione.it"><i class="icon-facebook icon-large"></i></a></li>
-        <li class="icon"><a href="#"><i class="icon-google-plus icon-large"></i></a></li> -->
+        <li class="icon"><a href="#"><i class="icon-google-plus icon-large"></i></a></li>
+        #}
       </ul>
     </li>
     <li class="space"></li>
