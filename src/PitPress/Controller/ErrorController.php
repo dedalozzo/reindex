@@ -14,6 +14,10 @@ namespace PitPress\Controller;
 use Phalcon\Mvc\View;
 
 
+/**
+ * @brief Controller of Error actions.
+ * @nosubgrouping
+ */
 class ErrorController extends BaseController {
 
 
@@ -23,7 +27,7 @@ class ErrorController extends BaseController {
     $this->view->setVar('method', strtolower($_SERVER['REQUEST_METHOD']));
     $this->view->setVar('url', "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']);
     $this->view->disableLevel(View::LEVEL_MAIN_LAYOUT);
-    $this->view->pick('404/404');
+    $this->view->pick('views/error/404');
   }
 
 } 
