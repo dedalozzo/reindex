@@ -1,6 +1,4 @@
 {% if entries is defined %}
-  {% set tagPaths = arraycolumn(categories, 'path', 'type') %}
-  {% set tagLabels = arraycolumn(categories, 'label', 'type') %}
   {% for entry in entries %}
     {% set userUrl = '//'~domainName~'/utenti/'~entry.username %}
     <hr class="fade-short">
@@ -15,7 +13,7 @@
         <div class="item-excerpt">{{ entry.excerpt }}</div>
         <div class="ghost gutter">
           <ul class="list item-tags">
-            <li><a class="tag {{ entry.type }}" href="//{{ domainName~tagPaths[entry.type] }}">{{ tagLabels[entry.type] }}</a></li>
+            <li><a class="tag {{ entry.type }}" href="//{{ domainName~'/'~types[entry.type] }}/">{{ types[entry.type] }}</a></li>
             {% set tags = entry.tags %}
             {% for tag in tags %}
               <li><a class="tag" href="/tag/">{{ tag['value'] }}</a></li>
