@@ -2,7 +2,7 @@
 
 /**
  * @file PostController.php
- * @brief Controller of Post actions.
+ * @brief This file contains the PostController class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -47,7 +47,7 @@ class PostController extends BaseController {
     $this->view->setVar('replies', $doc->getReplies());
     $this->view->setVar('title', $doc->title);
 
-    $this->view->disableLevel(View::LEVEL_LAYOUT);
+    $this->view->pick('views/post/show');
   }
 
 
@@ -87,6 +87,8 @@ class PostController extends BaseController {
     $this->assets->addJs($codeMirrorPath."/mode/css/css.min.js", FALSE);
     $this->assets->addJs($codeMirrorPath."/mode/htmlmixed/htmlmixed.min.js", FALSE);
     $this->assets->addJs($codeMirrorPath."/mode/clike/clike.min.js", FALSE);
+
+    $this->view->pick('views/post/edit');
   }
 
 }
