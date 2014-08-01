@@ -2,7 +2,7 @@
 
 /**
  * @file AuthGroup.php
- * @brief Group of Updates routes.
+ * @brief This file contains the AuthGroup class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -16,11 +16,10 @@ use Phalcon\DI;
 
 
 /**
- * @brief Group of authentication routes.
+ * @brief Group of Authentication routes.
  * @nosubgrouping
  */
 class AuthGroup extends Group {
-
 
   public function initialize() {
     // Sets the default controller for the following routes.
