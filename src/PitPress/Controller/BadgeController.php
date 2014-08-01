@@ -19,9 +19,6 @@ class BadgeController extends BaseController {
 
   protected $badgeLoader;
 
-  // Stores the typology sub-menu definition.
-  protected static $typologySubMenu = ['bronzo', 'argento', 'oro', 'tutti'];
-
 
   /**
    * @brief Initializes the controller.
@@ -110,12 +107,13 @@ class BadgeController extends BaseController {
   /**
    * @brief Displays the special tag badges.
    */
-  public function byTagAction($type) {
-    if (empty($type))
-      $type = 'tutti';
+  public function byTagAction($filter = NULL) {
+    // Stores the typology sub-menu definition.
+    //protected static $typologySubMenu = ['bronzo', 'argento', 'oro', 'tutti'];
 
-    $this->view->setVar('submenu', self::$typologySubMenu);
-    $this->view->setVar('submenuIndex', array_flip(self::$typologySubMenu)[$type]);
+    //$this->view->setVar('submenu', self::$typologySubMenu);
+    //$this->view->setVar('submenuIndex', array_flip(self::$typologySubMenu)[$type]);
+    $this->view->setVar('title', 'Badges per tag');
   }
 
 }
