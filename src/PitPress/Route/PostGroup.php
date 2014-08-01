@@ -2,7 +2,7 @@
 
 /**
  * @file PostGroup.php
- * @brief Group of Post routes.
+ * @brief This file contains the PostGroup class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -20,7 +20,6 @@ use Phalcon\DI;
  * @nosubgrouping
  */
 class PostGroup extends Group {
-
 
   public function initialize() {
     // Sets the default controller for the following routes.
