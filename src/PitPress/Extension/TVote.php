@@ -33,8 +33,8 @@ trait TVote {
    * @return int The voting status.
    */
   protected function vote(User $user, $value) {
-    if (is_null($user))
-      return IVote::NO_USER_LOGGED_IN;
+    if (is_null($user)) return IVote::NO_USER_LOGGED_IN;
+    if ($user->id == $this->userId) return IVote::CANNOT_VOTE_YOUR_OWN_POST;
 
     $voted = $this->didUserVote($user, $voteId);
 
