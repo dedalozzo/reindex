@@ -6,6 +6,7 @@
   <title>{{ title }} - {{ domainName|capitalize }}</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
 
   {#
   <meta name="author" content="">
@@ -47,7 +48,6 @@
 <body onload="localStorage.clear();">
 
   {% block topbar %}
-    {% set sectionName = controllerName %}
     {% include "partials/navigation/topbar.volt" %}
   {% endblock %}
 
@@ -56,22 +56,22 @@
   {% endblock %}
 
   <div id="{% block container %}scrollable{% endblock %}">
-    {% block billboard %}
-      <div class="banner"><a href="#"><img src="/img/970x180.jpg" /></a></div>
-    {% endblock %}
+  {% block billboard %}
+    <div class="banner"><a href="#"><img src="/img/970x180.jpg" /></a></div>
+  {% endblock %}
 
-    {% block header %}
-    {% endblock %}
+  {% block header %}
+  {% endblock %}
 
-    {% block content %}
-      <div id="content">
-        {{ content() }}
-      </div> <!-- /content -->
-    {% endblock %}
+  {% block content %}
+    <div id="content">
 
-    {% block footer %}
-      {% include "partials/navigation/footer.volt" %}
-    {% endblock %}
+    </div> <!-- /content -->
+  {% endblock %}
+
+  {% block footer %}
+    {% include "partials/navigation/footer.volt" %}
+  {% endblock %}
   </div>
 
   {% block script %}
