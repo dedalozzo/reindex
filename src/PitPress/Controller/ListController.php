@@ -13,7 +13,7 @@ namespace PitPress\Controller;
 
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
-use PitPress\Helper;;
+use PitPress\Helper;
 use PitPress\Model\User\User;
 
 use Phalcon\Mvc\View;
@@ -24,6 +24,7 @@ use Phalcon\Mvc\View;
  * @nosubgrouping
  */
 abstract class ListController extends BaseController {
+
 
   /**
    * @brief Given a set of keys, retrieves entries.
@@ -102,31 +103,18 @@ abstract class ListController extends BaseController {
 
 
   /**
-   * @brief Gets the total number of posts.
-   */
-  protected function getPostsCount() {
-    $count = $this->couch->queryView("posts", "perDate")->getReducedValue();
-    return Helper\Text::formatNumber($count);
-  }
-
-
-  /**
-   * @brief Gets the total number of posts per type.
-   */
-  protected function getPostsCountPerType($type) {
-    $opts = new ViewQueryOpts();
-    $opts->setStartKey([$type])->setEndKey([$type, new \stdClass()]);
-    $count = $this->couch->queryView('posts', 'perDateByType', NULL, $opts)->getReducedValue();
-    return Helper\Text::formatNumber($count);
-  }
-
-
-  /**
    * @brief Builds the post url, given its publishing date and slug.
    * @return string The complete url of the post.
    */
   protected function buildUrl($publishingDate, $slug) {
     return "http://".$this->domainName.date('/Y/m/d/', $publishingDate).$slug;
+  }
+
+
+  public function initialize() {
+    parent::initialize();
+
+    $this->assets->addJs("/pit-bootstrap/dist/js/pit.min.js", FALSE);
   }
 
 
