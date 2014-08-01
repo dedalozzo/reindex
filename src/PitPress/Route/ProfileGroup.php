@@ -2,7 +2,7 @@
 
 /**
  * @file ProfileGroup.php
- * @brief User's profile routes.
+ * @brief This file contains the ProfileGroup class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -16,11 +16,10 @@ use Phalcon\DI;
 
 
 /**
- * @brief Group of user's profile routes.
+ * @brief Group of User's Profile routes.
  * @nosubgrouping
  */
 class ProfileGroup extends Group {
-
 
   public function initialize() {
     // Sets the default controller for the following routes.
@@ -30,16 +29,18 @@ class ProfileGroup extends Group {
         'controller' => 'profile'
       ]);
 
-    $this->setHostName('utenti.'.DI::getDefault()['config']['application']['domainName']);
+    $this->setHostName(DI::getDefault()['config']['application']['domainName']);
 
-    $this->addGet('/{username:[\da-z_]{5,20}}', ['action' => 'timeline']);
-    $this->addGet('/{username:[\da-z_]{5,20}}/timeline/{type}', ['action' => 'timeline']);
-    $this->addGet('/{username:[\da-z_]{5,20}}/connessioni/{type}', ['action' => 'connections']);
-    $this->addGet('/{username:[\da-z_]{5,20}}/preferiti/{type}', ['action' => 'favorites']);
-    $this->addGet('/{username:[\da-z_]{5,20}}/reputatione/{type}', ['action' => 'reputation']);
-    $this->addGet('/{username:[\da-z_]{5,20}}/attivita/{type}', ['action' => 'activities']);
-    $this->addGet('/{username:[\da-z_]{5,20}}/ricompense/{type}', ['action' => 'bounties']);
-    $this->addGet('/{username:[\da-z_]{5,20}}/progetti/{type}', ['action' => 'projects']);
+    // All the following routes start with /utenti.
+    $this->setPrefix('/utenti/([\da-z_]{5,20})');
+    $this->addGet('', ['action' => 'timeline', 'username' => 1]);
+    $this->addGet('/timeline/{type}', ['action' => 'timeline', 'username' => 1]);
+    $this->addGet('/connessioni/{type}', ['action' => 'connections', 'username' => 1]);
+    $this->addGet('/preferiti/{type}', ['action' => 'favorites', 'username' => 1]);
+    $this->addGet('/reputatione/{type}', ['action' => 'reputation', 'username' => 1]);
+    $this->addGet('/attivita/{type}', ['action' => 'activities', 'username' => 1]);
+    $this->addGet('/ricompense/{type}', ['action' => 'bounties', 'username' => 1]);
+    $this->addGet('/progetti/{type}', ['action' => 'projects', 'username' => 1]);
   }
 
 }
