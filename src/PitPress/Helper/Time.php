@@ -20,22 +20,15 @@ use ElephantOnCouch\Helper\TimeHelper;
  */
 class Time extends TimeHelper {
 
-  private static $periods = ['sempre', 'anno', 'trimestre', 'mese', 'settimana', '24-ore'];
-
-  private static $months = [
-    'gennaio',
-    'febbraio',
-    'marzo',
-    'aprile',
-    'maggio',
-    'giugno',
-    'luglio',
-    'agosto',
-    'settembre',
-    'ottobre',
-    'novembre',
-    'dicembre'
-  ];
+  /** @name Time Periods */
+  //!@{
+  const DAY = 5;
+  const WEEK = 4;
+  const MONTH = 3;
+  const QUARTER = 2;
+  const YEAR = 1;
+  const EVER = 0;
+  //!@}
 
 
   /**
@@ -75,75 +68,25 @@ class Time extends TimeHelper {
 
 
   /**
-   * @brief Returns an array of periods.
-   * @param[in] integer $count The number of periods from left to right.
-   * @return array
-   */
-  public static function periods($number = NULL) {
-    return array_slice(self::$periods, 0, $number, TRUE);
-  }
-
-
-  /**
-   * @brief Given a period as string, returns the position in periods array.
-   * @param[in] string $period A period of time.
-   * @return int|bool The position or `false` in case the period doesn't exist.
-   */
-  public static function periodIndex($period) {
-    $temp = array_flip(self::$periods);
-
-    if (array_key_exists($period, $temp))
-      return $temp[$period];
-    else
-      return FALSE;
-  }
-
-
-  /**
-   * @brief Returns all the months in a year in reverse order.
-   * @return array
-   */
-  public static function months() {
-    return array_reverse(self::$months);
-  }
-
-
-  /**
-   * @brief Given a month as string, returns the his number as string. For example, given `maggio` it returns `05`.
-   * @param[in] string $month A month.
-   * @return string|bool A double digit month number as string or `false` in case the month doesn't exist.
-   */
-  public static function monthIndex($month) {
-
-    $temp = array_flip(self::$months);
-
-    if (array_key_exists($month, $temp))
-      return sprintf("%02s", $temp[$month]);
-    else
-      return FALSE;
-  }
-
-
-  /**
-   * @brief Given a period as string, returns a timestamp since now in the past.
+   * @brief Given a period as string, returns the timestamp of that past time.
    * @param[in] string $period A period of time.
    * @return int
    */
-  public static function timestamp($period) {
+  public static function aWhileBack($period) {
     switch ($period) {
-      case '24-ore':
+      case self::DAY:
         $timestamp = strtotime('-1 day');
         break;
-      case 'settimana':
+      case self::WEEK:
         $timestamp = strtotime('-1 week');
         break;
-      case 'mese':
+      case self::MONTH:
         $timestamp = strtotime('-1 month');
         break;
-      case 'trimestre':
+      case self::QUARTER;
         $timestamp = strtotime('-3 month');
         break;
-      case 'anno':
+      case self::YEAR:
         $timestamp = strtotime('-1 year');
         break;
       default:
