@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file TagsGroup.php
- * @brief Group of Tags routes.
+ * @file TagGroup.php
+ * @brief This file contains the TagGroup class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -16,23 +16,22 @@ use Phalcon\DI;
 
 
 /**
- * @brief Group of tags' routes.
+ * @brief Group of Tag routes.
  * @nosubgrouping
  */
-class TagsGroup extends Group {
-
+class TagGroup extends Group {
 
   public function initialize() {
     // Sets the default controller for the following routes.
     $this->setPaths(
       [
         'namespace' => 'PitPress\Controller',
-        'controller' => 'tags'
+        'controller' => 'tag'
       ]);
 
     $this->setHostName(DI::getDefault()['config']['application']['domainName']);
 
-    // All the following routes start with /tags.
+    // All the following routes start with /tag.
     $this->setPrefix('/tags');
     $this->addGet('/', ['action' => 'newest']);
     $this->addGet('/popolari/', ['action' => 'popular']);
