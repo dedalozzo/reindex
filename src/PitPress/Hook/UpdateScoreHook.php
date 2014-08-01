@@ -14,20 +14,20 @@ namespace PitPress\Hook;
 use Phalcon\CLI\Console\Exception;
 use Phalcon\DI\InjectionAwareInterface;
 
-use ElephantOnCouch\Hook\ChunkHook;
-use ElephantOnCouch\Helper\ArrayHelper;
+use ElephantOnCouch\Hook\IChunkHook;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 use ElephantOnCouch\Couch;
 
 use PitPress\Model\Accessory\Vote;
 use PitPress\Model\Accessory\Score;
+use PitPress\Helper\ArrayHelper;
 
 
 /**
  * @brief This class calculates the score for every single post.
  * @nosubgrouping
  */
-class UpdateScoreHook implements ChunkHook, InjectionAwareInterface {
+class UpdateScoreHook implements IChunkHook, InjectionAwareInterface {
 
   private $di;
   private $config;
