@@ -17,7 +17,6 @@ $di->setShared('view',
     $view = new View();
     $view->setViewsDir($root.$config->application->viewsDir);
     $view->registerEngines(['.volt' => 'volt']);
-    //$view->disableLevel(View::LEVEL_MAIN_LAYOUT);
     return $view;
   }
 );
