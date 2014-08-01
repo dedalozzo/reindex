@@ -11,11 +11,13 @@
 namespace PitPress\Controller;
 
 
+use ElephantOnCouch\Couch;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
-use PitPress\Helper\Time;
+use PitPress\Helper;
 
 use Phalcon\Mvc\View;
+use Phalcon\Tag;
 
 
 /**
@@ -24,42 +26,43 @@ use Phalcon\Mvc\View;
  */
 class IndexController extends ListController {
 
-  // Stores the still open answer sub-menu definition.
-  protected static $stillOpenSubMenu = ['nessuna-risposta/', 'popolari/', 'nuove/', 'rivolte-a-me/'];
+
+  protected function getLabel() {
+    return 'contributi';
+  }
 
 
   /**
-   * @brief Gets a list of tags recently updated.
+   * @brief Returns `true`if the caller object is an instance of the class implementing this method, `false` otherwise.
    */
-  protected function recentTags() {
-    // todo Change this part, getting the classification of the last week, grouped by tagId.
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(60);
-    // todo Change newest with newest.
-    $classifications = $this->couch->queryView("classifications", "newest", NULL, $opts);
-    $keys = array_column($classifications->asArray(), 'value');
+  protected function isSameClass() {
+    return get_class($this) == get_class();
+  }
 
-    $opts->reset();
-    $tags = $this->couch->queryView("tags", "allNames", $keys, $opts);
 
-    $opts->reset();
-    $opts->includeMissingKeys()->groupResults();
-    $postsPerTag = $this->couch->queryView("classifications", "perTag", $keys, $opts);
+  /**
+   * @brief Gets the total number of posts.
+   */
+  protected function getCount() {
+    if ($this->isSameClass()) {
+      $count = $this->couch->queryView("posts", "perDate")->getReducedValue();
+    }
+    else {
+      $opts = new ViewQueryOpts();
+      $opts->setStartKey([$this->type])->setEndKey([$this->type, Couch::WildCard()]);
+      $count = $this->couch->queryView('posts', 'perDateByType', NULL, $opts)->getReducedValue();
+    }
 
-    $recentTags = [];
-    for ($i = 0; $i < 60; $i++)
-      $recentTags[] = [$tags[$i]['value'], $postsPerTag[$i]['value']];
-
-    $this->view->setVar('recentTags', $recentTags);
+    return Helper\Text::formatNumber($count);
   }
 
 
   /*
-   * @brief Gets the posts info per type.
+   * @brief Retrieves information for a bunch of posts.
    */
-  protected function getPostsInfoPerType($viewName, $type, $count = 20) {
+  protected function getInfo($viewName, $type, $count = 20) {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit($count)->reverseOrderOfResults()->setStartKey([$type, new \stdClass()])->setEndKey([$type]);
+    $opts->doNotReduce()->setLimit($count)->reverseOrderOfResults()->setStartKey([$type, Couch::WildCard()])->setEndKey([$type]);
     $rows = $this->couch->queryView('posts', $viewName, NULL, $opts);
 
     if ($rows->isEmpty())
@@ -92,7 +95,7 @@ class IndexController extends ListController {
       $properties = $posts[$i]['value'];
       $entry->title = $properties['title'];
       $entry->url = $this->buildUrl($properties['publishingDate'], $properties['slug']);
-      $entry->whenHasBeenPublished = Time::when($properties['publishingDate']);
+      $entry->whenHasBeenPublished = Helper\Time::when($properties['publishingDate']);
       $entry->score = is_null($scores[$i]['value']) ? 0 : $scores[$i]['value'];
       $entry->repliesCount = is_null($replies[$i]['value']) ? 0 : $replies[$i]['value'];
 
@@ -103,111 +106,42 @@ class IndexController extends ListController {
   }
 
 
-  /*
-   * @brief Given a filter name returns the correspondent type. In case the filter is invalid returns `false`, otherwise
-   * the filter name or empty is no filter has been provided.
-   * @param[in] string $filter The filter name.
-   * @return string|bool|null
+  /**
+   * @brief Gets a list of tags recently updated.
    */
-  protected function getTypeByFilter($filter) {
-
-    if (empty($filter))
-      return NULL;
-
-    switch ($filter) {
-      case 'contributi':
-        $type = NULL;
-        break;
-      case 'articoli':
-        $type = 'article';
-        break;
-      case 'libri':
-        $type = 'book';
-        break;
-      case 'links':
-        $type = 'link';
-        break;
-      case 'domande':
-        $type = 'question';
-        break;
-      default:
-        return FALSE;
-    }
-
-    return $type;
-  }
-
-
-  protected function perDateByType($type, $year, $month, $day) {
+  protected function recentTags() {
+    // todo Change this part, getting the classification of the last week, grouped by tagId.
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults();
+    $opts->doNotReduce()->setLimit(60);
+    // todo Change newest...
+    $classifications = $this->couch->queryView("classifications", "newest", NULL, $opts);
+    $keys = array_column($classifications->asArray(), 'value');
 
-    $aDay = (empty($day)) ? 1 : (int)$day;
-    $aMonth = (empty($month)) ? 1 : (int)$month;
-    $aYear = (int)$year;
+    $opts->reset();
+    $tags = $this->couch->queryView("tags", "allNames", $keys, $opts);
 
-    $startDate = (new \DateTime())->setDate($aYear, $aMonth, $aDay)->modify('midnight');
-    $endDate = clone($startDate);
+    $opts->reset();
+    $opts->includeMissingKeys()->groupResults();
+    $postsPerTag = $this->couch->queryView("classifications", "perTag", $keys, $opts);
 
-    if (!empty($day))
-      $endDate->modify('tomorrow')->modify('last second');
-    elseif (!empty($month))
-      $endDate->modify('last day of this month')->modify('last second');
-    else
-      $endDate->setDate($aYear, 12, 31)->modify('last second');
+    $recentTags = [];
+    for ($i = 0; $i < 60; $i++)
+      $recentTags[] = [$tags[$i]['value'], $postsPerTag[$i]['value']];
 
-    //$this->monolog->addNotice(sprintf('startDate: %s', $startDate->format(\DateTime::ATOM)));
-    //$this->monolog->addNotice(sprintf('endDate: %s', $endDate->format(\DateTime::ATOM)));
-
-    if (empty($type)) {
-      $opts->setStartKey($endDate->getTimestamp())->setEndKey($startDate->getTimestamp());
-      $rows = $this->couch->queryView("posts", "perDate", NULL, $opts);
-      $postsCount = $this->couch->queryView("posts", "perDate", NULL, $opts->reduce());
-    }
-    else {
-      $opts->setStartKey([$type, $endDate->getTimestamp()])->setEndKey([$type, $startDate->getTimestamp()]);
-      $rows = $this->couch->queryView("posts", "perDateByType", NULL, $opts);
-      $postsCount = $this->couch->queryView("posts", "perDate", NULL, $opts->reduce());
-    }
-
-    $this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'id')));
-    $this->view->setVar('entriesCount', $postsCount);
+    $this->view->setVar('recentTags', $recentTags);
   }
-
-
-  protected function popularEver($type) {
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey([$type, time(), new \stdClass()])->setEndKey([$type, 0, 0]);
-
-    $rows = $this->couch->queryView('scores', 'perType', NULL, $opts)->asArray();
-
-    $this->view->setVar('entries', $this->getEntries(array_column($rows, 'value')));
-  }
-
-
-  /*
- * @brief Gets the popular posts per type in a period.
- */
-  protected function popularInPeriod($type, $period) {
-    $opts = new ViewQueryOpts();
-
-    if ($period != 'sempre')
-      $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey([$type, time()])->setEndKey([$type, Time::timestamp($period)]);
-    else
-      $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey([$type, new \stdClass()])->setEndKey([$type]);
-
-    $rows = $this->couch->queryView('posts', 'perDateByType', NULL, $opts);
-
-    $this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'id')));
-  }
-
 
 
   public function initialize() {
     parent::initialize();
 
+    $this->type = $this->controllerName;
+
+    $this->monolog->addDebug(sprintf('Type: %s', $this->type));
+
     $this->assets->addJs("/pit-bootstrap/dist/js/tab.min.js", FALSE);
-    $this->assets->addJs("/pit-bootstrap/dist/js/pit.min.js", FALSE);
+
+    $this->view->pick('views/index');
   }
 
 
@@ -216,9 +150,16 @@ class IndexController extends ListController {
 
     $this->recentTags();
 
-    $this->view->setVar('questions', $this->getPostsInfoPerType('perDateByType', 'question'));
-    $this->view->setVar('articles', $this->getPostsInfoPerType('perDateByType', 'article'));
-    $this->view->setVar('books', $this->getPostsInfoPerType('perDateByType', 'book'));
+    // Overrides the section name because index its own subclasses belong to the same section.
+    $this->view->setVar('sectionName', 'home');
+
+    // The entries label is printed below the entries count.
+    $this->view->setVar('entriesLabel', $this->getLabel());
+
+    // Those are the notebook pages, printed using the `updates.volt` widget.
+    $this->view->setVar('questions', $this->getInfo('perDateByType', 'question'));
+    $this->view->setVar('articles', $this->getInfo('perDateByType', 'article'));
+    $this->view->setVar('books', $this->getInfo('perDateByType', 'link'));
   }
 
 
@@ -226,12 +167,16 @@ class IndexController extends ListController {
    * @brief Page index.
    */
   public function indexAction() {
-    if (isset($this->user))
+    if (isset($this->user)) {
+      $this->view->setVar('title', 'Home');
+      $this->actionName = 'newest';
+
       return $this->dispatcher->forward(
         [
           'controller' => 'index',
           'action' => 'newest'
         ]);
+    }
     else
       return $this->dispatcher->forward(
         [
@@ -244,31 +189,23 @@ class IndexController extends ListController {
   /**
    * @brief Displays the newest posts.
    */
-  public function newestAction($filter = NULL) {
-    $type = $this->getTypeByFilter($filter);
-
-    if ($type === FALSE)
-      return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
-    else
-      $this->view->setVar('postType', $type);
-
+  public function newestAction() {
     $opts = new ViewQueryOpts();
 
-    if (is_null($type)) {
+    if ($this->isSameClass()) {
       $opts->doNotReduce()->reverseOrderOfResults()->setLimit(30);
       $rows = $this->couch->queryView("posts", "perDate", NULL, $opts);
-      $this->view->setVar('filter', 'none');
-      $this->view->setVar('entriesCount', $this->getPostsCount());
-      $this->view->setVar('entriesLabel', 'contributi');
     }
     else {
-      $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey([$type, new \stdClass()])->setEndKey([$type]);
+      $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey([$this->type, Couch::WildCard()])->setEndKey([$this->type]);
       $rows = $this->couch->queryView("posts", "perDateByType", NULL, $opts);
-      $this->view->setVar('entriesCount', $this->getPostsCountPerType($type));
-      $this->view->setVar('entriesLabel', $filter);
     }
 
     $this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'id')));
+    $this->view->setVar('entriesCount', $this->getCount());
+
+    if (is_null($this->view->title))
+      $this->view->setVar('title', sprintf('Nuovi %s', $this->getLabel()));
   }
 
 
@@ -276,99 +213,102 @@ class IndexController extends ListController {
    * @brief Displays the posts per date.
    */
   public function perDateAction($year, $month = NULL, $day = NULL) {
-    $this->perDateByType(NULL, $year, $month, $day);
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults();
 
-    $this->view->setVar('title', 'Contributi per data');
-  }
+    $aDay = (is_null($day)) ? 1 : (int)$day;
+    $aMonth = (is_null($month)) ? 1 : (int)$month;
+    $aYear = (int)$year;
 
+    $startDate = (new \DateTime())->setDate($aYear, $aMonth, $aDay)->modify('midnight');
+    $endDate = clone($startDate);
 
-  /**
-   * @brief Displays the posts per date by type.
-   */
-  public function perDateByTypeAction($filter, $year, $month = NULL, $day = NULL) {
-    $type = $this->getTypeByFilter($filter);
-
-    if ($type === FALSE)
-      return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+    if (isset($day))
+      $endDate->modify('tomorrow')->modify('last second');
+    elseif (isset($month))
+      $endDate->modify('last day of this month')->modify('last second');
     else
-      $this->view->setVar('postType', $type);
+      $endDate->setDate($aYear, 12, 31)->modify('last second');
 
-    $this->perDateByType($type, $year, $month, $day);
+    //$this->monolog->addDebug(sprintf('startDate: %s', $startDate->format(\DateTime::ATOM)));
+    //$this->monolog->addDebug(sprintf('endDate: %s', $endDate->format(\DateTime::ATOM)));
 
-    $this->view->setVar('title', sprintf('%s per data', ucfirst($filter)));
+    if ($this->isSameClass()) {
+      $opts->setStartKey($endDate->getTimestamp())->setEndKey($startDate->getTimestamp());
+      $rows = $this->couch->queryView("posts", "perDate", NULL, $opts);
+      $count = $this->couch->queryView("posts", "perDate", NULL, $opts->reduce())->getReducedValue();
+    }
+    else {
+      $opts->setStartKey([$this->type, $endDate->getTimestamp()])->setEndKey([$this->type, $startDate->getTimestamp()]);
+      $rows = $this->couch->queryView("posts", "perDateByType", NULL, $opts);
+      $count = $this->couch->queryView("posts", "perDateByType", NULL, $opts->reduce())->getReducedValue();
+    }
+
+    $this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'id')));
+    $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
+    $this->view->setVar('title', sprintf('%s per data', ucfirst($this->getLabel())));
   }
 
 
   /**
    * @brief Displays the most popular updates for the provided period.
+   * @todo Replace `posts` with `scores`.
    */
-  public function popularAction($filter = NULL, $period = '24-ore') {
-    $type = $this->getTypeByFilter($filter);
+  public function popularAction($filter = NULL) {
+    $period = $this->getPeriod($filter);
+    if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    if ($type === FALSE)
-      return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
-    else
-      $this->view->setVar('postType', $type);
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults();
 
-    if (empty($period))
-      $period = '24-ore';
+    if ($this->isSameClass()) {
+      $opts->setStartKey(time());
 
-    $periodIndex = Time::periodIndex($period);
-    if ($periodIndex === FALSE)
-      return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+      if ($period == Helper\Time::EVER)
+        $opts->setEndKey(0);
+      else
+        $opts->setEndKey(Helper\Time::aWhileBack($period));
 
-    $this->view->setVar('subsectionMenu', Time::periods(6));
-    $this->view->setVar('subsectionIndex', Time::periodIndex($period));
+      $rows = $this->couch->queryView("posts", "perDate", NULL, $opts);
+      $count = $this->couch->queryView("posts", "perDate", NULL, $opts->reduce())->getReducedValue();
+    }
+    else {
+      $opts->setStartKey([$this->type, Couch::WildCard()]);
 
-    $this->popularEver(new \stdClass(), $period);
+      if ($period == Helper\Time::EVER)
+        $opts->setEndKey([$this->type]);
+      else
+        $opts->setEndKey([$this->type, Helper\Time::aWhileBack($period)]);
+
+      $rows = $this->couch->queryView("posts", "perDateByType", NULL, $opts);
+      $count = $this->couch->queryView("posts", "perDateByType", NULL, $opts->reduce())->getReducedValue();
+    }
+
+    $this->monolog->addNotice(sprintf('Period: %s', $period));
+
+    $this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'id')));
+    $this->view->setVar('entriesCount', $count);
+    $this->view->setVar('submenu', $this->periods);
+    $this->view->setVar('submenuIndex', $period);
+    $this->view->setVar('title', sprintf('%s popolari', ucfirst($this->getLabel())));
   }
 
 
   /**
    * @brief Displays the last updated entries.
    */
-  public function activeAction($filter = NULL) {
-    $type = $this->getTypeByFilter($filter);
-
-    if ($type === FALSE)
-      return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
-    else
-      $this->view->setVar('postType', $type);
+  public function activeAction() {
+    $this->view->setVar('entriesCount', 0);
+    $this->view->setVar('title', sprintf('%s attivi', ucfirst($this->getLabel())));
   }
 
 
   /**
    * @brief Displays the newest updates based on my tags.
    */
-  public function interestingAction($filter = NULL) {
-    $type = $this->getTypeByFilter($filter);
-
-    if ($type === FALSE)
-      return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
-    else
-      $this->view->setVar('postType', $type);
-  }
-
-
-  /**
-   * @brief Displays the newest questions having a bounty.
-   */
-  public function importantAction() {
-    $this->view->setVar('postType', 'question');
-  }
-
-
-  /**
-   * @brief Displays the questions, still open, based on user's tags.
-   */
-  public function openAction($filter = NULL) {
-    $this->view->setVar('postType', 'question');
-
-    if (empty($filter))
-      $filter = 'rivolte-a-me';
-
-    $this->view->setVar('subsectionMenu', self::$stillOpenSubMenu);
-    $this->view->setVar('subsectionIndex', array_flip(self::$stillOpenSubMenu)[$filter]);
+  public function interestingAction() {
+    $this->view->setVar('entriesCount', 0);
+    $this->view->setVar('title', sprintf('%s interessanti', ucfirst($this->getLabel())));
   }
 
 }
