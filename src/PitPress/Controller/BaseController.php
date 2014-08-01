@@ -2,8 +2,7 @@
 
 /**
  * @file BaseController.php
- * @brief Ancestor of every defined controller.
- * @details Here you can find the common functions of each controller.
+ * @brief This file contains the BaseController class.
  * @author Filippo F. Fadda
  */
 
@@ -14,11 +13,13 @@ namespace PitPress\Controller;
 
 use Phalcon\Mvc\Controller;
 
+use PitPress\Helper;
 use PitPress\Version;
 
 
 /**
  * @brief The base controller, a subclass of Phalcon controller.
+ * @details Here you can find the common functions of each controller.
  * @nosubgrouping
  */
 abstract class BaseController extends Controller {
@@ -34,12 +35,23 @@ abstract class BaseController extends Controller {
 
   protected $user;
 
+  protected $periods = [
+    'sempre' => Helper\Time::EVER,
+    'anno' => Helper\Time::YEAR,
+    'trimestre' => Helper\Time::QUARTER,
+    'mese' => Helper\Time::MONTH,
+    'settimana' => Helper\Time::WEEK,
+    '24-ore' => Helper\Time::DAY
+  ];
+
 
   /**
-   * @brief Returns an associative array of paths indexed by controller name.
+   * @brief Given a a human readable period of time, returns the correspondent number.
+   * @param[in] string $filter A human readable period of time.
+   * @return int|bool If the filter exists returns its number, else returns `false`.
    */
-  protected static function getPaths($menu) {
-    return array_column($menu, 'path', 'name');
+  protected function getPeriod($filter) {
+    return is_null($filter) ? Helper\Time::EVER : Helper\ArrayHelper::value($filter, $this->periods);
   }
 
 
@@ -70,8 +82,11 @@ abstract class BaseController extends Controller {
     // It is just the primary domain, for example: `programmazione.it`.
     $this->domainName = $this->di['config']['application']['domainName'];
 
-    // Includes the subdomain if any, for example: `blog.programmazione.it`.
+    // Includes the subdomain if any, for example: `it-it.programmazione.it`.
     $this->serverName = $_SERVER['SERVER_NAME'];
+
+    $this->controllerName = $this->dispatcher->getControllerName();
+    $this->actionName = $this->dispatcher->getActionName();
 
     // Includes the assets.
     $this->assets->addCss("/pit-bootstrap/dist/css/pit.css", FALSE);
@@ -95,8 +110,17 @@ abstract class BaseController extends Controller {
 
     $this->view->setVar('domainName', $this->domainName);
     $this->view->setVar('serverName', $this->serverName);
-    $this->view->setVar('controllerName', $this->dispatcher->getControllerName());
-    $this->view->setVar('actionName', $this->dispatcher->getActionName());
+    $this->view->setVar('controllerName', $this->controllerName);
+    $this->view->setVar('actionName', $this->actionName);
+
+    // Section and controller are different things. Many controllers, for example, belong to the same section. However,
+    // in general, there is a one to one relation between controller and section; this is why we assign to the section
+    // name, the controller name. Anyway, the section name can be overridden in child controllers, in case you want
+    // associate a controller to a different section.
+    $this->view->setVar('sectionName', $this->controllerName);
+
+    $this->monolog->addDebug(sprintf("Controller: %s", $this->dispatcher->getControllerName()));
+    $this->monolog->addDebug(sprintf("Action: %s", $this->dispatcher->getActionName()));
 
     if (isset($this->user))
       $this->view->setVar('currentUser', $this->user);
