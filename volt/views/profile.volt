@@ -11,14 +11,14 @@
 <div id="content" style="background-image: url(//www.utepprintstore.com/wp-content/uploads/Desktop-Background-1024x768.jpg); background-size: 970px 410px; background-repeat: no-repeat;">
   <div class="ghost gutter-plus" style="margin-top: 200px;">
     <div style="position: relative;">
-      <img id="avatar" class="img-polaroid pull-left" src="{{ doc.getGravatar(doc.email) }}&s=160">
-      {% if currentUser is defined and doc.id == currentUser.id %}
+      <img id="avatar" class="img-polaroid pull-left" src="{{ user.getGravatar(user.email) }}&s=160">
+      {% if currentUser is defined and user.id == currentUser.id %}
       <a class="change-avatar" href="http://it.gravatar.com/"><i class="icon-camera"></i>CAMBIA FOTO</a>
       {% endif %}
     </div>
-    <div class="pippo">{{ doc.firstName }} {{ doc.lastName }}</div>
+    <div class="pippo">{{ user.firstName }} {{ user.lastName }}</div>
     <div class="pull-right" style="margin-top: 148px;">
-      {% if currentUser is defined and (doc.id == currentUser.id or currentUser.isAdmin()) %}
+      {% if currentUser is defined and (user.id == currentUser.id or currentUser.isAdmin()) %}
       <a class="btn blue" href="#"><i class="icon-user"></i> MODIFICA</a>
       {% endif %}
       {% if currentUser is defined and currentUser.isAdmin() %}
@@ -27,8 +27,8 @@
     </div>
   </div>
 
-  {% set resourceName = doc.username %}
-  {% include "partials/navigation/types.volt" %}
+  {% set resourceName = user.username %}
+  {% include "partials/types.volt" %}
   {% include "partials/navigation/menu/profile.volt" %}
   {% include "partials/navigation/menu.volt" %}
 
@@ -41,8 +41,8 @@
   </div> <!-- /column-left -->
 
   <div class="column-right">
-    {% set lastVisit = doc.getLastvisit() %}
-    {% set hitsCount = doc.getHitsCount() %}
+    {% set lastVisit = user.getLastvisit() %}
+    {% set hitsCount = user.getHitsCount() %}
 
     <div class="reputation big">
       <table>
@@ -57,15 +57,15 @@
     {% include "partials/widgets/badges.volt" %}
 
     <!--<blockquote>
-      {% if doc.firstName is defined %}
-        Mi chiamo {{ doc.firstName|upper }} {{ doc.lastName|upper }}.
+      {% if user.firstName is defined %}
+        Mi chiamo {{ user.firstName|upper }} {{ user.lastName|upper }}.
       {% else %}
-        {{ doc.username }}
+        {{ user.username }}
       {% endif %}
-      {% if doc.birthday is defined %}
-        Ho {{ doc.getAge() }} anni.
+      {% if user.birthday is defined %}
+        Ho {{ user.getAge() }} anni.
       {% endif %}
-      Mi sono iscritto il {{ doc.getElapsedTimeSinceRegistration()|lower }}.
+      Mi sono iscritto il {{ user.getElapsedTimeSinceRegistration()|lower }}.
       {% if lastVisit != "" %}
         La mia ultima visita risale al {{ lastVisit|lower }}.
       {% endif %}
