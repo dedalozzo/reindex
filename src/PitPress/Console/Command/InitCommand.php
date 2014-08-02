@@ -624,8 +624,7 @@ MAP;
 
 
     // @params userId
-    // @methods: todo
-    function lastAddedFavorites() {
+    function perDateFavorites() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'star')
@@ -633,32 +632,14 @@ function($doc) use ($emit) {
 };
 MAP;
 
-      $handler = new ViewHandler("lastAdded");
+      $handler = new ViewHandler("perDate");
       $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
 
       return $handler;
     }
 
-    $doc->addHandler(lastAddedFavorites());
-
-
-    // @params userId, type
-    // @methods: todo
-    function lastAddedFavoritesPerType() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'star')
-    $emit([$doc->userId, $doc->itemType, $doc->timestamp], $doc->itemId);
-};
-MAP;
-
-      $handler = new ViewHandler("lastAddedPerType");
-      $handler->mapFn = $map;
-
-      return $handler;
-    }
-
-    $doc->addHandler(lastAddedFavoritesPerType());
+    $doc->addHandler(perDateFavorites());
 
 
     $this->couch->saveDoc($doc);
