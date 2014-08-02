@@ -1,6 +1,6 @@
 {# This is used when a resource is provided, like a username or a post id. #}
 {% if resourceName is defined %}
-  {% set resourcePath = resourceName %}
+  {% set resourcePath = resourceName~'/' %}
 {% else %}
   {% set resourcePath = '' %}
 {% endif %}
