@@ -145,14 +145,13 @@ abstract class Post extends Item implements Extension\ICount, Extension\IStar, E
 
     $classifications = $this->couch->queryView("classifications", "perPost", NULL, $opts);
 
-    $keys = [];
-    foreach ($classifications as $classification)
-      $keys[] = $classification['value'];
-
-    $opts->reset();
-    $opts->doNotReduce();
-
-    return $this->couch->queryView("tags", "allNames", $keys, $opts); // Tags.
+    if (!$classifications->isEmpty()) {
+      $opts->reset();
+      $opts->doNotReduce();
+      return $this->couch->queryView("tags", "allNames", array_column($classifications->asArray(), 'value'), $opts);
+    }
+    else
+      return [];
   }
 
   //!@}
