@@ -43,7 +43,7 @@ class IndexController extends ListController {
   /**
    * @brief Gets the total number of posts.
    */
-  protected function getCount() {
+  protected function countPosts() {
     if ($this->isSameClass()) {
       $count = $this->couch->queryView("posts", "perDate")->getReducedValue();
     }
@@ -202,7 +202,7 @@ class IndexController extends ListController {
     }
 
     $this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'id')));
-    $this->view->setVar('entriesCount', $this->getCount());
+    $this->view->setVar('entriesCount', $this->countPosts());
 
     if (is_null($this->view->title))
       $this->view->setVar('title', sprintf('Nuovi %s', $this->getLabel()));
