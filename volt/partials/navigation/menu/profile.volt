@@ -1,9 +1,9 @@
-{% set sectionLabel = doc.username|upper %}
+{% set sectionLabel = user.username|upper %}
 {% set menu = [
   'activities': 'attivita',
   'projects': 'progetti',
   'favorites': 'preferiti',
   'connections': 'connessioni',
-  'about': 'profilo'],
-  'timeline': 'timeline'
+  'about': 'profilo',
+  'index': 'timeline'
 ] %}
