@@ -168,9 +168,9 @@ class AuthController extends BaseController {
 
     $this->view->setVar('title', 'Unisciti al più grande social network italiano di sviluppatori');
 
-    $this->view->disableLevel(View::LEVEL_MAIN_LAYOUT);
-
     $this->assets->addJs("/pit-bootstrap/dist/js/tab.min.js", FALSE);
+
+    $this->view->pick('views/auth/signin');
   }
 
 
