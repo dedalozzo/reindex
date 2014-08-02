@@ -1,4 +1,4 @@
-{% extends "index.volt" %}
+{% extends "templates/base.volt" %}
 
 {% block topbar %}{% endblock %}
 {% block container %}fixed{% endblock %}
