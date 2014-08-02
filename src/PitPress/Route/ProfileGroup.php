@@ -33,14 +33,26 @@ class ProfileGroup extends Group {
 
     // All the following routes start with /utenti.
     $this->setPrefix('/utenti/([\da-z_]{5,20})');
-    $this->addGet('', ['action' => 'timeline', 'username' => 1]);
-    $this->addGet('/timeline/{type}', ['action' => 'timeline', 'username' => 1]);
-    $this->addGet('/connessioni/{type}', ['action' => 'connections', 'username' => 1]);
-    $this->addGet('/preferiti/{type}', ['action' => 'favorites', 'username' => 1]);
-    $this->addGet('/reputatione/{type}', ['action' => 'reputation', 'username' => 1]);
-    $this->addGet('/attivita/{type}', ['action' => 'activities', 'username' => 1]);
-    $this->addGet('/ricompense/{type}', ['action' => 'bounties', 'username' => 1]);
-    $this->addGet('/progetti/{type}', ['action' => 'projects', 'username' => 1]);
+
+    $this->addGet('/', ['action' => 'index', 'username' => 1]);
+    $this->addGet('/timeline/', ['action' => 'index', 'username' => 1]);
+
+    $this->addGet('/connessioni/', ['action' => 'connections', 'username' => 1]);
+    $this->addGet('/connessioni/{filter}/', ['action' => 'connections', 'username' => 1]);
+
+    $this->addGet('/preferiti/', ['action' => 'favorites', 'username' => 1]);
+
+    $this->addGet('/reputatione/', ['action' => 'reputation', 'username' => 1]);
+    $this->addGet('/reputatione/{filter}/', ['action' => 'reputation', 'username' => 1]);
+
+    $this->addGet('/attivita/', ['action' => 'activities', 'username' => 1]);
+    $this->addGet('/attivita/{filter}/', ['action' => 'activities', 'username' => 1]);
+
+    $this->addGet('/ricompense/', ['action' => 'bounties', 'username' => 1]);
+    $this->addGet('/ricompense/{filter}/', ['action' => 'bounties', 'username' => 1]);
+
+    $this->addGet('/progetti/', ['action' => 'projects', 'username' => 1]);
+    $this->addGet('/progetti/{filter}/', ['action' => 'projects', 'username' => 1]);
   }
 
 }
