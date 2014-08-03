@@ -17,8 +17,10 @@
     </ul>
   </li>
   {% else %}
-    {% set controllerPath = sections[sectionName]['path'] %}
   <li><span><b>{{ sectionLabel }}</b></span></li>
+  {% endif %}
+  {% if controllerPath is empty %}
+    {% set controllerPath = sections[sectionName]['path'] %}
   {% endif %}
   <li class="pull-right icon"><a href="http://programmazione.it/rss" class="icon-rss icon-large"></a></li>
   {% for name, path in menu %}
