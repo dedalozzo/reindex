@@ -28,6 +28,7 @@
   </div>
 
   {% set resourceName = user.username %}
+  {% set controllerPath = '/' %}
   {% include "partials/types.volt" %}
   {% include "partials/navigation/menu/profile.volt" %}
   {% include "partials/navigation/menu.volt" %}
