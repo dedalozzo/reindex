@@ -48,9 +48,6 @@ class ProfileController extends ListController {
 
   public function afterExecuteRoute() {
     parent::afterExecuteRoute();
-
-    $this->view->setVar('sectionName', 'user');
-
     $this->view->pick('views/profile');
   }
 
