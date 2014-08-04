@@ -1,6 +1,6 @@
 {% if entries is defined %}
   {% for entry in entries %}
-    {% set userUrl = '//'~domainName~'/utenti/'~entry.username %}
+    {% set userUrl = '//'~domainName~'/'~entry.username %}
     <hr class="fade-short">
     <article id="{{ entry.id }}">
       <div class="item-time">{{ entry.whenHasBeenPublished }}</div>
