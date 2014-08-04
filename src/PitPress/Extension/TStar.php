@@ -25,7 +25,7 @@ use PitPress\Model\Item;
 trait TStar {
 
 
-  public function isStarred(User $user, &$starId = NULL) {
+  public function isStarred(User $user = NULL, &$starId = NULL) {
     // In case there is no user logged in returns false.
     if (is_null($user)) return FALSE;
 
@@ -43,7 +43,7 @@ trait TStar {
   }
 
 
-  public function star(User $user) {
+  public function star(User $user = NULL) {
     if (is_null($user)) return Item::NO_USER_LOGGED_IN;
 
     if ($this->isStarred($user, $starId)) {

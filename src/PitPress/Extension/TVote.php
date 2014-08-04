@@ -33,7 +33,7 @@ trait TVote {
    * @param[in] string $value The vote.
    * @return int The voting status.
    */
-  protected function vote(User $user, $value) {
+  protected function vote(User $user = NULL, $value) {
     if (is_null($user)) return Item::NO_USER_LOGGED_IN;
     if ($user->id == $this->userId) return IVote::CANNOT_VOTE_YOUR_OWN_POST;
 
@@ -75,22 +75,22 @@ trait TVote {
   }
 
 
-  public function voteUp(User $user) {
+  public function voteUp(User $user = NULL) {
     return $this->vote($user, 1);
   }
 
 
-  public function voteDown(User $user) {
+  public function voteDown(User $user = NULL) {
     return $this->vote($user, -1);
   }
 
 
-  public function like(User $user) {
+  public function like(User $user = NULL) {
     return $this->vote($user, 1);
   }
 
 
-  public function didUserVote(User $user, &$voteId = NULL) {
+  public function didUserVote(User $user = NULL, &$voteId = NULL) {
     // In case there is no user logged in returns false.
     if (is_null($user)) return FALSE;
 
