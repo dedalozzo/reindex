@@ -108,6 +108,7 @@ abstract class BaseController extends Controller {
 
     $this->view->setVar('version', Version::getNumber());
 
+    $this->view->setVar('currentUser', $this->user);
     $this->view->setVar('domainName', $this->domainName);
     $this->view->setVar('serverName', $this->serverName);
     $this->view->setVar('controllerName', $this->controllerName);
@@ -122,8 +123,6 @@ abstract class BaseController extends Controller {
     $this->monolog->addDebug(sprintf("Controller: %s", $this->dispatcher->getControllerName()));
     $this->monolog->addDebug(sprintf("Action: %s", $this->dispatcher->getActionName()));
 
-    if (isset($this->user))
-      $this->view->setVar('currentUser', $this->user);
   }
 
 
