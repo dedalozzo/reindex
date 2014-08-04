@@ -40,7 +40,7 @@
             </ul>
           </div>
         </li>
-          {% set userUri = '//utenti.'~domainName~'/'~currentUser.username %}
+          {% set userUri = '//'~domainName~'/'~currentUser.username %}
         <li><button class="btn btn-icon blue" title="messaggi e notifiche" data-dropdown="#dropdown-inbox"><i class="icon-inbox icon-large"></i></button></li>
         <li>
           <button class="btn btn-icon blue" data-dropdown="#dropdown-user"><img class="gravatar" src="{{ currentUser.getGravatar(currentUser.email) }}&s=20"></button>
