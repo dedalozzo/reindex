@@ -6,7 +6,7 @@
     <!-- <div class="alert alert-info">Le tue modifiche saranno poste in coda sino a che il processo di revisione paritaria (peer review) avrà luogo. Ogni modifica, purché costruttiva, è benvenuta. Grazie.</div> -->
     {{ flash.output() }}
 
-    <div id="page-title">{{ doc.title }}</div>
+    <div id="page-title">{{ post.title }}</div>
 
     <form class="frm-stacked" action="//{{ domainName }}/accedi/" id="signinform" name="signinform" method="post" role="form">
       <fieldset>
@@ -41,7 +41,7 @@
           });
         </script>
         <label for="title">Titolo: </label>
-        <input type="text" style="width: 100%;" placeholder="Titolo" autocomplete="on" id="keyword" name="keyword" value="{{ doc.title }}">
+        <input type="text" style="width: 100%;" placeholder="Titolo" autocomplete="on" id="keyword" name="keyword" value="{{ post.title }}">
       </fieldset>
       <fieldset>
         <ul class="list tabs">
@@ -72,7 +72,7 @@
             </ul>
             {{ text_area("body", "class": "pure-input-1") }}
             <script type="text/javascript">
-              var editor = CodeMirror.fromTextArea(document.getElementById("body"), {
+              var editor = CodeMirror.fromTextArea(postument.getElementById("body"), {
                 mode: 'gfm',
                 lineNumbers: true,
                 lineWrapping: true,
@@ -134,7 +134,7 @@
 
       <div class="pure-controls">
         <button type="submit" name="signin" class="btn large red">Salva le modifiche</button>
-        <a href="//{{ serverName~doc.getHref() }}" class="btn large">Annulla</a>
+        <a href="//{{ serverName~post.getHref() }}" class="btn large">Annulla</a>
       </div>
     </form>
 
