@@ -8,7 +8,7 @@
   {% set hitsCount = post.getHitsCount() %}
   {% set repliesCount = post.getRepliesCount() %}
 
-  <div id="page-title"><a href="#" title="Aggiungi ai preferiti"><i class="icon-star-empty"></i></a> {{ post.title }}</div>
+  <div id="page-title"><button class="btn btn-star {% if post.isStarred(currentUser) %} active{% endif %}" title="aggiungi ai preferiti"><i class="icon-star icon-largest"></i></button> {{ post.title }}</div>
   <hr class="fade-long">
   <div class="column-left">
 
@@ -61,10 +61,10 @@
           </section>
         </div>
         <ul class="list item-buttons gutter">
-          <li><button class="btn btn-like {% if post.didUserVote(currentUser) %} active {% endif %} red" title="mi piace"><i class="icon-thumbs-up icon-largest"></i></button></li>
+          <li><button class="btn btn-like {% if post.didUserVote(currentUser) %} active{% endif %}" title="mi piace"><i class="icon-thumbs-up icon-largest"></i></button></li>
           <li><button class="btn btn-link score">{{ post.getScore() }}</button></li>
           <li class="space"></li>
-          <li><button class="btn btn-icon star {% if post.isStarred(currentUser) %} active {% endif %}" title="aggiungi la domanda ai preferiti"><i class="icon-star icon-large"></i></button></li>
+          <li><button class="btn btn-star {% if post.isStarred(currentUser) %} active{% endif %}" title="aggiungi ai preferiti"><i class="icon-star icon-large"></i></button></li>
           <li>
             <button class="btn btn-icon blue" title="condividi la domanda" data-dropdown="#dropdown-share"><i class="icon-share icon-large"></i></button>
             <div id="dropdown-share" class="dropdown dropdown-relative dropdown-tip">
@@ -79,7 +79,7 @@
             </div>
           </li>
           <li><button class="btn btn-icon blue" title="segnala un problema riguardante la domanda"><i class="icon-flag icon-large"></i></button></li>
-          <li><a class="btn btn-icon trans blue" title="migliora la domanda modificandone il contenuto" href="//{{ serverName~'/'~post.id~'/modifica/' }}"><i class="icon-file-text icon-large"></i></a></li>
+          <li><a class="btn btn-icon blue" title="migliora la domanda modificandone il contenuto" href="//{{ serverName~'/'~post.id~'/modifica/' }}"><i class="icon-file-text icon-large"></i></a></li>
           <li>
             <button class="btn btn-icon orange" title="strumenti di amministrazione" data-dropdown="#dropdown-admin"><i class="icon-gear icon-large"></i></button>
             <div id="dropdown-admin" class="dropdown dropdown-relative dropdown-anchor-right dropdown-tip">
