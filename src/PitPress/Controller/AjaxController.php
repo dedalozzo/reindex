@@ -73,13 +73,29 @@ class AjaxController extends BaseController {
 
   /**
    * @brief Likes a post.
-   * @param[in] $url The URL.
-   * @return string
+   * @return int
    */
   public function likeAction() {
     if ($this->request->hasPost('id')) {
       $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
       echo json_encode($doc->like($this->user));
+
+      $this->view->disable();
+    }
+    else {
+      throw new \DomainException("Stai tentando di effettuare una richiesta da un dominio sconosciuto.");
+    }
+  }
+
+
+  /**
+   * @brief Stars an item.
+   * @return int
+   */
+  public function starAction() {
+    if ($this->request->hasPost('id')) {
+      $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
+      echo json_encode($doc->star($this->user));
 
       $this->view->disable();
     }
