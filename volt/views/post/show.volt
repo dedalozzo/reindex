@@ -140,7 +140,7 @@
       <ul class="list item-buttons gutter">
         <li><button class="btn btn-like {% if reply.didUserVote(currentUser) %} active {% endif %} red" title="la risposta mi piace"><i class="icon-thumbs-up icon-largest"></i></button></li>
         <li><button class="btn btn-link score">{{ reply.getScore() }}</button></li>
-        <li><button class="btn btn-like red" title="la risposta mi piace"><i class="icon-ok icon-largest"></i></button></li>
+        <li><button class="btn btn-accept" title="accetta la risposta"><i class="icon-ok icon-largest"></i></button></li>
         <li class="space"></li>
         <li><button class="btn btn-icon blue" title="condividi la risposta"><i class="icon-link icon-large"></i></button></li>
         <li><button class="btn btn-icon blue"><i class="icon-comment icon-large"></i></button></li>
