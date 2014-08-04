@@ -20,6 +20,13 @@ use PitPress\Model\User\User;
  */
 interface IStar {
 
+  /** @name Starring Status */
+  //!@{
+  const STARRED = 1; //!< The post has been added to your favorites.
+  const UNSTARRED = 2; //!< The vote has been removed from your favorites.
+  //!@}
+
+
   /** @name Starring Methods */
   //!@{
 
@@ -33,17 +40,10 @@ interface IStar {
 
 
   /**
-   * @brief Adds the item to the favourites list of the current user.
+   * @brief Adds or removes the item to the favourites list of the current user.
    * @param[in] User $user The current user logged in.
    */
   public function star(User $user);
-
-
-  /**
-   * @brief Removes the item from the favourites list of the current user.
-   * @param[in] User $user The current user logged in.
-   */
-  public function unstar(User $user);
 
 
   /**
