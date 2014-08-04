@@ -39,13 +39,15 @@ class PostController extends BaseController {
           'action' => 'show404'
         ]);
 
-    $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $rows[0]['id']);
-    $doc->incHits();
-    $doc->html = $this->markdown->parse($doc->body);
+    $post = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $rows[0]['id']);
+    $post->incHits();
+    $post->html = $this->markdown->parse($post->body);
 
-    $this->view->setVar('doc', $doc);
-    $this->view->setVar('replies', $doc->getReplies());
-    $this->view->setVar('title', $doc->title);
+    $this->view->setVar('post', $post);
+    $this->view->setVar('replies', $post->getReplies());
+    $this->view->setVar('title', $post->title);
+
+    $this->assets->addJs("/pit-bootstrap/dist/js/post.min.js", FALSE);
 
     $this->view->pick('views/post/show');
   }
@@ -62,13 +64,13 @@ class PostController extends BaseController {
           'action' => 'show404'
         ]);
 
-    $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $id);
+    $post = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $id);
 
-    $this->tag->setDefault("title", $doc->title);
-    $this->tag->setDefault("body", $doc->body);
+    $this->tag->setDefault("title", $post->title);
+    $this->tag->setDefault("body", $post->body);
 
-    $this->view->setVar('doc', $doc);
-    $this->view->setVar('title', $doc->title);
+    $this->view->setVar('post', $post);
+    $this->view->setVar('title', $post->title);
 
     $this->view->disableLevel(View::LEVEL_LAYOUT);
 
