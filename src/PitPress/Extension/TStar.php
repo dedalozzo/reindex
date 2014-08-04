@@ -16,6 +16,7 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Model\Accessory\Star;
 use PitPress\Model\User\User;
+use PitPress\Model\Item;
 
 
 /**
@@ -25,6 +26,9 @@ trait TStar {
 
 
   public function isStarred(User $user, &$starId = NULL) {
+    // In case there is no user logged in returns false.
+    if (is_null($user)) return FALSE;
+
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $user->id]);
 
@@ -40,18 +44,17 @@ trait TStar {
 
 
   public function star(User $user) {
-    if (!$this->isStarred($user)) {
-      $doc = Star::create($user->id, $this->id, $this->getType());
-      $this->couch->saveDoc($doc);
-    }
-  }
+    if (is_null($user)) return Item::NO_USER_LOGGED_IN;
 
-
-  public function unstar(User $user) {
     if ($this->isStarred($user, $starId)) {
-      $doc = $this->couch->getDoc(Couch::STD_DOC_PATH, $starId);
-      $doc->delete();
+      $star = $this->couch->getDoc(Couch::STD_DOC_PATH, $starId);
+      $this->couch->deleteDoc(Couch::STD_DOC_PATH, $starId, $star->rev);
+      return IStar::UNSTARRED;
+    }
+    else {
+      $doc = Star::create($user->id, $this->id);
       $this->couch->saveDoc($doc);
+      return IStar::STARRED;
     }
   }
 
@@ -60,7 +63,7 @@ trait TStar {
     $opts = new ViewQueryOpts();
     $opts->setKey([$this->id]);
 
-    return $this->couch->queryView("stars", "perItem", NULL, $opts)->getReducedValue();;
+    return $this->couch->queryView("stars", "perItem", NULL, $opts)->getReducedValue();
   }
 
 }
