@@ -2,7 +2,7 @@
 
 /**
  * @file AjaxGroup.php
- * @brief Group of AJAX routes.
+ * @brief This file contains the AjaxGroup class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -21,7 +21,6 @@ use Phalcon\DI;
  */
 class AjaxGroup extends Group {
 
-
   public function initialize() {
     // Sets the default controller for the following routes.
     $this->setPaths(
@@ -33,6 +32,7 @@ class AjaxGroup extends Group {
     $this->setHostName('ajax.'.DI::getDefault()['config']['application']['domainName']);
 
     $this->addPost('/like/', ['action' => 'like']);
+    $this->addPost('/star/', ['action' => 'star']);
   }
 
 }
