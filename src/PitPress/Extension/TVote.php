@@ -16,6 +16,7 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Model\Accessory\Vote;
 use PitPress\Model\User\User;
+use PitPress\Model\Item;
 
 use Phalcon\DI;
 
@@ -33,7 +34,7 @@ trait TVote {
    * @return int The voting status.
    */
   protected function vote(User $user, $value) {
-    if (is_null($user)) return IVote::NO_USER_LOGGED_IN;
+    if (is_null($user)) return Item::NO_USER_LOGGED_IN;
     if ($user->id == $this->userId) return IVote::CANNOT_VOTE_YOUR_OWN_POST;
 
     $voted = $this->didUserVote($user, $voteId);
@@ -91,8 +92,7 @@ trait TVote {
 
   public function didUserVote(User $user, &$voteId = NULL) {
     // In case there is no user logged in returns false.
-    if (is_null($user))
-      return FALSE;
+    if (is_null($user)) return FALSE;
 
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $user->id]);
