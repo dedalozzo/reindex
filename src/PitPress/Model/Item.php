@@ -24,6 +24,7 @@ use PitPress\Helper\Time;
 abstract class Item extends Storable {
   use Extension\TVersion;
 
+  const NO_USER_LOGGED_IN = -1; //!< No user logged in. The user is a guest.
 
   /**
    * @copydoc Storable.save
