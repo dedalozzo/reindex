@@ -25,6 +25,8 @@ use Phalcon\Mvc\View;
  */
 abstract class ListController extends BaseController {
 
+  const RESULTS_PER_PAGE = 20;
+
 
   /**
    * @brief Given a set of keys, retrieves entries.
@@ -72,7 +74,7 @@ abstract class ListController extends BaseController {
     for ($i = 0; $i < $postCount; $i++) {
       $entry = (object)($posts[$i]['value']);
       $entry->id = $posts[$i]['id'];
-      $entry->url = $this->buildUrl($entry->publishingDate, $entry->slug);
+      $entry->url = $this->buildPostUrl($entry->publishingDate, $entry->slug);
       $entry->whenHasBeenPublished = Helper\Time::when($entry->publishingDate);
       $entry->username = $users[$i]['value'][0];
       $entry->gravatar = User::getGravatar($users[$i]['value'][1]);
@@ -104,10 +106,29 @@ abstract class ListController extends BaseController {
 
   /**
    * @brief Builds the post url, given its publishing date and slug.
+   * @param[in] int $publishingDate The publishing timestamp.
+   * @param[in] string $slug The slug of the title.
    * @return string The complete url of the post.
    */
-  protected function buildUrl($publishingDate, $slug) {
+  protected function buildPostUrl($publishingDate, $slug) {
     return "http://".$this->domainName.date('/Y/m/d/', $publishingDate).$slug;
+  }
+
+
+  /**
+   * @brief Builds the pagination url.
+   * @param[in|out] array $entries An array of the entries passed by reference.
+   * @return string The pagination url or `null` in case there aren't more pages.
+   */
+  protected function buildPaginationUrl(&$entries) {
+
+    // If the query returned more entries than the ones must display on the page, a link to the next page must be provided.
+    if (count($entries) > self::RESULTS_PER_PAGE) {
+      $last = array_pop($entries);
+      return sprintf('%s%s?startkey=%d&startkey_docid=%s', $this->domainName, parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), $last->publishingDate, $last->id);
+    }
+    else
+      return NULL;
   }
 
 
