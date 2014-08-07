@@ -96,4 +96,29 @@ class Time extends TimeHelper {
     return $timestamp;
   }
 
+
+  /**
+   * @brief Given a period of time (an year, a month or a day), calculates the date limits for that period.
+   * @param[out] \DateTime $minDate The minimum date in the period.
+   * @param[out] \DateTime $maxDate The maximum date in the period.
+   * @param[in] string $year An year.
+   * @param[in] string $month A month.
+   * @param[in] string $day A day.
+   */
+  public static function dateLimits(&$minDate, &$maxDate, $year, $month = NULL, $day = NULL) {
+    $aDay = (is_null($day)) ? 1 : (int)$day;
+    $aMonth = (is_null($month)) ? 1 : (int)$month;
+    $aYear = (int)$year;
+
+    $minDate = (new \DateTime())->setDate($aYear, $aMonth, $aDay)->modify('midnight');
+    $maxDate = clone($minDate);
+
+    if (isset($day))
+      $maxDate->modify('tomorrow')->modify('last second');
+    elseif (isset($month))
+      $maxDate->modify('last day of this month')->modify('last second');
+    else
+      $maxDate->setDate($aYear, 12, 31)->modify('last second');
+  }
+
 }
