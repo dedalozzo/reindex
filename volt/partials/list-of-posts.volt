@@ -1,8 +1,8 @@
 {% if entries is defined %}
   {% for entry in entries %}
     {% set userUrl = '//'~domainName~'/'~entry.username %}
-    <hr class="fade-short">
     <article id="{{ entry.id }}">
+      <hr class="fade-short">
       <div class="item-time">{{ entry.whenHasBeenPublished }}</div>
       <div class="item-tools">
         <a{% if entry.liked %} class="active"{% endif %} title="mi piace"><i class="icon-thumbs-up icon-large"></i></a><span>{{ entry.score }}</span>
@@ -38,4 +38,5 @@
   {% elsefor %}
     <div class="alert alert-info">Siamo spiacenti, la ricerca non ha prodotto alcun risultato.</div>
   {% endfor %}
+  {% include "partials/pagination.volt" %}
 {% endif %}
