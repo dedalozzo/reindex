@@ -94,7 +94,7 @@ class IndexController extends ListController {
 
       $properties = $posts[$i]['value'];
       $entry->title = $properties['title'];
-      $entry->url = $this->buildUrl($properties['publishingDate'], $properties['slug']);
+      $entry->url = $this->buildPostUrl($properties['publishingDate'], $properties['slug']);
       $entry->whenHasBeenPublished = Helper\Time::when($properties['publishingDate']);
       $entry->score = is_null($scores[$i]['value']) ? 0 : $scores[$i]['value'];
       $entry->repliesCount = is_null($replies[$i]['value']) ? 0 : $replies[$i]['value'];
@@ -191,17 +191,24 @@ class IndexController extends ListController {
    */
   public function newestAction() {
     $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->reverseOrderOfResults()->setLimit(self::RESULTS_PER_PAGE+1);
+
+    // Paginates results.
+    $startKey = isset($_GET['startkey']) ? (int)$_GET['startkey'] : Couch::WildCard();
+    if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
 
     if ($this->isSameClass()) {
-      $opts->doNotReduce()->reverseOrderOfResults()->setLimit(30);
+      $opts->setStartKey($startKey);
       $rows = $this->couch->queryView("posts", "perDate", NULL, $opts);
     }
     else {
-      $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey([$this->type, Couch::WildCard()])->setEndKey([$this->type]);
+      $opts->setStartKey([$this->type, $startKey])->setEndKey([$this->type]);
       $rows = $this->couch->queryView("posts", "perDateByType", NULL, $opts);
     }
 
-    $this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'id')));
+    $entries = $this->getEntries(array_column($rows->asArray(), 'id'));
+    $this->view->setVar('nextPage', $this->buildPaginationUrl($entries));
+    $this->view->setVar('entries', $entries);
     $this->view->setVar('entriesCount', $this->countPosts());
 
     if (is_null($this->view->title))
@@ -214,37 +221,32 @@ class IndexController extends ListController {
    */
   public function perDateAction($year, $month = NULL, $day = NULL) {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults();
+    $opts->doNotReduce()->reverseOrderOfResults()->setLimit(self::RESULTS_PER_PAGE+1);
 
-    $aDay = (is_null($day)) ? 1 : (int)$day;
-    $aMonth = (is_null($month)) ? 1 : (int)$month;
-    $aYear = (int)$year;
+    Helper\Time::dateLimits($minDate, $maxDate, $year, $month, $day);
 
-    $startDate = (new \DateTime())->setDate($aYear, $aMonth, $aDay)->modify('midnight');
-    $endDate = clone($startDate);
-
-    if (isset($day))
-      $endDate->modify('tomorrow')->modify('last second');
-    elseif (isset($month))
-      $endDate->modify('last day of this month')->modify('last second');
-    else
-      $endDate->setDate($aYear, 12, 31)->modify('last second');
-
-    //$this->monolog->addDebug(sprintf('startDate: %s', $startDate->format(\DateTime::ATOM)));
-    //$this->monolog->addDebug(sprintf('endDate: %s', $endDate->format(\DateTime::ATOM)));
+    // Paginates results.
+    $postDate = isset($_GET['startkey']) ? (new \DateTime())->setTimestamp((int)$_GET['startkey']) : clone($maxDate);
+    if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
 
     if ($this->isSameClass()) {
-      $opts->setStartKey($endDate->getTimestamp())->setEndKey($startDate->getTimestamp());
+      $opts->setStartKey($postDate->getTimestamp())->setEndKey($minDate->getTimestamp());
       $rows = $this->couch->queryView("posts", "perDate", NULL, $opts);
-      $count = $this->couch->queryView("posts", "perDate", NULL, $opts->reduce())->getReducedValue();
+
+      $opts->reduce()->setStartKey($maxDate->getTimestamp())->unsetOpt('startkey_docid');
+      $count = $this->couch->queryView("posts", "perDate", NULL, $opts)->getReducedValue();
     }
     else {
-      $opts->setStartKey([$this->type, $endDate->getTimestamp()])->setEndKey([$this->type, $startDate->getTimestamp()]);
+      $opts->setStartKey([$this->type, $postDate->getTimestamp()])->setEndKey([$this->type, $minDate->getTimestamp()]);
       $rows = $this->couch->queryView("posts", "perDateByType", NULL, $opts);
-      $count = $this->couch->queryView("posts", "perDateByType", NULL, $opts->reduce())->getReducedValue();
+
+      $opts->reduce()->setStartKey([$this->type, $maxDate->getTimestamp()])->unsetOpt('startkey_docid');
+      $count = $this->couch->queryView("posts", "perDateByType", NULL, $opts)->getReducedValue();
     }
 
-    $this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'id')));
+    $entries = $this->getEntries(array_column($rows->asArray(), 'id'));
+    $this->view->setVar('nextPage', $this->buildPaginationUrl($entries));
+    $this->view->setVar('entries', $entries);
     $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
     $this->view->setVar('title', sprintf('%s per data', ucfirst($this->getLabel())));
   }
@@ -259,12 +261,13 @@ class IndexController extends ListController {
     if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults();
+    $opts->doNotReduce()->setLimit(self::RESULTS_PER_PAGE+1)->reverseOrderOfResults();
 
     if ($this->isSameClass()) {
       $opts->setStartKey(time());
 
       if ($period == Helper\Time::EVER)
+        // ERROR: don't provide a data and use another view that use as key the score and as value the postId
         $opts->setEndKey(0);
       else
         $opts->setEndKey(Helper\Time::aWhileBack($period));
@@ -276,6 +279,7 @@ class IndexController extends ListController {
       $opts->setStartKey([$this->type, Couch::WildCard()]);
 
       if ($period == Helper\Time::EVER)
+        // ERROR: don't provide a data and use another view that use as key the [type, score] and as value the postId
         $opts->setEndKey([$this->type]);
       else
         $opts->setEndKey([$this->type, Helper\Time::aWhileBack($period)]);
