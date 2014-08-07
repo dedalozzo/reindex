@@ -36,12 +36,15 @@ abstract class BaseController extends Controller {
   protected $user;
 
   protected $periods = [
-    'sempre' => Helper\Time::EVER,
-    'anno' => Helper\Time::YEAR,
-    'trimestre' => Helper\Time::QUARTER,
-    'mese' => Helper\Time::MONTH,
-    'settimana' => Helper\Time::WEEK,
-    '24-ore' => Helper\Time::DAY
+    "sempre" => Helper\Time::EVER,
+    "anno scorso" => Helper\Time::YEAR,
+    "quest'anno" => Helper\Time::YEAR,
+    "mese scorso" => Helper\Time::MONTH,
+    "questo mese" => Helper\Time::MONTH,
+    "settimana scorsa" => Helper\Time::WEEK,
+    "questa settimana" => Helper\Time::WEEK,
+    "ieri" => Helper\Time::DAY,
+    "oggi" => Helper\Time::DAY
   ];
 
 
