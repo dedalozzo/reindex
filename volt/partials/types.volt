@@ -1,7 +1,7 @@
 {% set types = [
   'index': 'tutti',
-  'article': 'articoli',
-  'book': 'libri',
   'link': 'links',
-  'question': 'domande'
+  'question': 'domande',
+  'article': 'articoli',
+  'book': 'libri'
 ] %}
