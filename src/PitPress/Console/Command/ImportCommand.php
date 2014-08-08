@@ -214,7 +214,6 @@ class ImportCommand extends AbstractCommand {
 
     // We finally save the book.
     try {
-      //$this->couch->saveDoc($book);
       $book->save();
     }
     catch(\Exception $e) {
@@ -282,7 +281,7 @@ class ImportCommand extends AbstractCommand {
       else
         $postType = 'book';
 
-      $doc = Classification::create($item->postId, $postType, 'blog', $item->tagId, (int)$item->unixTime);
+      $doc = Classification::create($item->postId, $postType, $item->tagId, (int)$item->unixTime);
 
       $this->couch->saveDoc($doc);
     }
@@ -295,22 +294,26 @@ class ImportCommand extends AbstractCommand {
    * @brief Imports favorites.
    */
   protected function importFavorites($postId) {
-    $sql = "SELECT I.id AS itemId, I.stereotype as stereotype, M.id AS userId, UNIX_TIMESTAMP(F.date) AS timestamp FROM Item I, Member M, Favourite F WHERE I.idItem = F.idItem AND M.idMember = F.idMember AND I.id = '".$postId."'";
+    $sql = "SELECT I.id AS itemId, I.stereotype as stereotype, M.id AS userId, UNIX_TIMESTAMP(I.date) AS publishingDate, UNIX_TIMESTAMP(F.date) AS dateAdded FROM Item I, Member M, Favourite F WHERE I.idItem = F.idItem AND M.idMember = F.idMember AND I.id = '".$postId."'";
 
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
 
     while ($item = mysqli_fetch_object($result)) {
-      $timestamp = (int)$item->timestamp;
 
-      if ($item->stereotype == self::ARTICLE)
-        $itemType = 'article';
-      else
-        $itemType = 'book';
+      if ($item->stereotype == self::ARTICLE) {
+        $post = new Article();
+        $post->type = 'article';
+      }
+      else {
+        $post = new Book();
+        $post->type = 'book';
+      }
 
-      if ($timestamp > 0)
-        $doc = Star::create($item->userId, $item->itemId, $itemType, $timestamp);
-      else
-        $doc = Star::create($item->userId, $item->itemId, $itemType);
+      $post->id = $item->itemId;
+      $post->userId = $item->userId;
+      $post->publishingDate = (int)$item->publishingDate;
+
+        $doc = Star::create($item->userId, $post, (int)$item->dateAdded);
 
       $this->couch->saveDoc($doc);
     }
@@ -328,13 +331,7 @@ class ImportCommand extends AbstractCommand {
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
 
     while ($item = mysqli_fetch_object($result)) {
-      $timestamp = (int)$item->timestamp;
-
-      if ($timestamp > 0)
-        $doc = Subscription::create($item->itemId, $item->userId, $timestamp);
-      else
-        $doc = Subscription::create($item->itemId, $item->userId);
-
+      $doc = Subscription::create($item->itemId, $item->userId, (int)$item->timestamp);
       $this->couch->saveDoc($doc);
     }
 
