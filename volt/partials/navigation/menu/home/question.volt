@@ -1,5 +1,6 @@
 {% set sectionLabel = 'links' %}
 {% set menu = [
+  'favorite': 'preferite',
   'interesting': 'interessanti',
   'active': 'attive',
   'popular': 'popolari',
