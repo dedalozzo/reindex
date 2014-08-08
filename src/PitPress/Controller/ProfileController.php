@@ -62,11 +62,25 @@ class ProfileController extends ListController {
     if (is_null($user)) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey([$user->id, Couch::WildCard()])->setEndKey([$user->id]);
-    $rows = $this->couch->queryView("posts", "perDateByUser", NULL, $opts);
-    $count = $this->couch->queryView("posts", "perDateByUser", NULL, $opts->reduce())->getReducedValue();
 
-    $this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'id')));
+    // Paginates results.
+    $startKey = isset($_GET['startkey']) ? (int)$_GET['startkey'] : Couch::WildCard();
+    if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
+
+    $opts->doNotReduce()->setLimit(self::RESULTS_PER_PAGE+1)->reverseOrderOfResults()->setStartKey([$user->id, $startKey])->setEndKey([$user->id]);
+    $rows = $this->couch->queryView("posts", "perDateByUser", NULL, $opts);
+
+    $opts->reduce()->setStartKey([$user->id, Couch::WildCard()])->unsetOpt('startkey_docid');
+    $count = $this->couch->queryView("posts", "perDateByUser", NULL, $opts)->getReducedValue();
+
+    $entries = $this->getEntries(array_column($rows->asArray(), 'id'));
+
+    if (count($entries) > self::RESULTS_PER_PAGE) {
+      $last = array_pop($entries);
+      $this->view->setVar('nextPage', $this->buildPaginationUrl($last->publishingDate, $last->id));
+    }
+
+    $this->view->setVar('entries', $entries);
     $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
     $this->view->setVar('entriesLabel', 'contributi');
     $this->view->setVar('title', sprintf('%s timeline', $username));
@@ -80,24 +94,6 @@ class ProfileController extends ListController {
 
   public function badgesAction($username) {
 
-  }
-
-
-  public function favoritesAction($username) {
-    $user = $this->getUser($username);
-
-    // If the user doesn't exist, forward to 404.
-    if (is_null($user)) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
-
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(30)->reverseOrderOfResults()->setStartKey([$user->id, Couch::WildCard()])->setEndKey([$user->id]);
-    $rows = $this->couch->queryView("favorites", "perDate", NULL, $opts);
-    $count = $this->couch->queryView("favorites", "perDate", NULL, $opts->reduce())->getReducedValue();
-
-    $this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'value')));
-    $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
-    $this->view->setVar('entriesLabel', 'preferiti');
-    $this->view->setVar('title', sprintf('%s preferiti', $username));
   }
 
 
