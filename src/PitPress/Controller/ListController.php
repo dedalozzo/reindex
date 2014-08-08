@@ -25,7 +25,7 @@ use Phalcon\Mvc\View;
  */
 abstract class ListController extends BaseController {
 
-  const RESULTS_PER_PAGE = 20;
+  const RESULTS_PER_PAGE = 15;
 
 
   /**
@@ -117,18 +117,12 @@ abstract class ListController extends BaseController {
 
   /**
    * @brief Builds the pagination url.
-   * @param[in|out] array $entries An array of the entries passed by reference.
-   * @return string The pagination url or `null` in case there aren't more pages.
+   * @param[in] mixed $startKey A key.
+   * @param[in] string $startKeyDocId A document ID.
+   * @return string The pagination url.
    */
-  protected function buildPaginationUrl(&$entries) {
-
-    // If the query returned more entries than the ones must display on the page, a link to the next page must be provided.
-    if (count($entries) > self::RESULTS_PER_PAGE) {
-      $last = array_pop($entries);
-      return sprintf('%s%s?startkey=%d&startkey_docid=%s', $this->domainName, parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), $last->publishingDate, $last->id);
-    }
-    else
-      return NULL;
+  protected function buildPaginationUrl($starKey, $startKeyDocId) {
+    return sprintf('%s%s?startkey=%d&startkey_docid=%s', $this->domainName, parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), $starKey, $startKeyDocId);
   }
 
 
