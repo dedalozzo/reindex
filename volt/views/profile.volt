@@ -53,8 +53,8 @@
       </table>
     </div>
 
-    <div class="banner"><a href="#"><img src="/img/300x250.gif" /></a></div>
     {% include "partials/widgets/stats.volt" %}
+    <div class="banner"><a href="#"><img src="/img/300x250.gif" /></a></div>
     {% include "partials/widgets/badges.volt" %}
 
     <!--<blockquote>
