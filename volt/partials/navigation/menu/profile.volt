@@ -1,8 +1,7 @@
 {% set sectionLabel = user.username|upper %}
 {% set menu = [
-  'activities': 'attivita',
+  'activities': 'attività',
   'projects': 'progetti',
-  'favorites': 'preferiti',
   'connections': 'connessioni',
   'about': 'profilo',
   'index': 'timeline'
