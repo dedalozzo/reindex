@@ -52,7 +52,7 @@ trait TStar {
       return IStar::UNSTARRED;
     }
     else {
-      $doc = Star::create($user->id, $this->id);
+      $doc = Star::create($user->id, $this);
       $this->couch->saveDoc($doc);
       return IStar::STARRED;
     }
