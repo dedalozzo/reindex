@@ -32,16 +32,17 @@ class Classification extends Doc {
   /**
    * @brief Creates an instance of Classification class.
    */
-  public static function create($postId, $postType, $postSection, $tagId, $timestamp = NULL) {
+  public static function create($postId, $postType, $tagId, $timestamp = NULL) {
     $instance = new self();
 
     $instance->meta["postId"] = $postId;
     $instance->meta["postType"] = $postType;
-    $instance->meta["postSection"] = $postSection;
     $instance->meta["tagId"] = $tagId;
 
     if (is_null($timestamp))
       $instance->meta["timestamp"] = time();
+    else
+      $instance->meta["timestamp"] = $timestamp;
 
     return $instance;
   }
