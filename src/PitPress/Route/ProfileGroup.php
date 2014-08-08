@@ -40,8 +40,6 @@ class ProfileGroup extends Group {
     $this->addGet('/connessioni/', ['action' => 'connections', 'username' => 1]);
     $this->addGet('/connessioni/{filter}/', ['action' => 'connections', 'username' => 1]);
 
-    $this->addGet('/preferiti/', ['action' => 'favorites', 'username' => 1]);
-
     $this->addGet('/reputatione/', ['action' => 'reputation', 'username' => 1]);
     $this->addGet('/reputatione/{filter}/', ['action' => 'reputation', 'username' => 1]);
 
