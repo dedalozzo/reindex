@@ -40,6 +40,7 @@ class QuestionGroup extends Group {
     $this->addGet('/importanti/', ['action' => 'important']);
     $this->addGet('/aperte/', ['action' => 'open']);
     $this->addGet('/aperte/{filter}/', ['action' => 'open']);
+    $this->addGet('/preferite/', ['action' => 'favorite']);
 
     $this->addGet('/([0-9]{4})/', ['action' => 'perDate', 'year' => 1]);
     $this->addGet('/([0-9]{4})/([0-9]{2})/', ['action' => 'perDate', 'year' => 1, 'month' => 2]);
