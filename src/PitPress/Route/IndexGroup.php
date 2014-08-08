@@ -48,6 +48,7 @@ class IndexGroup extends Group {
     $this->addGet('/popolari/{filter}/', ['action' => 'popular']);
     $this->addGet('/attivi/', ['action' => 'active']);
     $this->addGet('/interessanti/', ['action' => 'interesting']);
+    $this->addGet('/preferiti/', ['action' => 'favorite']);
 
     $this->addGet('/([0-9]{4})/', ['action' => 'perDate', 'year' => 1]);
     $this->addGet('/([0-9]{4})/([0-9]{2})/', ['action' => 'perDate', 'year' => 1, 'month' => 2]);
