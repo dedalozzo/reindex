@@ -623,23 +623,80 @@ MAP;
     $doc = DesignDoc::create('favorites');
 
 
-    // @params userId
-    function perDateFavorites() {
+    // @params: userId
+    function favoritesPerDateAdded() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'star')
-    $emit([$doc->userId, $doc->timestamp], $doc->itemId);
+    $emit([$doc->userId, $doc->dateAdded], $doc->itemId);
 };
 MAP;
 
-      $handler = new ViewHandler("perDate");
+      $handler = new ViewHandler("perDateAdded");
       $handler->mapFn = $map;
       $handler->useBuiltInReduceFnCount();
 
       return $handler;
     }
 
-    $doc->addHandler(perDateFavorites());
+    $doc->addHandler(favoritesPerDateAdded());
+
+
+    // @params: userid, type
+    function favoritesPerDateAddedByType() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'star')
+    $emit([$doc->userId, $doc->itemType, $doc->dateAdded], $doc->itemId);
+};
+MAP;
+
+      $handler = new ViewHandler("perDateAddedByType");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
+
+      return $handler;
+    }
+
+    $doc->addHandler(favoritesPerDateAddedByType());
+
+
+    // @params: userId
+    function favoritesPerPublishingDate() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'star')
+    $emit([$doc->userId, $doc->itemPublishingDate], $doc->itemId);
+};
+MAP;
+
+      $handler = new ViewHandler("perPublishingDate");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
+
+      return $handler;
+    }
+
+    $doc->addHandler(favoritesPerPublishingDate());
+
+
+    // @params: userid, type
+    function favoritesPerPublishingDateByType() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'star')
+    $emit([$doc->userId, $doc->itemType, $doc->itemPublishingDate], $doc->itemId);
+};
+MAP;
+
+      $handler = new ViewHandler("perPublishingDateByType");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
+
+      return $handler;
+    }
+
+    $doc->addHandler(favoritesPerPublishingDateByType());
 
 
     $this->couch->saveDoc($doc);
