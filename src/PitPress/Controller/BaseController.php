@@ -41,8 +41,8 @@ abstract class BaseController extends Controller {
     "quest'anno" => Helper\Time::YEAR,
     "mese scorso" => Helper\Time::MONTH,
     "questo mese" => Helper\Time::MONTH,
-    "settimana scorsa" => Helper\Time::WEEK,
-    "questa settimana" => Helper\Time::WEEK,
+    "sett. scorsa" => Helper\Time::WEEK,
+    "questa sett." => Helper\Time::WEEK,
     "ieri" => Helper\Time::DAY,
     "oggi" => Helper\Time::DAY
   ];
