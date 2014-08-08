@@ -31,6 +31,8 @@ class Subscription extends Doc {
 
     if (is_null($timestamp))
       $instance->meta["timestamp"] = time();
+    else
+      $instance->meta["timestamp"] = $timestamp;
 
     return $instance;
   }
