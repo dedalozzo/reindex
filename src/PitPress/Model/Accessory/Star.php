@@ -13,6 +13,8 @@ namespace PitPress\Model\Accessory;
 
 use ElephantOnCouch\Doc\Doc;
 
+use PitPress\Model\Item;
+
 
 /**
  * @brief This class is used to keep trace of the user favourites.
@@ -23,14 +25,18 @@ class Star extends Doc {
   /**
    * @brief Creates an instance of Star class.
    */
-  public static function create($userId, $itemId, $timestamp = NULL) {
+  public static function create($userId, Item $item, $timestamp = NULL) {
     $instance = new self();
 
     $instance->meta["userId"] = $userId;
-    $instance->meta["itemId"] = $itemId;
+    $instance->meta["itemId"] = $item->id;
+    $instance->meta["itemType"] = $item->type;
+    $instance->meta["itemPublishingDate"] = $item->publishingDate;
 
     if (is_null($timestamp))
-      $instance->meta["timestamp"] = time();
+      $instance->meta["dateAdded"] = time();
+    else
+      $instance->meta["dateAdded"] = $timestamp;
 
     return $instance;
   }
