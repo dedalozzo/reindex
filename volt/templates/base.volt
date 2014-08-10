@@ -55,7 +55,12 @@
     <a id="skin" href="#"></a>
   {% endblock %}
 
+  {% block menubar %}
+    {% include "partials/navigation/menubar.volt" %}
+  {% endblock %}
+
   <div id="{% block container %}scrollable{% endblock %}">
+
   {% block billboard %}
     <div class="banner"><a href="#"><img src="/img/970x180.jpg" /></a></div>
   {% endblock %}
