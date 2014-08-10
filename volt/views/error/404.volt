@@ -1,6 +1,7 @@
 {% extends "templates/base.volt" %}
 
 {% block topbar %}{% endblock %}
+{% block menubar %}{% endblock %}
 {% block container %}fixed{% endblock %}
 {% block billboard %}{% endblock %}
 
