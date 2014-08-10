@@ -1,31 +1,12 @@
 <nav class="topbar">
   <ul class="list">
     {% include "partials/brand.volt" %}
-    <li>
-      <ul class="list pills no-gutter">
-        {% set sections = [
-        'home': ['path': '/', 'label': 'home', 'icon': 'home'],
-        'tag': ['path': '/tags/', 'label': 'tags', 'icon': 'tags'],
-        'badge': ['path': '/badges/', 'label': 'badges', 'icon': 'certificate'],
-        'user': ['path': '/utenti/', 'label': 'utenti', 'icon': 'group']
-        ] %}
-        {% for name, item in sections %}
-          <li{{ (name == sectionName) ? ' class="active"' : '' }}><a href="//{{ domainName~item['path'] }}"><i class="icon-{{ item['icon'] }}"></i>&nbsp;{{ item['label'] }}</a></li>
-        {% endfor %}
-        {#
-        <li><a href="//{{ domainName }}/tour/">Tour</a></li>
-        <li><a href="//{{ domainName }}/aiuto/">Aiuto</a></li>
-        <li class="icon"><a href="http://twitter.com/prg_it"><i class="icon-twitter icon-large"></i></a></li>
-        <li class="icon"><a href="http://facebook.com/programmazione.it"><i class="icon-facebook icon-large"></i></a></li>
-        <li class="icon"><a href="#"><i class="icon-google-plus icon-large"></i></a></li>
-        #}
-      </ul>
-    </li>
     <li class="space"></li>
     {% if currentUser is defined %}
     <li>
       <ul class="list">
         <li><button class="btn btn-icon blue" title="cerca" data-dropdown="#dropdown-search"><i class="icon-search icon-large"></i></button></li>
+        {% set userUri = '//'~domainName~'/'~currentUser.username %}
         <li>
           <button class="btn btn-icon blue" title="collabora" data-dropdown="#dropdown-plus"><i class="icon-file icon-large"></i></button>
           <div id="dropdown-plus" class="dropdown dropdown-relative dropdown-anchor-right dropdown-tip">
@@ -40,7 +21,6 @@
             </ul>
           </div>
         </li>
-          {% set userUri = '//'~domainName~'/'~currentUser.username %}
         <li><button class="btn btn-icon blue" title="messaggi e notifiche" data-dropdown="#dropdown-inbox"><i class="icon-inbox icon-large"></i></button></li>
         <li>
           <button class="btn btn-icon blue" data-dropdown="#dropdown-user"><img class="gravatar" src="{{ currentUser.getGravatar(currentUser.email) }}&s=20"></button>
@@ -50,7 +30,7 @@
               <li class="dropdown-divider"></li>
               <li><a href="{{ userUri }}/profilo/"><i class="icon-user"></i>Profilo</a></li>
               <li><a href="{{ userUri }}/connessioni/"><i class="icon-group"></i>Connessioni</a></li>
-              <li><a href="{{ userUri }}/preferiti/"><i class="icon-star"></i>Preferiti</a></li>
+              <li><a href="//{{ domainName }}/preferiti/"><i class="icon-star"></i>Preferiti</a></li>
               <li><a href="{{ userUri }}/progetti/"><i class="icon-github"></i>Progetti</a></li>
               <li><a href="{{ userUri }}/attivita/"><i class="icon-tasks"></i>Attività</a></li>
               <li class="dropdown-divider"></li>
@@ -69,6 +49,7 @@
   <!-- <a href="#" data-toggle="modal" data-target="#myModal">Registrati</a> -->
   <!-- Button trigger modal -->
 </nav>
+
 
 <!-- <form class="topbar-search" method="get" action="search.php" autocomplete="off" name="form_search">
   <input type="search" placeholder="Cerca" autocomplete="on" id="keyword" name="keyword">
