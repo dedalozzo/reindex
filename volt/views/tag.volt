@@ -2,8 +2,9 @@
 
 {% block content %}
   <div id="content">
-  {% include "partials/navigation/menu/tag.volt" %}
-  {% include "partials/navigation/menu.volt" %}
+  {% include "partials/navigation/tabs/tag.volt" %}
+  {% include "partials/navigation/tabs.volt" %}
+  {% include "partials/navigation/pills.volt" %}
 
     <div class="ghost gutter">Un tag è un'etichetta che relaziona un contenuto con altri simili, inerenti lo stesso argomento. Un corretto utilizzo dei tag permette agli utenti di trovare contenuti afferenti ai propri interessi, agevolandoli nella selezione delle domande a cui potrebbero essere in grado di rispondere.</div>
 
