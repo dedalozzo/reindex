@@ -1,4 +1,3 @@
-{% set sectionLabel = 'links' %}
 {% set menu = [
   'favorite': 'preferite',
   'interesting': 'interessanti',
@@ -8,3 +7,5 @@
   'open': 'aperte',
   'important': 'importanti'
 ] %}
+{% set section = 'domande' %}
+{% set button = 'nuova' %}
