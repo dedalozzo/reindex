@@ -2,8 +2,9 @@
 
 {% block content %}
 <div id="content">
-  {% include "partials/navigation/menu/badge.volt" %}
-  {% include "partials/navigation/menu.volt" %}
+  {% include "partials/navigation/tabs/badge.volt" %}
+  {% include "partials/navigation/tabs.volt" %}
+  {% include "partials/navigation/pills.volt" %}
 
   <div class="column-left">
   {% include "partials/list-of-badges.volt" %}
