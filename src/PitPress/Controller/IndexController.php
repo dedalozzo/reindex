@@ -340,20 +340,24 @@ class IndexController extends ListController {
 
       $opts->reduce()->setStartKey([$this->user->id, Couch::WildCard()])->unsetOpt('startkey_docid');
       $count = $this->couch->queryView("favorites", "perDateAdded", NULL, $opts)->getReducedValue();
+
+      $key = 1;
     }
     else {
-      $opts->doNotReduce()->setLimit(self::RESULTS_PER_PAGE+1)->reverseOrderOfResults()->setStartKey([$this->user->id, $startKey])->setEndKey([$this->user->id]);
+      $opts->doNotReduce()->setLimit(self::RESULTS_PER_PAGE+1)->reverseOrderOfResults()->setStartKey([$this->user->id, $this->type, $startKey])->setEndKey([$this->user->id, $this->type]);
       $rows = $this->couch->queryView("favorites", "perDateAddedByType", NULL, $opts);
 
-      $opts->reduce()->setStartKey([$this->user->id, Couch::WildCard()])->unsetOpt('startkey_docid');
+      $opts->reduce()->setStartKey([$this->user->id, $this->type, Couch::WildCard()])->unsetOpt('startkey_docid');
       $count = $this->couch->queryView("favorites", "perDateAddedByType", NULL, $opts)->getReducedValue();
+
+      $key = 2;
     }
 
     $stars = $rows->asArray();
     // If the query returned more entries than the ones must display on the page, a link to the next page must be provided.
     if ($rows->count() > self::RESULTS_PER_PAGE) {
       $last = array_pop($stars);
-      $this->view->setVar('nextPage', $this->buildPaginationUrl($last['key'][1], $last['id']));
+      $this->view->setVar('nextPage', $this->buildPaginationUrl($last['key'][$key], $last['id']));
     }
 
     $this->view->setVar('entries', $this->getEntries(array_column($stars, 'value')));
