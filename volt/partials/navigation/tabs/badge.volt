@@ -1,4 +1,3 @@
-{% set sectionLabel = 'BADGES' %}
 {% set menu = [
   'byTag': 'per-tag',
   'bronze': 'bronzo',
@@ -8,3 +7,4 @@
   'achieve': 'ottenuti',
   'all': 'tutti'
 ] %}
+{% set section = 'badges' %}
