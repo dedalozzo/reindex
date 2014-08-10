@@ -40,8 +40,8 @@ class IndexGroup extends Group {
     $this->addGet('/([0-9]{4})/([0-9]{2})/([0-9]{2})/', ['action' => 'perDate', 'year' => 1, 'month' => 2, 'day' => 3]);
     //$this->addGet('/([0-9]{4})/(?:([0-9]{2})/(?:([0-9]{2})/){0,1}){0,1}', ['action' => 'perDate', 'year' => 1, 'month' => 2, 'day' => 3]);
 
-    // All the following routes start with /tutti.
-    $this->setPrefix('/tutti');
+    // All the following routes start with /news.
+    $this->setPrefix('/home');
     $this->addGet('/', ['action' => 'newest']);
     $this->addGet('/nuovi/', ['action' => 'newest']);
     $this->addGet('/popolari/', ['action' => 'popular']);
