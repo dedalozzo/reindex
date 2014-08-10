@@ -2,8 +2,9 @@
 
 {% block content %}
   <div id="content">
-  {% include "partials/navigation/menu/user.volt" %}
-  {% include "partials/navigation/menu.volt" %}
+  {% include "partials/navigation/tabs/user.volt" %}
+  {% include "partials/navigation/tabs.volt" %}
+  {% include "partials/navigation/pills.volt" %}
 
   {% if actionName == 'byName' %}
     <div class="ghost gutter">
