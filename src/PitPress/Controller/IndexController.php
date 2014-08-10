@@ -150,9 +150,6 @@ class IndexController extends ListController {
 
     $this->recentTags();
 
-    // Overrides the section name because index its own subclasses belong to the same section.
-    $this->view->setVar('sectionName', 'home');
-
     // The entries label is printed below the entries count.
     $this->view->setVar('entriesLabel', $this->getLabel());
 
