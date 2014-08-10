@@ -1,4 +1,3 @@
-{% set sectionLabel = 'UTENTI' %}
 {% set menu = [
   'privileges': 'privilegi',
   'moderators': 'moderatori',
@@ -7,3 +6,4 @@
   'newest': 'nuovi',
   'reputation': 'reputazione'
 ] %}
+{% set section = 'utenti' %}
