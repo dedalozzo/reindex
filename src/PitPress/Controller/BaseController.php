@@ -117,12 +117,6 @@ abstract class BaseController extends Controller {
     $this->view->setVar('controllerName', $this->controllerName);
     $this->view->setVar('actionName', $this->actionName);
 
-    // Section and controller are different things. Many controllers, for example, belong to the same section. However,
-    // in general, there is a one to one relation between controller and section; this is why we assign to the section
-    // name, the controller name. Anyway, the section name can be overridden in child controllers, in case you want
-    // associate a controller to a different section.
-    $this->view->setVar('sectionName', $this->controllerName);
-
     $this->monolog->addDebug(sprintf("Controller: %s", $this->dispatcher->getControllerName()));
     $this->monolog->addDebug(sprintf("Action: %s", $this->dispatcher->getActionName()));
 
