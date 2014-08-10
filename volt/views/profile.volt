@@ -29,9 +29,9 @@
 
   {% set resourceName = user.username %}
   {% set controllerPath = '/' %}
-  {% include "partials/types.volt" %}
-  {% include "partials/navigation/menu/profile.volt" %}
-  {% include "partials/navigation/menu.volt" %}
+  {% include "partials/navigation/tabs/profile.volt" %}
+  {% include "partials/navigation/tabs.volt" %}
+  {% include "partials/navigation/pills.volt" %}
 
   {{ flash.output() }}
 
@@ -80,6 +80,6 @@
 
 {% block script %}
 <script>
-  $('html, body').animate({scrollTop: '+=220px'}, 1);
+  $('html, body').animate({scrollTop: '+=252px'}, 1);
 </script>
 {% endblock %}
