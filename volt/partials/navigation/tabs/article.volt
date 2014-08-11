@@ -1,5 +1,5 @@
 {% extends "partials/navigation/tabs/index.volt" %}
 {% block vars %}
-  {% set section = 'articoli' %}
+  {% set resource = 'articoli' %}
   {% set button = 'nuovo' %}
 {% endblock %}
