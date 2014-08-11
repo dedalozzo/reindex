@@ -323,7 +323,26 @@ class IndexController extends ListController {
   }
 
 
-  public function favoriteAction() {
+  /**
+   * @brief Displays the user favorites.
+   */
+  public function favoriteAction($filter = NULL) {
+    // Stores sub-menu definition.
+    $filters = ['data-pubblicazione' => 0, 'data-inserimento' => 1];
+    if (is_null($filter)) $filter = 'data-inserimento';
+
+    $index = Helper\ArrayHelper::value($filter, $filters);
+    if ($index === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+
+    if ($index == 0) {
+      $perDate = 'perPublishingDate';
+      $perDateByType = 'perPublishingDateByType';
+    }
+    else {
+      $perDate = 'perDateAdded';
+      $perDateByType = 'perDateAddedByType';
+    }
+
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->reverseOrderOfResults()->setLimit(self::RESULTS_PER_PAGE+1);
 
@@ -332,20 +351,20 @@ class IndexController extends ListController {
     if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
 
     if ($this->isSameClass()) {
-      $opts->doNotReduce()->setLimit(self::RESULTS_PER_PAGE+1)->reverseOrderOfResults()->setStartKey([$this->user->id, $startKey])->setEndKey([$this->user->id]);
-      $rows = $this->couch->queryView("favorites", "perDateAdded", NULL, $opts);
+      $opts->setStartKey([$this->user->id, $startKey])->setEndKey([$this->user->id]);
+      $rows = $this->couch->queryView("favorites", $perDate, NULL, $opts);
 
       $opts->reduce()->setStartKey([$this->user->id, Couch::WildCard()])->unsetOpt('startkey_docid');
-      $count = $this->couch->queryView("favorites", "perDateAdded", NULL, $opts)->getReducedValue();
+      $count = $this->couch->queryView("favorites", $perDate, NULL, $opts)->getReducedValue();
 
       $key = 1;
     }
     else {
-      $opts->doNotReduce()->setLimit(self::RESULTS_PER_PAGE+1)->reverseOrderOfResults()->setStartKey([$this->user->id, $this->type, $startKey])->setEndKey([$this->user->id, $this->type]);
-      $rows = $this->couch->queryView("favorites", "perDateAddedByType", NULL, $opts);
+      $opts->setStartKey([$this->user->id, $this->type, $startKey])->setEndKey([$this->user->id, $this->type]);
+      $rows = $this->couch->queryView("favorites", $perDateByType, NULL, $opts);
 
       $opts->reduce()->setStartKey([$this->user->id, $this->type, Couch::WildCard()])->unsetOpt('startkey_docid');
-      $count = $this->couch->queryView("favorites", "perDateAddedByType", NULL, $opts)->getReducedValue();
+      $count = $this->couch->queryView("favorites", $perDateByType, NULL, $opts)->getReducedValue();
 
       $key = 2;
     }
@@ -360,6 +379,8 @@ class IndexController extends ListController {
     $this->view->setVar('entries', $this->getEntries(array_column($stars, 'value')));
     $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
     $this->view->setVar('entriesLabel', 'preferiti');
+    $this->view->setVar('submenu', $filters);
+    $this->view->setVar('submenuIndex', $index);
     $this->view->setVar('title', sprintf('%s preferiti', ucfirst($this->getLabel())));
   }
 
