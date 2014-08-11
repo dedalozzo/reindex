@@ -60,7 +60,7 @@ class QuestionController extends IndexController {
    * @brief Displays the questions, still open, based on user's tags.
    */
   public function openAction($filter = NULL) {
-    // Stores the still open answer sub-menu definition.
+    // Stores sub-menu definition.
     $filters = ['nessuna-risposta' => 0, 'popolari' => 1, 'nuove' => 2, 'rivolte-a-me' => 3];
     if (is_null($filter)) $filter = 'nessuna-risposta';
 
