@@ -7,4 +7,4 @@
   'achieve': 'ottenuti',
   'all': 'tutti'
 ] %}
-{% set section = 'badges' %}
+{% set resource = 'badges' %}

@@ -7,5 +7,5 @@
   'open': 'aperte',
   'important': 'importanti'
 ] %}
-{% set section = 'domande' %}
+{% set resource = 'domande' %}
 {% set button = 'nuova' %}

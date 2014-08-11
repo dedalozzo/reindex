@@ -4,5 +4,5 @@
   'byName': 'per-nome',
   'popular': 'popolari'
 ] %}
-{% set section = 'tags' %}
+{% set resource = 'tags' %}
 {% set button = 'nuovo' %}
