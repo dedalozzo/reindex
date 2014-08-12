@@ -2,8 +2,8 @@
 {% if submenu is defined  %}
   {% set actionPath = menu[actionName] %}
   <ul class="list pills small">
-    {% for path, value in submenu %}
-      <li{{ (value == submenuIndex) ? ' class="active pull-right"' : ' class="pull-right"' }}><a href="//{{ domainName~'/'~section~'/'~resourcePath~actionPath~'/'~path }}/">{{ path|minustospace }}</a></li>
+    {% for filterPath, value in submenu %}
+      <li{{ (value == submenuIndex) ? ' class="active pull-right"' : ' class="pull-right"' }}><a href="//{{ domainName~'/'~controllerPath~actionPath~'/'~filterPath }}/">{{ filterPath|minustospace }}</a></li>
     {% endfor %}
   </ul>
 {% endif %}
