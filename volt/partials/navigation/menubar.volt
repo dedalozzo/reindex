@@ -1,6 +1,7 @@
+{# Menu bar #}
 <nav class="menubar">
   <ul class="list gutter">
-    <li><a class="tag alt" href="//{{ domainName }}/home/"><i class="icon-home"></i>&nbsp;home</a></li>
+    <li><a class="tag alt" href="//{{ domainName }}"><i class="icon-home"></i>&nbsp;home</a></li>
     {% include 'partials/types.volt' %}
     {% for name, path in types %}
     <li><a class="tag {{ name }}" href="//{{ domainName~'/'~path }}/">{{ path }}</a></li>
