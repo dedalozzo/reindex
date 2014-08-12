@@ -31,7 +31,6 @@ class ProfileGroup extends Group {
 
     $this->setHostName(DI::getDefault()['config']['application']['domainName']);
 
-    // All the following routes start with /utenti.
     $this->setPrefix('/([\da-z_]{5,20})');
 
     $this->addGet('', ['action' => 'index', 'username' => 1]);
