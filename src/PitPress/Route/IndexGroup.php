@@ -22,27 +22,37 @@ use Phalcon\DI;
  */
 class IndexGroup extends Group {
 
-  public function initialize() {
-    // Sets the default controller for the following routes.
-    $this->setPaths(
-      [
-        'namespace' => 'PitPress\Controller',
-        'controller' => 'index'
-      ]);
 
-    $this->setHostName(DI::getDefault()['config']['application']['domainName']);
+  /**
+   * @brief Returns the controller name.
+   */
+  protected function getController() {
+    return 'index';
+  }
 
-    $this->addGet('/', ['action' => 'index']);
 
-    // perDate
-    $this->addGet('/([0-9]{4})/', ['action' => 'perDate', 'year' => 1]);
-    $this->addGet('/([0-9]{4})/([0-9]{2})/', ['action' => 'perDate', 'year' => 1, 'month' => 2]);
-    $this->addGet('/([0-9]{4})/([0-9]{2})/([0-9]{2})/', ['action' => 'perDate', 'year' => 1, 'month' => 2, 'day' => 3]);
-    //$this->addGet('/([0-9]{4})/(?:([0-9]{2})/(?:([0-9]{2})/){0,1}){0,1}', ['action' => 'perDate', 'year' => 1, 'month' => 2, 'day' => 3]);
+  /**
+   * @brief Returns the default action name.
+   */
+  protected function getDefaultAction() {
+    return 'index';
+  }
 
-    // All the following routes start with /news.
-    $this->setPrefix('/home');
-    $this->addGet('/', ['action' => 'newest']);
+
+  /**
+   * @brief Returns the routes prefix.
+   */
+  public function getPrefix() {
+    return '';
+  }
+
+
+  /**
+   * @brief Page index.
+   */
+  protected function addRoutes() {
+    $this->setPrefix($this->getPrefix());
+    $this->addGet('/', ['action' => $this->getDefaultAction()]);
     $this->addGet('/nuovi/', ['action' => 'newest']);
     $this->addGet('/popolari/', ['action' => 'popular']);
     $this->addGet('/popolari/{filter}/', ['action' => 'popular']);
@@ -54,8 +64,26 @@ class IndexGroup extends Group {
     $this->addGet('/([0-9]{4})/', ['action' => 'perDate', 'year' => 1]);
     $this->addGet('/([0-9]{4})/([0-9]{2})/', ['action' => 'perDate', 'year' => 1, 'month' => 2]);
     $this->addGet('/([0-9]{4})/([0-9]{2})/([0-9]{2})/', ['action' => 'perDate', 'year' => 1, 'month' => 2, 'day' => 3]);
+    //$this->addGet('/([0-9]{4})/(?:([0-9]{2})/(?:([0-9]{2})/){0,1}){0,1}', ['action' => 'perDate', 'year' => 1, 'month' => 2, 'day' => 3]);
+
+    $this->setPrefix('/tags/{tag}'.$this->getPrefix());
+    $this->addGet('', ['action' => 'newest']);
+    $this->addGet('/nuovi/', ['action' => 'newest']);
+    $this->addGet('/popolari/', ['action' => 'popular']);
+    $this->addGet('/popolari/{filter}/', ['action' => 'popular']);
+    $this->addGet('/attivi/', ['action' => 'active']);
+    $this->addGet('/interessanti/', ['action' => 'interesting']);
+    $this->addGet('/preferiti/', ['action' => 'favorite']);
+    $this->addGet('/preferiti/{filter}/', ['action' => 'favorite']);
 
     //$this->addGet('/rss', ['action' => 'rss']);
+  }
+
+
+  public function initialize() {
+    $this->setPaths(['namespace' => 'PitPress\Controller', 'controller' => $this->getController()]);
+    $this->setHostName(DI::getDefault()['config']['application']['domainName']);
+    $this->addRoutes();
   }
 
 }
