@@ -6,4 +6,4 @@
   'newest': 'nuovi',
   'reputation': 'reputazione'
 ] %}
-{% set section = 'utenti' %}
+{% set resource = 'utenti' %}
