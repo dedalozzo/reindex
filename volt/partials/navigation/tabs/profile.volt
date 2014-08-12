@@ -1,4 +1,4 @@
-{% set section = user.username|upper %}
+{% set resource = user.username %}
 {% set menu = [
   'activities': 'attività',
   'projects': 'progetti',
