@@ -5,6 +5,4 @@
 'popular': 'popolari',
 'newest': 'nuovi'
 ] %}
-{% block vars %}
-  {% set section = 'home' %}
-{% endblock %}
+{% block vars %}{% endblock %}
