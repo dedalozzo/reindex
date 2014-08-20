@@ -1,13 +1,23 @@
 <?php
 
 
-namespace PitPress\Model\Blog;
+namespace PitPress\Model;
 
 
 class Book {
 
   /** @name Properties */
   //!@{
+
+  /**
+   * @brief Meta tag description.
+   * @details In case of a book we use the following description:
+     @code
+       Author: Filippo F. Fadda, Publisher: P. Picture, Category: Books, Length: 784 pages
+     @endcode
+   */
+  public string description;
+
   public string $isbn; //!< ISBN.
   public string $authors; //!< Authors.
   public string $publisher; //!< Publisher.

@@ -8,10 +8,7 @@
  */
 
 
-namespace PitPress\Model\Forum;
-
-
-use PitPress\Model\Post;
+namespace PitPress\Model;
 
 
 /**
@@ -19,13 +16,5 @@ use PitPress\Model\Post;
  * @nosubgrouping
  */
 class Question extends Post {
-
-
-  /**
-   * @brief Gets the related answers.
-   */
-  public function getAnswers() {
-
-  }
 
 }

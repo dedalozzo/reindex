@@ -8,7 +8,7 @@
  */
 
 
-namespace PitPress\Model\Blog;
+namespace PitPress\Model;
 
 
 /**

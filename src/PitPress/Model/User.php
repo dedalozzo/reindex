@@ -8,12 +8,11 @@
  */
 
 
-namespace PitPress\Model\User;
+namespace PitPress\Model;
 
 
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
-use PitPress\Model\Storable;
 use PitPress\Extension;
 
 

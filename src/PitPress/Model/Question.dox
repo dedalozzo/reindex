@@ -1,7 +1,7 @@
 <?php
 
 
-namespace PitPress\Model\Forum;
+namespace PitPress\Model;
 
 
 class Question  {

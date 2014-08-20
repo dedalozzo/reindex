@@ -8,7 +8,7 @@
  */
 
 
-namespace PitPress\Model\Tag;
+namespace PitPress\Model;
 
 
 /**
