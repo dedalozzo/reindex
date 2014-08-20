@@ -81,7 +81,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if (isset($doc->supertype) and $doc->supertype == 'post')
-    $emit($doc->_id, [
+    $emit(strtok($doc->_id, '::'), [
        'type' => $doc->type,
        'title' => $doc->title,
        'excerpt' => $doc->excerpt,
@@ -208,7 +208,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'tag')
-    $emit($doc->_id, [$doc->name, $doc->excerpt, $doc->publishingDate]);
+    $emit(strtok($doc->_id, '::'), [$doc->name, $doc->excerpt, $doc->publishingDate]);
 };
 MAP;
 
@@ -226,7 +226,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'tag')
-    $emit($doc->_id, $doc->name);
+    $emit(strtok($doc->_id, '::'), $doc->name);
 };
 MAP;
 
