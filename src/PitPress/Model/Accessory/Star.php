@@ -29,7 +29,7 @@ class Star extends Doc {
     $instance = new self();
 
     $instance->meta["userId"] = $userId;
-    $instance->meta["itemId"] = $item->id;
+    $instance->meta["itemId"] = $item->getUnversionId();
     $instance->meta["itemType"] = $item->type;
     $instance->meta["itemPublishingDate"] = $item->publishingDate;
 
