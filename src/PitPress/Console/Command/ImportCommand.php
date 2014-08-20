@@ -16,10 +16,11 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use PitPress\Model\Blog\Article;
-use PitPress\Model\Blog\Book;
-use PitPress\Model\Tag\Tag;
-use PitPress\Model\User\User;
+use PitPress\Model\Post;
+use PitPress\Model\Article;
+use PitPress\Model\Book;
+use PitPress\Model\Tag;
+use PitPress\Model\User;
 use PitPress\Model\Reply;
 use PitPress\Model\Accessory\Star;
 use PitPress\Model\Accessory\Classification;
@@ -115,18 +116,18 @@ class ImportCommand extends AbstractCommand {
   }
 
 
-  private function importRelated($postId) {
-    $this->importClassifications($postId);
-    $this->importReplies($postId);
-    $this->importFavorites($postId);
-    $this->importSubscriptions($postId);
+  private function importRelated(Post $post) {
+    $this->importClassifications($post);
+    $this->importReplies($post);
+    $this->importFavorites($post);
+    $this->importSubscriptions($post);
   }
 
 
   private function processArticle($item) {
-    $article = new Article();
+    $article = Article::createVersion($item->id);
 
-    $article->id = $item->id;
+    $article->type = 'article';
     $article->userId = $item->userId;
     $article->publishingDate = (int)$item->unixTime;
     $article->title = Text::convertCharset($item->title, TRUE);
@@ -158,14 +159,14 @@ class ImportCommand extends AbstractCommand {
     if ($item->downloadNum > 0)
       $this->redis->hSet($article->id, 'downloads', $item->downloadNum);
 
-    $this->importRelated($article->id);
+    $this->importRelated($article);
   }
 
 
   private function processBook($item) {
-    $book = new Book();
+    $book = Book::createVersion($item->id);
 
-    $book->id = $item->id;
+    $book->type = 'book';
     $book->userId = $item->userId;
     $book->publishingDate = (int)$item->unixTime;
     $book->title = Text::convertCharset($item->title, TRUE);
@@ -223,7 +224,7 @@ class ImportCommand extends AbstractCommand {
     // We update the book views.
     $this->redis->hSet($book->id, 'hits', $item->hitNum);
 
-    $this->importRelated($book->id);
+    $this->importRelated($book);
   }
 
 
@@ -248,9 +249,8 @@ class ImportCommand extends AbstractCommand {
     $progress->start($this->output, $rows);
 
     while ($item = mysqli_fetch_object($result)) {
-      $tag = new Tag();
+      $tag = Tag::createVersion($item->id);
 
-      $tag->id = $item->id;
       $tag->publishingDate = (int)$item->unixTime;
       $tag->name = Text::convertCharset(strtolower(str_replace(" ", "-", stripslashes($item->name))));
       $tag->userId = $userId;
@@ -269,20 +269,13 @@ class ImportCommand extends AbstractCommand {
   /**
    * @brief Imports classifications.
    */
-  protected function importClassifications($postId) {
-    $sql = "SELECT I.id AS postId, C.id AS tagId, I.stereotype AS stereotype, UNIX_TIMESTAMP(I.date) AS unixTime FROM Item I, Category C, ItemsXCategory X WHERE I.idItem = X.idItem AND C.idCategory = X.idCategory AND I.id = '".$postId."'";
+  protected function importClassifications(Post $post) {
+    $sql = "SELECT C.id AS tagId, UNIX_TIMESTAMP(I.date) AS unixTime FROM Item I, Category C, ItemsXCategory X WHERE I.idItem = X.idItem AND C.idCategory = X.idCategory AND I.id = '".$post->getUnversionId()."'";
 
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
 
     while ($item = mysqli_fetch_object($result)) {
-
-      if ($item->stereotype == self::ARTICLE)
-        $postType = 'article';
-      else
-        $postType = 'book';
-
-      $doc = Classification::create($item->postId, $postType, $item->tagId, (int)$item->unixTime);
-
+      $doc = Classification::create($post, $item->tagId, (int)$item->unixTime);
       $this->couch->saveDoc($doc);
     }
 
@@ -293,27 +286,17 @@ class ImportCommand extends AbstractCommand {
   /**
    * @brief Imports favorites.
    */
-  protected function importFavorites($postId) {
-    $sql = "SELECT I.id AS itemId, I.stereotype as stereotype, M.id AS userId, UNIX_TIMESTAMP(I.date) AS publishingDate, UNIX_TIMESTAMP(F.date) AS dateAdded FROM Item I, Member M, Favourite F WHERE I.idItem = F.idItem AND M.idMember = F.idMember AND I.id = '".$postId."'";
+  protected function importFavorites(Post $post) {
+    $sql = "SELECT I.id AS itemId, I.stereotype as stereotype, M.id AS userId, UNIX_TIMESTAMP(I.date) AS publishingDate, UNIX_TIMESTAMP(F.date) AS dateAdded FROM Item I, Member M, Favourite F WHERE I.idItem = F.idItem AND M.idMember = F.idMember AND I.id = '".$post->getUnversionId()."'";
 
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
 
     while ($item = mysqli_fetch_object($result)) {
-
-      if ($item->stereotype == self::ARTICLE) {
-        $post = new Article();
-        $post->type = 'article';
-      }
-      else {
-        $post = new Book();
-        $post->type = 'book';
-      }
-
       $post->id = $item->itemId;
       $post->userId = $item->userId;
       $post->publishingDate = (int)$item->publishingDate;
 
-        $doc = Star::create($item->userId, $post, (int)$item->dateAdded);
+      $doc = Star::create($item->userId, $post, (int)$item->dateAdded);
 
       $this->couch->saveDoc($doc);
     }
@@ -325,13 +308,13 @@ class ImportCommand extends AbstractCommand {
   /**
    * @brief Imports subscriptions.
    */
-  protected function importSubscriptions($postId) {
-    $sql = "SELECT I.id AS itemId, M.id AS userId, UNIX_TIMESTAMP(T.creationTime) AS timestamp FROM Item I, Member M, Thread T WHERE I.idItem = T.idItem AND M.idMember = T.idMember AND I.id = '".$postId."'";
+  protected function importSubscriptions(Post $post) {
+    $sql = "SELECT M.id AS userId, UNIX_TIMESTAMP(T.creationTime) AS timestamp FROM Item I, Member M, Thread T WHERE I.idItem = T.idItem AND M.idMember = T.idMember AND I.id = '".$post->getUnversionId()."'";
 
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
 
     while ($item = mysqli_fetch_object($result)) {
-      $doc = Subscription::create($item->itemId, $item->userId, (int)$item->timestamp);
+      $doc = Subscription::create($post->getUnversionId(), $item->userId, (int)$item->timestamp);
       $this->couch->saveDoc($doc);
     }
 
@@ -342,8 +325,8 @@ class ImportCommand extends AbstractCommand {
   /**
    * @brief Imports comments.
    */
-  protected function importReplies($postId) {
-    $sql = "SELECT C.idComment, I.idItem, I.id AS postId, M.id AS userId, UNIX_TIMESTAMP(C.date) AS unixTime, C.body FROM Comment C, Item I, Member M WHERE C.idItem = I.idItem AND C.idMember = M.idMember AND I.id = '".$postId."' ORDER BY C.date DESC, idComment DESC";
+  protected function importReplies(Post $post) {
+    $sql = "SELECT C.idComment, I.idItem, M.id AS userId, UNIX_TIMESTAMP(C.date) AS unixTime, C.body FROM Comment C, Item I, Member M WHERE C.idItem = I.idItem AND C.idMember = M.idMember AND I.id = '".$post->getUnversionId()."' ORDER BY C.date DESC, idComment DESC";
 
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
 
@@ -353,7 +336,7 @@ class ImportCommand extends AbstractCommand {
 
         $replay->id = UUID::generate(UUID::UUID_RANDOM, UUID::FMT_STRING);
         $replay->publishingDate = (int)$item->unixTime;
-        $replay->postId = $item->postId;
+        $replay->postId = $post->getUnversionId();
         $replay->userId = $item->userId;
 
         $utf8 = Text::convertCharset($item->body);
@@ -410,13 +393,15 @@ class ImportCommand extends AbstractCommand {
       // This is the first page, so we set many properties.
       if (empty($body)) {
         $article->id = $page->id;
+        $article->type = 'article';
+        $article->version = microtime();
         $article->userId = $page->userId;
         $article->publishingDate = (int)$page->unixTime;
         $article->title = $this->pruneTitle($title, $subtitle);
         //$this->monolog->addNotice(sprintf("%s", $article->title));
 
         $this->redis->hSet($article->id, 'hits', $page->hitNum);
-        $this->importRelated($page->id);
+        $this->importRelated($article);
       }
       else {
         $body .= PHP_EOL.PHP_EOL;
