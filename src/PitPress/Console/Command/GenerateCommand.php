@@ -19,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use SimplePie;
 
 use PitPress\Model\Accessory\Vote;
-use PitPress\Model\Link\Link;
+use PitPress\Model\Link;
 use PitPress\Helper\Text;
 
 use ElephantOnCouch\Opt\ViewQueryOpts;
@@ -123,7 +123,7 @@ class GenerateCommand extends AbstractCommand {
     $progress->start($output, $feed->get_item_quantity());
 
     foreach ($feed->get_items() as $item) {
-      $link = new Link();
+      $link = Link::createVersion();
       $link->title = $item->get_title();
 
       $purged = Text::purge($item->get_description());
