@@ -8,11 +8,9 @@
  */
 
 
-//! PitPress blog blog namespace.
-namespace PitPress\Model\Blog;
+namespace PitPress\Model;
 
 
-use PitPress\Model\Post;
 use PitPress\Extension;
 use PitPress\Property;
 

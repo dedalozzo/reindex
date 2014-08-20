@@ -1,7 +1,7 @@
 <?php
 
 
-namespace PitPress\Model\Tag;
+namespace PitPress\Model;
 
 
 class Tag  {

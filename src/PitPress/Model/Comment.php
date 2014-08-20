@@ -8,10 +8,7 @@
  */
 
 
-namespace PitPress\Model\Forum;
-
-
-use PitPress\Model\Reply;
+namespace PitPress\Model;
 
 
 /**
