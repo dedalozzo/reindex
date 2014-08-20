@@ -23,8 +23,9 @@ use PitPress\Property;
  * @details Every post is versioned into the database, has tags and also a owner, who created the entry.
  * @nosubgrouping
  */
-abstract class Post extends Item implements Extension\ICount, Extension\IStar, Extension\IVote, Extension\ISubscribe {
-  use Extension\TCount, Extension\TStar, Extension\TVote, Extension\TSubscribe;
+abstract class Post extends Item implements Extension\ICount, Extension\IStar, Extension\IVote, Extension\ISubscribe, Extension\IVersion {
+
+  use Extension\TCount, Extension\TStar, Extension\TVote, Extension\TSubscribe, Extension\TVersion;
   use Property\TDescription;
 
 
