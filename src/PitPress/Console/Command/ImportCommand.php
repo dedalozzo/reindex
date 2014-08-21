@@ -125,7 +125,7 @@ class ImportCommand extends AbstractCommand {
 
 
   private function processArticle($item) {
-    $article = Article::createVersion($item->id);
+    $article = Article::create($item->id);
 
     $article->type = 'article';
     $article->userId = $item->userId;
@@ -146,6 +146,7 @@ class ImportCommand extends AbstractCommand {
 
     // We finally save the article.
     try {
+      $article->approve();
       $article->save();
     }
     catch(\Exception $e) {
@@ -164,7 +165,7 @@ class ImportCommand extends AbstractCommand {
 
 
   private function processBook($item) {
-    $book = Book::createVersion($item->id);
+    $book = Book::create($item->id);
 
     $book->type = 'book';
     $book->userId = $item->userId;
@@ -215,6 +216,7 @@ class ImportCommand extends AbstractCommand {
 
     // We finally save the book.
     try {
+      $book->approve();
       $book->save();
     }
     catch(\Exception $e) {
@@ -249,11 +251,13 @@ class ImportCommand extends AbstractCommand {
     $progress->start($this->output, $rows);
 
     while ($item = mysqli_fetch_object($result)) {
-      $tag = Tag::createVersion($item->id);
+      $tag = Tag::create($item->id);
 
       $tag->publishingDate = (int)$item->unixTime;
       $tag->name = Text::convertCharset(strtolower(str_replace(" ", "-", stripslashes($item->name))));
       $tag->userId = $userId;
+
+      $tag->approve();
 
       $this->couch->saveDoc($tag);
 
@@ -394,7 +398,7 @@ class ImportCommand extends AbstractCommand {
       if (empty($body)) {
         $article->id = $page->id;
         $article->type = 'article';
-        $article->version = microtime();
+        $article->versionNumber = time();
         $article->userId = $page->userId;
         $article->publishingDate = (int)$page->unixTime;
         $article->title = $this->pruneTitle($title, $subtitle);
@@ -442,6 +446,7 @@ class ImportCommand extends AbstractCommand {
       // generate a JSON conversion error. Maybe it is a CouchDB bug or maybe it's an Hoedown bug. todo
       $article->html = "";
 
+      $article->approve();
       $article->save();
     }
     catch(\Exception $e) {
