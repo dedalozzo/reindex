@@ -19,8 +19,8 @@ use PitPress\Extension;
  * @details Every post must be tagged with a maximun of five tags.
  * @nosubgrouping
  */
-class Tag extends Item implements Extension\ICount, Extension\IStar, Extension\IVersion {
-  use Extension\TCount, Extension\TStar, Extension\TVersion;
+class Tag extends Versionable implements Extension\ICount, Extension\IStar {
+  use Extension\TCount, Extension\TStar;
 
   /** @name Ignoring Methods */
   //!@{
