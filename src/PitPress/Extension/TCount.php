@@ -19,7 +19,7 @@ trait TCount {
 
   public function getHitsCount() {
     if (isset($this->rev))
-      return number_format($this->redis->hGet($this->id, 'hits'), 0, ",", ".");
+      return number_format($this->redis->hGet($this->getUnversionId(), 'hits'), 0, ",", ".");
     else
       return 0;
   }
@@ -28,7 +28,7 @@ trait TCount {
   public function incHits() {
     // We can increment the views of a document that has been already saved.
     if (isset($this->rev))
-      $this->redis->hIncrBy($this->id, 'hits', 1);
+      $this->redis->hIncrBy($this->getUnversionId(), 'hits', 1);
   }
 
 } 
