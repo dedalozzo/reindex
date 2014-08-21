@@ -15,8 +15,8 @@ use ElephantOnCouch\Couch;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Model\Accessory\Vote;
-use PitPress\Model\User\User;
-use PitPress\Model\Item;
+use PitPress\Model\User;
+use PitPress\Model\Versionable;
 
 use Phalcon\DI;
 
@@ -34,7 +34,7 @@ trait TVote {
    * @return int The voting status.
    */
   protected function vote(User $user = NULL, $value) {
-    if (is_null($user)) return Item::NO_USER_LOGGED_IN;
+    if (is_null($user)) return Versionable::NO_USER_LOGGED_IN;
     if ($user->id == $this->userId) return IVote::CANNOT_VOTE_YOUR_OWN_POST;
 
     $voted = $this->didUserVote($user, $voteId);
@@ -68,7 +68,7 @@ trait TVote {
         return IVote::UNCHANGED;
     }
     else {
-      $vote = Vote::create($this->getType(), $this->id, $user->id, $value);
+      $vote = Vote::create($this->getType(), $this->getUnversionId(), $user->id, $value);
       $this->couch->saveDoc($vote);
       return IVote::REGISTERED;
     }
@@ -95,7 +95,7 @@ trait TVote {
     if (is_null($user)) return FALSE;
 
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $user->id]);
+    $opts->doNotReduce()->setLimit(1)->setKey([$this->getUnversionId(), $user->id]);
 
     $result = $this->couch->queryView("votes", "perPostAndUser", NULL, $opts);
 
@@ -110,7 +110,7 @@ trait TVote {
 
   public function getScore() {
     $opts = new ViewQueryOpts();
-    $opts->setKey($this->id);
+    $opts->setKey($this->getUnversionId());
 
     return $this->couch->queryView("votes", "perPost", NULL, $opts)->getReducedValue();
   }
@@ -120,7 +120,7 @@ trait TVote {
 
     // Gets the users have voted the item.
     $opts = new ViewQueryOpts();
-    $opts->setKey($this->id);
+    $opts->setKey($this->getUnversionId());
     $result = $this->couch->queryView("users", "haveVoted", NULL, $opts);
 
     if ($result->isEmpty())
