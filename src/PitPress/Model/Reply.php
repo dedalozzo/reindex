@@ -20,8 +20,8 @@ use PitPress\Property;
  * article, a book review, etc.).
  * @nosubgrouping
  */
-class Reply extends Item implements Extension\IVote, Extension\IVersion {
-  use Extension\TVote, Extension\TVersion;
+class Reply extends Versionable implements Extension\IVote {
+  use Extension\TVote;
   use Property\TBody;
 
 
