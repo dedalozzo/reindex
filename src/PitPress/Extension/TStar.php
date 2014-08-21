@@ -15,8 +15,8 @@ use ElephantOnCouch\Couch;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Model\Accessory\Star;
-use PitPress\Model\User\User;
-use PitPress\Model\Item;
+use PitPress\Model\User;
+use PitPress\Model\Versionable;
 
 
 /**
@@ -30,7 +30,7 @@ trait TStar {
     if (is_null($user)) return FALSE;
 
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $user->id]);
+    $opts->doNotReduce()->setLimit(1)->setKey([$this->getUnversionId(), $user->id]);
 
     $result = $this->couch->queryView("stars", "perItem", NULL, $opts);
 
@@ -44,7 +44,7 @@ trait TStar {
 
 
   public function star(User $user = NULL) {
-    if (is_null($user)) return Item::NO_USER_LOGGED_IN;
+    if (is_null($user)) return Versionable::NO_USER_LOGGED_IN;
 
     if ($this->isStarred($user, $starId)) {
       $star = $this->couch->getDoc(Couch::STD_DOC_PATH, $starId);
@@ -61,7 +61,7 @@ trait TStar {
 
   public function getStarsCount() {
     $opts = new ViewQueryOpts();
-    $opts->setKey([$this->id]);
+    $opts->setKey([$this->getUnversionId()]);
 
     return $this->couch->queryView("stars", "perItem", NULL, $opts)->getReducedValue();
   }
