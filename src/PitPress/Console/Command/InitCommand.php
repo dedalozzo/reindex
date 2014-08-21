@@ -80,8 +80,8 @@ MAP;
     function allPosts() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) and $doc->supertype == 'post')
-    $emit(strtok($doc->_id, '::'), [
+  if (isset($doc->supertype) && $doc->supertype == 'post')
+    $emit($doc->_id, [
        'type' => $doc->type,
        'title' => $doc->title,
        'excerpt' => $doc->excerpt,
@@ -106,7 +106,7 @@ MAP;
     function postsByUrl() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) and $doc->supertype == 'post')
+  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
     $emit([$doc->year, $doc->month, $doc->day, $doc->slug]);
 };
 MAP;
@@ -124,7 +124,7 @@ MAP;
     function postsPerDate() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) and $doc->supertype == 'post')
+  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
     $emit($doc->publishingDate);
 };
 MAP;
@@ -143,7 +143,7 @@ MAP;
     function postsPerDateByType() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) and $doc->supertype == 'post')
+  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
     $emit([$doc->type, $doc->publishingDate]);
 };
 MAP;
@@ -162,7 +162,7 @@ MAP;
     function postsPerDateByUser() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) and $doc->supertype == 'post')
+  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
     $emit([$doc->userId, $doc->publishingDate]);
 };
 MAP;
@@ -181,7 +181,7 @@ MAP;
     function postsPerDateByUserAndType() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) and $doc->supertype == 'post')
+  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
     $emit([$doc->userId, $doc->type, $doc->publishingDate]);
 };
 MAP;
@@ -208,7 +208,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'tag')
-    $emit(strtok($doc->_id, '::'), [$doc->name, $doc->excerpt, $doc->publishingDate]);
+    $emit($doc->_id, [$doc->name, $doc->excerpt, $doc->publishingDate]);
 };
 MAP;
 
@@ -225,7 +225,7 @@ MAP;
     function allNames() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'tag')
+  if ($doc->type == 'tag' && isset($doc->current))
     $emit(strtok($doc->_id, '::'), $doc->name);
 };
 MAP;
@@ -242,7 +242,7 @@ MAP;
     function newestTags() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'tag')
+  if ($doc->type == 'tag' && isset($doc->current))
     $emit($doc->publishingDate);
 };
 MAP;
@@ -259,7 +259,7 @@ MAP;
     function tagsByName() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'tag')
+  if ($doc->type == 'tag' && isset($doc->current))
     $emit($doc->name);
 };
 MAP;
