@@ -11,7 +11,7 @@
 namespace PitPress\Extension;
 
 
-use PitPress\Model\User\User;
+use PitPress\Model\User;
 
 
 /**
