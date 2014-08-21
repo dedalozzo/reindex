@@ -10,7 +10,7 @@ namespace PitPress\Helper;
 
 
 use ElephantOnCouch\Helper\ArrayHelper as ElephantOnCouchArrayHelper;
-use PitPress\Extension;
+use ElephantOnCouch\Doc\Doc;
 
 
 /**
@@ -50,7 +50,7 @@ class ArrayHelper extends ElephantOnCouchArrayHelper {
    */
   public static function unversion(array &$ids) {
     array_walk($ids, function(&$value, $key) {
-        $value = strtok($value, Extension\IVersion::SEPARATOR);
+        $value = strtok($value, Doc::SEPARATOR);
       }
     );
   }
