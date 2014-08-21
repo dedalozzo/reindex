@@ -13,7 +13,7 @@ namespace PitPress\Model\Accessory;
 
 use ElephantOnCouch\Doc\Doc;
 
-use PitPress\Model\Item;
+use PitPress\Model\Versionable;
 
 
 /**
@@ -25,7 +25,7 @@ class Star extends Doc {
   /**
    * @brief Creates an instance of Star class.
    */
-  public static function create($userId, Item $item, $timestamp = NULL) {
+  public static function create($userId, Versionable $item, $timestamp = NULL) {
     $instance = new self();
 
     $instance->meta["userId"] = $userId;
