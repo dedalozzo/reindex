@@ -123,7 +123,7 @@ class GenerateCommand extends AbstractCommand {
     $progress->start($output, $feed->get_item_quantity());
 
     foreach ($feed->get_items() as $item) {
-      $link = Link::createVersion();
+      $link = Link::create();
       $link->title = $item->get_title();
 
       $purged = Text::purge($item->get_description());
