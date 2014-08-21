@@ -10,6 +10,7 @@ namespace PitPress\Helper;
 
 
 use ElephantOnCouch\Helper\ArrayHelper as ElephantOnCouchArrayHelper;
+use PitPress\Extension;
 
 
 /**
@@ -40,6 +41,18 @@ class ArrayHelper extends ElephantOnCouchArrayHelper {
       return $array[$key];
     else
       return FALSE;
+  }
+
+
+  /**
+   * @brief Modifies the specified array, depriving each ID of its related version.
+   * @param[in|out] array $ids An array of IDs.
+   */
+  public static function unversion(array &$ids) {
+    array_walk($ids, function(&$value, $key) {
+        $value = strtok($value, Extension\IVersion::SEPARATOR);
+      }
+    );
   }
 
 } 
