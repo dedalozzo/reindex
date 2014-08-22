@@ -150,7 +150,7 @@ class IndexController extends ListController {
   public function afterExecuteRoute() {
     parent::afterExecuteRoute();
 
-    //$this->recentTags();
+    $this->recentTags();
 
     // The entries label is printed below the entries count.
     $this->view->setVar('entriesLabel', $this->getLabel());
