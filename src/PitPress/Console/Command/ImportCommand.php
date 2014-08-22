@@ -154,7 +154,7 @@ class ImportCommand extends AbstractCommand {
     }
 
     // We update the article views.
-    $this->redis->hSet($article->id, 'hits', $item->hitNum);
+    $this->redis->hSet($article->getUnversionId(), 'hits', $item->hitNum);
 
     // We update the article downloads.
     if ($item->downloadNum > 0)
@@ -224,7 +224,7 @@ class ImportCommand extends AbstractCommand {
     }
 
     // We update the book views.
-    $this->redis->hSet($book->id, 'hits', $item->hitNum);
+    $this->redis->hSet($book->getUnversionId(), 'hits', $item->hitNum);
 
     $this->importRelated($book);
   }
@@ -404,12 +404,12 @@ class ImportCommand extends AbstractCommand {
         $article->title = $this->pruneTitle($title, $subtitle);
         //$this->monolog->addNotice(sprintf("%s", $article->title));
 
-        $this->redis->hSet($article->id, 'hits', $page->hitNum);
+        $this->redis->hSet($article->getUnversionId(), 'hits', $page->hitNum);
         $this->importRelated($article);
       }
       else {
         $body .= PHP_EOL.PHP_EOL;
-        $this->redis->hIncrBy($article->id, 'hits', $page->hitNum);
+        $this->redis->hIncrBy($article->getUnversionId(), 'hits', $page->hitNum);
       }
 
       if (!empty($subtitle) && $subtitle != $paragraphTitle) {
