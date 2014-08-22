@@ -69,22 +69,24 @@ class IndexController extends ListController {
       return NULL;
 
     // Entries.
-    $keys = array_column($rows->asArray(), 'id');
+    $ids = array_column($rows->asArray(), 'id');
 
     // Posts.
     $opts->reset();
     $opts->doNotReduce()->includeMissingKeys();
-    $posts = $this->couch->queryView("posts", "all", $keys, $opts);
+    $posts = $this->couch->queryView("posts", "all", $ids, $opts);
+
+    Helper\ArrayHelper::unversion($ids);
 
     // Scores.
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
-    $scores = $this->couch->queryView("votes", "perPost", $keys, $opts);
+    $scores = $this->couch->queryView("votes", "perPost", $ids, $opts);
 
     // Replies.
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
-    $replies = $this->couch->queryView("replies", "perPost", $keys, $opts);
+    $replies = $this->couch->queryView("replies", "perPost", $ids, $opts);
 
     $entries = [];
     $postCount = count($posts);
@@ -148,7 +150,7 @@ class IndexController extends ListController {
   public function afterExecuteRoute() {
     parent::afterExecuteRoute();
 
-    $this->recentTags();
+    //$this->recentTags();
 
     // The entries label is printed below the entries count.
     $this->view->setVar('entriesLabel', $this->getLabel());
@@ -186,7 +188,9 @@ class IndexController extends ListController {
   /**
    * @brief Displays the newest posts.
    */
-  public function newestAction() {
+  public function newestAction($tag = NULL) {
+    $this->monolog->addDebug(sprintf('Tag: %s', $tag));
+
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->reverseOrderOfResults()->setLimit(self::RESULTS_PER_PAGE+1);
 
@@ -369,14 +373,25 @@ class IndexController extends ListController {
       $key = 2;
     }
 
+    // We get the document IDs pruned by their version number, but we need them.
     $stars = $rows->asArray();
+
     // If the query returned more entries than the ones must display on the page, a link to the next page must be provided.
     if ($rows->count() > self::RESULTS_PER_PAGE) {
       $last = array_pop($stars);
       $this->view->setVar('nextPage', $this->buildPaginationUrl($last['key'][$key], $last['id']));
     }
 
-    $this->view->setVar('entries', $this->getEntries(array_column($stars, 'value')));
+    // So we make another query to retrieves the IDs.
+    if (empty($stars))
+      $posts = [];
+    else {
+      $opts->reset();
+      $opts->doNotReduce();
+      $posts = $this->couch->queryView("posts", "unversion", array_column($stars, 'value'), $opts)->asArray();
+    }
+
+    $this->view->setVar('entries', $this->getEntries(array_column($posts, 'id')));
     $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
     $this->view->setVar('entriesLabel', 'preferiti');
     $this->view->setVar('submenu', $filters);
