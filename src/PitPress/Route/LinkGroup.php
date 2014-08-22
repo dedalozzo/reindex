@@ -20,7 +20,7 @@ class LinkGroup extends IndexGroup {
 
 
   protected function getController() {
-    return 'book';
+    return 'link';
   }
 
 
