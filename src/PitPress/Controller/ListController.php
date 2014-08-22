@@ -14,7 +14,7 @@ namespace PitPress\Controller;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Helper;
-use PitPress\Model\User\User;
+use PitPress\Model\User;
 
 use Phalcon\Mvc\View;
 
@@ -31,15 +31,17 @@ abstract class ListController extends BaseController {
   /**
    * @brief Given a set of keys, retrieves entries.
    */
-  protected function getEntries($keys) {
-    if (empty($keys))
+  protected function getEntries($ids) {
+    if (empty($ids))
       return [];
 
     $opts = new ViewQueryOpts();
 
     // Posts.
     $opts->doNotReduce();
-    $posts = $this->couch->queryView("posts", "all", $keys, $opts);
+    $posts = $this->couch->queryView("posts", "all", $ids, $opts);
+
+    Helper\ArrayHelper::unversion($ids);
 
     // Likes.
     if (isset($this->user)) {
@@ -47,7 +49,7 @@ abstract class ListController extends BaseController {
       $opts->doNotReduce()->includeMissingKeys();
 
       $complex = [];
-      foreach ($keys as $postId)
+      foreach ($ids as $postId)
         $complex[] = [$postId, $this->user->id];
 
       $likes = $this->couch->queryView("votes", "perPostAndUser", $complex, $opts);
@@ -56,18 +58,18 @@ abstract class ListController extends BaseController {
     // Scores.
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
-    $scores = $this->couch->queryView("votes", "perPost", $keys, $opts);
+    $scores = $this->couch->queryView("votes", "perPost", $ids, $opts);
 
     // Replies.
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
-    $replies = $this->couch->queryView("replies", "perPost", $keys, $opts);
+    $replies = $this->couch->queryView("replies", "perPost", $ids, $opts);
 
     // Users.
-    $keys = array_column(array_column($posts->asArray(), 'value'), 'userId');
+    $userIds = array_column(array_column($posts->asArray(), 'value'), 'userId');
     $opts->reset();
     $opts->doNotReduce()->includeMissingKeys();
-    $users = $this->couch->queryView("users", "allNames", $keys, $opts);
+    $users = $this->couch->queryView("users", "allNames", $userIds, $opts);
 
     $entries = [];
     $postCount = count($posts);
@@ -89,10 +91,10 @@ abstract class ListController extends BaseController {
       $classifications = $this->couch->queryView("classifications", "perPost", NULL, $opts);
 
       if (!$classifications->isEmpty()) {
-        $keys = array_column($classifications->asArray(), 'value');
+        $tagIds = array_column($classifications->asArray(), 'value');
         $opts->reset();
         $opts->doNotReduce();
-        $entry->tags = $this->couch->queryView("tags", "allNames", $keys, $opts);
+        $entry->tags = $this->couch->queryView("tags", "allNames", $tagIds, $opts);
       }
       else
         $entry->tags = [];
