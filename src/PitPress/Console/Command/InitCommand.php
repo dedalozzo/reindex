@@ -102,6 +102,25 @@ MAP;
     $doc->addHandler(allPosts());
 
 
+    // @params: NONE
+    function unversionPosts() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
+    $emit(strtok($doc->_id, '::'));
+};
+MAP;
+
+      $handler = new ViewHandler("unversion");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
+
+      return $handler;
+    }
+
+    $doc->addHandler(unversionPosts());
+
+
     // @params: year, month, day, slug
     function postsByUrl() {
       $map = <<<'MAP'
