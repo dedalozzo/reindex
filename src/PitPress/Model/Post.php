@@ -83,7 +83,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    */
   public function getReplies() {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->reverseOrderOfResults()->setStartKey([$this->id, Couch::WildCard()])->setEndKey([$this->id])->includeDocs();
+    $opts->doNotReduce()->reverseOrderOfResults()->setStartKey([$this->getUnversionId(), Couch::WildCard()])->setEndKey([$this->getUnversionId()])->includeDocs();
     $rows = $this->couch->queryView("replies", "newestPerPost", NULL, $opts);
 
     $replies = [];
@@ -103,7 +103,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   public function getRepliesCount() {
     $opts = new ViewQueryOpts();
     $opts->groupResults();
-    return $this->couch->queryView("replies", "perPost", [$this->id], $opts)->getReducedValue();
+    return $this->couch->queryView("replies", "perPost", [$this->getUnversionId()], $opts)->getReducedValue();
   }
 
   //!@}
