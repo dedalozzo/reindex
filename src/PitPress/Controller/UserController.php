@@ -13,7 +13,7 @@ namespace PitPress\Controller;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Helper\Time;
-use PitPress\Model\User\User;
+use PitPress\Model\User;
 
 use Phalcon\Mvc\View;
 
