@@ -2,11 +2,12 @@
 
 {% block content %}
 <div id="content">
+  <div id="page-title">{{ post.title }}</div>
+  <hr class="fade-long">
+
   <div class="column-left">
     <!-- <div class="alert alert-info">Le tue modifiche saranno poste in coda sino a che il processo di revisione paritaria (peer review) avrà luogo. Ogni modifica, purché costruttiva, è benvenuta. Grazie.</div> -->
     {{ flash.output() }}
-
-    <div id="page-title">{{ post.title }}</div>
 
     <form class="frm-stacked" action="//{{ domainName }}/accedi/" id="signinform" name="signinform" method="post" role="form">
       <fieldset>
@@ -70,9 +71,9 @@
                 <a href="#" title="Lista numerata"><i class="icon-list-ol"></i></a>
               </li>
             </ul>
-            {{ text_area("body", "class": "pure-input-1") }}
+            {{ text_area("body") }}
             <script type="text/javascript">
-              var editor = CodeMirror.fromTextArea(postument.getElementById("body"), {
+              var editor = CodeMirror.fromTextArea(document.getElementById("body"), {
                 mode: 'gfm',
                 lineNumbers: true,
                 lineWrapping: true,
@@ -132,7 +133,7 @@
         </script>
       </fieldset>
 
-      <div class="pure-controls">
+      <div>
         <button type="submit" name="signin" class="btn large red">Salva le modifiche</button>
         <a href="//{{ serverName~post.getHref() }}" class="btn large">Annulla</a>
       </div>
@@ -141,9 +142,6 @@
   </div> <!-- /column-left -->
 
   <aside class="column-right">
-
-  <div class="banner"><a href="#"><img src="/img/300x250cro.jpeg" /></a></div>
-
   </aside> <!-- /column-right -->
 </div>
 {% endblock %}
