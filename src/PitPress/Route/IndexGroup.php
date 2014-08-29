@@ -48,10 +48,10 @@ class IndexGroup extends Group {
 
 
   /**
-   * @brief Page index.
+   * @brief Adds the routes to the group.
+   * @details This method maybe called twice because tags use the same routes with a different prefix.
    */
   protected function addRoutes() {
-    $this->setPrefix($this->getPrefix());
     $this->addGet('/', ['action' => $this->getDefaultAction()]);
     $this->addGet('/nuovi/', ['action' => 'newest']);
     $this->addGet('/popolari/', ['action' => 'popular']);
@@ -66,16 +66,6 @@ class IndexGroup extends Group {
     $this->addGet('/([0-9]{4})/([0-9]{2})/([0-9]{2})/', ['action' => 'perDate', 'year' => 1, 'month' => 2, 'day' => 3]);
     //$this->addGet('/([0-9]{4})/(?:([0-9]{2})/(?:([0-9]{2})/){0,1}){0,1}', ['action' => 'perDate', 'year' => 1, 'month' => 2, 'day' => 3]);
 
-    $this->setPrefix('/tags/{tag}'.$this->getPrefix());
-    $this->addGet('', ['action' => 'newest']);
-    $this->addGet('/nuovi/', ['action' => 'newest']);
-    $this->addGet('/popolari/', ['action' => 'popular']);
-    $this->addGet('/popolari/{filter}/', ['action' => 'popular']);
-    $this->addGet('/attivi/', ['action' => 'active']);
-    $this->addGet('/interessanti/', ['action' => 'interesting']);
-    $this->addGet('/preferiti/', ['action' => 'favorite']);
-    $this->addGet('/preferiti/{filter}/', ['action' => 'favorite']);
-
     //$this->addGet('/rss', ['action' => 'rss']);
   }
 
@@ -83,6 +73,13 @@ class IndexGroup extends Group {
   public function initialize() {
     $this->setPaths(['namespace' => 'PitPress\Controller', 'controller' => $this->getController()]);
     $this->setHostName(DI::getDefault()['config']['application']['domainName']);
+
+    // Sets the standard routes.
+    $this->setPrefix($this->getPrefix());
+    $this->addRoutes();
+
+    // Sets the standard routes for a tag.
+    $this->setPrefix('/{tag}'.$this->getPrefix());
     $this->addRoutes();
   }
 
