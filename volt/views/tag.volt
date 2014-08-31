@@ -22,7 +22,7 @@
         {% if loop.first %}
         <ul class="list gutter">
         {% endif %}
-          <li style="width: 25%;"><a class="tag" href="#">{{ entry.name }}</a><span class="popularity"> × {{ entry.postsCount }}</span><br>{{ entry.excerpt }}</li>
+          <li style="width: 25%;"><a class="tag" href="//{{ serverName }}/{{ entry.name }}/">{{ entry.name }}</a><span class="popularity"> × {{ entry.postsCount }}</span><br>{{ entry.excerpt }}</li>
         {% if loop.last %}
           {% for i in 1..modulus  %}
           <li style="width: 25%;"></li>
