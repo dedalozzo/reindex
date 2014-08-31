@@ -45,7 +45,7 @@
             <li><a class="tag {{ post.type }}" href="//{{ domainName~'/'~types[post.type] }}/">{{ types[post.type] }}</a></li>
             {% set tags = post.getTags() %}
             {% for tag in tags %}
-            <li><a class="tag" href="/tag/">{{ tag['value'] }}</a></li>
+            <li><a class="tag" href="//{{ serverName }}/{{ tag['value'] }}/">{{ tag['value'] }}</a></li>
             {% endfor  %}
           </ul>
           <section class="item-user pull-right">
