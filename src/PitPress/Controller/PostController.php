@@ -15,6 +15,10 @@ use ElephantOnCouch\Couch;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use Phalcon\Mvc\View;
+use Phalcon\Validation\Validator\PresenceOf;
+
+use PitPress\Exception\InvalidFieldException;
+use PitPress\Helper\ValidationHelper;
 
 
 /**
@@ -58,16 +62,50 @@ class PostController extends BaseController {
    */
   public function editAction($id) {
     if (empty($id))
-      return $this->dispatcher->forward(
-        [
-          'controller' => 'error',
-          'action' => 'show404'
-        ]);
+      return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    $post = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $id);
+    if (is_null($this->user))
+      return $this->dispatcher->forward(['controller' => 'auth', 'action' => 'signin']);
 
-    $this->tag->setDefault("title", $post->title);
-    $this->tag->setDefault("body", $post->body);
+    // The validation object must be created in any case.
+    $validation = new ValidationHelper();
+    $this->view->setVar('validation', $validation);
+
+    if ($this->request->isPost()) {
+
+      try {
+        $validation->setFilters("title", "trim");
+        $validation->add("title", new PresenceOf(["message" => "Il titolo è obbligatorio."]));
+
+        $validation->setFilters("body", "trim");
+        $validation->add("body", new PresenceOf(["message" => "Il corpo è obbligatorio."]));
+
+        $group = $validation->validate($_POST);
+        if (count($group) > 0) {
+          throw new InvalidFieldException("I campi sono incompleti o i valori indicati non sono validi. Gli errori sono segnalati in rosso sotto ai rispettivi campi d'inserimento.");
+        }
+
+        // Filters only the messages generated for the field 'name'.
+        /*foreach ($validation->getMessages()->filter('email') as $message) {
+          $this->flash->notice($message->getMessage());
+          break;
+        }*/
+
+        $title = $this->request->getPost('email');
+        $body = $this->request->getPost('body');
+      }
+      catch (\Exception $e) {
+        // Displays the error message.
+        $this->flash->error($e->getMessage());
+      }
+
+    }
+    else {
+      $post = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $id);
+
+      $this->tag->setDefault("title", $post->title);
+      $this->tag->setDefault("body", $post->body);
+    }
 
     $this->view->setVar('post', $post);
     $this->view->setVar('title', $post->title);
