@@ -111,7 +111,7 @@ class UpdateScoreHook implements IChunkHook, InjectionAwareInterface {
           $post = $this->couch2->getDoc(Couch::STD_DOC_PATH, $keys[$i]);
 
           if (is_object($post)) {
-            $score = Score::create($post->section, $post->type, $post->id, $post->publishingDate, $partialScores[$i]);
+            $score = Score::create($post->type, $post->id, $post->publishingDate, $partialScores[$i]);
             $docs[] = $score;
           }
           else {
