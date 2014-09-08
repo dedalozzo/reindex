@@ -18,7 +18,7 @@ use PitPress\Helper\Text;
 $root = realpath(__DIR__."/../");
 
 // Initializes the Composer autoloading system. (Note: We don't use the Phalcon loader.)
-require $root."/vendor/autoload.php";
+require $root . "/vendor/autoload.php";
 
 $monolog = new Logger('pit-press');
 
