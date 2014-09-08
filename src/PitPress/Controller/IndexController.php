@@ -320,19 +320,7 @@ class IndexController extends ListController {
   /**
    * @brief Displays the newest updates based on my tags.
    */
-  public function interestingAction($tag = NULL) {
-    if (isset($tag)) {
-      $opts = new ViewQueryOpts();
-      $opts->doNotReduce()->reverseOrderOfResults()->setLimit(1);
-      $opts->setKey($tag);
-      $tags = $this->couch->queryView("tags", "byName", NULL, $opts)->asArray();
-
-      $tagId = strtok($tags[0]['id'], '::');
-
-      $this->monolog->addDebug(sprintf('Tag Id: %s', $tags[0]['id']));
-
-    }
-
+  public function interestingAction() {
     $opts = new ViewQueryOpts();
     $opts->reduce()->groupResults();
     //$opts->setLimit(self::RESULTS_PER_PAGE+1);
