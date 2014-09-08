@@ -18,6 +18,7 @@ use PitPress\Helper;
 
 use Phalcon\Mvc\View;
 use Phalcon\Tag;
+use PitPress\Model\Versionable;
 
 
 /**
@@ -150,7 +151,7 @@ class IndexController extends ListController {
   public function afterExecuteRoute() {
     parent::afterExecuteRoute();
 
-    $this->recentTags();
+    //$this->recentTags();
 
     // The entries label is printed below the entries count.
     $this->view->setVar('entriesLabel', $this->getLabel());
@@ -189,8 +190,6 @@ class IndexController extends ListController {
    * @brief Displays the newest posts.
    */
   public function newestAction($tag = NULL) {
-    $this->monolog->addDebug(sprintf('Tag: %s', $tag));
-
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->reverseOrderOfResults()->setLimit(self::RESULTS_PER_PAGE+1);
 
@@ -321,7 +320,68 @@ class IndexController extends ListController {
   /**
    * @brief Displays the newest updates based on my tags.
    */
-  public function interestingAction() {
+  public function interestingAction($tag = NULL) {
+    if (isset($tag)) {
+      $opts = new ViewQueryOpts();
+      $opts->doNotReduce()->reverseOrderOfResults()->setLimit(1);
+      $opts->setKey($tag);
+      $tags = $this->couch->queryView("tags", "byName", NULL, $opts)->asArray();
+
+      $tagId = strtok($tags[0]['id'], '::');
+
+      $this->monolog->addDebug(sprintf('Tag Id: %s', $tags[0]['id']));
+
+    }
+
+    $opts = new ViewQueryOpts();
+    $opts->reduce()->groupResults();
+    //$opts->setLimit(self::RESULTS_PER_PAGE+1);
+
+    // Paginates results.
+    //$startKey = isset($_GET['startkey']) ? (int)$_GET['startkey'] : Couch::WildCard();
+    //if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
+
+    if ($this->isSameClass()) {
+      //$opts->setStartKey($startKey);
+
+      $keys = ['3e96144b-3ebd-41e4-8a45-78cd9af1671d', '493e48ea-78f0-4a64-be17-6cacf21f848b'];
+
+      //$keys[] = $tagId;
+      $rows = $this->couch->queryView("posts", "byTag", $keys, $opts);
+    }
+    else {
+      //$opts->setStartKey([$this->type, $startKey])->setEndKey([$this->type]);
+      //$rows = $this->couch->queryView("posts", "perDateByType", NULL, $opts);
+    }
+
+
+    $this->monolog->addDebug('Posts: ', $rows->asArray());
+
+    $phpCount = count($rows->asArray()[0]['value']);
+    $mysqlCount = count($rows->asArray()[1]['value']);
+    $this->monolog->addDebug(sprintf('php: %d', $phpCount));
+    $this->monolog->addDebug(sprintf('mysql: %d', $mysqlCount));
+
+    $this->monolog->addDebug(sprintf('total: %d', $phpCount + $mysqlCount));
+
+    $merged = array_merge($rows->asArray()[0]['value'], $rows->asArray()[1]['value']);
+    $this->monolog->addDebug(sprintf('total merge: %d', count($merged)));
+    $this->monolog->addDebug(sprintf('total unique: %d', count(array_unique($merged))));
+
+
+
+    $entries = $this->getEntries($rows->asArray()[1]['value']);
+
+    $this->monolog->addDebug('Qui passo');
+
+    if (count($entries) > self::RESULTS_PER_PAGE) {
+      $last = array_pop($entries);
+      $this->view->setVar('nextPage', $this->buildPaginationUrl($last->publishingDate, $last->id));
+    }
+
+    $this->view->setVar('entries', $entries);
+    //$this->view->setVar('entriesCount', $this->countPosts());
+
     $this->view->setVar('entriesCount', 0);
     $this->view->setVar('title', sprintf('%s interessanti', ucfirst($this->getLabel())));
   }
@@ -398,6 +458,5 @@ class IndexController extends ListController {
     $this->view->setVar('submenuIndex', $index);
     $this->view->setVar('title', sprintf('%s preferiti', ucfirst($this->getLabel())));
   }
-
 
 }
