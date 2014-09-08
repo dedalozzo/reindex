@@ -113,43 +113,39 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   // @{
 
   /**
-   * @brief Removes all tags.
+   * @brief Removes all associated tags.
    */
   public function resetTags() {
-
+    $this->unsetMetadata('tags');
   }
 
 
   /**
-   * @brief Adds the specified tag to the tags list.
+   * @brief Adds the specified tag to the list of tags.
+   * @param[in] int $tagId The tag uuid.
    */
-  public function addTag() {
-
+  public function addTag($tagId) {
+    $this->meta['tags'][] = $tagId;
   }
 
 
   /**
-   * @brief Adds many tags at once to the tags list.
+   * @brief Adds many tags at once to the list of tags.
    */
-  public function addMultipleTagsAtOnce() {
-
+  public function addMultipleTagsAtOnce(array $tags) {
+    $this->meta['tags'] = array_unique(array_merge($this->meta['tags'], $tags));
   }
 
 
   /**
-   * @brief Gets the associated tags list.
+   * @brief Gets the associated list of tags.
    */
   public function getTags() {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setKey($this->id);
+    $opts->doNotReduce();
 
-    $classifications = $this->couch->queryView("classifications", "perPost", NULL, $opts);
-
-    if (!$classifications->isEmpty()) {
-      $opts->reset();
-      $opts->doNotReduce();
-      return $this->couch->queryView("tags", "allNames", array_column($classifications->asArray(), 'value'), $opts);
-    }
+    if ($this->isMetadataPresent('tags'))
+      return $this->couch->queryView("tags", "allNames", $this->meta['tags'], $opts);
     else
       return [];
   }
