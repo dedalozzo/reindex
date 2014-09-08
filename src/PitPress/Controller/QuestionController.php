@@ -29,7 +29,7 @@ class QuestionController extends IndexController {
   }
 
 
-  public function newestAction() {
+  public function newestAction($tag = NULL) {
     parent::newestAction();
     $this->view->setVar('title', sprintf('Nuove %s', $this->getLabel()));
   }
