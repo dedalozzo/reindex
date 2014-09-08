@@ -47,4 +47,14 @@ abstract class Activity extends Doc {
     $this->badges[] = $badgeClass;
   }
 
+
+  // In case of a Post we add the tags, so we can obtain the favorites of a specific tag.
+  /*
+  if (method_exists($item, 'getTags')) {
+    $tags = array_column($item->getTags(), 'id');
+    ArrayHelper::unversion($tags);
+    $instance->meta['itemTags'] = $tags;
+  }
+  */
+
 }
