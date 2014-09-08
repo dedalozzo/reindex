@@ -41,19 +41,21 @@
               <input type="hidden" name="{{ security.getTokenKey() }}" value="{{ security.getToken() }}"/>
               <ul class="list vertical mbottom10">
                 <li>
-                  {{ email_field("email", "placeholder": "E-mail", "style": "width: 100%") }}
+                  {{ email_field("email", "placeholder": "E-mail") }}
                   <label>{{ validation.first("email") }}</label>
                 </li>
                 <li>
                   {{ password_field("password", "placeholder": "Password") }}
-                  <button type="submit" name="signin" class="btn blue">Accedi</button>
                   <label>{{ validation.first("password") }}</label>
+                </li>
+                <li class="pull-right">
+                  <button type="submit" name="signin" class="btn blue">Accedi</button>
                 </li>
               </ul>
             </form>
           </div>
           <div>
-            <p>Se non sei ancora registrato, puoi accedere usando uno dei seguenti social network.</p>
+            <p>Se non sei ancora registrato, puoi accedere usando uno dei seguenti social networks.</p>
             <ul class="list social half-gutter">
               <li><a id="facebook-btn" rel="facebook" href="//{{ serverName }}/accedi/facebook/"><span class="logo"></span>Facebook</a></li>
               <li><a id="google-btn" rel="google" href="//{{ serverName }}/accedi/google/"><span class="logo"></span>Google+</a></li>
@@ -70,13 +72,40 @@
           <div>
             <form action="//{{ serverName }}/registrati/" id="signinform" name="signinform" method="post" role="form">
               <ul class="list vertical mbottom10">
-                <li>{{ text_field("username", "placeholder": "Nome utente") }}</li>
-                <li>{{ email_field("email", "placeholder": "E-mail") }}</li>
-                <li>{{ password_field("password", "placeholder": "Password") }}</li>
-                <li>{{ password_field("password2", "placeholder": "Ripeti la password") }}</li>
-                <li><button type="submit" name="signin" class="btn blue">Registrati</button></li>
+                <li>
+                  {{ text_field("username", "placeholder": "Nome utente") }}
+                  <label>{{ validation.first("username") }}</label>
+                </li>
+                <li>
+                  {{ email_field("email", "placeholder": "E-mail") }}
+                  <label>{{ validation.first("email") }}</label>
+                </li>
+                <li>
+                  {{ password_field("password", "placeholder": "Password") }}
+                  <label>{{ validation.first("password") }}</label>
+                </li>
+                <li>
+                  {{ password_field("password2", "placeholder": "Ripeti la password") }}
+                  <label>{{ validation.first("password2") }}</label>
+                </li>
+                <li class="pull-right">
+                  <button type="submit" name="signin" class="btn blue">Registrati</button>
+                </li>
               </ul>
             </form>
+          </div>
+          <div>
+            <p>Puoi anche registrarti usando uno dei seguenti social networks.</p>
+            <ul class="list social half-gutter">
+              <li><a id="facebook-btn" rel="facebook" href="//{{ serverName }}/accedi/facebook/"><span class="logo"></span>Facebook</a></li>
+              <li><a id="google-btn" rel="google" href="//{{ serverName }}/accedi/google/"><span class="logo"></span>Google+</a></li>
+              <li class="space"></li>
+            </ul>
+            <ul class="list social">
+              <li><a id="linkedin-btn" rel="linkedin" href="//{{ serverName }}/accedi/linkedin/"><span class="logo"></span>LinkedIn</a></li>
+              <li><a id="github-btn" rel="github" href="//{{ serverName }}/accedi/github/"><span class="logo"></span>GitHub</a></li>
+              <li class="space"></li>
+            </ul>
           </div>
         </div>
       </section>
