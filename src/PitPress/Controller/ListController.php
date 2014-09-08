@@ -48,11 +48,11 @@ abstract class ListController extends BaseController {
       $opts->reset();
       $opts->doNotReduce()->includeMissingKeys();
 
-      $complex = [];
+      $keys = [];
       foreach ($ids as $postId)
-        $complex[] = [$postId, $this->user->id];
+        $keys[] = [$postId, $this->user->id];
 
-      $likes = $this->couch->queryView("votes", "perPostAndUser", $complex, $opts);
+      $likes = $this->couch->queryView("votes", "perPostAndUser", $keys, $opts);
     }
 
     // Scores.
@@ -87,17 +87,10 @@ abstract class ListController extends BaseController {
 
       // Tags.
       $opts->reset();
-      $opts->doNotReduce()->setKey($entry->id);
-      $classifications = $this->couch->queryView("classifications", "perPost", NULL, $opts);
+      $opts->doNotReduce();
 
-      if (!$classifications->isEmpty()) {
-        $tagIds = array_column($classifications->asArray(), 'value');
-        $opts->reset();
-        $opts->doNotReduce();
-        $entry->tags = $this->couch->queryView("tags", "allNames", $tagIds, $opts);
-      }
-      else
-        $entry->tags = [];
+      if (!empty($entry->tags))
+        $entry->tags = $this->couch->queryView("tags", "allNames", $entry->tags, $opts);
 
       $entries[] = $entry;
     }
