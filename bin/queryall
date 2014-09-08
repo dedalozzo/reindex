@@ -3,7 +3,6 @@ pit query tags/all &
 pit query votes/perPost &
 pit query stars/perItem &
 pit query subscriptions/perItem --limit=1 &
-pit query classifications/perPost &
 pit query reputation/perUser &
 pit query favorites/perDateAdded --limit=1 &
 pit query users/allNames --limit=1 &
