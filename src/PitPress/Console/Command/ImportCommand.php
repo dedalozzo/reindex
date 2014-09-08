@@ -117,7 +117,6 @@ class ImportCommand extends AbstractCommand {
 
 
   private function importRelated(Post $post) {
-    $this->importClassifications($post);
     $this->importReplies($post);
     $this->importFavorites($post);
     $this->importSubscriptions($post);
@@ -143,6 +142,7 @@ class ImportCommand extends AbstractCommand {
 
     $purged = Text::purge($article->html);
     $article->excerpt = Text::truncate($purged);
+    $this->importClassifications($article);
 
     // We finally save the article.
     try {
@@ -214,6 +214,8 @@ class ImportCommand extends AbstractCommand {
     $book->positive = Text::bbcodeToMarkdown($positive, $item->id);
     $book->negative = Text::bbcodeToMarkdown($negative, $item->id);
 
+    $this->importClassifications($book);
+
     // We finally save the book.
     try {
       $book->approve();
@@ -279,8 +281,8 @@ class ImportCommand extends AbstractCommand {
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
 
     while ($item = mysqli_fetch_object($result)) {
-      $doc = Classification::create($post, $item->tagId, (int)$item->unixTime);
-      $this->couch->saveDoc($doc);
+      //$doc = Classification::create($post, $item->tagId, (int)$item->unixTime);
+      $post->addTag($item->tagId);
     }
 
     mysqli_free_result($result);
@@ -445,6 +447,8 @@ class ImportCommand extends AbstractCommand {
       // I don't know why, a double PHP_EOL is required, otherwise any subtitles containing the `à` character will
       // generate a JSON conversion error. Maybe it is a CouchDB bug or maybe it's an Hoedown bug. todo
       $article->html = "";
+
+      $this->importClassifications($article);
 
       $article->approve();
       $article->save();
