@@ -40,7 +40,6 @@ class InitCommand extends AbstractCommand {
     $this->initScores();
     $this->initStars();
     $this->initSubscriptions();
-    $this->initClassifications();
     $this->initReputation();
     $this->initBadges();
     $this->initFavorites();
@@ -87,7 +86,8 @@ function($doc) use ($emit) {
        'excerpt' => $doc->excerpt,
        'slug' => $doc->slug,
        'publishingDate' => $doc->publishingDate,
-       'userId' => $doc->userId
+       'userId' => $doc->userId,
+       'tags' => $doc->tags
      ]);
 };
 MAP;
@@ -498,72 +498,6 @@ MAP;
   }
 
 
-  protected function initClassifications() {
-    $doc = DesignDoc::create('classifications');
-
-
-    // @params postId
-    // @methods: Post.getTags()
-    function classificationsPerPost() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'classification')
-    $emit($doc->postId, $doc->tagId);
-};
-MAP;
-
-      $handler = new ViewHandler("perPost");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount();
-
-      return $handler;
-    }
-
-    $doc->addHandler(classificationsPerPost());
-
-
-    // @params NONE
-    function newestClassifications() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'classification')
-    $emit($doc->timestamp, $doc->tagId);
-};
-MAP;
-
-      $handler = new ViewHandler("newest");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount();
-
-      return $handler;
-    }
-
-    $doc->addHandler(newestClassifications());
-
-
-    // @params tagId
-    function classificationsPerTag() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'classification')
-    $emit($doc->tagId);
-};
-MAP;
-
-      $handler = new ViewHandler("perTag");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount();
-
-      return $handler;
-    }
-
-    $doc->addHandler(classificationsPerTag());
-
-
-    $this->couch->saveDoc($doc);
-  }
-
-
   protected function initBadges() {
     $doc = DesignDoc::create('badges');
 
@@ -901,6 +835,32 @@ MAP;
   }
 
 
+  protected function initTest() {
+    $doc = DesignDoc::create('test');
+
+
+    function recentTags() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) && $doc->supertype == 'post')
+    $emit($doc->publishingDate, $doc->points);
+};
+MAP;
+
+      $handler = new ViewHandler("recentTags");
+      $handler->mapFn = $map;
+      //$handler->reduceFn = $reduce;
+
+      return $handler;
+    }
+
+    $doc->addHandler(recentTags());
+
+
+    $this->couch->saveDoc($doc);
+  }
+
+
   /**
    * @brief Configures the command.
    */
@@ -960,10 +920,6 @@ MAP;
             $this->initSubscriptions();
             break;
 
-          case 'classifications':
-            $this->initClassifications();
-            break;
-
           case 'badges':
             $this->initBadges();
             break;
@@ -982,6 +938,10 @@ MAP;
 
           case 'replies':
             $this->initReplies();
+            break;
+
+          case 'tests':
+            $this->initTest();
             break;
         }
 
