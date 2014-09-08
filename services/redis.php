@@ -8,9 +8,6 @@
  */
 
 
-use ElephantOnCouch\Couch;
-
-
 // Creates an instance of Redis client and return it.
 $di->setShared('redis',
   function() use ($config) {
