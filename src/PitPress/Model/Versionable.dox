@@ -12,7 +12,6 @@ class Versionable {
   public string $previousVersionNumber //!< The version number of the previous document revision.
   public string $username; //!< The author username.
   public string $userId; //!< The user id who created the content.
-  public string $publishingDate; //!< The publishing date.
   //!@}
 
 }
