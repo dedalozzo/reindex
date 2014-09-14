@@ -101,12 +101,12 @@ abstract class ListController extends BaseController {
 
   /**
    * @brief Builds the post url, given its publishing date and slug.
-   * @param[in] int $publishingDate The publishing timestamp.
+   * @param[in] int $publishedAt The publishing timestamp.
    * @param[in] string $slug The slug of the title.
    * @return string The complete url of the post.
    */
-  protected function buildPostUrl($publishingDate, $slug) {
-    return "http://".$this->domainName.date('/Y/m/d/', $publishingDate).$slug;
+  protected function buildPostUrl($publishedAt, $slug) {
+    return "http://".$this->domainName.date('/Y/m/d/', $publishedAt).$slug;
   }
 
 
