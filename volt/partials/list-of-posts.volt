@@ -16,7 +16,7 @@
             <li><a class="tag {{ entry.type }}" href="//{{ domainName~'/'~types[entry.type] }}/">{{ types[entry.type] }}</a></li>
             {% set tags = entry.tags %}
             {% for tag in tags %}
-              <li><a class="tag" href="//{{ serverName }}/{{ tag['key'] }}/">{{ tag['value'] }}</a></li>
+              <li><a class="tag" href="//{{ serverName }}/{{ tag['value'] }}/">{{ tag['value'] }}</a></li>
             {% endfor %}
             <li class="space"></li>
           </ul>
