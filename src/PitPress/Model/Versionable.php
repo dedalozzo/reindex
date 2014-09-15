@@ -14,8 +14,6 @@ namespace PitPress\Model;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 use ElephantOnCouch\Generator\UUID;
 
-use PitPress\Helper\Time;
-
 
 /**
  * @brief A generic content created by a user.
@@ -94,16 +92,6 @@ abstract class Versionable extends Storable {
 
 
   /**
-   * @brief Returns a measure of the time passed since the publishing date. In case is passed more than a day, returns
-   * a human readable date.
-   * @return string
-   */
-  public function whenHasBeenPublished() {
-    return Time::when($this->publishingDate);
-  }
-
-
-  /**
    * @brief Returns the author's username.
    */
   public function getUsername() {
@@ -176,27 +164,6 @@ abstract class Versionable extends Storable {
   public function unsetUserId() {
     if ($this->isMetadataPresent('userId'))
       unset($this->meta['userId']);
-  }
-
-
-  public function getPublishingDate() {
-    return $this->meta['publishingDate'];
-  }
-
-
-  public function issetPublishingDate() {
-    return isset($this->meta['publishingDate']);
-  }
-
-
-  public function setPublishingDate($value) {
-    $this->meta['publishingDate'] = $value;
-  }
-
-
-  public function unsetPublishingDate() {
-    if ($this->isMetadataPresent('publishingDate'))
-      unset($this->meta['publishingDate']);
   }
 
   //! @endcond
