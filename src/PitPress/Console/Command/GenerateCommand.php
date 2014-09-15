@@ -131,7 +131,8 @@ class GenerateCommand extends AbstractCommand {
 
       $link->url = $item->get_link();
       $link->userId = $userId;
-      $link->publishingDate = time();
+      $link->createdAt = time();
+      $link->publishedAt = $link->createdAt;
 
       $link->approve();
       $link->save();
