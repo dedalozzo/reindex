@@ -16,6 +16,7 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Extension;
 use PitPress\Property;
+use PitPress\Helper;
 
 
 /**
@@ -41,6 +42,16 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     $this->meta['day'] = date("d", $this->publishedAt);
 
     parent::save();
+  }
+
+
+  /**
+   * @brief Returns a measure of the time passed since the publishing date. In case is passed more than a day, returns
+   * a human readable date.
+   * @return string
+   */
+  public function whenHasBeenPublished() {
+    return Helper\Time::when($this->publishedAt);
   }
 
 
