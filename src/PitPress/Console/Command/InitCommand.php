@@ -85,7 +85,7 @@ function($doc) use ($emit) {
        'title' => $doc->title,
        'excerpt' => $doc->excerpt,
        'slug' => $doc->slug,
-       'publishingDate' => $doc->publishingDate,
+       'publishedAt' => $doc->publishedAt,
        'userId' => $doc->userId,
        'tags' => $doc->tags
      ]);
@@ -144,7 +144,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
-    $emit($doc->publishingDate);
+    $emit($doc->publishedAt);
 };
 MAP;
 
@@ -163,7 +163,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
-    $emit([$doc->type, $doc->publishingDate]);
+    $emit([$doc->type, $doc->publishedAt]);
 };
 MAP;
 
@@ -182,7 +182,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
-    $emit([$doc->userId, $doc->publishingDate]);
+    $emit([$doc->userId, $doc->publishedAt]);
 };
 MAP;
 
@@ -201,7 +201,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
-    $emit([$doc->userId, $doc->type, $doc->publishingDate]);
+    $emit([$doc->userId, $doc->type, $doc->publishedAt]);
 };
 MAP;
 
@@ -227,7 +227,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'tag')
-    $emit($doc->_id, [$doc->name, $doc->excerpt, $doc->publishingDate]);
+    $emit($doc->_id, [$doc->name, $doc->excerpt, $doc->publishedAt]);
 };
 MAP;
 
@@ -262,7 +262,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'tag' && isset($doc->current))
-    $emit($doc->publishingDate);
+    $emit($doc->publishedAt);
 };
 MAP;
 
@@ -615,41 +615,41 @@ MAP;
 
 
     // @params: userId
-    function favoritesPerPublishingDate() {
+    function favoritesPerPublishedAt() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'star')
-    $emit([$doc->userId, $doc->itemPublishingDate], $doc->itemId);
+    $emit([$doc->userId, $doc->itemPublishedAt], $doc->itemId);
 };
 MAP;
 
-      $handler = new ViewHandler("perPublishingDate");
+      $handler = new ViewHandler("perPublishedAt");
       $handler->mapFn = $map;
       $handler->useBuiltInReduceFnCount();
 
       return $handler;
     }
 
-    $doc->addHandler(favoritesPerPublishingDate());
+    $doc->addHandler(favoritesPerPublishedAt());
 
 
     // @params: userid, type
-    function favoritesPerPublishingDateByType() {
+    function favoritesPerPublishedAtByType() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'star')
-    $emit([$doc->userId, $doc->itemType, $doc->itemPublishingDate], $doc->itemId);
+    $emit([$doc->userId, $doc->itemType, $doc->itemPublishedAt], $doc->itemId);
 };
 MAP;
 
-      $handler = new ViewHandler("perPublishingDateByType");
+      $handler = new ViewHandler("perPublishedAtByType");
       $handler->mapFn = $map;
       $handler->useBuiltInReduceFnCount(); // Used to count the posts.
 
       return $handler;
     }
 
-    $doc->addHandler(favoritesPerPublishingDateByType());
+    $doc->addHandler(favoritesPerPublishedAtByType());
 
 
     $this->couch->saveDoc($doc);
@@ -798,7 +798,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if (isset($doc->supertype) and $doc->supertype == 'reply')
-    $emit([$doc->postId, $doc->publishingDate]);
+    $emit([$doc->postId, $doc->publishedAt]);
 };
 MAP;
 
@@ -843,7 +843,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if (isset($doc->supertype) && $doc->supertype == 'post')
-    $emit($doc->publishingDate, $doc->points);
+    $emit($doc->publishedAt, $doc->points);
 };
 MAP;
 
