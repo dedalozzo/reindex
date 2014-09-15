@@ -36,9 +36,9 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     $this->meta['slug'] = $this->getSlug();
 
     // Used to group by year, month and day.
-    $this->meta['year'] = date("Y", $this->publishingDate);
-    $this->meta['month'] = date("m", $this->publishingDate);
-    $this->meta['day'] = date("d", $this->publishingDate);
+    $this->meta['year'] = date("Y", $this->publishedAt);
+    $this->meta['month'] = date("m", $this->publishedAt);
+    $this->meta['day'] = date("d", $this->publishedAt);
 
     parent::save();
   }
@@ -71,7 +71,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @return string
    */
   public function getHref() {
-    return "/".date("Y/m/d", $this->publishingDate)."/".$this->getSlug();
+    return "/".date("Y/m/d", $this->publishedAt)."/".$this->getSlug();
   }
 
 
@@ -173,6 +173,27 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   public function unsetTitle() {
     if ($this->isMetadataPresent('title'))
       unset($this->meta['title']);
+  }
+
+
+  public function getPublishedAt() {
+    return $this->meta['publishedAt'];
+  }
+
+
+  public function issetPublishedAt() {
+    return isset($this->meta['publishedAt']);
+  }
+
+
+  public function setPublishedAt($value) {
+    $this->meta['publishedAt'] = $value;
+  }
+
+
+  public function unsetPublishedAt() {
+    if ($this->isMetadataPresent('publishedAt'))
+      unset($this->meta['publishedAt']);
   }
 
   //! @endcond
