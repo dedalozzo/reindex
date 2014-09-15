@@ -97,8 +97,8 @@ class IndexController extends ListController {
 
       $properties = $posts[$i]['value'];
       $entry->title = $properties['title'];
-      $entry->url = $this->buildPostUrl($properties['publishingDate'], $properties['slug']);
-      $entry->whenHasBeenPublished = Helper\Time::when($properties['publishingDate']);
+      $entry->url = $this->buildPostUrl($properties['publishedAt'], $properties['slug']);
+      $entry->whenHasBeenPublished = Helper\Time::when($properties['publishedAt']);
       $entry->score = is_null($scores[$i]['value']) ? 0 : $scores[$i]['value'];
       $entry->repliesCount = is_null($replies[$i]['value']) ? 0 : $replies[$i]['value'];
 
@@ -210,7 +210,7 @@ class IndexController extends ListController {
 
     if (count($entries) > self::RESULTS_PER_PAGE) {
       $last = array_pop($entries);
-      $this->view->setVar('nextPage', $this->buildPaginationUrl($last->publishingDate, $last->id));
+      $this->view->setVar('nextPage', $this->buildPaginationUrl($last->publishedAt, $last->id));
     }
 
     $this->view->setVar('entries', $entries);
@@ -253,7 +253,7 @@ class IndexController extends ListController {
 
     if (count($entries) > self::RESULTS_PER_PAGE) {
       $last = array_pop($entries);
-      $this->view->setVar('nextPage', $this->buildPaginationUrl($last->publishingDate, $last->id));
+      $this->view->setVar('nextPage', $this->buildPaginationUrl($last->publishedAt, $last->id));
     }
 
     $this->view->setVar('entries', $entries);
@@ -364,7 +364,7 @@ class IndexController extends ListController {
 
     if (count($entries) > self::RESULTS_PER_PAGE) {
       $last = array_pop($entries);
-      $this->view->setVar('nextPage', $this->buildPaginationUrl($last->publishingDate, $last->id));
+      $this->view->setVar('nextPage', $this->buildPaginationUrl($last->publishedAt, $last->id));
     }
 
     $this->view->setVar('entries', $entries);
@@ -387,12 +387,12 @@ class IndexController extends ListController {
     if ($index === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     if ($index == 0) {
-      $perDate = 'perPublishingDate';
-      $perDateByType = 'perPublishingDateByType';
+      $perDate = 'perPublishedAt';
+      $perDateByType = 'perPublishedAtByType';
     }
     else {
-      $perDate = 'perDateAdded';
-      $perDateByType = 'perDateAddedByType';
+      $perDate = 'perAddedAt';
+      $perDateByType = 'perAddedAtByType';
     }
 
     $opts = new ViewQueryOpts();

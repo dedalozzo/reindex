@@ -31,12 +31,12 @@ class Star extends Doc {
     $instance->meta["userId"] = $userId;
     $instance->meta["itemId"] = $item->getUnversionId();
     $instance->meta["itemType"] = $item->type;
-    $instance->meta["itemPublishingDate"] = $item->publishingDate;
+    $instance->meta["itemPublishedAt"] = $item->publishedAt;
 
     if (is_null($timestamp))
-      $instance->meta["dateAdded"] = time();
+      $instance->meta["addedAt"] = time();
     else
-      $instance->meta["dateAdded"] = $timestamp;
+      $instance->meta["addedAt"] = $timestamp;
 
     return $instance;
   }

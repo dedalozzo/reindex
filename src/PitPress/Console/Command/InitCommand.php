@@ -577,41 +577,41 @@ MAP;
 
 
     // @params: userId
-    function favoritesPerDateAdded() {
+    function favoritesPerPublishedAt() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'star')
-    $emit([$doc->userId, $doc->dateAdded], $doc->itemId);
+    $emit([$doc->userId, $doc->publishedAt], $doc->itemId);
 };
 MAP;
 
-      $handler = new ViewHandler("perDateAdded");
+      $handler = new ViewHandler("perPublishedAt");
       $handler->mapFn = $map;
       $handler->useBuiltInReduceFnCount();
 
       return $handler;
     }
 
-    $doc->addHandler(favoritesPerDateAdded());
+    $doc->addHandler(favoritesPerPublishedAt());
 
 
     // @params: userid, type
-    function favoritesPerDateAddedByType() {
+    function favoritesPerPublishedAtByType() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'star')
-    $emit([$doc->userId, $doc->itemType, $doc->dateAdded], $doc->itemId);
+    $emit([$doc->userId, $doc->itemType, $doc->publishedAt], $doc->itemId);
 };
 MAP;
 
-      $handler = new ViewHandler("perDateAddedByType");
+      $handler = new ViewHandler("perPublishedAtByType");
       $handler->mapFn = $map;
       $handler->useBuiltInReduceFnCount(); // Used to count the posts.
 
       return $handler;
     }
 
-    $doc->addHandler(favoritesPerDateAddedByType());
+    $doc->addHandler(favoritesPerPublishedAtByType());
 
 
     // @params: userId

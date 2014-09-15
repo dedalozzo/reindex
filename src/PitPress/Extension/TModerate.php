@@ -39,7 +39,7 @@ trait TModerate {
 
   public function publish() {
     $this->meta['state'] = PostState::PUBLISHED;
-    $this->meta["publishingDate"] = time();
+    $this->meta["publishedAt"] = time();
 
     $this->save();
   }

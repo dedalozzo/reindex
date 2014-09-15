@@ -128,7 +128,8 @@ class ImportCommand extends AbstractCommand {
 
     $article->type = 'article';
     $article->userId = $item->userId;
-    $article->publishingDate = (int)$item->unixTime;
+    $article->createdAt = (int)$item->unixTime;
+    $article->publishedAt = $article->createdAt;
     $article->title = Text::convertCharset($item->title, TRUE);
     $article->body = $this->convertText($item->body, $item->idItem);
 
@@ -169,7 +170,9 @@ class ImportCommand extends AbstractCommand {
 
     $book->type = 'book';
     $book->userId = $item->userId;
-    $book->publishingDate = (int)$item->unixTime;
+    $book->createdAt = (int)$item->unixTime;
+    $book->publishedAt = $book->createdAt;
+
     $book->title = Text::convertCharset($item->title, TRUE);
 
     $body = stripslashes($item->body);
@@ -255,7 +258,7 @@ class ImportCommand extends AbstractCommand {
     while ($item = mysqli_fetch_object($result)) {
       $tag = Tag::create($item->id);
 
-      $tag->publishingDate = (int)$item->unixTime;
+      $tag->createdAt = (int)$item->unixTime;
       $tag->name = Text::convertCharset(strtolower(str_replace(" ", "-", stripslashes($item->name))));
       $tag->userId = $userId;
 
@@ -293,16 +296,17 @@ class ImportCommand extends AbstractCommand {
    * @brief Imports favorites.
    */
   protected function importFavorites(Post $post) {
-    $sql = "SELECT I.id AS itemId, I.stereotype as stereotype, M.id AS userId, UNIX_TIMESTAMP(I.date) AS publishingDate, UNIX_TIMESTAMP(F.date) AS dateAdded FROM Item I, Member M, Favourite F WHERE I.idItem = F.idItem AND M.idMember = F.idMember AND I.id = '".$post->getUnversionId()."'";
+    $sql = "SELECT I.id AS itemId, I.stereotype as stereotype, M.id AS userId, UNIX_TIMESTAMP(I.date) AS publishedAt, UNIX_TIMESTAMP(F.date) AS addedAt FROM Item I, Member M, Favourite F WHERE I.idItem = F.idItem AND M.idMember = F.idMember AND I.id = '".$post->getUnversionId()."'";
 
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
 
     while ($item = mysqli_fetch_object($result)) {
       $post->id = $item->itemId;
       $post->userId = $item->userId;
-      $post->publishingDate = (int)$item->publishingDate;
+      $post->createdAt = (int)$item->publishedAt;
+      $post->publishedAt = $post->createdAt;
 
-      $doc = Star::create($item->userId, $post, (int)$item->dateAdded);
+      $doc = Star::create($item->userId, $post, (int)$item->addedAt);
 
       $this->couch->saveDoc($doc);
     }
@@ -341,7 +345,7 @@ class ImportCommand extends AbstractCommand {
         $replay = new Reply();
 
         $replay->id = UUID::generate(UUID::UUID_RANDOM, UUID::FMT_STRING);
-        $replay->publishingDate = (int)$item->unixTime;
+        $replay->createdAt = (int)$item->unixTime;
         $replay->postId = $post->getUnversionId();
         $replay->userId = $item->userId;
 
@@ -402,7 +406,8 @@ class ImportCommand extends AbstractCommand {
         $article->type = 'article';
         $article->versionNumber = time();
         $article->userId = $page->userId;
-        $article->publishingDate = (int)$page->unixTime;
+        $article->createdAd = (int)$page->unixTime;
+        $article->publishedAt = $article->createdAd;
         $article->title = $this->pruneTitle($title, $subtitle);
         //$this->monolog->addNotice(sprintf("%s", $article->title));
 

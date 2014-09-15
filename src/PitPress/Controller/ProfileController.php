@@ -80,7 +80,7 @@ class ProfileController extends ListController {
 
     if (count($entries) > self::RESULTS_PER_PAGE) {
       $last = array_pop($entries);
-      $this->view->setVar('nextPage', $this->buildPaginationUrl($last->publishingDate, $last->id));
+      $this->view->setVar('nextPage', $this->buildPaginationUrl($last->publishedAt, $last->id));
     }
 
     $this->view->setVar('entries', $entries);
