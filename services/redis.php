@@ -13,7 +13,7 @@ $di->setShared('redis',
   function() use ($config) {
     $redis = new Redis();
     //$redis->pconnect($config->redis->socket);
-    $redis->pconnect("127.0.0.1");
+    $redis->pconnect($config->redis->host, $config->redis->port);
 
     return $redis;
   }
