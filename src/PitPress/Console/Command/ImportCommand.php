@@ -560,10 +560,10 @@ class ImportCommand extends AbstractCommand {
       $user->email = Text::convertCharset($item->email);
       $user->password = Text::convertCharset($item->password);
       $user->birthday = (int)$item->birthday;
-      $user->sex = $item->sex;
+      $user->gender = $item->sex; // 0 => undefined, 1 => male, 2 => female.
       $user->internetProtocolAddress = Text::convertCharset($item->ipAddress);
       $user->creationDate = (int)$item->creationDate;
-      $user->confirmationHash = Text::convertCharset($item->confirmationHash);
+      $user->hash = Text::convertCharset($item->confirmationHash);
 
       if ($item->confirmed == 1)
         $user->confirm();
