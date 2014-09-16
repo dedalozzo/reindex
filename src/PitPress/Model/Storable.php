@@ -15,6 +15,8 @@ use ElephantOnCouch\Doc\Doc;
 
 use Phalcon\DI;
 
+use PitPress\Helper;
+
 
 /**
  * @brief This class is used to represent a storable object.
@@ -48,6 +50,26 @@ abstract class Storable extends Doc {
       $this->createdAt = $this->modifiedAt;
 
     $this->couch->saveDoc($this);
+  }
+
+
+  /**
+   * @brief Returns a measure of the time passed since the creation time. In case is passed more than a day, returns
+   * a human readable date.
+   * @return string
+   */
+  public function whenHasBeenCreated() {
+    return Helper\Time::when($this->createdAt);
+  }
+
+
+  /**
+   * @brief Returns a measure of the time passed since the last modification. In case is passed more than a day, returns
+   * a human readable date.
+   * @return string
+   */
+  public function whenHasBeenModified() {
+    return Helper\Time::when($this->modifiedAt);
   }
 
 
