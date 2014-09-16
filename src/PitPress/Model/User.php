@@ -216,6 +216,12 @@ class User extends Storable implements Extension\ICount {
   }
 
 
+  public function unsetFirstName() {
+    if ($this->isMetadataPresent('firstName'))
+      unset($this->meta['firstName']);
+  }
+
+
   public function getLastName() {
     return $this->meta['lastName'];
   }
@@ -228,6 +234,12 @@ class User extends Storable implements Extension\ICount {
 
   public function setLastName($value) {
     $this->meta['lastName'] = $value;
+  }
+
+
+  public function unsetLastName() {
+    if ($this->isMetadataPresent('lastName'))
+      unset($this->meta['lastName']);
   }
 
 
@@ -246,6 +258,12 @@ class User extends Storable implements Extension\ICount {
   }
 
 
+  public function unsetUsername() {
+    if ($this->isMetadataPresent('username'))
+      unset($this->meta['username']);
+  }
+
+
   public function getEmail() {
     return $this->meta['email'];
   }
@@ -258,6 +276,12 @@ class User extends Storable implements Extension\ICount {
 
   public function setEmail($value) {
     $this->meta['email'] = strtolower($value);
+  }
+
+
+  public function unsetEmail() {
+    if ($this->isMetadataPresent('email'))
+      unset($this->meta['email']);
   }
 
 
@@ -276,18 +300,30 @@ class User extends Storable implements Extension\ICount {
   }
 
 
-  public function getSex() {
-    return @$this->meta['sex'];
+  public function unsetPassword() {
+    if ($this->isMetadataPresent('password'))
+      unset($this->meta['password']);
   }
 
 
-  public function issetSex() {
-    return isset($this->meta['sex']);
+  public function getGender() {
+    return @$this->meta['gender'];
   }
 
 
-  public function setSex($value) {
-    $this->meta['sex'] = $value;
+  public function issetGender() {
+    return isset($this->meta['gender']);
+  }
+
+
+  public function setGender($value) {
+    $this->meta['gender'] = $value;
+  }
+
+
+  public function unsetGender() {
+    if ($this->isMetadataPresent('gender'))
+      unset($this->meta['gender']);
   }
 
 
@@ -306,6 +342,12 @@ class User extends Storable implements Extension\ICount {
   }
 
 
+  public function unsetBirthday() {
+    if ($this->isMetadataPresent('birthday'))
+      unset($this->meta['birthday']);
+  }
+
+
   public function getAbout() {
     return $this->meta['about'];
   }
@@ -318,6 +360,12 @@ class User extends Storable implements Extension\ICount {
 
   public function setAbout($value) {
     $this->meta['about'] = $value;
+  }
+
+  
+  public function unsetAbout() {
+    if ($this->isMetadataPresent('about'))
+      unset($this->meta['about']);
   }
   
 
@@ -336,39 +384,30 @@ class User extends Storable implements Extension\ICount {
   }
 
 
-  public function getCreationDate() {
-    return $this->meta['creationDate'];
+  public function unsetInternetProtocolAddress() {
+    if ($this->isMetadataPresent('ipAddress'))
+      unset($this->meta['ipAddress']);
   }
 
 
-  public function issetCreationDate() {
-    return isset($this->meta['creationDate']);
+  public function getHash() {
+    return $this->meta['hash'];
   }
 
 
-  public function setCreationDate($value) {
-    $this->meta['creationDate'] = $value;
+  public function issetHash() {
+    return isset($this->meta['hash']);
   }
 
 
-  public function unsetCreationDate() {
-    if ($this->isMetadataPresent('creationDate'))
-      unset($this->meta['creationDate']);
+  public function setHash($value) {
+    $this->meta['hash'] = $value;
   }
 
 
-  public function getConfirmationHash() {
-    return $this->meta['confirmationHash'];
-  }
-
-
-  public function issetConfirmationHash() {
-    return isset($this->meta['confirmationHash']);
-  }
-
-
-  public function setConfirmationHash($value) {
-    $this->meta['confirmationHash'] = $value;
+  public function unsetHash() {
+    if ($this->isMetadataPresent('hash'))
+      unset($this->meta['hash']);
   }
 
   //! @endcond
