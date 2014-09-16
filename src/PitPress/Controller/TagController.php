@@ -23,22 +23,24 @@ use PitPress\Helper;
 class TagController extends BaseController {
 
 
-  protected function getEntries($keys) {
-    if (empty($keys))
+  protected function getEntries($ids) {
+    if (empty($ids))
       return [];
 
     $opts = new ViewQueryOpts();
 
     // Gets the tags properties.
     $opts->doNotReduce();
-    $tags = $this->couch->queryView("tags", "all", $keys, $opts);
+    $tags = $this->couch->queryView("tags", "all", $ids, $opts);
 
-    $this->view->setVar('tagsCount', $tags->getTotalRows());
+    $this->view->setVar('tagsCount', $tags->getTotalRows()); // todo This must be changed.
+
+    Helper\ArrayHelper::unversion($ids);
 
     // Retrieves the posts count per tag.
     $opts->reset();
     $opts->groupResults()->includeMissingKeys();
-    $classifications = $this->couch->queryView("classifications", "perTag", $keys, $opts);
+    $postsCount = $this->couch->queryView("tags", "count", $ids, $opts);
 
     $entries = [];
     $tagsCount = count($tags);
@@ -48,7 +50,7 @@ class TagController extends BaseController {
       $entry->name = $tags[$i]['value'][0];
       $entry->excerpt = $tags[$i]['value'][1];
       $entry->whenHasBeenPublished = Helper\Time::when($tags[$i]['value'][2]);
-      $entry->postsCount = is_null($classifications[$i]['value']) ? 0 : $classifications[$i]['value'];
+      $entry->postsCount = is_null($postsCount[$i]['value']) ? 0 : $postsCount[$i]['value'];
 
       $entries[] = $entry;
     }
