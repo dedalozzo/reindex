@@ -8,18 +8,16 @@ class User  {
 
   /** @name Properties */
   //!@{
+  string $username; //!< The username.
   string $firstName; //!< First name.
   string $lastName; //!< Last surname.
-  string $username; //!< The username.
 
   string $email; //!< E-mail.
   string $password; //!< Password chosen by the user.
-  string $confirmationHash //!< String hash sent via e-mail to the user to confirm that his e-mail is real.
+  string $hash //!< String hash sent via e-mail to the user to confirm that his e-mail is real.
   string $internetProtocolAddress //!< The IP address of the user.
 
-  integer $creationDate; //!< Registration date.
-
-  integer $sex; //!< Sex.
+  integer $gender; //!< Sex.
   integer $birthday; //!< Date of birth.
   string $about; //!< A few words about the user.
 
