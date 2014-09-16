@@ -177,6 +177,46 @@ MAP;
     $doc->addHandler(postsPerDateByType());
 
 
+    // @params: NONE
+    function postsPerDateByTag() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
+    foreach ($doc->tags as tagId)
+      $emit([tagId, $doc->publishedAt]);
+};
+MAP;
+
+      $handler = new ViewHandler("perDateByTag");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
+
+      return $handler;
+    }
+
+    $doc->addHandler(postsPerDateByTag());
+
+
+    // @params: type
+    function postsPerDateByTagAndType() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
+    foreach ($doc->tags as tagId)
+      $emit([tagId, $doc->type, $doc->publishedAt]);
+};
+MAP;
+
+      $handler = new ViewHandler("perDateByTagAndType");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
+
+      return $handler;
+    }
+
+    $doc->addHandler(postsPerDateByTagAndType());
+
+
     // @params: userId
     function postsPerDateByUser() {
       $map = <<<'MAP'
@@ -290,6 +330,25 @@ MAP;
     }
 
     $doc->addHandler(tagsByName());
+
+
+    function tagsCount() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) && $doc->supertype == 'post')
+    foreach ($doc->tags as $tagId)
+      $emit($tagId);
+};
+MAP;
+
+      $handler = new ViewHandler("count");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
+
+      return $handler;
+    }
+
+    $doc->addHandler(tagsCount());
 
 
     $this->couch->saveDoc($doc);
@@ -614,44 +673,6 @@ MAP;
     $doc->addHandler(favoritesPerPublishedAtByType());
 
 
-    // @params: userId
-    function favoritesPerPublishedAt() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'star')
-    $emit([$doc->userId, $doc->itemPublishedAt], $doc->itemId);
-};
-MAP;
-
-      $handler = new ViewHandler("perPublishedAt");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount();
-
-      return $handler;
-    }
-
-    $doc->addHandler(favoritesPerPublishedAt());
-
-
-    // @params: userid, type
-    function favoritesPerPublishedAtByType() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'star')
-    $emit([$doc->userId, $doc->itemType, $doc->itemPublishedAt], $doc->itemId);
-};
-MAP;
-
-      $handler = new ViewHandler("perPublishedAtByType");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
-
-      return $handler;
-    }
-
-    $doc->addHandler(favoritesPerPublishedAtByType());
-
-
     $this->couch->saveDoc($doc);
   }
 
@@ -871,7 +892,7 @@ MAP;
       InputArgument::IS_ARRAY | InputArgument::REQUIRED,
       "The documents containing the views you want create. Use 'all' if you want insert all the documents, 'users' if
       you want just init the users or separate multiple documents with a space. The available documents are: docs, posts,
-      tags, votes, scores, stars, subscriptions, classifications, badges, favorites, users, reputation, replies.");
+      tags, votes, scores, stars, subscriptions, badges, favorites, users, reputation, replies.");
   }
 
 
