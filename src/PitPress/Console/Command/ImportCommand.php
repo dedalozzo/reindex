@@ -406,8 +406,8 @@ class ImportCommand extends AbstractCommand {
         $article->type = 'article';
         $article->versionNumber = time();
         $article->userId = $page->userId;
-        $article->createdAd = (int)$page->unixTime;
-        $article->publishedAt = $article->createdAd;
+        $article->createdAt = (int)$page->unixTime;
+        $article->publishedAt = $article->createdAt;
         $article->title = $this->pruneTitle($title, $subtitle);
         //$this->monolog->addNotice(sprintf("%s", $article->title));
 
@@ -541,7 +541,7 @@ class ImportCommand extends AbstractCommand {
     $this->output->writeln("Importing users...");
 
     //$sql = "SELECT idMember, name AS firstName, surname AS lastName, nickName AS username, email, password, sex, birthDate AS birthday, ipAddress, confirmHash AS confirmationHash, confirmed AS authenticated, regDate AS creationDate, lastUpdate, avatarData, avatarType, realNamePcy FROM Member";
-    $sql = "SELECT id, name AS firstName, surname AS lastName, nickName AS username, email, password, sex, UNIX_TIMESTAMP(birthDate) AS birthday, ipAddress, confirmHash AS confirmationHash, confirmed, UNIX_TIMESTAMP(regDate) AS creationDate, lastUpdate, realNamePcy FROM Member";
+    $sql = "SELECT id, name AS firstName, surname AS lastName, nickName AS username, email, password, sex, UNIX_TIMESTAMP(birthDate) AS birthday, ipAddress, confirmHash AS confirmationHash, confirmed, UNIX_TIMESTAMP(regDate) AS createdAt, UNIX_TIMESTAMP(lastUpdate) as modifiedAt, realNamePcy FROM Member";
     $sql .= $this->limit;
 
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
@@ -562,7 +562,8 @@ class ImportCommand extends AbstractCommand {
       $user->birthday = (int)$item->birthday;
       $user->gender = $item->sex; // 0 => undefined, 1 => male, 2 => female.
       $user->internetProtocolAddress = Text::convertCharset($item->ipAddress);
-      $user->creationDate = (int)$item->creationDate;
+      $user->createdAt = (int)$item->createdAt;
+      $user->modifiedAt = is_null($item->modifiedAt) ? $user->createdAt : (int)$item->modifiedAt;
       $user->hash = Text::convertCharset($item->confirmationHash);
 
       if ($item->confirmed == 1)
