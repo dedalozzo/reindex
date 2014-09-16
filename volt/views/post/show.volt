@@ -119,7 +119,7 @@
     {% endif %}
 
     <hr class="fade-short">
-    <div class="item-time">{{ reply.whenHasBeenPublished() }}</div>
+    <div class="item-time">{{ reply.whenHasBeenCreated() }}</div>
     <div class="item-content">
       <div class="item-body">
         {{ reply.html }}
