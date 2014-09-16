@@ -58,6 +58,24 @@ class IndexController extends ListController {
   }
 
 
+  /**
+   * @brief Given a tag's name, returns its id.
+   * @param[in] string $name The tag's name.
+   * @return string|bool Returns the tag id, or `false` in case the tag doesn't exist.
+   */
+  protected function getTagId($name) {
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->setLimit(1)->setKey($name);
+
+    $rows = $this->couch->queryView('tags', 'byName', NULL, $opts);
+
+    if ($rows->count())
+      return $rows->current()['id'];
+    else
+      return FALSE;
+  }
+
+
   /*
    * @brief Retrieves information for a bunch of posts.
    */
@@ -190,6 +208,11 @@ class IndexController extends ListController {
    * @brief Displays the newest posts.
    */
   public function newestAction($tag = NULL) {
+    if (isset($tag)) {
+      $tagId = $this->getTagId($tag);
+      if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+    }
+
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->reverseOrderOfResults()->setLimit(self::RESULTS_PER_PAGE+1);
 
@@ -197,14 +220,24 @@ class IndexController extends ListController {
     $startKey = isset($_GET['startkey']) ? (int)$_GET['startkey'] : Couch::WildCard();
     if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
 
-    if ($this->isSameClass()) {
-      $opts->setStartKey($startKey);
-      $rows = $this->couch->queryView("posts", "perDate", NULL, $opts);
-    }
-    else {
-      $opts->setStartKey([$this->type, $startKey])->setEndKey([$this->type]);
-      $rows = $this->couch->queryView("posts", "perDateByType", NULL, $opts);
-    }
+    if ($this->isSameClass())
+      if (is_null($tag)) {
+        $opts->setStartKey($startKey);
+        $rows = $this->couch->queryView("posts", "perDate", NULL, $opts);
+      }
+      else {
+        $opts->setStartKey([$tagId, $startKey])->setEndKey([$tagId]);
+        $rows = $this->couch->queryView("posts", "perDateByType", NULL, $opts);
+      }
+    else
+      if (is_null($tag)) {
+        $opts->setStartKey([$this->type, $startKey])->setEndKey([$this->type]);
+        $rows = $this->couch->queryView("posts", "perDateByType", NULL, $opts);
+      }
+      else {
+        $opts->setStartKey([$tagId, $this->type, $startKey])->setEndKey([$tagId, $this->type]);
+        $rows = $this->couch->queryView("posts", "perDateByType", NULL, $opts);
+      }
 
     $entries = $this->getEntries(array_column($rows->asArray(), 'id'));
 
