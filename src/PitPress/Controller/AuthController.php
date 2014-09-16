@@ -228,7 +228,7 @@ class AuthController extends BaseController {
   /**
    * @brief The user has clicked on the confirmation link sent via e-mail by the previous action.
    */
-  public function activateAction($confirmationHash) {
+  public function activateAction($hash) {
     //$sql = "SELECT idMember, UNIX_TIMESTAMP(lastUpdate), confirmed, email FROM Member WHERE confirmHash = '".mysql_real_escape_string($confirmHash)."'";
     /*$result = mysql_query($sql, $connection) or die(mysql_error());
 
