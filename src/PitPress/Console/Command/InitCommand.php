@@ -85,6 +85,7 @@ function($doc) use ($emit) {
        'title' => $doc->title,
        'excerpt' => $doc->excerpt,
        'slug' => $doc->slug,
+       'modifiedAt' => $doc->modifiedAt,
        'publishedAt' => $doc->publishedAt,
        'userId' => $doc->userId,
        'tags' => $doc->tags
@@ -182,8 +183,8 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
-    foreach ($doc->tags as tagId)
-      $emit([tagId, $doc->publishedAt]);
+    foreach ($doc->tags as $tagId)
+      $emit([$tagId, $doc->publishedAt]);
 };
 MAP;
 
@@ -202,8 +203,8 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
-    foreach ($doc->tags as tagId)
-      $emit([tagId, $doc->type, $doc->publishedAt]);
+    foreach ($doc->tags as $tagId)
+      $emit([$tagId, $doc->type, $doc->publishedAt]);
 };
 MAP;
 
