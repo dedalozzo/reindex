@@ -51,7 +51,7 @@ class IndexGroup extends Group {
    * @brief Adds the routes to the group.
    * @details This method maybe called twice because tags use the same routes with a different prefix.
    */
-  protected function addRoutes() {
+  protected function addRoutes($postfix = "") {
     $this->addGet('/', ['action' => $this->getDefaultAction()]);
     $this->addGet('/nuovi/', ['action' => 'newest']);
     $this->addGet('/popolari/', ['action' => 'popular']);
@@ -61,9 +61,12 @@ class IndexGroup extends Group {
     $this->addGet('/preferiti/', ['action' => 'favorite']);
     $this->addGet('/preferiti/{filter}/', ['action' => 'favorite']);
 
-    $this->addGet('/([0-9]{4})/', ['action' => 'perDate', 'year' => 1]);
-    $this->addGet('/([0-9]{4})/([0-9]{2})/', ['action' => 'perDate', 'year' => 1, 'month' => 2]);
-    $this->addGet('/([0-9]{4})/([0-9]{2})/([0-9]{2})/', ['action' => 'perDate', 'year' => 1, 'month' => 2, 'day' => 3]);
+    $this->addGet('/{year:[0-9]{4}}/', ['action' => 'perDate'.$postfix]);
+    $this->addGet('/{year:[0-9]{4}}/{month:[0-9]{2}}/', ['action' => 'perDate'.$postfix]);
+    $this->addGet('/{year:[0-9]{4}}/{month:[0-9]{2}}/{day:[0-9]{2}}/', ['action' => 'perDate'.$postfix]);
+    //$this->addGet('/([0-9]{4})/', ['action' => 'perDate', 'year' => 1]);
+    //$this->addGet('/([0-9]{4})/([0-9]{2})/', ['action' => 'perDate', 'year' => 1, 'month' => 2]);
+    //$this->addGet('/([0-9]{4})/([0-9]{2})/([0-9]{2})/', ['action' => 'perDate', 'year' => 1, 'month' => 2, 'day' => 3]);
     //$this->addGet('/([0-9]{4})/(?:([0-9]{2})/(?:([0-9]{2})/){0,1}){0,1}', ['action' => 'perDate', 'year' => 1, 'month' => 2, 'day' => 3]);
 
     //$this->addGet('/rss', ['action' => 'rss']);
@@ -79,8 +82,8 @@ class IndexGroup extends Group {
     $this->addRoutes();
 
     // Sets the standard routes for a tag.
-    $this->setPrefix('/{tag}'.$this->getPrefix());
-    $this->addRoutes();
+    $this->setPrefix('/{tag:[a-z]+}'.$this->getPrefix());
+    $this->addRoutes('ByTag');
   }
 
 }
