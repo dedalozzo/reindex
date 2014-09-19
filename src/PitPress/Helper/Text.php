@@ -13,6 +13,7 @@ namespace PitPress\Helper;
 
 
 use Converter;
+use ElephantOnCouch\Doc\Doc;
 
 
 /**
@@ -107,6 +108,16 @@ class Text {
     $text = strip_tags($text);
 
     return $text;
+  }
+
+
+  /**
+   * @brief Prunes the ID of its version number, if any.
+   * @param[in] string $id An UUID followed by a timestamp, like `3e96144b-3ebd-41e4-8a45-78cd9af1671d::1410886811`.
+   * @return string Returns just `3e96144b-3ebd-41e4-8a45-78cd9af1671d`.
+   */
+  public static function unversion($id) {
+    return strtok($id, Doc::SEPARATOR);
   }
 
 
