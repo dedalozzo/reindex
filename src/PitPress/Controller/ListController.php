@@ -88,9 +88,7 @@ abstract class ListController extends BaseController {
       // Tags.
       $opts->reset();
       $opts->doNotReduce();
-
-      if (!empty($entry->tags))
-        $entry->tags = $this->couch->queryView("tags", "allNames", $entry->tags, $opts);
+      $entry->tags = (!empty($entry->tags)) ? $this->couch->queryView("tags", "allNames", $entry->tags, $opts) : [];
 
       $entries[] = $entry;
     }
