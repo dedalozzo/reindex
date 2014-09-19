@@ -18,7 +18,6 @@ use PitPress\Helper;
 
 use Phalcon\Mvc\View;
 use Phalcon\Tag;
-use PitPress\Model\Versionable;
 
 
 /**
@@ -44,15 +43,26 @@ class IndexController extends ListController {
   /**
    * @brief Gets the total number of posts.
    */
-  protected function countPosts() {
-    if ($this->isSameClass()) {
-      $count = $this->couch->queryView("posts", "perDate")->getReducedValue();
-    }
-    else {
-      $opts = new ViewQueryOpts();
-      $opts->setStartKey([$this->type])->setEndKey([$this->type, Couch::WildCard()]);
-      $count = $this->couch->queryView('posts', 'perDateByType', NULL, $opts)->getReducedValue();
-    }
+  protected function countPosts($tagId) {
+    if ($this->isSameClass())
+      if (is_null($tagId))
+        $count = $this->couch->queryView("posts", "perDate")->getReducedValue();
+      else {
+        $opts = new ViewQueryOpts();
+        $opts->setStartKey([$tagId])->setEndKey([$tagId, Couch::WildCard()]);
+        $count = $this->couch->queryView('posts', 'perDateByTag', NULL, $opts)->getReducedValue();
+      }
+    else
+      if (is_null($tagId)) {
+        $opts = new ViewQueryOpts();
+        $opts->setStartKey([$this->type])->setEndKey([$this->type, Couch::WildCard()]);
+        $count = $this->couch->queryView('posts', 'perDateByType', NULL, $opts)->getReducedValue();
+      }
+      else {
+        $opts = new ViewQueryOpts();
+        $opts->setStartKey([$tagId, $this->type])->setEndKey([$tagId, $this->type, Couch::WildCard()]);
+        $count = $this->couch->queryView('posts', 'perDateByTagAndType', NULL, $opts)->getReducedValue();
+      }
 
     return Helper\Text::formatNumber($count);
   }
@@ -70,7 +80,7 @@ class IndexController extends ListController {
     $rows = $this->couch->queryView('tags', 'byName', NULL, $opts);
 
     if ($rows->count())
-      return $rows->current()['id'];
+      return Helper\Text::unversion(current($rows->getIterator())['id']);
     else
       return FALSE;
   }
@@ -212,6 +222,8 @@ class IndexController extends ListController {
       $tagId = $this->getTagId($tag);
       if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
     }
+    else
+      $tagId = NULL;
 
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->reverseOrderOfResults()->setLimit(self::RESULTS_PER_PAGE+1);
@@ -227,7 +239,7 @@ class IndexController extends ListController {
       }
       else {
         $opts->setStartKey([$tagId, $startKey])->setEndKey([$tagId]);
-        $rows = $this->couch->queryView("posts", "perDateByType", NULL, $opts);
+        $rows = $this->couch->queryView("posts", "perDateByTag", NULL, $opts);
       }
     else
       if (is_null($tag)) {
@@ -236,7 +248,7 @@ class IndexController extends ListController {
       }
       else {
         $opts->setStartKey([$tagId, $this->type, $startKey])->setEndKey([$tagId, $this->type]);
-        $rows = $this->couch->queryView("posts", "perDateByType", NULL, $opts);
+        $rows = $this->couch->queryView("posts", "perDateByTagAndType", NULL, $opts);
       }
 
     $entries = $this->getEntries(array_column($rows->asArray(), 'id'));
@@ -247,7 +259,7 @@ class IndexController extends ListController {
     }
 
     $this->view->setVar('entries', $entries);
-    $this->view->setVar('entriesCount', $this->countPosts());
+    $this->view->setVar('entriesCount', $this->countPosts($tagId));
 
     if (is_null($this->view->title))
       $this->view->setVar('title', sprintf('Nuovi %s', $this->getLabel()));
@@ -280,6 +292,50 @@ class IndexController extends ListController {
 
       $opts->reduce()->setStartKey([$this->type, $maxDate->getTimestamp()])->unsetOpt('startkey_docid');
       $count = $this->couch->queryView("posts", "perDateByType", NULL, $opts)->getReducedValue();
+    }
+
+    $entries = $this->getEntries(array_column($rows->asArray(), 'id'));
+
+    if (count($entries) > self::RESULTS_PER_PAGE) {
+      $last = array_pop($entries);
+      $this->view->setVar('nextPage', $this->buildPaginationUrl($last->publishedAt, $last->id));
+    }
+
+    $this->view->setVar('entries', $entries);
+    $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
+    $this->view->setVar('title', sprintf('%s per data', ucfirst($this->getLabel())));
+  }
+
+
+  /**
+   * @brief Displays the posts per date.
+   */
+  public function perDateByTagAction($tag, $year, $month = NULL, $day = NULL) {
+    $tagId = $this->getTagId($tag);
+    if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->reverseOrderOfResults()->setLimit(self::RESULTS_PER_PAGE+1);
+
+    Helper\Time::dateLimits($minDate, $maxDate, $year, $month, $day);
+
+    // Paginates results.
+    $postDate = isset($_GET['startkey']) ? (new \DateTime())->setTimestamp((int)$_GET['startkey']) : clone($maxDate);
+    if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
+
+    if ($this->isSameClass()) {
+      $opts->setStartKey([$tagId, $postDate->getTimestamp()])->setEndKey([$tagId, $minDate->getTimestamp()]);
+      $rows = $this->couch->queryView("posts", "perDateByTag", NULL, $opts);
+
+      $opts->reduce()->setStartKey([$tagId, $maxDate->getTimestamp()])->unsetOpt('startkey_docid');
+      $count = $this->couch->queryView("posts", "perDateByTag", NULL, $opts)->getReducedValue();
+    }
+    else {
+      $opts->setStartKey([$tagId, $this->type, $postDate->getTimestamp()])->setEndKey([$tagId, $this->type, $minDate->getTimestamp()]);
+      $rows = $this->couch->queryView("posts", "perDateByTagAndType", NULL, $opts);
+
+      $opts->reduce()->setStartKey([$tagId, $this->type, $maxDate->getTimestamp()])->unsetOpt('startkey_docid');
+      $count = $this->couch->queryView("posts", "perDateByTagAndType", NULL, $opts)->getReducedValue();
     }
 
     $entries = $this->getEntries(array_column($rows->asArray(), 'id'));
