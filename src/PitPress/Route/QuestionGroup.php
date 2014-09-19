@@ -34,7 +34,7 @@ class QuestionGroup extends IndexGroup {
   }
 
 
-  protected function addRoutes() {
+  protected function addRoutes($postfix = "") {
     $this->addGet('/', ['action' => $this->getDefaultAction()]);
     $this->addGet('/nuove/', ['action' => 'newest']);
     $this->addGet('/popolari/', ['action' => 'popular']);
@@ -47,9 +47,12 @@ class QuestionGroup extends IndexGroup {
     $this->addGet('/preferite/', ['action' => 'favorite']);
     $this->addGet('/preferite/{filter}/', ['action' => 'favorite']);
 
-    $this->addGet('/([0-9]{4})/', ['action' => 'perDate', 'year' => 1]);
-    $this->addGet('/([0-9]{4})/([0-9]{2})/', ['action' => 'perDate', 'year' => 1, 'month' => 2]);
-    $this->addGet('/([0-9]{4})/([0-9]{2})/([0-9]{2})/', ['action' => 'perDate', 'year' => 1, 'month' => 2, 'day' => 3]);
+    $this->addGet('/{year:[0-9]{4}}/', ['action' => 'perDate'.$postfix]);
+    $this->addGet('/{year:[0-9]{4}}/{month:[0-9]{2}}/', ['action' => 'perDate'.$postfix]);
+    $this->addGet('/{year:[0-9]{4}}/{month:[0-9]{2}}/{day:[0-9]{2}}/', ['action' => 'perDate'.$postfix]);
+    //$this->addGet('/([0-9]{4})/', ['action' => 'perDate', 'year' => 1]);
+    //$this->addGet('/([0-9]{4})/([0-9]{2})/', ['action' => 'perDate', 'year' => 1, 'month' => 2]);
+    //$this->addGet('/([0-9]{4})/([0-9]{2})/([0-9]{2})/', ['action' => 'perDate', 'year' => 1, 'month' => 2, 'day' => 3]);
     //$this->addGet('/([0-9]{4})/(?:([0-9]{2})/(?:([0-9]{2})/){0,1}){0,1}', ['action' => 'perDate', 'year' => 1, 'month' => 2, 'day' => 3]);
 
     //$this->addGet('/rss', ['action' => 'rss']);
