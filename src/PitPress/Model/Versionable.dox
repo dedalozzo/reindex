@@ -8,10 +8,11 @@ class Versionable {
 
   /** @name Properties */
   //!@{
-  public string $versionNumber //!< The document version number.
-  public string $previousVersionNumber //!< The version number of the previous document revision.
-  public string $username; //!< The author username.
-  public string $userId; //!< The user id who created the content.
+  string $unversionId //!< The id pruned of its version number.
+  string $versionNumber //!< The document version number.
+  string $previousVersionNumber //!< The version number of the previous document revision.
+  string $username; //!< The author username.
+  string $userId; //!< The user id who created the content.
   //!@}
 
 }
