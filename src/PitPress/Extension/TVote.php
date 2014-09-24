@@ -46,8 +46,7 @@ trait TVote {
       // Calculates difference in seconds.
       $seconds = time() - $vote->getTimestamp();
 
-      $di = DI::getDefault();
-      $votingGracePeriod = $di['config']['application']['votingGracePeriod'];
+      $votingGracePeriod = $this->di['config']['application']['votingGracePeriod'];
 
       // The user has a grace period to change or undo his vote.
       if ($seconds <= $votingGracePeriod && !$vote->hasBeenRecorded()) {
