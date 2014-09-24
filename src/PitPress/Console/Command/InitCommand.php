@@ -108,7 +108,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
-    $emit(strtok($doc->_id, '::'));
+    $emit($doc->unversionId);
 };
 MAP;
 
@@ -256,6 +256,25 @@ MAP;
     $doc->addHandler(postsPerDateByUserAndType());
 
 
+    function postsPerTag() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
+    foreach ($doc->tags as $tagId)
+      $emit($tagId);
+};
+MAP;
+
+      $handler = new ViewHandler("perTag");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
+
+      return $handler;
+    }
+
+    $doc->addHandler(postsPerTag());
+
+
     $this->couch->saveDoc($doc);
   }
 
@@ -286,7 +305,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'tag' && isset($doc->current))
-    $emit(strtok($doc->_id, '::'), $doc->name);
+    $emit($doc->unversionId, $doc->name);
 };
 MAP;
 
@@ -333,23 +352,23 @@ MAP;
     $doc->addHandler(tagsByName());
 
 
-    function tagsCount() {
+    function tagsPerPost() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post')
+  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
     foreach ($doc->tags as $tagId)
-      $emit($tagId);
+      $emit($doc->unversionId, $tagId);
 };
 MAP;
 
-      $handler = new ViewHandler("count");
+      $handler = new ViewHandler("perPost");
       $handler->mapFn = $map;
       $handler->useBuiltInReduceFnCount();
 
       return $handler;
     }
 
-    $doc->addHandler(tagsCount());
+    $doc->addHandler(tagsPerPost());
 
 
     $this->couch->saveDoc($doc);
