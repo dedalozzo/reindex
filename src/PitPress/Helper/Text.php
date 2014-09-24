@@ -22,6 +22,7 @@ use ElephantOnCouch\Doc\Doc;
  */
 class Text {
 
+  const SEPARATOR = '::'; //!< Used to separate the ID from the version number.
 
   /**
    * @brief Converts a string from a charset to another one.
@@ -117,7 +118,7 @@ class Text {
    * @return string Returns just `3e96144b-3ebd-41e4-8a45-78cd9af1671d`.
    */
   public static function unversion($id) {
-    return strtok($id, Doc::SEPARATOR);
+    return strtok($id, self::SEPARATOR);
   }
 
 
