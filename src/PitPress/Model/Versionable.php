@@ -21,6 +21,7 @@ use ElephantOnCouch\Generator\UUID;
  */
 abstract class Versionable extends Storable {
 
+  const SEPARATOR = '::'; //!< Used to separate the ID from the version number.
   const NO_USER_LOGGED_IN = -1; //!< No user logged in. The user is a guest.
 
 
@@ -30,16 +31,16 @@ abstract class Versionable extends Storable {
   /**
    * @brief Creates an instance of the class, modifying opportunely the ID, appending a version number.
    * @details Versioned items, in fact, share the same ID, but a version number is added to differentiate them.
-   * @param[in] string $id When provided use it appending the version number, else a new ID is generated.
+   * @param[in] string $id When provided, appends the version number, else a new ID is generated.
    * @return object
    */
   public static function create($id = NULL) {
     $instance = new static();
 
     if (is_null($id))
-      $instance->meta['_id'] = UUID::generate(UUID::UUID_RANDOM, UUID::FMT_STRING).self::SEPARATOR.(string)time();
+      $instance->setId(UUID::generate(UUID::UUID_RANDOM, UUID::FMT_STRING));
     else
-      $instance->meta['_id'] = (string)$id.self::SEPARATOR.(string)time();
+      $instance->setId($id);
 
     return $instance;
   }
@@ -113,36 +114,43 @@ abstract class Versionable extends Storable {
   }
 
 
- //! @cond HIDDEN_SYMBOLS
+  //! @cond HIDDEN_SYMBOLS
+
+  public function setId($value) {
+    $pos = stripos($value, self::SEPARATOR);
+    $this->meta['unversionId'] = strtok($value, self::SEPARATOR);
+    $this->meta['versionNumber'] = ($pos) ? substr($value, $pos + strlen(self::SEPARATOR)) : (string)time();
+    $this->meta['_id'] = $this->meta['unversionId'] . self::SEPARATOR . $this->meta['versionNumber'];
+  }
+
+
+  public function getUnversionId() {
+    return $this->meta["unversionId"];
+  }
+
+
+  public function issetUnversionId() {
+    return isset($this->meta["unversionId"]);
+  }
+
 
   public function getVersionNumber() {
-    return substr($this->meta['_id'], stripos($this->meta['_id'], self::SEPARATOR) + strlen(self::SEPARATOR));
+    return $this->meta["versionNumber"];
   }
 
 
   public function issetVersionNumber() {
-    if (stripos($this->meta['_id'], self::SEPARATOR) === FALSE)
-      return FALSE;
-    else
-      return TRUE;
-  }
-
-
-  public function setVersionNumber($value) {
-    $this->meta['_id'] = $this->getUnversionId().self::SEPARATOR.(string)$value;
-  }
-
-
-  public function unsetVersionNumber() {
-    $this->meta['_id'] = $this->getUnversionId();
+    return isset($this->meta['versionNumber']);
   }
 
 
   public function getPreviousVersionNumber() {
-    if ($this->isMetadataPresent('previousVersionNumber'))
-      return $this->meta['previousVersionNumber'];
-    else
-      return NULL;
+    return $this->meta["previousVersionNumber"];
+  }
+
+
+  public function issetPreviousVersionNumber() {
+    return isset($this->meta['previousVersionNumber']);
   }
 
 
