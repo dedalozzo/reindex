@@ -155,7 +155,7 @@ class ImportCommand extends AbstractCommand {
     }
 
     // We update the article views.
-    $this->redis->hSet($article->getUnversionId(), 'hits', $item->hitNum);
+    $this->redis->hSet($article->unversionId, 'hits', $item->hitNum);
 
     // We update the article downloads.
     if ($item->downloadNum > 0)
@@ -229,7 +229,7 @@ class ImportCommand extends AbstractCommand {
     }
 
     // We update the book views.
-    $this->redis->hSet($book->getUnversionId(), 'hits', $item->hitNum);
+    $this->redis->hSet($book->unversionId, 'hits', $item->hitNum);
 
     $this->importRelated($book);
   }
@@ -279,7 +279,7 @@ class ImportCommand extends AbstractCommand {
    * @brief Imports classifications.
    */
   protected function importClassifications(Post $post) {
-    $sql = "SELECT C.id AS tagId, UNIX_TIMESTAMP(I.date) AS unixTime FROM Item I, Category C, ItemsXCategory X WHERE I.idItem = X.idItem AND C.idCategory = X.idCategory AND I.id = '".$post->getUnversionId()."'";
+    $sql = "SELECT C.id AS tagId, UNIX_TIMESTAMP(I.date) AS unixTime FROM Item I, Category C, ItemsXCategory X WHERE I.idItem = X.idItem AND C.idCategory = X.idCategory AND I.id = '".$post->unversionId."'";
 
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
 
@@ -296,7 +296,7 @@ class ImportCommand extends AbstractCommand {
    * @brief Imports favorites.
    */
   protected function importFavorites(Post $post) {
-    $sql = "SELECT I.id AS itemId, I.stereotype as stereotype, M.id AS userId, UNIX_TIMESTAMP(I.date) AS publishedAt, UNIX_TIMESTAMP(F.date) AS addedAt FROM Item I, Member M, Favourite F WHERE I.idItem = F.idItem AND M.idMember = F.idMember AND I.id = '".$post->getUnversionId()."'";
+    $sql = "SELECT I.id AS itemId, I.stereotype as stereotype, M.id AS userId, UNIX_TIMESTAMP(I.date) AS publishedAt, UNIX_TIMESTAMP(F.date) AS addedAt FROM Item I, Member M, Favourite F WHERE I.idItem = F.idItem AND M.idMember = F.idMember AND I.id = '".$post->unversionId."'";
 
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
 
@@ -319,12 +319,12 @@ class ImportCommand extends AbstractCommand {
    * @brief Imports subscriptions.
    */
   protected function importSubscriptions(Post $post) {
-    $sql = "SELECT M.id AS userId, UNIX_TIMESTAMP(T.creationTime) AS timestamp FROM Item I, Member M, Thread T WHERE I.idItem = T.idItem AND M.idMember = T.idMember AND I.id = '".$post->getUnversionId()."'";
+    $sql = "SELECT M.id AS userId, UNIX_TIMESTAMP(T.creationTime) AS timestamp FROM Item I, Member M, Thread T WHERE I.idItem = T.idItem AND M.idMember = T.idMember AND I.id = '".$post->unversionId."'";
 
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
 
     while ($item = mysqli_fetch_object($result)) {
-      $doc = Subscription::create($post->getUnversionId(), $item->userId, (int)$item->timestamp);
+      $doc = Subscription::create($post->unversionId, $item->userId, (int)$item->timestamp);
       $this->couch->saveDoc($doc);
     }
 
@@ -336,7 +336,7 @@ class ImportCommand extends AbstractCommand {
    * @brief Imports comments.
    */
   protected function importReplies(Post $post) {
-    $sql = "SELECT C.idComment, I.idItem, M.id AS userId, UNIX_TIMESTAMP(C.date) AS unixTime, C.body FROM Comment C, Item I, Member M WHERE C.idItem = I.idItem AND C.idMember = M.idMember AND I.id = '".$post->getUnversionId()."' ORDER BY C.date DESC, idComment DESC";
+    $sql = "SELECT C.idComment, I.idItem, M.id AS userId, UNIX_TIMESTAMP(C.date) AS unixTime, C.body FROM Comment C, Item I, Member M WHERE C.idItem = I.idItem AND C.idMember = M.idMember AND I.id = '".$post->unversionId."' ORDER BY C.date DESC, idComment DESC";
 
     $result = mysqli_query($this->mysql, $sql) or die(mysqli_error($this->mysql));
 
@@ -346,7 +346,7 @@ class ImportCommand extends AbstractCommand {
 
         $replay->id = UUID::generate(UUID::UUID_RANDOM, UUID::FMT_STRING);
         $replay->createdAt = (int)$item->unixTime;
-        $replay->postId = $post->getUnversionId();
+        $replay->postId = $post->unversionId;
         $replay->userId = $item->userId;
 
         $utf8 = Text::convertCharset($item->body);
@@ -404,19 +404,18 @@ class ImportCommand extends AbstractCommand {
       if (empty($body)) {
         $article->id = $page->id;
         $article->type = 'article';
-        $article->versionNumber = time();
         $article->userId = $page->userId;
         $article->createdAt = (int)$page->unixTime;
         $article->publishedAt = $article->createdAt;
         $article->title = $this->pruneTitle($title, $subtitle);
         //$this->monolog->addNotice(sprintf("%s", $article->title));
 
-        $this->redis->hSet($article->getUnversionId(), 'hits', $page->hitNum);
+        $this->redis->hSet($article->unversionId, 'hits', $page->hitNum);
         $this->importRelated($article);
       }
       else {
         $body .= PHP_EOL.PHP_EOL;
-        $this->redis->hIncrBy($article->getUnversionId(), 'hits', $page->hitNum);
+        $this->redis->hIncrBy($article->unversionId, 'hits', $page->hitNum);
       }
 
       if (!empty($subtitle) && $subtitle != $paragraphTitle) {
