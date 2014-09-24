@@ -14,6 +14,8 @@ namespace PitPress\Model;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 use ElephantOnCouch\Generator\UUID;
 
+use PitPress\Helper;
+
 
 /**
  * @brief A generic content created by a user.
@@ -21,7 +23,6 @@ use ElephantOnCouch\Generator\UUID;
  */
 abstract class Versionable extends Storable {
 
-  const SEPARATOR = '::'; //!< Used to separate the ID from the version number.
   const NO_USER_LOGGED_IN = -1; //!< No user logged in. The user is a guest.
 
 
@@ -67,7 +68,7 @@ abstract class Versionable extends Storable {
    * @brief Reverts to the specified version.
    * @param[in] Reverts to the specified version. If a version is not specified it takes the previous one.
    */
-  public function revert($version = NULL) {
+  public function revert($versionNumber = NULL) {
     // todo
   }
 
@@ -117,10 +118,10 @@ abstract class Versionable extends Storable {
   //! @cond HIDDEN_SYMBOLS
 
   public function setId($value) {
-    $pos = stripos($value, self::SEPARATOR);
-    $this->meta['unversionId'] = strtok($value, self::SEPARATOR);
-    $this->meta['versionNumber'] = ($pos) ? substr($value, $pos + strlen(self::SEPARATOR)) : (string)time();
-    $this->meta['_id'] = $this->meta['unversionId'] . self::SEPARATOR . $this->meta['versionNumber'];
+    $pos = stripos($value, Helper\Text::SEPARATOR);
+    $this->meta['unversionId'] = Helper\Text::unversion($value);
+    $this->meta['versionNumber'] = ($pos) ? substr($value, $pos + strlen(Helper\Text::SEPARATOR)) : (string)time();
+    $this->meta['_id'] = $this->meta['unversionId'] . Helper\Text::SEPARATOR . $this->meta['versionNumber'];
   }
 
 
