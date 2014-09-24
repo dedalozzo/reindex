@@ -307,7 +307,7 @@ class User extends Storable implements Extension\ICount {
 
 
   public function getGender() {
-    return @$this->meta['gender'];
+    return $this->meta['gender'];
   }
 
 
