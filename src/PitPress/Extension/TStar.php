@@ -17,6 +17,7 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
 use PitPress\Model\Accessory\Star;
 use PitPress\Model\User;
 use PitPress\Model\Versionable;
+use PitPress\Helper\Text;
 
 
 /**
@@ -30,7 +31,7 @@ trait TStar {
     if (is_null($user)) return FALSE;
 
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([$this->getUnversionId(), $user->id]);
+    $opts->doNotReduce()->setLimit(1)->setKey([Text::unversion($this->id), $user->id]);
 
     $result = $this->couch->queryView("stars", "perItem", NULL, $opts);
 
@@ -61,7 +62,7 @@ trait TStar {
 
   public function getStarsCount() {
     $opts = new ViewQueryOpts();
-    $opts->setKey([$this->getUnversionId()]);
+    $opts->setKey([Text::unversion($this->id)]);
 
     return $this->couch->queryView("stars", "perItem", NULL, $opts)->getReducedValue();
   }
