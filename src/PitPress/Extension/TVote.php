@@ -14,6 +14,7 @@ namespace PitPress\Extension;
 use ElephantOnCouch\Couch;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
+use PitPress\Helper\Text;
 use PitPress\Model\Accessory\Vote;
 use PitPress\Model\User;
 use PitPress\Model\Versionable;
@@ -49,7 +50,7 @@ trait TVote {
       $votingGracePeriod = $this->di['config']['application']['votingGracePeriod'];
 
       // The user has a grace period to change or undo his vote.
-      if ($seconds <= $votingGracePeriod && !$vote->hasBeenRecorded()) {
+      if ($seconds <= $votingGracePeriod) {
 
         // The user clicked twice on the same button to undo his vote (or like).
         if ($vote->value === $value) {
@@ -67,7 +68,7 @@ trait TVote {
         return IVote::UNCHANGED;
     }
     else {
-      $vote = Vote::create($this->getType(), $this->getUnversionId(), $user->id, $value);
+      $vote = Vote::create(Text::unversion($this->id), $user->id, $value);
       $this->couch->saveDoc($vote);
       return IVote::REGISTERED;
     }
@@ -94,9 +95,9 @@ trait TVote {
     if (is_null($user)) return FALSE;
 
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([$this->getUnversionId(), $user->id]);
+    $opts->doNotReduce()->setLimit(1)->setKey([Text::unversion($this->id), $user->id]);
 
-    $result = $this->couch->queryView("votes", "perPostAndUser", NULL, $opts);
+    $result = $this->couch->queryView("votes", "perItemAndUser", NULL, $opts);
 
     if ($result->isEmpty())
       return FALSE;
@@ -109,9 +110,9 @@ trait TVote {
 
   public function getScore() {
     $opts = new ViewQueryOpts();
-    $opts->setKey($this->getUnversionId());
+    $opts->setKey(Text::unversion($this->id));
 
-    return $this->couch->queryView("votes", "perPost", NULL, $opts)->getReducedValue();
+    return $this->couch->queryView("votes", "perItem", NULL, $opts)->getReducedValue();
   }
 
 
@@ -119,7 +120,7 @@ trait TVote {
 
     // Gets the users have voted the item.
     $opts = new ViewQueryOpts();
-    $opts->setKey($this->getUnversionId());
+    $opts->setKey(Text::unversion($this->id));
     $result = $this->couch->queryView("users", "haveVoted", NULL, $opts);
 
     if ($result->isEmpty())
