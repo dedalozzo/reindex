@@ -22,6 +22,7 @@ use PitPress\Model\Accessory\Vote;
 use PitPress\Model\Link;
 use PitPress\Helper\Text;
 
+use ElephantOnCouch\Couch;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
 
@@ -78,9 +79,7 @@ class GenerateCommand extends AbstractCommand {
           else
             $value = rand(0, 100) > 7 ? 1 : -1;
 
-          $postType = ($item->stereotype == self::ARTICLE) ? 'article' : 'book';
-
-          $vote = Vote::create($postType, $item->id, $userId, $value);
+          $vote = Vote::create($item->id, $userId, $value);
           $this->couch->saveDoc($vote);
         }
 
