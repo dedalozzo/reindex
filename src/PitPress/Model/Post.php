@@ -18,6 +18,8 @@ use PitPress\Extension;
 use PitPress\Property;
 use PitPress\Helper;
 
+use Phalcon\DI;
+
 
 /**
  * @brief This class is used to represent a generic entry, a content created by a user.
@@ -30,7 +32,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
 
   /**
-   * @copydoc
+   * @copydoc Storable::save
    */
   public function save() {
     $this->meta['supertype'] = 'post';
@@ -86,6 +88,27 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   }
 
 
+  /**
+   * @brief Updates the score on the Redis database.
+   * @return string
+   */
+  public function updateScore() {
+    // All.
+    $this->redis->zAdd("post", $this->getScore(), $this->unversionId);
+
+    // Type.
+    $this->redis->zAdd($this->type, $this->getScore(), $this->unversionId);
+
+    foreach ($this->tags as $tagId) {
+      // Tag.
+      $this->redis->zAdd($tagId, $this->getScore(), $this->unversionId); // tagId, score, postId
+
+      // Tag and type.
+      $this->redis->zAdd($tagId.'_'.$this->type, $this->getScore(), $this->unversionId); // tagId, score, postId
+    }
+  }
+
+
   /** @name Replaying Methods */
   //!@{
 
@@ -94,7 +117,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    */
   public function getReplies() {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->reverseOrderOfResults()->setStartKey([$this->getUnversionId(), Couch::WildCard()])->setEndKey([$this->getUnversionId()])->includeDocs();
+    $opts->doNotReduce()->reverseOrderOfResults()->setStartKey([$this->unversionId, Couch::WildCard()])->setEndKey([$this->unversionId])->includeDocs();
     $rows = $this->couch->queryView("replies", "newestPerPost", NULL, $opts);
 
     $replies = [];
@@ -114,7 +137,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   public function getRepliesCount() {
     $opts = new ViewQueryOpts();
     $opts->groupResults();
-    return $this->couch->queryView("replies", "perPost", [$this->getUnversionId()], $opts)->getReducedValue();
+    return $this->couch->queryView("replies", "perPost", [$this->unversionId], $opts)->getReducedValue();
   }
 
   //!@}
