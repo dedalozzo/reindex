@@ -21,47 +21,27 @@ use ElephantOnCouch\Doc\Doc;
 class Vote extends Doc {
 
   /**
-   * @brief Creates an instance of Vote class. This parameter is not required, you can provide NULL.
-   * @param[in] $postType The post type.
-   * @param[in] $postId The post identifier. Can be also an item.
+   * @brief Creates an instance of Vote class.
+   * @param[in] $itemId The item identifier.
    * @param[in] $userId The identifier of the user who has voted.
    * @param[in] $value The value of the vote.
-   * @return An instance of Vote class.
+   * @return Vote
    */
-  public static function create($postType, $postId, $userId, $value) {
+  public static function create($itemId, $userId, $value) {
     $instance = new self();
 
-    $instance->meta["postType"] = $postType;
-    $instance->meta["postId"] = $postId;
+    $instance->meta["itemId"] = $itemId;
     $instance->meta["userId"] = $userId;
-    $instance->meta["recorded"] = FALSE;
     $instance->setValue($value);
 
     return $instance;
   }
 
 
-  /**
-   * @brief Returns `true`if the vote has been recorded by the PitPress daemon.
-   * @return boolean
-   */
-  public function hasBeenRecorded() {
-    return $this->meta["recorded"];
-  }
-
-
-  /**
-   * @brief Marks the vote has recorded.
-   */
-  public function markAsRecorded() {
-    $this->meta["recorded"] = TRUE;
-  }
-
-
   //! @cond HIDDEN_SYMBOLS
 
-  public function getPostId() {
-    return $this->meta["postId"];
+  public function getItemId() {
+    return $this->meta["itemId"];
   }
 
 
