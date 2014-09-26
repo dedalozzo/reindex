@@ -16,6 +16,7 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Model\Accessory\Subscription;
 use PitPress\Model\User;
+use PitPress\Helper\Text;
 
 
 /**
@@ -26,7 +27,7 @@ trait TSubscribe {
 
   public function isSubscribed(User $user, &$subscriptionId = NULL) {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([$this->getUnversionId(), $user->id]);
+    $opts->doNotReduce()->setLimit(1)->setKey([Text::unversion($this->id), $user->id]);
 
     $result = $this->couch->queryView("subscriptions", "perItem", NULL, $opts);
 
@@ -42,7 +43,7 @@ trait TSubscribe {
   public function subscribe(User $user) {
 
     if (!$this->isSubscribed($user)) {
-      $doc = Subscription::create($this->getUnversionId(), $user->id);
+      $doc = Subscription::create(Text::unversion($this->id), $user->id);
       $this->couch->saveDoc($doc);
     }
   }
