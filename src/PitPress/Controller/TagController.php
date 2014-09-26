@@ -37,10 +37,10 @@ class TagController extends BaseController {
 
     Helper\ArrayHelper::unversion($ids);
 
-    // Retrieves the posts count per tag.
+    // Retrieves the number of posts per tag.
     $opts->reset();
     $opts->groupResults()->includeMissingKeys();
-    $postsCount = $this->couch->queryView("tags", "count", $ids, $opts);
+    $postsCount = $this->couch->queryView("posts", "perTag", $ids, $opts);
 
     $entries = [];
     $tagsCount = count($tags);
