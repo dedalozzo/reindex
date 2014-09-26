@@ -379,42 +379,42 @@ MAP;
     $doc = DesignDoc::create('votes');
 
 
-    // @params: [postId]
-    function votesPerPost() {
+    // @params: [itemId]
+    function votesPerItem() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'vote')
-    $emit($doc->postId, $doc->value);
+    $emit($doc->itemId, $doc->value);
 };
 MAP;
 
-      $handler = new ViewHandler("perPost");
+      $handler = new ViewHandler("perItem");
       $handler->mapFn = $map;
       $handler->useBuiltInReduceFnSum(); // Used to count the votes.
 
       return $handler;
     }
 
-    $doc->addHandler(votesPerPost());
+    $doc->addHandler(votesPerItem());
 
 
-    // @params: postId, userId
-    function votesPerPostAndUser() {
+    // @params: itemId, userId
+    function votesPerItemAndUser() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'vote')
-    $emit([$doc->postId, $doc->userId], $doc->value);
+    $emit([$doc->itemId, $doc->userId], $doc->value);
 };
 MAP;
 
-      $handler = new ViewHandler("perPostAndUser");
+      $handler = new ViewHandler("perItemAndUser");
       $handler->mapFn = $map;
       $handler->useBuiltInReduceFnSum(); // Used to count the votes.
 
       return $handler;
     }
 
-    $doc->addHandler(votesPerPostAndUser());
+    $doc->addHandler(votesPerItemAndUser());
 
 
     // @params: [userId]
@@ -434,44 +434,6 @@ MAP;
     }
 
     $doc->addHandler(votesPerUser());
-
-
-    // @params: type, postId
-    function votesPerType() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'vote')
-    $emit([$doc->postType, $doc->postId], $doc->value);
-};
-MAP;
-
-      $handler = new ViewHandler("perType");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnSum(); // Used to count the votes.
-
-      return $handler;
-    }
-
-    $doc->addHandler(votesPerType());
-
-
-    // @params: timestamp
-    function votesNotRecorded() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if (($doc->type == 'vote') && (!$doc->recorded))
-    $emit($doc->timestamp, $doc);
-};
-MAP;
-
-      $handler = new ViewHandler("notRecorded");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount();
-
-      return $handler;
-    }
-
-    $doc->addHandler(votesNotRecorded());
 
 
     $this->couch->saveDoc($doc);
