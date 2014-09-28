@@ -110,7 +110,7 @@ class IndexController extends ListController {
     // Scores.
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
-    $scores = $this->couch->queryView("votes", "perPost", $ids, $opts);
+    $scores = $this->couch->queryView("votes", "perItem", $ids, $opts);
 
     // Replies.
     $opts->reset();
