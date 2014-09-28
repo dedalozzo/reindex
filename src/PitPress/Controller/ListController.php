@@ -52,13 +52,13 @@ abstract class ListController extends BaseController {
       foreach ($ids as $postId)
         $keys[] = [$postId, $this->user->id];
 
-      $likes = $this->couch->queryView("votes", "perPostAndUser", $keys, $opts);
+      $likes = $this->couch->queryView("votes", "perItemAndUser", $keys, $opts);
     }
 
     // Scores.
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
-    $scores = $this->couch->queryView("votes", "perPost", $ids, $opts);
+    $scores = $this->couch->queryView("votes", "perItem", $ids, $opts);
 
     // Replies.
     $opts->reset();
