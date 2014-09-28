@@ -31,11 +31,16 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   use Property\TDescription;
 
 
+  public function __construct() {
+    parent::__construct();
+    $this->meta['supertype'] = 'post';
+  }
+
+
   /**
    * @copydoc Storable::save
    */
   public function save() {
-    $this->meta['supertype'] = 'post';
     $this->meta['slug'] = $this->getSlug();
 
     // Used to group by year, month and day.
@@ -93,18 +98,18 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @return string
    */
   public function updateScore() {
-    // All.
-    $this->redis->zAdd("post", $this->getScore(), $this->unversionId);
+    // Order set with all the posts.
+    $this->redis->zAdd("_"."post", $this->getScore(), $this->unversionId);
 
-    // Type.
-    $this->redis->zAdd($this->type, $this->getScore(), $this->unversionId);
+    // Order set with all the posts of a specific type: article, question, ecc.
+    $this->redis->zAdd("_".$this->type, $this->getScore(), $this->unversionId); // _type, score, postId
 
     foreach ($this->tags as $tagId) {
-      // Tag.
+      // Order set with all the posts related to a specific tag.
       $this->redis->zAdd($tagId, $this->getScore(), $this->unversionId); // tagId, score, postId
 
-      // Tag and type.
-      $this->redis->zAdd($tagId.'_'.$this->type, $this->getScore(), $this->unversionId); // tagId, score, postId
+      // Order set with all the post of a specific type, related to a specific tag.
+      $this->redis->zAdd($tagId.'_'.$this->type, $this->getScore(), $this->unversionId); // tagId_type, score, postId
     }
   }
 
@@ -188,6 +193,27 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
 
   //! @cond HIDDEN_SYMBOLS
+
+  public function getSupertype() {
+    return $this->meta['supertype'];
+  }
+
+
+  public function issetSupertype() {
+    return isset($this->meta['supertype']);
+  }
+
+
+  public function setSupertype($value) {
+    $this->meta['supertype'] = $value;
+  }
+
+
+  public function unsetSupertype() {
+    if ($this->isMetadataPresent('supertype'))
+      unset($this->meta['supertype']);
+  }
+
 
   public function getTitle() {
     return $this->meta['title'];
