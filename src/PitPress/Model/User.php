@@ -67,7 +67,7 @@ class User extends Storable implements Extension\ICount {
    * @return string
    */
   public function getElapsedTimeSinceRegistration() {
-    return strftime('%e %B, %Y', $this->getCreationDate());
+    return strftime('%e %B, %Y', $this->createdAt);
   }
 
 
