@@ -617,12 +617,50 @@ MAP;
     $doc = DesignDoc::create('favorites');
 
 
+// @params: userId
+    function favoritesPerAddedAt() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'star')
+    $emit([$doc->userId, $doc->addedAt], $doc->itemId);
+};
+MAP;
+
+      $handler = new ViewHandler("perAddedAt");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
+
+      return $handler;
+    }
+
+    $doc->addHandler(favoritesPerAddedAt());
+
+
+    // @params: userId, type
+    function favoritesPerAddedAtByType() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'star')
+    $emit([$doc->userId, $doc->itemType, $doc->addedAt], $doc->itemId);
+};
+MAP;
+
+      $handler = new ViewHandler("perAddedAtByType");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
+
+      return $handler;
+    }
+
+    $doc->addHandler(favoritesPerAddedAtByType());
+
+
     // @params: userId
     function favoritesPerPublishedAt() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'star')
-    $emit([$doc->userId, $doc->publishedAt], $doc->itemId);
+    $emit([$doc->userId, $doc->itemPublishedAt], $doc->itemId);
 };
 MAP;
 
@@ -636,12 +674,12 @@ MAP;
     $doc->addHandler(favoritesPerPublishedAt());
 
 
-    // @params: userid, type
+    // @params: userId, type
     function favoritesPerPublishedAtByType() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'star')
-    $emit([$doc->userId, $doc->itemType, $doc->publishedAt], $doc->itemId);
+    $emit([$doc->userId, $doc->itemType, $doc->itemPublishedAt], $doc->itemId);
 };
 MAP;
 
