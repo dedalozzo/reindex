@@ -41,34 +41,6 @@ class IndexController extends ListController {
 
 
   /**
-   * @brief Gets the total number of posts.
-   */
-  protected function countPosts($tagId) {
-    if ($this->isSameClass())
-      if (is_null($tagId))
-        $count = $this->couch->queryView("posts", "perDate")->getReducedValue();
-      else {
-        $opts = new ViewQueryOpts();
-        $opts->setStartKey([$tagId])->setEndKey([$tagId, Couch::WildCard()]);
-        $count = $this->couch->queryView('posts', 'perDateByTag', NULL, $opts)->getReducedValue();
-      }
-    else
-      if (is_null($tagId)) {
-        $opts = new ViewQueryOpts();
-        $opts->setStartKey([$this->type])->setEndKey([$this->type, Couch::WildCard()]);
-        $count = $this->couch->queryView('posts', 'perDateByType', NULL, $opts)->getReducedValue();
-      }
-      else {
-        $opts = new ViewQueryOpts();
-        $opts->setStartKey([$tagId, $this->type])->setEndKey([$tagId, $this->type, Couch::WildCard()]);
-        $count = $this->couch->queryView('posts', 'perDateByTagAndType', NULL, $opts)->getReducedValue();
-      }
-
-    return Helper\Text::formatNumber($count);
-  }
-
-
-  /**
    * @brief Given a tag's name, returns its id.
    * @param[in] string $name The tag's name.
    * @return string|bool Returns the tag id, or `false` in case the tag doesn't exist.
@@ -215,16 +187,25 @@ class IndexController extends ListController {
 
 
   /**
+   * @brief Page index by tag.
+   * @param[in] string $tag The tag name.
+   */
+  public function indexByTagAction($tag) {
+    $this->actionName = 'newestByTag';
+
+    return $this->dispatcher->forward(
+      [
+        'controller' => 'index',
+        'action' => 'newestByTag',
+        'params' => [$tag]
+      ]);
+  }
+
+
+  /**
    * @brief Displays the newest posts.
    */
-  public function newestAction($tag = NULL) {
-    if (isset($tag)) {
-      $tagId = $this->getTagId($tag);
-      if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
-    }
-    else
-      $tagId = NULL;
-
+  public function newestAction() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->reverseOrderOfResults()->setLimit(self::RESULTS_PER_PAGE+1);
 
@@ -232,24 +213,20 @@ class IndexController extends ListController {
     $startKey = isset($_GET['startkey']) ? (int)$_GET['startkey'] : Couch::WildCard();
     if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
 
-    if ($this->isSameClass())
-      if (is_null($tag)) {
-        $opts->setStartKey($startKey);
-        $rows = $this->couch->queryView("posts", "perDate", NULL, $opts);
-      }
-      else {
-        $opts->setStartKey([$tagId, $startKey])->setEndKey([$tagId]);
-        $rows = $this->couch->queryView("posts", "perDateByTag", NULL, $opts);
-      }
-    else
-      if (is_null($tag)) {
-        $opts->setStartKey([$this->type, $startKey])->setEndKey([$this->type]);
-        $rows = $this->couch->queryView("posts", "perDateByType", NULL, $opts);
-      }
-      else {
-        $opts->setStartKey([$tagId, $this->type, $startKey])->setEndKey([$tagId, $this->type]);
-        $rows = $this->couch->queryView("posts", "perDateByTagAndType", NULL, $opts);
-      }
+    if ($this->isSameClass()) {
+      $opts->setStartKey($startKey);
+      $rows = $this->couch->queryView("posts", "perDate", NULL, $opts);
+
+      $count = $this->couch->queryView("posts", "perDate")->getReducedValue();
+    }
+    else {
+      $opts->setStartKey([$this->type, $startKey])->setEndKey([$this->type]);
+      $rows = $this->couch->queryView("posts", "perDateByType", NULL, $opts);
+
+      $opts->reset();
+      $opts->setStartKey([$this->type])->setEndKey([$this->type, Couch::WildCard()]);
+      $count = $this->couch->queryView('posts', 'perDateByType', NULL, $opts)->getReducedValue();
+    }
 
     $entries = $this->getEntries(array_column($rows->asArray(), 'id'));
 
@@ -259,7 +236,55 @@ class IndexController extends ListController {
     }
 
     $this->view->setVar('entries', $entries);
-    $this->view->setVar('entriesCount', $this->countPosts($tagId));
+    $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
+
+    if (is_null($this->view->title))
+      $this->view->setVar('title', sprintf('Nuovi %s', $this->getLabel()));
+  }
+
+
+  /**
+   * @brief Displays the newest posts by tag.
+   * @param[in] string $tag The tag name.
+   */
+  public function newestByTagAction($tag) {
+    $tagId = $this->getTagId(urldecode($tag));
+    if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->reverseOrderOfResults()->setLimit(self::RESULTS_PER_PAGE+1);
+
+    // Paginates results.
+    $startKey = isset($_GET['startkey']) ? (int)$_GET['startkey'] : Couch::WildCard();
+    if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
+
+    if ($this->isSameClass()) {
+      $opts->setStartKey([$tagId, $startKey])->setEndKey([$tagId]);
+      $rows = $this->couch->queryView("posts", "perDateByTag", NULL, $opts);
+
+      $opts->reset();
+      $opts->setStartKey([$tagId])->setEndKey([$tagId, Couch::WildCard()]);
+      $count = $this->couch->queryView('posts', 'perDateByTag', NULL, $opts)->getReducedValue();
+    }
+    else {
+      $opts->setStartKey([$tagId, $this->type, $startKey])->setEndKey([$tagId, $this->type]);
+      $rows = $this->couch->queryView("posts", "perDateByTagAndType", NULL, $opts);
+
+      $opts->reset();
+      $opts->setStartKey([$tagId, $this->type])->setEndKey([$tagId, $this->type, Couch::WildCard()]);
+      $count = $this->couch->queryView('posts', 'perDateByTagAndType', NULL, $opts)->getReducedValue();
+    }
+
+    $entries = $this->getEntries(array_column($rows->asArray(), 'id'));
+
+    if (count($entries) > self::RESULTS_PER_PAGE) {
+      $last = array_pop($entries);
+      $this->view->setVar('nextPage', $this->buildPaginationUrl($last->publishedAt, $last->id));
+    }
+
+    $this->view->setVar('entries', $entries);
+    $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
+    $this->view->setVar('resource', $tag);
 
     if (is_null($this->view->title))
       $this->view->setVar('title', sprintf('Nuovi %s', $this->getLabel()));
@@ -308,7 +333,8 @@ class IndexController extends ListController {
 
 
   /**
-   * @brief Displays the posts per date.
+   * @brief Displays the posts per date by tag.
+   * @param[in] string $tag The tag name.
    */
   public function perDateByTagAction($tag, $year, $month = NULL, $day = NULL) {
     $tagId = $this->getTagId($tag);
@@ -347,24 +373,28 @@ class IndexController extends ListController {
 
     $this->view->setVar('entries', $entries);
     $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
+    $this->view->setVar('resource', $tag);
     $this->view->setVar('title', sprintf('%s per data', ucfirst($this->getLabel())));
   }
 
 
   /**
-   * @brief Displays the most popular updates for the provided period.
-   * @todo Replace `posts` with `scores`.
+   * @brief Displays the most popular updates for the provided period (ordered by score).
    */
   public function popularAction($filter = NULL) {
     $period = $this->getPeriod($filter);
     if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(self::RESULTS_PER_PAGE+1)->reverseOrderOfResults();
+    //$opts = new ViewQueryOpts();
+    //$opts->doNotReduce()->setLimit(self::RESULTS_PER_PAGE+1)->reverseOrderOfResults();
 
     if ($this->isSameClass()) {
-      $opts->setStartKey(time());
+      //$opts->setStartKey(time());
 
+      $pippo = $this->redis->zRevRangeByScore('_post', 0, 14, ['withscores' => TRUE, 'limit' => ['+inf', 0]]);
+      $this->monolog->addDebug("redis", $pippo);
+
+      /*
       if ($period == Helper\Time::EVER)
         // ERROR: don't provide a data and use another view that use as key the score and as value the postId
         $opts->setEndKey(0);
@@ -373,9 +403,10 @@ class IndexController extends ListController {
 
       $rows = $this->couch->queryView("posts", "perDate", NULL, $opts);
       $count = $this->couch->queryView("posts", "perDate", NULL, $opts->reduce())->getReducedValue();
+      */
     }
     else {
-      $opts->setStartKey([$this->type, Couch::WildCard()]);
+      /*$opts->setStartKey([$this->type, Couch::WildCard()]);
 
       if ($period == Helper\Time::EVER)
         // ERROR: don't provide a data and use another view that use as key the [type, score] and as value the postId
@@ -384,7 +415,7 @@ class IndexController extends ListController {
         $opts->setEndKey([$this->type, Helper\Time::aWhileBack($period)]);
 
       $rows = $this->couch->queryView("posts", "perDateByType", NULL, $opts);
-      $count = $this->couch->queryView("posts", "perDateByType", NULL, $opts->reduce())->getReducedValue();
+      $count = $this->couch->queryView("posts", "perDateByType", NULL, $opts->reduce())->getReducedValue();*/
     }
 
     $this->monolog->addNotice(sprintf('Period: %s', $period));
@@ -398,6 +429,29 @@ class IndexController extends ListController {
 
 
   /**
+   * @brief Displays the most popular updates by tag, for the provided period (ordered by score).
+   * @param[in] string $tag The tag name.
+   */
+  public function popularByTagAction($tag, $filter = NULL) {
+    $tagId = $this->getTagId($tag);
+    if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+
+    $period = $this->getPeriod($filter);
+    if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+
+    if ($this->isSameClass()) {
+      $pippo = $this->redis->zRevRangeByScore($tagId, '+inf', 0, ['limit' => [0, 15]]);
+    }
+    else {
+      $pippo = $this->redis->zRevRangeByScore($tagId.'_'.$this->type, '+inf', 0, ['limit' => [0, 15]]);
+    }
+
+    $this->view->setVar('resource', $tag);
+    //$this->monolog->addDebug("redis", $pippo);
+  }
+
+
+  /**
    * @brief Displays the last updated entries.
    */
   public function activeAction() {
@@ -407,9 +461,20 @@ class IndexController extends ListController {
 
 
   /**
+   * @brief Displays the last updated entries by tag.
+   */
+  public function activeByTagAction($tag) {
+    $this->view->setVar('entriesCount', 0);
+    $this->view->setVar('resource', $tag);
+    $this->view->setVar('title', sprintf('%s attivi', ucfirst($this->getLabel())));
+  }
+
+
+  /**
    * @brief Displays the newest updates based on my tags.
    */
   public function interestingAction() {
+    /*
     $opts = new ViewQueryOpts();
     $opts->reduce()->groupResults();
     //$opts->setLimit(self::RESULTS_PER_PAGE+1);
@@ -458,7 +523,7 @@ class IndexController extends ListController {
 
     $this->view->setVar('entries', $entries);
     //$this->view->setVar('entriesCount', $this->countPosts());
-
+    */
     $this->view->setVar('entriesCount', 0);
     $this->view->setVar('title', sprintf('%s interessanti', ucfirst($this->getLabel())));
   }
