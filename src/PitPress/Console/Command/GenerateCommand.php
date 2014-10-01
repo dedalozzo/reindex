@@ -43,7 +43,7 @@ class GenerateCommand extends AbstractCommand {
    * @brief Generates fake votes.
    */
   private function generateVotes(InputInterface $input, OutputInterface $output) {
-    $output->writeln("Generate votes...");
+    $output->writeln("Generating votes...");
 
     $limit = (int)$input->getOption('limit');
 
@@ -101,7 +101,7 @@ class GenerateCommand extends AbstractCommand {
    * @brief Consumes a site feed and generate a link for every item.
    */
   private function generateLinks(InputInterface $input, OutputInterface $output) {
-    $output->writeln("Generate links...");
+    $output->writeln("Generating links...");
 
     $opts = new ViewQueryOpts();
     $opts->setKey('redazione')->setLimit(1);
