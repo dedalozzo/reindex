@@ -6,7 +6,6 @@
   {% else %}
     {% set controllerPath = '' %}
   {% endif %}
-  <li class="pull-right icon"><a href="http://programmazione.it/rss" class="icon-rss icon-large"></a></li>
   {% if button is defined %}
   <li class="pull-right icon"><a href="http://programmazione.it" class="icon-plus icon-large"> {{ button }}</a></li>
   {% endif %}
