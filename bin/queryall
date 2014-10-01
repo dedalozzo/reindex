@@ -1,11 +1,10 @@
 pit query posts/all &
 pit query tags/all &
-pit query votes/perPost &
+pit query votes/perItem &
 pit query stars/perItem &
 pit query subscriptions/perItem --limit=1 &
 pit query reputation/perUser &
 pit query favorites/perAddedAt --limit=1 &
 pit query users/allNames --limit=1 &
 pit query replies/newestPerPost &
-pit query scores/perSection &
 pit query badges/perClass &
