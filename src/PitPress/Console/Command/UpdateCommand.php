@@ -33,13 +33,13 @@ class UpdateCommand extends AbstractCommand {
    * @brief Update posts score.
    */
   private function updateScore(InputInterface $input, OutputInterface $output) {
-    $output->writeln("Update score...");
+    $output->writeln("Updating score...");
 
     $progress = $this->getApplication()->getHelperSet()->get('progress');
 
     $opts = new ViewQueryOpts();
     $opts->doNotReduce();
-    $ids = array_column($this->couch->queryView('posts', 'unversion', NULL, $opts), 'id');
+    $ids = array_column($this->couch->queryView('posts', 'unversion', NULL, $opts)->asArray(), 'id');
 
     $progress->start($output, count($ids));
 
