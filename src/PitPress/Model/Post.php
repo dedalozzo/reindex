@@ -98,18 +98,23 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @return string
    */
   public function updateScore() {
+    $score = $this->getScore();
+    $id = $this->unversionId;
+
     // Order set with all the posts.
-    $this->redis->zAdd("_"."post", $this->getScore(), $this->unversionId);
+    $this->redis->zAdd("_"."post", $score, $id);
 
     // Order set with all the posts of a specific type: article, question, ecc.
-    $this->redis->zAdd("_".$this->type, $this->getScore(), $this->unversionId); // _type, score, postId
+    $this->redis->zAdd("_".$this->type, $score, $id);
 
-    foreach ($this->tags as $tagId) {
+    foreach ($this->tags as $tag) {
+      $tagId = $tag['key']; // We need the unversion ID.
+
       // Order set with all the posts related to a specific tag.
-      $this->redis->zAdd($tagId, $this->getScore(), $this->unversionId); // tagId, score, postId
+      $this->redis->zAdd($tagId, $score, $id);
 
       // Order set with all the post of a specific type, related to a specific tag.
-      $this->redis->zAdd($tagId.'_'.$this->type, $this->getScore(), $this->unversionId); // tagId_type, score, postId
+      $this->redis->zAdd($tagId.'_'.$this->type, $score, $id);
     }
   }
 
