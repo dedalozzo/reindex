@@ -13,7 +13,7 @@ namespace PitPress\Model\Accessory;
 
 use ElephantOnCouch\Doc\Doc;
 
-use PitPress\Model\Versionable;
+use PitPress\Model\Storable;
 
 
 /**
@@ -25,13 +25,20 @@ class Star extends Doc {
   /**
    * @brief Creates an instance of Star class.
    */
-  public static function create($userId, Versionable $item, $timestamp = NULL) {
+  public static function create($userId, Storable $item, $timestamp = NULL) {
     $instance = new self();
 
     $instance->meta["userId"] = $userId;
-    $instance->meta["itemId"] = $item->getUnversionId();
+    $instance->meta["itemId"] = $item->unversionId;
     $instance->meta["itemType"] = $item->type;
-    $instance->meta["itemPublishedAt"] = $item->publishedAt;
+
+    // Articles, questions, books have a unique supertype: post.
+    if ($item->isMetadataPresent('supertype'))
+      $instance->meta["supertype"] = $item->supertype;
+
+    // A post can be published or not.
+    if ($item->isMetadataPresent('itemPublishedAt'))
+      $instance->meta["itemPublishedAt"] = $item->publishedAt;
 
     if (is_null($timestamp))
       $instance->meta["addedAt"] = time();
