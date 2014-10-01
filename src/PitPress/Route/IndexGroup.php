@@ -52,14 +52,11 @@ class IndexGroup extends Group {
    * @details This method maybe called twice because tags use the same routes with a different prefix.
    */
   protected function addRoutes($postfix = "") {
-    $this->addGet('/', ['action' => $this->getDefaultAction()]);
-    $this->addGet('/nuovi/', ['action' => 'newest']);
-    $this->addGet('/popolari/', ['action' => 'popular']);
-    $this->addGet('/popolari/{filter}/', ['action' => 'popular']);
-    $this->addGet('/attivi/', ['action' => 'active']);
-    $this->addGet('/interessanti/', ['action' => 'interesting']);
-    $this->addGet('/preferiti/', ['action' => 'favorite']);
-    $this->addGet('/preferiti/{filter}/', ['action' => 'favorite']);
+    $this->addGet('/', ['action' => $this->getDefaultAction().$postfix]);
+    $this->addGet('/nuovi/', ['action' => 'newest'.$postfix]);
+    $this->addGet('/popolari/', ['action' => 'popular'.$postfix]);
+    $this->addGet('/popolari/{filter}/', ['action' => 'popular'.$postfix]);
+    $this->addGet('/attivi/', ['action' => 'active'.$postfix]);
 
     $this->addGet('/{year:[0-9]{4}}/', ['action' => 'perDate'.$postfix]);
     $this->addGet('/{year:[0-9]{4}}/{month:[0-9]{2}}/', ['action' => 'perDate'.$postfix]);
@@ -77,13 +74,18 @@ class IndexGroup extends Group {
     $this->setPaths(['namespace' => 'PitPress\Controller', 'controller' => $this->getController()]);
     $this->setHostName(DI::getDefault()['config']['application']['domainName']);
 
+    // Sets the standard routes for a tag. Don't change the order!
+    $this->setPrefix('/{tag:[a-z]+}'.$this->getPrefix());
+    $this->addRoutes('ByTag');
+
     // Sets the standard routes.
     $this->setPrefix($this->getPrefix());
     $this->addRoutes();
 
-    // Sets the standard routes for a tag.
-    $this->setPrefix('/{tag:[a-z]+}'.$this->getPrefix());
-    $this->addRoutes('ByTag');
+    // The following routes don't support the postfix.
+    $this->addGet('/interessanti/', ['action' => 'interesting']);
+    $this->addGet('/preferiti/', ['action' => 'favorite']);
+    $this->addGet('/preferiti/{filter}/', ['action' => 'favorite']);
   }
 
 }
