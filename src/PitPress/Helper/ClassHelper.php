@@ -27,4 +27,14 @@ class ClassHelper {
     return preg_replace('/\.php\z/i', '', "\\".basename(str_replace("/", "\\", substr($pathname, stripos($pathname, "PitPress")))));
   }
 
+
+  /**
+   * @brief Given a class within its namespace, it does return the class name pruned by its namespace.
+   * @param[in] string $class The class included its namespace.
+   * @return string The class name.
+   */
+  public static function getClassName($class) {
+    return join('', array_slice(explode('\\', $class), -1));
+  }
+
 } 
