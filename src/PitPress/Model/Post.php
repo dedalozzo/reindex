@@ -93,28 +93,42 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   }
 
 
+
+  protected function addScore($set, \DateTime $date, $score, $id) {
+    $this->redis->zAdd($set, $score, $id);
+    $this->redis->zAdd($set.$date->format('Ymd'), $score, $id);
+    $this->redis->zAdd($set.$date->format('Ym'), $score, $id);
+    $this->redis->zAdd($set.$date->format('Y'), $score, $id);
+    $this->redis->zAdd($set.$date->format('Y_w'), $score, $id);
+  }
+
+
   /**
    * @brief Updates the score on the Redis database.
    * @return string
    */
-  public function updateScore() {
-    $score = $this->getScore();
+  public function updatePopularity() {
+    $config = $this->di['config'];
+
+    $set = 'pop_';
+    $date = (new \DateTime())->setTimestamp($this->publishedAt);
+    $popularity = ($this->getScore() * $config->scoring->voteCoefficient) + ($this->getRepliesCount() * $config->scoring->replyCoefficient) + ($this->getHitsCount() * $config->scoring->hitCoefficient);
     $id = $this->unversionId;
 
     // Order set with all the posts.
-    $this->redis->zAdd("_"."post", $score, $id);
+    $this->addScore($set, $date, $popularity, $id);
 
     // Order set with all the posts of a specific type: article, question, ecc.
-    $this->redis->zAdd("_".$this->type, $score, $id);
+    $this->addScore($set.$this->type, $date, $popularity, $id);
 
     foreach ($this->tags as $tag) {
-      $tagId = $tag['key']; // We need the unversion ID.
+      $tagId = $tag['key']; // We need the unversion identifier.
 
       // Order set with all the posts related to a specific tag.
-      $this->redis->zAdd($tagId, $score, $id);
+      $this->addScore($set.$tagId, $date, $popularity, $id);
 
       // Order set with all the post of a specific type, related to a specific tag.
-      $this->redis->zAdd($tagId.'_'.$this->type, $score, $id);
+      $this->addScore($set.$tagId.'_'.$this->type, $date, $popularity, $id);
     }
   }
 
