@@ -22,12 +22,15 @@ class Time extends TimeHelper {
 
   /** @name Time Periods */
   //!@{
-  const DAY = 5;
-  const WEEK = 4;
-  const MONTH = 3;
-  const QUARTER = 2;
-  const YEAR = 1;
-  const EVER = 0;
+  const TODAY = 0;
+  const YESTERDAY = 1;
+  const THIS_WEEK = 2;
+  const LAST_WEEK = 3;
+  const THIS_MONTH = 4;
+  const LAST_MONTH = 5;
+  const THIS_YEAR = 6;
+  const LAST_YEAR = 7;
+  const EVER = 8;
   //!@}
 
 
@@ -68,32 +71,49 @@ class Time extends TimeHelper {
 
 
   /**
-   * @brief Given a period as string, returns the timestamp of that past time.
-   * @param[in] string $period A period of time.
-   * @return int
+   * @brief Given a constant representing a period, returns a formatted string.
+   * @param[in] int $period A period in time.
+   * @param[in] string $prefix A string prefix.
+   * @param[in] string $prefix A string postfix.
+   * @return string
    */
-  public static function aWhileBack($period) {
-    switch ($period) {
-      case self::DAY:
-        $timestamp = strtotime('-1 day');
+  public static function aWhileBack($periodInTime, $prefix = "", $postfix = "") {
+    $date = new \DateTime();
+
+    switch ($periodInTime) {
+      case self::TODAY:
+        $format = $date->format("Ymd");
         break;
-      case self::WEEK:
-        $timestamp = strtotime('-1 week');
+      case self::YESTERDAY:
+        $date->modify('yesterday');
+        $format = $date->format("Ymd");
         break;
-      case self::MONTH:
-        $timestamp = strtotime('-1 month');
+      case self::THIS_WEEK:
+        $format = $date->format("Y_W");
         break;
-      case self::QUARTER;
-        $timestamp = strtotime('-3 month');
+      case self::LAST_WEEK;
+        $date->modify('last week');
+        $format = $date->format("Ymd");
         break;
-      case self::YEAR:
-        $timestamp = strtotime('-1 year');
+      case self::THIS_MONTH;
+        $format = $date->format("Ym");
         break;
-      default:
-        $timestamp = new \stdClass();
+      case self::LAST_MONTH;
+        $date->modify('last month');
+        $format = $date->format("Ym");
+        break;
+      case self::THIS_YEAR;
+        $format = $date->format("Y");
+        break;
+      case self::LAST_YEAR:
+        $date->modify('last year');
+        $format = $date->format("Y");
+        break;
+      default: // EVER
+        $format = "";
     }
 
-    return $timestamp;
+    return empty($format) ? $format : $prefix.$format.$postfix;
   }
 
 
@@ -119,6 +139,13 @@ class Time extends TimeHelper {
       $maxDate->modify('last day of this month')->modify('last second');
     else
       $maxDate->setDate($aYear, 12, 31)->modify('last second');
+  }
+
+
+
+  public static function getSet($period) {
+    $date = (new \DateTime())->setTimestamp(time())->modify('midnight');
+
   }
 
 }
