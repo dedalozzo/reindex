@@ -96,10 +96,10 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
   protected function addScore($set, \DateTime $date, $score, $id) {
     $this->redis->zAdd($set, $score, $id);
-    $this->redis->zAdd($set.$date->format('Ymd'), $score, $id);
-    $this->redis->zAdd($set.$date->format('Ym'), $score, $id);
-    $this->redis->zAdd($set.$date->format('Y'), $score, $id);
-    $this->redis->zAdd($set.$date->format('Y_w'), $score, $id);
+    $this->redis->zAdd($set.$date->format('_Ymd'), $score, $id);
+    $this->redis->zAdd($set.$date->format('_Ym'), $score, $id);
+    $this->redis->zAdd($set.$date->format('_Y'), $score, $id);
+    $this->redis->zAdd($set.$date->format('_Y_w'), $score, $id);
   }
 
 
@@ -116,7 +116,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     $id = $this->unversionId;
 
     // Order set with all the posts.
-    $this->addScore($set, $date, $popularity, $id);
+    $this->addScore($set.'post', $date, $popularity, $id);
 
     // Order set with all the posts of a specific type: article, question, ecc.
     $this->addScore($set.$this->type, $date, $popularity, $id);
@@ -125,7 +125,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
       $tagId = $tag['key']; // We need the unversion identifier.
 
       // Order set with all the posts related to a specific tag.
-      $this->addScore($set.$tagId, $date, $popularity, $id);
+      $this->addScore($set.$tagId.'_'.'post', $date, $popularity, $id);
 
       // Order set with all the post of a specific type, related to a specific tag.
       $this->addScore($set.$tagId.'_'.$this->type, $date, $popularity, $id);
