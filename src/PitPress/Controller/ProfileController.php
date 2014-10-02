@@ -70,7 +70,7 @@ class ProfileController extends ListController {
     $startKey = isset($_GET['startkey']) ? (int)$_GET['startkey'] : Couch::WildCard();
     if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
 
-    $opts->doNotReduce()->setLimit(self::RESULTS_PER_PAGE+1)->reverseOrderOfResults()->setStartKey([$user->id, $startKey])->setEndKey([$user->id]);
+    $opts->doNotReduce()->setLimit($this->resultsPerPage+1)->reverseOrderOfResults()->setStartKey([$user->id, $startKey])->setEndKey([$user->id]);
     $rows = $this->couch->queryView("posts", "perDateByUser", NULL, $opts);
 
     $opts->reduce()->setStartKey([$user->id, Couch::WildCard()])->unsetOpt('startkey_docid');
@@ -78,9 +78,9 @@ class ProfileController extends ListController {
 
     $entries = $this->getEntries(array_column($rows->asArray(), 'id'));
 
-    if (count($entries) > self::RESULTS_PER_PAGE) {
+    if (count($entries) > $this->resultsPerPage) {
       $last = array_pop($entries);
-      $this->view->setVar('nextPage', $this->buildPaginationUrl($last->publishedAt, $last->id));
+      $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->publishedAt, $last->id));
     }
 
     $this->view->setVar('entries', $entries);
