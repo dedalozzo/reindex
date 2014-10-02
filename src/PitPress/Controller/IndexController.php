@@ -207,7 +207,7 @@ class IndexController extends ListController {
    */
   public function newestAction() {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->reverseOrderOfResults()->setLimit(self::RESULTS_PER_PAGE+1);
+    $opts->doNotReduce()->reverseOrderOfResults()->setLimit($this->resultsPerPage+1);
 
     // Paginates results.
     $startKey = isset($_GET['startkey']) ? (int)$_GET['startkey'] : Couch::WildCard();
@@ -230,9 +230,9 @@ class IndexController extends ListController {
 
     $entries = $this->getEntries(array_column($rows->asArray(), 'id'));
 
-    if (count($entries) > self::RESULTS_PER_PAGE) {
+    if (count($entries) > $this->resultsPerPage) {
       $last = array_pop($entries);
-      $this->view->setVar('nextPage', $this->buildPaginationUrl($last->publishedAt, $last->id));
+      $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->publishedAt, $last->id));
     }
 
     $this->view->setVar('entries', $entries);
@@ -252,7 +252,7 @@ class IndexController extends ListController {
     if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->reverseOrderOfResults()->setLimit(self::RESULTS_PER_PAGE+1);
+    $opts->doNotReduce()->reverseOrderOfResults()->setLimit($this->resultsPerPage+1);
 
     // Paginates results.
     $startKey = isset($_GET['startkey']) ? (int)$_GET['startkey'] : Couch::WildCard();
@@ -277,9 +277,9 @@ class IndexController extends ListController {
 
     $entries = $this->getEntries(array_column($rows->asArray(), 'id'));
 
-    if (count($entries) > self::RESULTS_PER_PAGE) {
+    if (count($entries) > $this->resultsPerPage) {
       $last = array_pop($entries);
-      $this->view->setVar('nextPage', $this->buildPaginationUrl($last->publishedAt, $last->id));
+      $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->publishedAt, $last->id));
     }
 
     $this->view->setVar('entries', $entries);
@@ -296,7 +296,7 @@ class IndexController extends ListController {
    */
   public function perDateAction($year, $month = NULL, $day = NULL) {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->reverseOrderOfResults()->setLimit(self::RESULTS_PER_PAGE+1);
+    $opts->doNotReduce()->reverseOrderOfResults()->setLimit($this->resultsPerPage+1);
 
     Helper\Time::dateLimits($minDate, $maxDate, $year, $month, $day);
 
@@ -321,9 +321,9 @@ class IndexController extends ListController {
 
     $entries = $this->getEntries(array_column($rows->asArray(), 'id'));
 
-    if (count($entries) > self::RESULTS_PER_PAGE) {
+    if (count($entries) > $this->resultsPerPage) {
       $last = array_pop($entries);
-      $this->view->setVar('nextPage', $this->buildPaginationUrl($last->publishedAt, $last->id));
+      $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->publishedAt, $last->id));
     }
 
     $this->view->setVar('entries', $entries);
@@ -341,7 +341,7 @@ class IndexController extends ListController {
     if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->reverseOrderOfResults()->setLimit(self::RESULTS_PER_PAGE+1);
+    $opts->doNotReduce()->reverseOrderOfResults()->setLimit($this->resultsPerPage+1);
 
     Helper\Time::dateLimits($minDate, $maxDate, $year, $month, $day);
 
@@ -366,9 +366,9 @@ class IndexController extends ListController {
 
     $entries = $this->getEntries(array_column($rows->asArray(), 'id'));
 
-    if (count($entries) > self::RESULTS_PER_PAGE) {
+    if (count($entries) > $this->resultsPerPage) {
       $last = array_pop($entries);
-      $this->view->setVar('nextPage', $this->buildPaginationUrl($last->publishedAt, $last->id));
+      $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->publishedAt, $last->id));
     }
 
     $this->view->setVar('entries', $entries);
@@ -378,49 +378,34 @@ class IndexController extends ListController {
   }
 
 
-  /**
-   * @brief Displays the most popular updates for the provided period (ordered by score).
-   */
-  public function popularAction($filter = NULL) {
-    $period = $this->getPeriod($filter);
-    if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+  protected function popular($period, $tagId = NULL) {
+    $date = Helper\Time::aWhileBack($period, "_");
 
-    //$opts = new ViewQueryOpts();
-    //$opts->doNotReduce()->setLimit(self::RESULTS_PER_PAGE+1)->reverseOrderOfResults();
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce();
 
     if ($this->isSameClass()) {
-      //$opts->setStartKey(time());
-
-      $pippo = $this->redis->zRevRangeByScore('_post', 0, 14, ['withscores' => TRUE, 'limit' => ['+inf', 0]]);
-      $this->monolog->addDebug("redis", $pippo);
-
-      /*
-      if ($period == Helper\Time::EVER)
-        // ERROR: don't provide a data and use another view that use as key the score and as value the postId
-        $opts->setEndKey(0);
-      else
-        $opts->setEndKey(Helper\Time::aWhileBack($period));
-
-      $rows = $this->couch->queryView("posts", "perDate", NULL, $opts);
-      $count = $this->couch->queryView("posts", "perDate", NULL, $opts->reduce())->getReducedValue();
-      */
+      $set = "pop_".$tagId."post".$date;
     }
     else {
-      /*$opts->setStartKey([$this->type, Couch::WildCard()]);
-
-      if ($period == Helper\Time::EVER)
-        // ERROR: don't provide a data and use another view that use as key the [type, score] and as value the postId
-        $opts->setEndKey([$this->type]);
-      else
-        $opts->setEndKey([$this->type, Helper\Time::aWhileBack($period)]);
-
-      $rows = $this->couch->queryView("posts", "perDateByType", NULL, $opts);
-      $count = $this->couch->queryView("posts", "perDateByType", NULL, $opts->reduce())->getReducedValue();*/
+      $set = "pop_".$tagId.$this->type.$date;
     }
 
-    $this->monolog->addNotice(sprintf('Period: %s', $period));
+    $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
+    $keys = $this->redis->zRevRangeByScore($set, '+inf', 0, ['limit' => [$offset, $this->resultsPerPage-1]]);
+    $count = $this->redis->zCount($set, 0, '+inf');
 
-    $this->view->setVar('entries', $this->getEntries(array_column($rows->asArray(), 'id')));
+    if ($count > $this->resultsPerPage)
+      $this->view->setVar('nextPage', $this->buildPaginationUrlForRedis($offset + $this->resultsPerPage));
+
+    if (!empty($keys)) {
+      $rows = $this->couch->queryView("posts", "unversion", $keys, $opts);
+      $ids = $this->getEntries(array_column($rows->asArray(), 'id'));
+    }
+    else
+      $ids = [];
+
+    $this->view->setVar('entries', $ids);
     $this->view->setVar('entriesCount', $count);
     $this->view->setVar('submenu', $this->periods);
     $this->view->setVar('submenuIndex', $period);
@@ -429,8 +414,21 @@ class IndexController extends ListController {
 
 
   /**
+   * @brief Displays the most popular updates for the provided period (ordered by score).
+   * @param[in] string $filter Human readable representation of a period.
+   */
+  public function popularAction($filter = NULL) {
+    $period = $this->getPeriod($filter);
+    if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+
+    $this->popular($period);
+  }
+
+
+  /**
    * @brief Displays the most popular updates by tag, for the provided period (ordered by score).
    * @param[in] string $tag The tag name.
+   * @param[in] string $filter Human readable representation of a period.
    */
   public function popularByTagAction($tag, $filter = NULL) {
     $tagId = $this->getTagId($tag);
@@ -439,15 +437,7 @@ class IndexController extends ListController {
     $period = $this->getPeriod($filter);
     if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    if ($this->isSameClass()) {
-      $pippo = $this->redis->zRevRangeByScore($tagId, '+inf', 0, ['limit' => [0, 15]]);
-    }
-    else {
-      $pippo = $this->redis->zRevRangeByScore($tagId.'_'.$this->type, '+inf', 0, ['limit' => [0, 15]]);
-    }
-
-    $this->view->setVar('resource', $tag);
-    //$this->monolog->addDebug("redis", $pippo);
+    $this->popular($period, $tagId."_");
   }
 
 
@@ -477,7 +467,7 @@ class IndexController extends ListController {
     /*
     $opts = new ViewQueryOpts();
     $opts->reduce()->groupResults();
-    //$opts->setLimit(self::RESULTS_PER_PAGE+1);
+    //$opts->setLimit($this->resultsPerPage+1);
 
     // Paginates results.
     //$startKey = isset($_GET['startkey']) ? (int)$_GET['startkey'] : Couch::WildCard();
@@ -516,7 +506,7 @@ class IndexController extends ListController {
 
     $this->monolog->addDebug('Qui passo');
 
-    if (count($entries) > self::RESULTS_PER_PAGE) {
+    if (count($entries) > $this->resultsPerPage) {
       $last = array_pop($entries);
       $this->view->setVar('nextPage', $this->buildPaginationUrl($last->publishedAt, $last->id));
     }
@@ -550,7 +540,7 @@ class IndexController extends ListController {
     }
 
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->reverseOrderOfResults()->setLimit(self::RESULTS_PER_PAGE+1);
+    $opts->doNotReduce()->reverseOrderOfResults()->setLimit($this->resultsPerPage+1);
 
     // Paginates results.
     $startKey = isset($_GET['startkey']) ? (int)$_GET['startkey'] : Couch::WildCard();
@@ -579,9 +569,9 @@ class IndexController extends ListController {
     $stars = $rows->asArray();
 
     // If the query returned more entries than the ones must display on the page, a link to the next page must be provided.
-    if ($rows->count() > self::RESULTS_PER_PAGE) {
+    if ($rows->count() > $this->resultsPerPage) {
       $last = array_pop($stars);
-      $this->view->setVar('nextPage', $this->buildPaginationUrl($last['key'][$key], $last['id']));
+      $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last['key'][$key], $last['id']));
     }
 
     // So we make another query to retrieves the IDs.
