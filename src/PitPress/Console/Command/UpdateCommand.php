@@ -32,8 +32,8 @@ class UpdateCommand extends AbstractCommand {
   /**
    * @brief Update posts score.
    */
-  private function updateScore(InputInterface $input, OutputInterface $output) {
-    $output->writeln("Updating score...");
+  private function updatePopularity(InputInterface $input, OutputInterface $output) {
+    $output->writeln("Updating popularity...");
 
     $progress = $this->getApplication()->getHelperSet()->get('progress');
 
@@ -45,7 +45,7 @@ class UpdateCommand extends AbstractCommand {
 
     foreach ($ids as $id) {
       $post = $this->couch->getDoc(Couch::STD_DOC_PATH, $id);
-      $post->updateScore();
+      $post->updatePopularity();
 
       $progress->advance();
     }
@@ -62,7 +62,7 @@ class UpdateCommand extends AbstractCommand {
     $this->setDescription("Updates Redis database.");
     $this->addArgument("subcommand",
       InputArgument::REQUIRED,
-      "The data you want update. Use 'score' if you want update posts score.");
+      "The data you want update. Use 'popularity' if you want update posts popularity.");
   }
 
 
@@ -78,8 +78,8 @@ class UpdateCommand extends AbstractCommand {
     $subcommand = $input->getArgument('subcommand');
 
     switch ($subcommand) {
-      case 'score':
-        $this->updateScore($input, $output);
+      case 'popularity':
+        $this->updatePopularity($input, $output);
         break;
     }
 
