@@ -25,8 +25,7 @@ use Phalcon\Mvc\View;
  */
 abstract class ListController extends BaseController {
 
-  const RESULTS_PER_PAGE = 15;
-
+  protected $resultsPerPage;
 
   /**
    * @brief Given a set of keys, retrieves entries.
@@ -109,18 +108,30 @@ abstract class ListController extends BaseController {
 
 
   /**
-   * @brief Builds the pagination url.
+   * @brief Builds the pagination url for CouchDB.
    * @param[in] mixed $startKey A key.
    * @param[in] string $startKeyDocId A document ID.
    * @return string The pagination url.
    */
-  protected function buildPaginationUrl($starKey, $startKeyDocId) {
+  protected function buildPaginationUrlForCouch($starKey, $startKeyDocId) {
     return sprintf('%s%s?startkey=%d&startkey_docid=%s', $this->domainName, parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), $starKey, $startKeyDocId);
+  }
+
+
+  /**
+   * @brief Builds the pagination url for Redis.
+   * @param[in] int $offset The offset.
+   * @return string The pagination url.
+   */
+  protected function buildPaginationUrlForRedis($offset) {
+    return sprintf('%s%s?offset=%d', $this->domainName, parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), $offset);
   }
 
 
   public function initialize() {
     parent::initialize();
+
+    $this->resultsPerPage = $this->di['config']->application->resultsPerPage;
 
     $this->assets->addJs("/pit-bootstrap/dist/js/list.min.js", FALSE);
   }
