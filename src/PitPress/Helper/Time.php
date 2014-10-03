@@ -141,11 +141,4 @@ class Time extends TimeHelper {
       $maxDate->setDate($aYear, 12, 31)->modify('last second');
   }
 
-
-
-  public static function getSet($period) {
-    $date = (new \DateTime())->setTimestamp(time())->modify('midnight');
-
-  }
-
 }
