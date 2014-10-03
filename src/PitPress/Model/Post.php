@@ -104,8 +104,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
 
   /**
-   * @brief Updates the score on the Redis database.
-   * @return string
+   * @brief Updates the post popularity.
    */
   public function updatePopularity() {
     $config = $this->di['config'];
@@ -129,6 +128,34 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
       // Order set with all the post of a specific type, related to a specific tag.
       $this->addScore($set.$tagId.'_'.$this->type, $date, $popularity, $id);
+    }
+  }
+
+
+  /**
+   * @brief Updates the post timestamp.
+   */
+  public function updateTimestamp($timestamp = NULL) {
+    if (is_null($timestamp))
+      $timestamp = $this->modifiedAt;
+
+    $set = 'tmp_';
+    $id = $this->unversionId;
+
+    // Order set with all the posts.
+    $this->redis->zAdd($set.'post', $timestamp, $id);
+
+    // Order set with all the posts of a specific type: article, question, ecc.
+    $this->redis->zAdd($set.$this->type, $timestamp, $id);
+
+    foreach ($this->tags as $tag) {
+      $tagId = $tag['key']; // We need the unversion identifier.
+
+      // Order set with all the posts related to a specific tag.
+      $this->redis->zAdd($set.$tagId.'_'.'post', $timestamp, $id);
+
+      // Order set with all the post of a specific type, related to a specific tag.
+      $this->redis->zAdd($set.$tagId.'_'.$this->type, $timestamp, $id);
     }
   }
 
