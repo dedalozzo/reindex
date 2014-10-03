@@ -362,7 +362,8 @@ class ImportCommand extends AbstractCommand {
 
       // We finally save the comment.
       try {
-          $replay->save();
+        $replay->save();
+        $post->updateTimestamp($replay->modifiedAt);
       }
       catch(\Exception $e) {
         $this->monolog->addCritical(sprintf("Invalid JSON: Comment %s - Item %s", $item->idComment, $item->idItem));
