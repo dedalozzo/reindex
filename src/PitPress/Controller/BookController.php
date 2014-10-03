@@ -25,13 +25,13 @@ class BookController extends IndexController {
 
 
   protected function getPeriod($filter) {
-    return empty($filter) ? Helper\Time::YEAR : Helper\ArrayHelper::value($filter, $this->periods);
+    return empty($filter) ? Helper\Time::EVER : Helper\ArrayHelper::value($filter, $this->periods);
   }
 
 
-  public function popularAction($filter = NULL) {
+  protected function popular($filter, $tagId = NULL) {
     $this->periods = Helper\ArrayHelper::slice($this->periods, 3);
-    parent::popularAction($filter);
+    parent::popular($filter);
   }
 
 }

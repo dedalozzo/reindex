@@ -378,18 +378,16 @@ class IndexController extends ListController {
   }
 
 
-  protected function popular($period, $tagId = NULL) {
+  protected function popular($filter, $tagId = NULL) {
+    $period = $this->getPeriod($filter);
+    if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+
     $date = Helper\Time::aWhileBack($period, "_");
 
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce();
-
-    if ($this->isSameClass()) {
+    if ($this->isSameClass())
       $set = "pop_".$tagId."post".$date;
-    }
-    else {
+    else
       $set = "pop_".$tagId.$this->type.$date;
-    }
 
     $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
     $keys = $this->redis->zRevRangeByScore($set, '+inf', 0, ['limit' => [$offset, $this->resultsPerPage-1]]);
@@ -399,6 +397,8 @@ class IndexController extends ListController {
       $this->view->setVar('nextPage', $this->buildPaginationUrlForRedis($offset + $this->resultsPerPage));
 
     if (!empty($keys)) {
+      $opts = new ViewQueryOpts();
+      $opts->doNotReduce();
       $rows = $this->couch->queryView("posts", "unversion", $keys, $opts);
       $ids = $this->getEntries(array_column($rows->asArray(), 'id'));
     }
@@ -406,7 +406,7 @@ class IndexController extends ListController {
       $ids = [];
 
     $this->view->setVar('entries', $ids);
-    $this->view->setVar('entriesCount', $count);
+    $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
     $this->view->setVar('submenu', $this->periods);
     $this->view->setVar('submenuIndex', $period);
     $this->view->setVar('title', sprintf('%s popolari', ucfirst($this->getLabel())));
@@ -418,10 +418,7 @@ class IndexController extends ListController {
    * @param[in] string $filter Human readable representation of a period.
    */
   public function popularAction($filter = NULL) {
-    $period = $this->getPeriod($filter);
-    if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
-
-    $this->popular($period);
+    $this->popular($filter);
   }
 
 
@@ -434,10 +431,36 @@ class IndexController extends ListController {
     $tagId = $this->getTagId($tag);
     if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    $period = $this->getPeriod($filter);
-    if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+    $this->popular($filter, $tagId."_");
+    $this->view->setVar('resource', $tag);
+  }
 
-    $this->popular($period, $tagId."_");
+
+  protected function active($tagId = NULL) {
+    if ($this->isSameClass())
+      $set = "tmp_".$tagId."post";
+    else
+      $set = "tmp_".$tagId.$this->type;
+
+    $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
+    $keys = $this->redis->zRevRangeByScore($set, '+inf', 0, ['limit' => [$offset, $this->resultsPerPage-1]]);
+    $count = $this->redis->zCount($set, 0, '+inf');
+
+    if ($count > $this->resultsPerPage)
+      $this->view->setVar('nextPage', $this->buildPaginationUrlForRedis($offset + $this->resultsPerPage));
+
+    if (!empty($keys)) {
+      $opts = new ViewQueryOpts();
+      $opts->doNotReduce();
+      $rows = $this->couch->queryView("posts", "unversion", $keys, $opts);
+      $ids = $this->getEntries(array_column($rows->asArray(), 'id'));
+    }
+    else
+      $ids = [];
+
+    $this->view->setVar('entries', $ids);
+    $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
+    $this->view->setVar('title', sprintf('%s attivi', ucfirst($this->getLabel())));
   }
 
 
@@ -445,8 +468,7 @@ class IndexController extends ListController {
    * @brief Displays the last updated entries.
    */
   public function activeAction() {
-    $this->view->setVar('entriesCount', 0);
-    $this->view->setVar('title', sprintf('%s attivi', ucfirst($this->getLabel())));
+    $this->active();
   }
 
 
@@ -454,9 +476,11 @@ class IndexController extends ListController {
    * @brief Displays the last updated entries by tag.
    */
   public function activeByTagAction($tag) {
-    $this->view->setVar('entriesCount', 0);
+    $tagId = $this->getTagId($tag);
+    if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+
+    $this->active();
     $this->view->setVar('resource', $tag);
-    $this->view->setVar('title', sprintf('%s attivi', ucfirst($this->getLabel())));
   }
 
 

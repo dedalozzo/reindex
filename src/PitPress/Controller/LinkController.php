@@ -25,7 +25,7 @@ class LinkController extends IndexController {
 
 
   protected function getPeriod($filter) {
-    return empty($filter) ? Helper\Time::DAY : Helper\ArrayHelper::value($filter, $this->periods);
+    return empty($filter) ? Helper\Time::TODAY : Helper\ArrayHelper::value($filter, $this->periods);
   }
 
 }

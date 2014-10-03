@@ -29,9 +29,9 @@ class ArticleController extends IndexController {
   }
 
 
-  public function popularAction($filter = NULL) {
+  protected function popular($filter, $tagId = NULL) {
     $this->periods = Helper\ArrayHelper::slice($this->periods, 5);
-    parent::popularAction($filter);
+    parent::popular($filter);
   }
 
 } 

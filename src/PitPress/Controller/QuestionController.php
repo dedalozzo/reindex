@@ -25,19 +25,19 @@ class QuestionController extends IndexController {
 
 
   protected function getPeriod($filter) {
-    return empty($filter) ? Helper\Time::WEEK : Helper\ArrayHelper::value($filter, $this->periods);
+    return empty($filter) ? Helper\Time::THIS_WEEK : Helper\ArrayHelper::value($filter, $this->periods);
+  }
+
+
+  protected function popular($filter, $tagId = NULL) {
+    $this->periods = Helper\ArrayHelper::slice($this->periods, 7);
+    parent::popular($filter);
   }
 
 
   public function newestAction($tag = NULL) {
     parent::newestAction();
     $this->view->setVar('title', sprintf('Nuove %s', $this->getLabel()));
-  }
-
-
-  public function popularAction($filter = NULL) {
-    $this->periods = Helper\ArrayHelper::slice($this->periods, 5);
-    parent::popularAction($filter);
   }
 
 
