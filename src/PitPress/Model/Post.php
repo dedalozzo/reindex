@@ -148,14 +148,22 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     // Order set with all the posts of a specific type: article, question, ecc.
     $this->redis->zAdd($set.$this->type, $timestamp, $id);
 
-    foreach ($this->tags as $tag) {
-      $tagId = $tag['key']; // We need the unversion identifier.
+    if ($this->isMetadataPresent('tags')) {
+      $tags = $this->meta['tags'];
 
-      // Order set with all the posts related to a specific tag.
-      $this->redis->zAdd($set.$tagId.'_'.'post', $timestamp, $id);
+      foreach ($tags as $tagId) {
+        // Order set with all the posts related to a specific tag.
+        $this->redis->zAdd($set.$tagId.'_'.'post', $timestamp, $id);
 
-      // Order set with all the post of a specific type, related to a specific tag.
-      $this->redis->zAdd($set.$tagId.'_'.$this->type, $timestamp, $id);
+        // Order set with all the posts of a specific type, related to a specific tag.
+        $this->redis->zAdd($set.$tagId.'_'.$this->type, $timestamp, $id);
+
+        // Used to get a list of tags recently updated.
+        $this->redis->zAdd("tmp_tags".'_'.'post', $timestamp, $tagId);
+
+        // Used to get a list of tags, in relation to a specific type, recently updated.
+        $this->redis->zAdd("tmp_tags".'_'.$this->type, $timestamp, $tagId);
+      }
     }
   }
 
