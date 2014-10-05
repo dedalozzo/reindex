@@ -113,23 +113,28 @@ class IndexController extends ListController {
    * @brief Gets a list of tags recently updated.
    */
   protected function recentTags($count = 20) {
-    // todo Change this part, getting the classification of the last week, grouped by tagId.
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit($count);
-    // todo Change newest...
-    $classifications = $this->couch->queryView("classifications", "newest", NULL, $opts);
-    $keys = array_column($classifications->asArray(), 'value');
-
-    $opts->reset();
-    $tags = $this->couch->queryView("tags", "allNames", $keys, $opts);
-
-    $opts->reset();
-    $opts->includeMissingKeys()->groupResults();
-    $postsPerTag = $this->couch->queryView("classifications", "perTag", $keys, $opts);
-
     $recentTags = [];
-    for ($i = 0; $i < $count; $i++)
-      $recentTags[] = [$tags[$i]['value'], $postsPerTag[$i]['value']];
+
+    if ($this->isSameClass())
+      $set = "tmp_tags".'_'.'post';
+    else
+      $set = "tmp_tags".'_'.$this->type;
+
+    $ids = $this->redis->zRevRangeByScore($set, '+inf', 0, ['limit' => [0, $count-1]]);
+
+    if (!empty($keys)) {
+      $opts = new ViewQueryOpts();
+      $opts->doNotReduce();
+      $names = $this->couch->queryView("tags", "allNames", $ids, $opts);
+
+      $opts->reset();
+      $opts->groupResults()->includeMissingKeys();
+      $posts = $this->couch->queryView("posts", "perTag", $ids, $opts);
+
+      $count = count($ids);
+      for ($i = 0; $i < $count; $i++)
+        $recentTags[] = [$names[$i]['value'], $posts[$i]['value']];
+    }
 
     $this->view->setVar('recentTags', $recentTags);
   }
@@ -151,7 +156,7 @@ class IndexController extends ListController {
   public function afterExecuteRoute() {
     parent::afterExecuteRoute();
 
-    //$this->recentTags();
+    $this->recentTags();
 
     // The entries label is printed below the entries count.
     $this->view->setVar('entriesLabel', $this->getLabel());
@@ -479,7 +484,7 @@ class IndexController extends ListController {
     $tagId = $this->getTagId($tag);
     if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    $this->active();
+    $this->active($tagId."_");
     $this->view->setVar('resource', $tag);
   }
 
