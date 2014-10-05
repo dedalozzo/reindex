@@ -182,7 +182,7 @@ MAP;
     function postsPerDateByTag() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
+  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current) && isset($doc->tags))
     foreach ($doc->tags as $tagId)
       $emit([$tagId, $doc->publishedAt]);
 };
@@ -202,7 +202,7 @@ MAP;
     function postsPerDateByTagAndType() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
+  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current) && isset($doc->tags))
     foreach ($doc->tags as $tagId)
       $emit([$tagId, $doc->type, $doc->publishedAt]);
 };
@@ -259,7 +259,7 @@ MAP;
     function postsPerTag() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
+  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current) && isset($doc->tags))
     foreach ($doc->tags as $tagId)
       $emit($tagId);
 };
