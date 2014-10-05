@@ -23,7 +23,6 @@ use PitPress\Model\Tag;
 use PitPress\Model\User;
 use PitPress\Model\Reply;
 use PitPress\Model\Accessory\Star;
-use PitPress\Model\Accessory\Classification;
 use PitPress\Model\Accessory\Subscription;
 use PitPress\Helper\Text;
 
@@ -363,11 +362,12 @@ class ImportCommand extends AbstractCommand {
       // We finally save the comment.
       try {
         $replay->save();
-        $post->updateTimestamp($replay->modifiedAt);
       }
       catch(\Exception $e) {
         $this->monolog->addCritical(sprintf("Invalid JSON: Comment %s - Item %s", $item->idComment, $item->idItem));
       }
+
+      $post->updateTimestamp($replay->modifiedAt);
     }
 
     mysqli_free_result($result);
