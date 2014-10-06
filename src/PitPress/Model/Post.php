@@ -93,7 +93,6 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   }
 
 
-
   protected function addScore($set, \DateTime $date, $score, $id) {
     $this->redis->zAdd($set, $score, $id);
     $this->redis->zAdd($set.$date->format('_Ymd'), $score, $id);
