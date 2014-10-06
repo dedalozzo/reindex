@@ -208,6 +208,14 @@ class IndexController extends ListController {
 
 
   /**
+   * @brief Displays information about the tag.
+   */
+  public function infoByTagAction($tag) {
+    $this->view->setVar('title', 'Tags popolari');
+  }
+
+
+  /**
    * @brief Displays the newest posts.
    */
   public function newestAction() {
