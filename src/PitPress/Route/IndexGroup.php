@@ -83,6 +83,7 @@ class IndexGroup extends Group {
     $this->addRoutes();
 
     // The following routes don't support the postfix.
+    $this->addGet('/info/', ['action' => 'infoByTag']);
     $this->addGet('/interessanti/', ['action' => 'interesting']);
     $this->addGet('/preferiti/', ['action' => 'favorite']);
     $this->addGet('/preferiti/{filter}/', ['action' => 'favorite']);
