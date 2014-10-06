@@ -2,7 +2,8 @@
   {% set menu = [
   'activeByTag': 'attivi',
   'popularByTag': 'popolari',
-  'newestByTag': 'nuovi'
+  'newestByTag': 'nuovi',
+  'infoByTag': 'info'
   ] %}
 {% else %}
   {% set menu = [

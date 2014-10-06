@@ -4,7 +4,8 @@
   'popularByTag': 'popolari',
   'newestByTag': 'nuove',
   'openByTag': 'aperte',
-  'importantByTag': 'importanti'
+  'importantByTag': 'importanti',
+  'infoByTag': 'info',
   ] %}
   {% set resource = resource~'/domande' %}
 {% else %}
