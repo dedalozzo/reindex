@@ -13,6 +13,7 @@
     <li><a class="tag twitter" href="http://twitter.com/prg_it"><i class="icon-twitter no-text"></i></a></li>
     <li><a class="tag facebook" href="http://facebook.com/programmazione.it"><i class="icon-facebook no-text"></i></a></li>
     <li><a class="tag google" href="#"><i class="icon-google-plus no-text"></i></a></li>
+    <li><a class="tag linkedin" href="https://www.linkedin.com/company/programmazione.it"><i class="icon-linkedin no-text"></i></a></li>
     <li><a class="tag rss" href="http://programmazione.it/rss"><i class="icon-rss no-text"></i></a></li>
   </ul>
 </nav>
