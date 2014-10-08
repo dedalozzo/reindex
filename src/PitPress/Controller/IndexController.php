@@ -186,7 +186,7 @@ class IndexController extends ListController {
       return $this->dispatcher->forward(
         [
           'controller' => 'auth',
-          'action' => 'signin'
+          'action' => 'logon'
         ]);
   }
 
