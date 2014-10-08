@@ -61,7 +61,7 @@ class TagController extends ListController {
 
   public function initialize() {
     parent::initialize();
-    $this->resultsPerPage = 40;
+    $this->resultsPerPage = $this->di['config']->application->tagsPerPage;
     $this->view->pick('views/tag');
   }
 
@@ -115,9 +115,8 @@ class TagController extends ListController {
 
     // Paginates results.
     $startKey = isset($_GET['startkey']) ? $_GET['startkey'] : chr(0);
-    if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
-
     $opts->setStartKey($startKey);
+    if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
 
     $tags = $this->couch->queryView("tags", "byName", NULL, $opts)->asArray();
 
@@ -142,9 +141,8 @@ class TagController extends ListController {
 
     // Paginates results.
     $startKey = isset($_GET['startkey']) ? (int)$_GET['startkey'] : Couch::WildCard();
-    if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
-
     $opts->setStartKey($startKey);
+    if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
 
     $tags = $this->couch->queryView("tags", "newest", NULL, $opts)->asArray();
 
