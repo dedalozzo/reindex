@@ -144,6 +144,7 @@ class IndexController extends ListController {
     parent::initialize();
 
     $this->type = $this->controllerName;
+    $this->resultsPerPage = $this->di['config']->application->postsPerPage;
 
     $this->monolog->addDebug(sprintf('Type: %s', $this->type));
 
