@@ -287,7 +287,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'tag')
-    $emit($doc->_id, [$doc->name, $doc->excerpt, $doc->publishedAt]);
+    $emit($doc->_id, [$doc->name, $doc->excerpt, $doc->createdAt]);
 };
 MAP;
 
@@ -322,7 +322,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'tag' && isset($doc->current))
-    $emit($doc->publishedAt);
+    $emit($doc->createdAt);
 };
 MAP;
 
@@ -355,7 +355,7 @@ MAP;
     function tagsPerPost() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
+  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current) && isset($doc->tags))
     foreach ($doc->tags as $tagId)
       $emit($doc->unversionId, $tagId);
 };
