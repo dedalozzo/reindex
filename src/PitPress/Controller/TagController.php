@@ -12,6 +12,7 @@ namespace PitPress\Controller;
 
 
 use ElephantOnCouch\Opt\ViewQueryOpts;
+use ElephantOnCouch\Couch;
 
 use PitPress\Helper;
 
@@ -20,7 +21,7 @@ use PitPress\Helper;
  * @brief Controller of Tag actions.
  * @nosubgrouping
  */
-class TagController extends BaseController {
+class TagController extends ListController {
 
 
   protected function getEntries($ids) {
@@ -32,8 +33,6 @@ class TagController extends BaseController {
     // Gets the tags properties.
     $opts->doNotReduce();
     $tags = $this->couch->queryView("tags", "all", $ids, $opts);
-
-    $this->view->setVar('tagsCount', $tags->getTotalRows()); // todo This must be changed.
 
     Helper\ArrayHelper::unversion($ids);
 
@@ -49,7 +48,8 @@ class TagController extends BaseController {
       $entry->id = $tags[$i]['id'];
       $entry->name = $tags[$i]['value'][0];
       $entry->excerpt = $tags[$i]['value'][1];
-      $entry->whenHasBeenPublished = Helper\Time::when($tags[$i]['value'][2]);
+      $entry->createdAt = $tags[$i]['value'][2];
+      //$entry->whenHasBeenPublished = Helper\Time::when($tags[$i]['value'][2]);
       $entry->postsCount = is_null($postsCount[$i]['value']) ? 0 : $postsCount[$i]['value'];
 
       $entries[] = $entry;
@@ -59,18 +59,15 @@ class TagController extends BaseController {
   }
 
 
-  /**
-   * @brief Gets the total number of tags.
-   */
-  protected function getEntriesCount() {
-    $count = $this->couch->queryView("tags", "all")->getReducedValue();
-    return Helper\Text::formatNumber($count);
+  public function initialize() {
+    parent::initialize();
+    $this->resultsPerPage = 40;
+    $this->view->pick('views/tag');
   }
 
 
-  public function initialize() {
-    parent::initialize();
-    $this->view->pick('views/tag');
+  public function afterExecuteRoute() {
+    parent::afterExecuteRoute();
   }
 
 
@@ -83,15 +80,55 @@ class TagController extends BaseController {
 
 
   /**
+   * @brief Displays the last updated tags.
+   */
+  public function activeAction() {
+    $set = "tmp_tags".'_'.'post';
+
+    $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
+    $keys = $this->redis->zRevRangeByScore($set, '+inf', 0, ['limit' => [$offset, $this->resultsPerPage-1]]);
+    $count = $this->redis->zCount($set, 0, '+inf');
+
+    if ($count > $this->resultsPerPage)
+      $this->view->setVar('nextPage', $this->buildPaginationUrlForRedis($offset + $this->resultsPerPage));
+
+    if (!empty($keys)) {
+      $opts = new ViewQueryOpts();
+      $opts->doNotReduce();
+      $rows = $this->couch->queryView("tags", "allNames", $keys, $opts);
+      $ids = $this->getEntries(array_column($rows->asArray(), 'id'));
+    }
+    else
+      $ids = [];
+
+    $this->view->setVar('entries', $ids);
+    $this->view->setVar('title', 'Tags attivi');
+  }
+
+
+  /**
    * @brief Displays the tags sorted by name.
    */
   public function byNameAction() {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(40);
+    $opts->doNotReduce()->setLimit($this->resultsPerPage+1);
+
+    // Paginates results.
+    $startKey = isset($_GET['startkey']) ? $_GET['startkey'] : chr(0);
+    if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
+
+    $opts->setStartKey($startKey);
+
     $tags = $this->couch->queryView("tags", "byName", NULL, $opts)->asArray();
 
-    $this->view->setVar('entries', $this->getEntries(array_column($tags, 'id')));
-    $this->view->setVar('entriesCount', $this->getEntriesCount());
+    $entries = $this->getEntries(array_column($tags, 'id'));
+
+    if (count($entries) > $this->resultsPerPage) {
+      $last = array_pop($entries);
+      $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->name, $last->id));
+    }
+
+    $this->view->setVar('entries', $entries);
     $this->view->setVar('title', 'Tags per nome');
   }
 
@@ -101,10 +138,24 @@ class TagController extends BaseController {
    */
   public function newestAction() {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->reverseOrderOfResults()->setLimit(40);
+    $opts->doNotReduce()->reverseOrderOfResults()->setLimit($this->resultsPerPage+1);
+
+    // Paginates results.
+    $startKey = isset($_GET['startkey']) ? (int)$_GET['startkey'] : Couch::WildCard();
+    if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
+
+    $opts->setStartKey($startKey);
+
     $tags = $this->couch->queryView("tags", "newest", NULL, $opts)->asArray();
 
-    $this->view->setVar('entries', $this->getEntries(array_column($tags, 'id')));
+    $entries = $this->getEntries(array_column($tags, 'id'));
+
+    if (count($entries) > $this->resultsPerPage) {
+      $last = array_pop($entries);
+      $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->createdAt, $last->id));
+    }
+
+    $this->view->setVar('entries', $entries);
     $this->view->setVar('title', 'Nuovi tags');
   }
 
