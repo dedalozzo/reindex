@@ -46,6 +46,12 @@ class ProfileController extends ListController {
   }
 
 
+  public function initialize() {
+    parent::initialize();
+    $this->resultsPerPage = $this->di['config']->application->postsPerPage;
+  }
+
+
   public function afterExecuteRoute() {
     parent::afterExecuteRoute();
 
