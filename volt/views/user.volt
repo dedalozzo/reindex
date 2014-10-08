@@ -9,10 +9,11 @@
   {% if actionName == 'byName' %}
     <div class="ghost gutter">
       <form method="get" action="search.php" autocomplete="off" name="form_search">
-        <label>Cerca tra i <b>{{ usersCount }}</b> utenti registrati: </label><input type="text" placeholder="nome utente" autocomplete="on" id="keyword" name="keyword" />
+        <div>Cerca tra gli utenti:&nbsp;&nbsp;<input type="text" style="width: 200px;" placeholder="Nome utente" autocomplete="on" id="keyword" name="keyword" /></div>
       </form>
     </div>
   {% endif %}
+
   {% if users is defined %}
     {% for user in users %}
       {% set modulus = loop.index % 4 %}
@@ -50,6 +51,7 @@
       {% elsefor %}
       <div class="alert alert-info">Siamo spiacenti, la ricerca non ha prodotto alcun risultato.</div>
     {% endfor %}
+    {% include "partials/pagination.volt" %}
   {% endif %}
   </div>
 {% endblock %}
