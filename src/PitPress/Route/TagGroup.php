@@ -35,6 +35,7 @@ class TagGroup extends Group {
     $this->setPrefix('/tags');
     $this->addGet('/', ['action' => 'newest']);
     $this->addGet('/popolari/', ['action' => 'popular']);
+    $this->addGet('/attivi/', ['action' => 'active']);
     $this->addGet('/per-nome/', ['action' => 'byName']);
     $this->addGet('/nuovi/', ['action' => 'newest']);
     $this->addGet('/sinonimi/', ['action' => 'synonyms']);
