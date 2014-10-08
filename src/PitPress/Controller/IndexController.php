@@ -122,7 +122,7 @@ class IndexController extends ListController {
 
     $ids = $this->redis->zRevRangeByScore($set, '+inf', 0, ['limit' => [0, $count-1]]);
 
-    if (!empty($keys)) {
+    if (!empty($ids)) {
       $opts = new ViewQueryOpts();
       $opts->doNotReduce();
       $names = $this->couch->queryView("tags", "allNames", $ids, $opts);
