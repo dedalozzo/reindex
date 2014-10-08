@@ -27,6 +27,7 @@ abstract class ListController extends BaseController {
 
   protected $resultsPerPage;
 
+
   /**
    * @brief Given a set of keys, retrieves entries.
    */
@@ -114,7 +115,7 @@ abstract class ListController extends BaseController {
    * @return string The pagination url.
    */
   protected function buildPaginationUrlForCouch($starKey, $startKeyDocId) {
-    return sprintf('%s%s?startkey=%d&startkey_docid=%s', $this->domainName, parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), $starKey, $startKeyDocId);
+    return sprintf('%s%s?startkey=%s&startkey_docid=%s', $this->domainName, parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), $starKey, $startKeyDocId);
   }
 
 
