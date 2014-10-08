@@ -5,7 +5,7 @@
   'newestByTag': 'nuove',
   'openByTag': 'aperte',
   'importantByTag': 'importanti',
-  'infoByTag': 'info',
+  'infoByTag': 'info'
   ] %}
   {% set resource = resource~'/domande' %}
 {% else %}
