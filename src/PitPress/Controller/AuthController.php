@@ -19,12 +19,17 @@ use OAuth\ServiceFactory;
 use Phalcon\Mvc\View;
 use Phalcon\Validation\Validator\PresenceOf;
 use Phalcon\Validation\Validator\Email;
+use Phalcon\Validation\Validator\Confirmation;
 
 use ElephantOnCouch\Couch;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
+use PitPress\Exception\InvalidEmailException;
 use PitPress\Exception\InvalidFieldException;
 use PitPress\Helper\ValidationHelper;
+use PitPress\Model\User;
+use PitPress\Validator\Password;
+use PitPress\Validator\Username;
 
 use PitPress\Exception\InvalidTokenException;
 use PitPress\Exception\UserNotConfirmedException;
@@ -40,11 +45,11 @@ class AuthController extends BaseController {
 
 
   /**
-   * @brief Redirects to the referer page if any.
+   * @brief Redirects to the referrer page if any.
    */
-  protected function referer($user = NULL) {
-    if ($this->session->has("referer"))
-      return $this->response->redirect($this->session->get("referer"), TRUE);
+  protected function redirectToReferrer($user = NULL) {
+    if ($this->session->has("referrer"))
+      return $this->response->redirect($this->session->get("referrer"), TRUE);
     elseif (isset($user))
       return $this->redirect("http://utenti." . $this->domainName . "/" . $user->username);
     else
@@ -57,15 +62,29 @@ class AuthController extends BaseController {
 
 
   /**
-   * @brief Sign in with a PitPress account.
+   * @brief Sets the referrer is any.
    */
-  public function signInAction() {
-    if (isset($this->user))
-      return $this->dispatcher->forward(
-        [
-          'controller' => 'error',
-          'action' => 'show404'
-        ]);
+  protected function setReferrer() {
+    $requestUri = "//".$this->domainName.$_SERVER['REQUEST_URI'];
+
+    // Sets the HTTP Referrer to be able to return to the previous page.
+    if (isset($_SERVER['HTTP_REFERER']))
+      $referrerUri = $_SERVER['HTTP_REFERER'];
+    else
+      $referrerUri = "";
+
+    if (!empty($referrerUri) && ($requestUri != $referrerUri))
+      $this->session->set("referrer", $referrerUri);
+    else
+      $this->session->remove("referrer");
+  }
+
+
+  /**
+   * @brief Performs the Sign In.
+   */
+  protected function signIn() {
+    $this->view->setVar("signin", TRUE);
 
     // The validation object must be created in any case.
     $validation = new ValidationHelper();
@@ -136,7 +155,7 @@ class AuthController extends BaseController {
 
         $user->save();
 
-        return $this->referer($user);
+        return $this->redirectToReferrer($user);
       }
       catch (\Exception $e) {
         // To avoid Internet Explorer 6.x implementation issues.
@@ -151,26 +170,106 @@ class AuthController extends BaseController {
         $this->flash->error($e->getMessage());
       }
     }
-    else {
-      $requestUri = "//".$this->domainName.$_SERVER['REQUEST_URI'];
+    else
+      $this->setReferrer();
+  }
 
-      // Sets the HTTP Referer to be able to return to the previous page.
-      if (isset($_SERVER['HTTP_REFERER']))
-        $refererUri = $_SERVER['HTTP_REFERER'];
-      else
-        $refererUri = "";
 
-      if (!empty($refererUri) && ($requestUri != $refererUri))
-        $this->session->set("referer", $refererUri);
-      else
-        $this->session->remove("referer");
+  /**
+   * @brief Performs the Sign Up.
+   */
+  protected function signUp() {
+    $this->view->setVar("signup", TRUE);
+
+    // The validation object must be created in any case.
+    $validation = new ValidationHelper();
+    $this->view->setVar('validation', $validation);
+
+    if ($this->request->isPost()) {
+
+      try {
+        $validation->setFilters("username", "trim");
+        $validation->add("username", new Username());
+
+        $validation->setFilters("email", "trim");
+        $validation->setFilters("email", "lower");
+        $validation->add("email", new PresenceOf(["message" => "L'e-mail è obbligatoria."]));
+        $validation->add("email", new Email(["message" => "L'e-mail non è valida."]));
+
+        $validation->add("password", new Password());
+        $validation->add('password', new Confirmation(
+          [
+            'message' => "La password è diversa da quella di conferma.",
+            'with' => 'confirmPassword'
+          ]));
+
+        $group = $validation->validate($_POST);
+        if (count($group) > 0) {
+          throw new InvalidFieldException("I campi sono incompleti o i valori indicati non sono validi. Gli errori sono segnalati in rosso sotto ai rispettivi campi d'inserimento.");
+        }
+
+        // Filters only the messages generated for the field 'name'.
+        /*foreach ($validation->getMessages()->filter('email') as $message) {
+          $this->flash->notice($message->getMessage());
+          break;
+        }*/
+
+        $username = $this->request->getPost('username');
+        $email = $this->request->getPost('email');
+        //$password = $this->security->hash($this->request->getPost('password'));
+        $password = md5($this->request->getPost('password'));
+
+        $opts = new ViewQueryOpts();
+        $opts->setKey($email)->setLimit(1);
+
+        $rows = $this->couch->queryView("users", "byEmail", NULL, $opts);
+
+        if (!$rows->isEmpty())
+          throw new InvalidEmailException("Sei già registrato. <a href=\"#signin\">Fai il login!</a>");
+
+        $user = new User();
+        $user->username = $username;
+        $user->email = $email;
+        $user->password = $password;
+
+        // Updates the ip address with the current one.
+        $user->internetProtocolAddress = $_SERVER['REMOTE_ADDR'];
+
+        $user->save();
+
+        return $this->redirectToReferrer($user);
+      }
+      catch (\Exception $e) {
+        // Displays the error message.
+        $this->flash->error($e->getMessage());
+      }
     }
+    else
+      $this->setReferrer();
+  }
+
+
+  /**
+   * @brief Displays the logon form.
+   */
+  public function logonAction() {
+    if (isset($this->user))
+      return $this->dispatcher->forward(
+        [
+          'controller' => 'error',
+          'action' => 'show404'
+        ]);
+
+    if ($this->request->getPost('signup'))
+      $this->signUp();
+    else
+      $this->signIn();
 
     $this->view->setVar('title', 'Unisciti al più grande social network italiano di sviluppatori');
 
     $this->assets->addJs("/pit-bootstrap/dist/js/tab.min.js", FALSE);
 
-    $this->view->pick('views/auth/signin');
+    $this->view->pick('views/auth/logon');
   }
 
 
@@ -196,16 +295,6 @@ class AuthController extends BaseController {
     $this->view->disable();
 
     return $this->redirect();
-  }
-
-
-  /**
-   * @brief Sign up a PitPress account.
-   */
-  public function signUpAction() {
-    $this->view->setVar('title', 'Registrati');
-
-    $this->view->disableLevel(View::LEVEL_LAYOUT);
   }
 
 
@@ -273,7 +362,7 @@ class AuthController extends BaseController {
       $token = $service->requestAccessToken($_GET['code']);
 
       // Send a request with it
-      $result = json_decode($service->request('/me'), true);
+      $result = json_decode($service->request('/me'), TRUE);
 
       // Show some of the resultant data
       echo 'Your unique facebook user id is: ' . $result['id'] . ' and your name is ' . $result['name'];
@@ -307,7 +396,7 @@ class AuthController extends BaseController {
       $service->requestAccessToken($_GET['code']);
 
       // Send a request with it
-      $result = json_decode($service->request('https://www.googleapis.com/oauth2/v1/userinfo'), true);
+      $result = json_decode($service->request('https://www.googleapis.com/oauth2/v1/userinfo'), TRUE);
 
       // Show some of the resultant data
       echo 'Your unique google user id is: ' . $result['id'] . ' and your name is ' . $result['name'];
@@ -340,7 +429,7 @@ class AuthController extends BaseController {
       $token = $service->requestAccessToken($_GET['code']);
 
       // Send a request with it. Please note that XML is the default format.
-      $result = json_decode($service->request('/people/~?format=json'), true);
+      $result = json_decode($service->request('/people/~?format=json'), TRUE);
 
       // Show some of the resultant data
       echo 'Your linkedIn first name is ' . $result['firstName'] . ' and your last name is ' . $result['lastName'];
@@ -373,7 +462,7 @@ class AuthController extends BaseController {
       // This was a callback request from github, get the token
       $service->requestAccessToken($_GET['code']);
 
-      $result = json_decode($service->request('user/emails'), true);
+      $result = json_decode($service->request('user/emails'), TRUE);
 
       echo 'The first email on your github account is ' . $result[0];
 
