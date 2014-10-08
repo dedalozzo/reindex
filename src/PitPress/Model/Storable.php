@@ -46,7 +46,7 @@ abstract class Storable extends Doc {
     $this->modifiedAt = time();
 
     // Creation timestamp has not been provided.
-    if (is_null($this->createdAt))
+    if (!isset($this->createdAt))
       $this->createdAt = $this->modifiedAt;
 
     $this->couch->saveDoc($this);
