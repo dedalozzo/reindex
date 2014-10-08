@@ -11,6 +11,7 @@
 namespace PitPress\Controller;
 
 use ElephantOnCouch\Opt\ViewQueryOpts;
+use ElephantOnCouch\Couch;
 
 use PitPress\Helper\Time;
 use PitPress\Model\User;
@@ -22,10 +23,10 @@ use Phalcon\Mvc\View;
  * @brief Controller of User actions.
  * @nosubgrouping
  */
-class UserController extends BaseController {
+class UserController extends ListController {
 
 
-  protected function getUsers($keys) {
+  protected function getEntries($keys) {
     if (empty($keys))
       return [];
 
@@ -49,6 +50,7 @@ class UserController extends BaseController {
       $user->id = $result[$i]['id'];
       $user->username = $result[$i]['value'][0];
       $user->gravatar = User::getGravatar($result[$i]['value'][1]);
+      $user->createdAt = $result[$i]['value'][2];
       $user->when = Time::when($result[$i]['value'][2], false);
 
       $users[] = $user;
@@ -60,6 +62,7 @@ class UserController extends BaseController {
 
   public function initialize() {
     parent::initialize();
+    $this->resultsPerPage = $this->di['config']->application->usersPerPage;
     $this->view->pick('views/user');
   }
 
@@ -82,10 +85,23 @@ class UserController extends BaseController {
    */
   public function newestAction() {
     $opts = new ViewQueryOpts();
-    $opts->reverseOrderOfResults()->setLimit(40);
-    $users = $this->couch->queryView("users", "newest", NULL, $opts);
+    $opts->reverseOrderOfResults()->setLimit($this->resultsPerPage+1);
 
-    $this->view->setVar('users', $this->getUsers(array_column($users->asArray(), 'id')));
+    // Paginates results.
+    $startKey = isset($_GET['startkey']) ? (int)$_GET['startkey'] : Couch::WildCard();
+    $opts->setStartKey($startKey);
+    if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
+
+    $users = $this->couch->queryView("users", "newest", NULL, $opts)->asArray();
+
+    $entries = $this->getEntries(array_column($users, 'id'));
+
+    if (count($entries) > $this->resultsPerPage) {
+      $last = array_pop($entries);
+      $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->createdAt, $last->id));
+    }
+
+    $this->view->setVar('users', $entries);
     $this->view->setVar('title', 'Nuovi utenti');
   }
 
@@ -95,10 +111,23 @@ class UserController extends BaseController {
    */
   public function byNameAction() {
     $opts = new ViewQueryOpts();
-    $opts->setLimit(40);
-    $users = $this->couch->queryView("users", "byUsername", NULL, $opts);
+    $opts->setLimit($this->resultsPerPage+1);
 
-    $this->view->setVar('users', $this->getUsers(array_column($users->asArray(), 'id')));
+    // Paginates results.
+    $startKey = isset($_GET['startkey']) ? $_GET['startkey'] : chr(0);
+    $opts->setStartKey($startKey);
+    if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
+
+    $users = $this->couch->queryView("users", "byUsername", NULL, $opts)->asArray();
+
+    $entries = $this->getEntries(array_column($users, 'id'));
+
+    if (count($entries) > $this->resultsPerPage) {
+      $last = array_pop($entries);
+      $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->username, $last->id));
+    }
+
+    $this->view->setVar('users', $entries);
     $this->view->setVar('title', 'Utenti per nome');
   }
 
