@@ -31,7 +31,6 @@ class AuthGroup extends Group {
 
     $this->setHostName(DI::getDefault()['config']['application']['domainName']);
 
-    $this->addGet('/registrati/', ['action' => 'signUp']);
     $this->addGet('/resetta-password/', ['action' => 'resetPassword']);
     $this->addGet('/invia-email-attivazione/', ['action' => 'sendActivationEmail']);
     $this->addGet('/attiva/', ['action' => 'activate']);
@@ -39,7 +38,7 @@ class AuthGroup extends Group {
 
     // All the following routes start with /accedi.
     $this->setPrefix('/accedi');
-    $this->add('/', ['action' => 'signIn'], ['GET', 'POST']);
+    $this->add('/', ['action' => 'logon'], ['GET', 'POST']);
     $this->addGet('/facebook/', ['action' => 'facebook']);
     $this->addGet('/google/', ['action' => 'google']);
     $this->addGet('/linkedin/', ['action' => 'linkedin']);
