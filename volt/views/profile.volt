@@ -16,7 +16,7 @@
       <a class="change-avatar" href="http://it.gravatar.com/"><i class="icon-camera"></i>CAMBIA FOTO</a>
       {% endif %}
     </div>
-    <div class="pippo">{{ user.firstName }} {{ user.lastName }}</div>
+    <div class="full-name">{% if user.firstName is defined %}{{ user.firstName }}{% endif %} {% if user.lastName is defined %}{{ user.lastName }}{% endif %}</div>
     <div class="pull-right" style="margin-top: 148px;">
       {% if currentUser is defined and (user.id == currentUser.id or currentUser.isAdmin()) %}
       <a class="btn blue" href="#"><i class="icon-user"></i> MODIFICA</a>
@@ -57,7 +57,8 @@
     <div class="banner"><a href="#"><img src="/img/300x250.gif" /></a></div>
     {% include "partials/widgets/badges.volt" %}
 
-    <!--<blockquote>
+    {#
+    <blockquote>
       {% if user.firstName is defined %}
         Mi chiamo {{ user.firstName|upper }} {{ user.lastName|upper }}.
       {% else %}
@@ -71,7 +72,8 @@
         La mia ultima visita risale al {{ lastVisit|lower }}.
       {% endif %}
       Il mio profilo è stato visualizzato {% if hitsCount == 1 %}una volta{% else %}{{ hitsCount }} volte{% endif %}.
-    </blockquote>-->
+    </blockquote>
+    #}
 
   </div> <!-- /column-right -->
 
