@@ -132,8 +132,6 @@ abstract class ListController extends BaseController {
   public function initialize() {
     parent::initialize();
 
-    $this->resultsPerPage = $this->di['config']->application->resultsPerPage;
-
     $this->assets->addJs("/pit-bootstrap/dist/js/list.min.js", FALSE);
   }
 
