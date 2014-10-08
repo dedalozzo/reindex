@@ -33,7 +33,7 @@
     <aside class="prompt gutter">
       <p>
         <span class="at">{{ username }}@pit</span>:<span class="tilde">~</span>$&nbsp;{{ method }}&nbsp;{{ url }}<br>
-        <span class="at">{{ username }}@pit</span>:<span class="tilde">~</span>$&nbsp;Error&nbsp;404&nbsp;(Page&nbsp;Not&nbsp;Found)<br>
+        <span class="at">{{ username }}@pit</span>:<span class="tilde">~</span>$&nbsp;Errore&nbsp;404&nbsp;(Pagina&nbsp;non&nbsp;trovata)<br>
         <span class="at">{{ username }}@pit</span>:<span class="tilde">~</span>$&nbsp;<blink>&#95</blink>
       </p>
     </aside>
