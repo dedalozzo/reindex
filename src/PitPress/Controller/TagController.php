@@ -76,8 +76,6 @@ class TagController extends BaseController {
 
   /**
    * @brief Displays the most popular tags.
-   * @todo This requires more job. I have to pickup all the classifications grouped by tag, then use a list function to
-   * order them by count descending and return just the last 40.
    */
   public function popularAction() {
     $this->view->setVar('title', 'Tags popolari');
