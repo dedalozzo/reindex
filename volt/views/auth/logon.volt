@@ -31,10 +31,10 @@
     <aside class="registration">
       <section class="notebook gutter" id="sign">
         <ul class="list tabs no-gutter">
-          <li class="active"><a href="#signin" data-toggle="tab">ACCEDI</a></li>
-          <li><a href="#signup" data-toggle="tab">REGISTRATI</a></li>
+          <li{% if signin is defined %} class="active"{% endif %}><a href="#signin" data-toggle="tab">ACCEDI</a></li>
+          <li{% if signup is defined %} class="active"{% endif %}><a href="#signup" data-toggle="tab">REGISTRATI</a></li>
         </ul>
-        <div class="notebook-page active" id="signin">
+        <div class="notebook-page{% if signin is defined %} active{% endif %}" id="signin">
           <div>
             <p>Se possiedi già un'utenza sul sito, puoi accedere usando le tue credenziali.</p>
             <form action="//{{ serverName }}/accedi/" id="signinform" name="signinform" method="post" role="form">
@@ -68,9 +68,9 @@
             </ul>
           </div>
         </div>
-        <div class="notebook-page" id="signup">
+        <div class="notebook-page{% if signup is defined %} active{% endif %}" id="signup">
           <div>
-            <form action="//{{ serverName }}/registrati/" id="signinform" name="signinform" method="post" role="form">
+            <form action="//{{ serverName }}/accedi/" id="signupform" name="signupform" method="post" role="form">
               <ul class="list vertical mbottom10">
                 <li>
                   {{ text_field("username", "placeholder": "Nome utente") }}
@@ -85,11 +85,11 @@
                   <label>{{ validation.first("password") }}</label>
                 </li>
                 <li>
-                  {{ password_field("password2", "placeholder": "Ripeti la password") }}
+                  {{ password_field("confirmPassword", "placeholder": "Ripeti la password") }}
                   <label>{{ validation.first("password2") }}</label>
                 </li>
                 <li class="pull-right">
-                  <button type="submit" name="signin" class="btn blue">Registrati</button>
+                  <button type="submit" name="signup" value="signup" class="btn blue">Registrati</button>
                 </li>
               </ul>
             </form>
