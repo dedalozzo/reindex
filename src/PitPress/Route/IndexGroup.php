@@ -75,7 +75,7 @@ class IndexGroup extends Group {
     $this->setHostName(DI::getDefault()['config']['application']['domainName']);
 
     // Sets the standard routes for a tag. Don't change the order!
-    $this->setPrefix('/{tag:[a-z]+}'.$this->getPrefix());
+    $this->setPrefix('/{tag:[a-z0-9.-]+}'.$this->getPrefix());
     $this->addRoutes('ByTag');
 
     // Sets the standard routes.
