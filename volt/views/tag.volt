@@ -11,7 +11,7 @@
     {% if actionName == 'byName' %}
     <div class="ghost gutter">
       <form method="get" action="search.php" autocomplete="off" name="form_search">
-        <label>Cerca tra i <b>{{ entriesCount }}</b> tags: </label><input type="text" placeholder="nome tag" autocomplete="on" id="keyword" name="keyword" />
+        <div>Cerca tra i tags:&nbsp;&nbsp;<input type="text" style="width: 200px;" placeholder="Nome tag" autocomplete="on" id="keyword" name="keyword" /></div>
       </form>
     </div>
     {% endif %}
@@ -40,6 +40,7 @@
       {% elsefor %}
         <div class="alert alert-info">Siamo spiacenti, la ricerca non ha prodotto alcun risultato.</div>
       {% endfor %}
+      {% include "partials/pagination.volt" %}
     {% endif %}
   </div>
 {% endblock %}
