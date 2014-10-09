@@ -22,35 +22,12 @@ use PitPress\Extension;
 class Tag extends Versionable implements Extension\ICount, Extension\IStar {
   use Extension\TCount, Extension\TStar;
 
-  /** @name Ignoring Methods */
-  //!@{
-
-  /**
-   * @brief Adds the tag to the ignore list of the current user.
-   */
-  public function ignore(User $user) {
-  }
-
-
-  /**
-   * @brief Removes the tag from the ignore list of the current user.
-   */
-  public function unignore(User $user) {
-  }
-
-  //!@}
-
 
   /**
    * @brief Gets the item state.
    */
   public function getState() {
     return $this->meta['state'];
-  }
-
-
-  public function getFollowersCount() {
-
   }
 
 
