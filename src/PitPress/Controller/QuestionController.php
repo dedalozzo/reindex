@@ -29,7 +29,7 @@ class QuestionController extends IndexController {
   }
 
 
-  protected function popular($filter, $tagId = NULL) {
+  protected function popular($filter, $unversionTagId = NULL) {
     $this->periods = Helper\ArrayHelper::slice($this->periods, 7);
     parent::popular($filter);
   }

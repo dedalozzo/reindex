@@ -29,7 +29,7 @@ class BookController extends IndexController {
   }
 
 
-  protected function popular($filter, $tagId = NULL) {
+  protected function popular($filter, $unversionTagId = NULL) {
     $this->periods = Helper\ArrayHelper::slice($this->periods, 3);
     parent::popular($filter);
   }

@@ -51,10 +51,10 @@ class IndexController extends ListController {
 
     $rows = $this->couch->queryView('tags', 'byName', NULL, $opts);
 
-    if ($rows->count())
-      return Helper\Text::unversion(current($rows->getIterator())['id']);
-    else
+    if ($rows->isEmpty())
       return FALSE;
+    else
+      return current($rows->getIterator())['id'];
   }
 
 
@@ -262,8 +262,10 @@ class IndexController extends ListController {
    * @param[in] string $tag The tag name.
    */
   public function newestByTagAction($tag) {
-    $tagId = $this->getTagId(urldecode($tag));
+    $tagId = $this->getTagId($tag);
     if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+
+    $unversionTagId = Helper\Text::unversion($tagId);
 
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->reverseOrderOfResults()->setLimit($this->resultsPerPage+1);
@@ -273,19 +275,19 @@ class IndexController extends ListController {
     if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
 
     if ($this->isSameClass()) {
-      $opts->setStartKey([$tagId, $startKey])->setEndKey([$tagId]);
+      $opts->setStartKey([$unversionTagId, $startKey])->setEndKey([$unversionTagId]);
       $rows = $this->couch->queryView("posts", "perDateByTag", NULL, $opts);
 
       $opts->reset();
-      $opts->setStartKey([$tagId])->setEndKey([$tagId, Couch::WildCard()]);
+      $opts->setStartKey([$unversionTagId])->setEndKey([$unversionTagId, Couch::WildCard()]);
       $count = $this->couch->queryView('posts', 'perDateByTag', NULL, $opts)->getReducedValue();
     }
     else {
-      $opts->setStartKey([$tagId, $this->type, $startKey])->setEndKey([$tagId, $this->type]);
+      $opts->setStartKey([$unversionTagId, $this->type, $startKey])->setEndKey([$unversionTagId, $this->type]);
       $rows = $this->couch->queryView("posts", "perDateByTagAndType", NULL, $opts);
 
       $opts->reset();
-      $opts->setStartKey([$tagId, $this->type])->setEndKey([$tagId, $this->type, Couch::WildCard()]);
+      $opts->setStartKey([$unversionTagId, $this->type])->setEndKey([$unversionTagId, $this->type, Couch::WildCard()]);
       $count = $this->couch->queryView('posts', 'perDateByTagAndType', NULL, $opts)->getReducedValue();
     }
 
@@ -298,7 +300,7 @@ class IndexController extends ListController {
 
     $this->view->setVar('entries', $entries);
     $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
-    $this->view->setVar('resource', $tag);
+    $this->view->setVar('etag', $this->couch->getDoc(Couch::STD_DOC_PATH, $tagId));
 
     if (is_null($this->view->title))
       $this->view->setVar('title', sprintf('Nuovi %s', $this->getLabel()));
@@ -354,6 +356,8 @@ class IndexController extends ListController {
     $tagId = $this->getTagId($tag);
     if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
+    $unversionTagId = Helper\Text::unversion($tagId);
+
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->reverseOrderOfResults()->setLimit($this->resultsPerPage+1);
 
@@ -364,17 +368,17 @@ class IndexController extends ListController {
     if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
 
     if ($this->isSameClass()) {
-      $opts->setStartKey([$tagId, $postDate->getTimestamp()])->setEndKey([$tagId, $minDate->getTimestamp()]);
+      $opts->setStartKey([$unversionTagId, $postDate->getTimestamp()])->setEndKey([$unversionTagId, $minDate->getTimestamp()]);
       $rows = $this->couch->queryView("posts", "perDateByTag", NULL, $opts);
 
-      $opts->reduce()->setStartKey([$tagId, $maxDate->getTimestamp()])->unsetOpt('startkey_docid');
+      $opts->reduce()->setStartKey([$unversionTagId, $maxDate->getTimestamp()])->unsetOpt('startkey_docid');
       $count = $this->couch->queryView("posts", "perDateByTag", NULL, $opts)->getReducedValue();
     }
     else {
-      $opts->setStartKey([$tagId, $this->type, $postDate->getTimestamp()])->setEndKey([$tagId, $this->type, $minDate->getTimestamp()]);
+      $opts->setStartKey([$unversionTagId, $this->type, $postDate->getTimestamp()])->setEndKey([$unversionTagId, $this->type, $minDate->getTimestamp()]);
       $rows = $this->couch->queryView("posts", "perDateByTagAndType", NULL, $opts);
 
-      $opts->reduce()->setStartKey([$tagId, $this->type, $maxDate->getTimestamp()])->unsetOpt('startkey_docid');
+      $opts->reduce()->setStartKey([$unversionTagId, $this->type, $maxDate->getTimestamp()])->unsetOpt('startkey_docid');
       $count = $this->couch->queryView("posts", "perDateByTagAndType", NULL, $opts)->getReducedValue();
     }
 
@@ -387,21 +391,21 @@ class IndexController extends ListController {
 
     $this->view->setVar('entries', $entries);
     $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
-    $this->view->setVar('resource', $tag);
+    $this->view->setVar('etag', $this->couch->getDoc(Couch::STD_DOC_PATH, $tagId));
     $this->view->setVar('title', sprintf('%s per data', ucfirst($this->getLabel())));
   }
 
 
-  protected function popular($filter, $tagId = NULL) {
+  protected function popular($filter, $unversionTagId = NULL) {
     $period = $this->getPeriod($filter);
     if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $date = Helper\Time::aWhileBack($period, "_");
 
     if ($this->isSameClass())
-      $set = "pop_".$tagId."post".$date;
+      $set = "pop_".$unversionTagId."post".$date;
     else
-      $set = "pop_".$tagId.$this->type.$date;
+      $set = "pop_".$unversionTagId.$this->type.$date;
 
     $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
     $keys = $this->redis->zRevRangeByScore($set, '+inf', 0, ['limit' => [$offset, $this->resultsPerPage-1]]);
@@ -445,16 +449,18 @@ class IndexController extends ListController {
     $tagId = $this->getTagId($tag);
     if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    $this->popular($filter, $tagId."_");
-    $this->view->setVar('resource', $tag);
+    $unversionTagId = Helper\Text::unversion($tagId);
+
+    $this->popular($filter, $unversionTagId."_");
+    $this->view->setVar('etag', $this->couch->getDoc(Couch::STD_DOC_PATH, $tagId));
   }
 
 
-  protected function active($tagId = NULL) {
+  protected function active($unversionTagId = NULL) {
     if ($this->isSameClass())
-      $set = "tmp_".$tagId."post";
+      $set = "tmp_".$unversionTagId."post";
     else
-      $set = "tmp_".$tagId.$this->type;
+      $set = "tmp_".$unversionTagId.$this->type;
 
     $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
     $keys = $this->redis->zRevRangeByScore($set, '+inf', 0, ['limit' => [$offset, $this->resultsPerPage-1]]);
@@ -493,8 +499,8 @@ class IndexController extends ListController {
     $tagId = $this->getTagId($tag);
     if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    $this->active($tagId."_");
-    $this->view->setVar('resource', $tag);
+    $this->active(Helper\Text::unversion($tagId)."_");
+    $this->view->setVar('etag', $this->couch->getDoc(Couch::STD_DOC_PATH, $tagId));
   }
 
 
