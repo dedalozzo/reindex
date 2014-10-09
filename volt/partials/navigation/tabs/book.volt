@@ -1,7 +1,7 @@
 {% extends "partials/navigation/tabs/index.volt" %}
 {% block vars %}
-  {% if resource is defined %}
-    {% set resource = resource~'/libri' %}
+  {% if etag is defined %}
+    {% set resource = etag.name~'/libri' %}
   {% else %}
     {% set resource = 'libri' %}
   {% endif %}

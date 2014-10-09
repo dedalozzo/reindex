@@ -1,4 +1,4 @@
-{% if resource is defined %}
+{% if etag is defined %}
   {% set menu = [
   'activeByTag': 'attive',
   'popularByTag': 'popolari',
@@ -7,7 +7,7 @@
   'importantByTag': 'importanti',
   'infoByTag': 'info'
   ] %}
-  {% set resource = resource~'/domande' %}
+  {% set resource = etag.name~'/domande' %}
 {% else %}
   {% set menu = [
   'favorite': 'preferite',

@@ -1,4 +1,5 @@
-{% if resource is defined %}
+{% if etag is defined %}
+  {% set resource = etag.name %}
   {% set menu = [
   'activeByTag': 'attivi',
   'popularByTag': 'popolari',
