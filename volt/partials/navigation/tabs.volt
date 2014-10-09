@@ -1,7 +1,7 @@
 {# Menu #}
 <ul class="list tabs">
   {% if resource is defined %}
-    <li><span><b>{{ resource }}</b></span></li>
+    <li><span>{% if etag is defined %}<a class="btn-star{% if etag.isStarred(currentUser) %} active{% endif %}" title="aggiungi ai preferiti"><i class="icon-star icon-large"></i></a>{% endif %}&nbsp;<b>{{ resource }}</b></span></li>
     {% set controllerPath = resource~'/' %}
   {% else %}
     {% set controllerPath = '' %}
