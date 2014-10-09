@@ -35,8 +35,26 @@ class User extends Storable implements Extension\ICount {
 
 
   /**
+   * @brief Returns the user's favorite tags if any.
+   * @return array
+   */
+  public function getFavoriteTags() {
+    $opts = new ViewQueryOpts();
+    $opts->setKey($this->getId())->doNotReduce();
+    $favorites = $this->couch->queryView("favorites", "byUserTags", NULL, $opts);
+
+    if ($favorites->isEmpty())
+      return [];
+
+    $opts->reset();
+    $opts->doNotReduce();
+    return $this->couch->queryView("tags", "allNames", array_column($favorites->asArray(), 'value'), $opts)->asArray();
+  }
+
+
+  /**
    * @brief Returns the actual user's age based on his birthday, `null`in case a the user's birthday is not available.
-   * @return byte|null
+   * @return int|null
    */
   public function getAge() {
     if ($this->issetBirthday()) {
