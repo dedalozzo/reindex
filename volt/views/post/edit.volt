@@ -137,10 +137,15 @@
             });
           </script>
         </li>
-        <li class="pull-right">
-          <button type="submit" name="signin" class="btn large red">Salva le modifiche</button>
-          <a href="//{{ serverName~post.getHref() }}" class="btn large">Annulla</a>
+        <li>
+          {{ text_field("summary", "placeholder": "Breve descrizione delle modifiche") }}
+          <label>{{ validation.first("summary") }}</label>
         </li>
+      </ul>
+
+      <ul class="list btn-list gutter">
+        <li class="pull-right"><a href="//{{ serverName~post.getHref() }}" class="btn">ANNULLA</a></li>
+        <li class="pull-right"><button type="submit" name="signin" class="btn red">SALVA LE MODIFICHE</button></li>
       </ul>
 
     </form>
