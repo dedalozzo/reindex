@@ -108,6 +108,7 @@ class BadgeController extends BaseController {
    * @brief Displays the special tag badges.
    */
   public function byTagAction($filter = NULL) {
+    return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
     // Stores the typology sub-menu definition.
     //protected static $typologySubMenu = ['bronzo', 'argento', 'oro', 'tutti'];
 

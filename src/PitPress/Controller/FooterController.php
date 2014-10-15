@@ -18,13 +18,13 @@ use Phalcon\Mvc\View;
  * @brief Controller of Footer actions.
  * @nosubgrouping
  */
-class FooterController {
+class FooterController extends BaseController {
 
   /**
    * @brief Displays the tour page.
    */
   public function tourAction() {
-    phpinfo();
+    return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
     $this->view->disableLevel(View::LEVEL_LAYOUT);
   }
 
@@ -33,7 +33,7 @@ class FooterController {
    * @brief Displays the help page.
    */
   public function helpAction() {
-    phpinfo();
+    return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
     $this->view->disableLevel(View::LEVEL_LAYOUT);
   }
 
@@ -42,7 +42,7 @@ class FooterController {
    * @brief Displays a page with the legal info.
    */
   public function legalAction() {
-    phpinfo();
+    return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
     $this->view->disableLevel(View::LEVEL_LAYOUT);
   }
 
@@ -51,7 +51,7 @@ class FooterController {
    * @brief Displays the privacy page.
    */
   public function privacyAction() {
-    phpinfo();
+    return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
     $this->view->disableLevel(View::LEVEL_LAYOUT);
   }
 
@@ -60,7 +60,7 @@ class FooterController {
    * @brief Displays the career page.
    */
   public function careerAction() {
-    phpinfo();
+    return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
     $this->view->disableLevel(View::LEVEL_LAYOUT);
   }
 
@@ -69,7 +69,7 @@ class FooterController {
    * @brief Displays the advertising page.
    */
   public function advertisingAction() {
-    phpinfo();
+    return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
     $this->view->disableLevel(View::LEVEL_LAYOUT);
   }
 
@@ -78,7 +78,7 @@ class FooterController {
    * @brief Displays the contacts page.
    */
   public function contactAction() {
-    phpinfo();
+    return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
     $this->view->disableLevel(View::LEVEL_LAYOUT);
   }
 
