@@ -175,6 +175,48 @@ abstract class Versionable extends Storable {
       unset($this->meta['userId']);
   }
 
+
+  public function getEditorId() {
+    return $this->meta["editorId"];
+  }
+
+
+  public function issetEditorId() {
+    return isset($this->meta['editorId']);
+  }
+
+
+  public function setEditorId($value) {
+    $this->meta["editorId"] = $value;
+  }
+
+
+  public function unsetEditorId() {
+    if ($this->isMetadataPresent('editorId'))
+      unset($this->meta['editorId']);
+  }
+
+
+  public function getEditSummary() {
+    return $this->meta["editSummary"];
+  }
+
+
+  public function issetEditSummary() {
+    return isset($this->meta['editSummary']);
+  }
+
+
+  public function setEditSummary($value) {
+    $this->meta["editSummary"] = $value;
+  }
+
+
+  public function unsetEditSummary() {
+    if ($this->isMetadataPresent('editSummary'))
+      unset($this->meta['editSummary']);
+  }
+
   //! @endcond
 
 }
