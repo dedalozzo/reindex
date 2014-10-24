@@ -386,11 +386,12 @@ MAP;
 function($doc) use ($emit) {
   if (isset($doc->supertype) && $doc->supertype == 'post') {
 
-    $editorId = (isset($editorId) ? $editorId : userId;
+    $editorId = isset($doc->editorId) ? $doc->editorId : $doc->userId;
+    $editSummary = isset($doc->editSummary) ? $doc->editSummary : '';
     $emit($doc->unversionId, [
+        'modifiedAt => $doc->modifiedAt,
         'editorId' => $editorId,
-        'modifiedAt' => editorId,
-        'editSummary' => editSummary
+        'editSummary' => $editSummary
       ]);
   }
 };
