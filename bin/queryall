@@ -1,5 +1,6 @@
 pit query posts/all &
 pit query tags/all &
+pit query revisions/perPost --limit=1 &
 pit query votes/perItem &
 pit query stars/perItem &
 pit query subscriptions/perItem --limit=1 &
