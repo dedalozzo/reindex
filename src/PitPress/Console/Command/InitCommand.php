@@ -36,6 +36,7 @@ class InitCommand extends AbstractCommand {
     $this->initDocs();
     $this->initPosts();
     $this->initTags();
+    $this->initRevisions();
     $this->initVotes();
     $this->initScores();
     $this->initStars();
@@ -81,15 +82,15 @@ MAP;
 function($doc) use ($emit) {
   if (isset($doc->supertype) && $doc->supertype == 'post')
     $emit($doc->_id, [
-       'type' => $doc->type,
-       'title' => $doc->title,
-       'excerpt' => $doc->excerpt,
-       'slug' => $doc->slug,
-       'modifiedAt' => $doc->modifiedAt,
-       'publishedAt' => $doc->publishedAt,
-       'userId' => $doc->userId,
-       'tags' => $doc->tags
-     ]);
+        'type' => $doc->type,
+        'title' => $doc->title,
+        'excerpt' => $doc->excerpt,
+        'slug' => $doc->slug,
+        'modifiedAt' => $doc->modifiedAt,
+        'publishedAt' => $doc->publishedAt,
+        'userId' => $doc->userId,
+        'tags' => $doc->tags
+      ]);
 };
 MAP;
 
@@ -369,6 +370,40 @@ MAP;
     }
 
     $doc->addHandler(tagsPerPost());
+
+
+    $this->couch->saveDoc($doc);
+  }
+
+
+  protected function initRevisions() {
+    $doc = DesignDoc::create('revisions');
+
+
+    // @params: postId
+    function revisionsPerPost() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) && $doc->supertype == 'post') {
+
+    $editorId = (isset($editorId) ? $editorId : userId;
+    $emit($doc->unversionId, [
+        'editorId' => $editorId,
+        'modifiedAt' => editorId,
+        'editSummary' => editSummary
+      ]);
+  }
+};
+MAP;
+
+      $handler = new ViewHandler("perPost");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
+
+      return $handler;
+    }
+
+    $doc->addHandler(revisionsPerPost());
 
 
     $this->couch->saveDoc($doc);
@@ -962,6 +997,10 @@ MAP;
 
           case 'tags':
             $this->initTags();
+            break;
+
+          case 'revisions':
+            $this->initRevisions();
             break;
 
           case 'votes':
