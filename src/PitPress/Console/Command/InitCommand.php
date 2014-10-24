@@ -388,8 +388,9 @@ function($doc) use ($emit) {
 
     $editorId = isset($doc->editorId) ? $doc->editorId : $doc->userId;
     $editSummary = isset($doc->editSummary) ? $doc->editSummary : '';
+
     $emit($doc->unversionId, [
-        'modifiedAt => $doc->modifiedAt,
+        'modifiedAt' => $doc->modifiedAt,
         'editorId' => $editorId,
         'editSummary' => $editSummary
       ]);
@@ -399,7 +400,6 @@ MAP;
 
       $handler = new ViewHandler("perPost");
       $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
 
       return $handler;
     }
