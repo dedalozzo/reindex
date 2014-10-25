@@ -19,6 +19,7 @@ use Phalcon\Validation\Validator\PresenceOf;
 
 use PitPress\Exception\InvalidFieldException;
 use PitPress\Helper\ValidationHelper;
+use PitPress\Helper\Time;
 
 
 /**
@@ -103,11 +104,34 @@ class PostController extends BaseController {
     else {
       $post = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $id);
 
+      $opts = new ViewQueryOpts();
+      $opts->setKey($post->unversionId)->doNotReduce();
+      $revisions = $this->couch->queryView("revisions", "perPost", NULL, $opts);
+
+      $keys = array_column(array_column($revisions->asArray(), 'value'), 'editorId');
+      $opts->reset();
+      $opts->includeMissingKeys();
+      $users = $this->couch->queryView("users", "allNames", $keys, $opts);
+
+      $versions = [];
+      $revisionCount = count($revisions);
+      for ($i = 0; $i < $revisionCount; $i++) {
+        $version = (object)($revisions[$i]['value']);
+        $version->id = $revisions[$i]['id'];
+        $version->whenHasBeenModified = Time::when($version->modifiedAt);
+        $version->editor = $users[$i]['value'][0];
+
+        $versions[$version->modifiedAt] = $version;
+      }
+
+      krsort($versions);
+
       $this->tag->setDefault("title", $post->title);
       $this->tag->setDefault("body", $post->body);
     }
 
     $this->view->setVar('post', $post);
+    $this->view->setVar('revisions', $versions);
     $this->view->setVar('title', $post->title);
 
     $this->view->disableLevel(View::LEVEL_LAYOUT);
