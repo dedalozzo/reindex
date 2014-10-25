@@ -12,24 +12,9 @@
     <form action="//{{ domainName }}/accedi/" id="signinform" name="signinform" method="post" role="form">
 
       <select class="half-gutter" name="version" id="select-version">
-        <option value="">Seleziona la versione...</option>
-        <optgroup label="North America">
-          <option value="1">USA</option>
-          <option value="9">Canada</option>
-        </optgroup>
-        <optgroup label="Europe">
-          <option value="2">France</option>
-          <option value="3">Spain</option>
-          <option value="6">Bulgaria</option>
-          <option value="7" disabled="disabled">Greece</option>
-          <option value="8">Italy</option>
-        </optgroup>
-        <optgroup label="Asia" disabled="disabled">
-          <option value="5">Japan</option>
-          <option value="11">China</option>
-        </optgroup>
-        <option value="4">Brazil</option>
-        <option value="10">South Africa</option>
+        {% for revision in revisions %}
+          <option value="{{ revision.id }}">Rev. - {{ revision.editor }} - {{ revision.whenHasBeenModified }} - {% if revision.editSummary is empty %} Prima versione {% else %} {{ revision.editSummary }} {% endif  %}</option>
+        {% endfor %}
       </select>
       <script>
         $('#select-version').selectize({
@@ -176,17 +161,17 @@
     <ul class="list vertical post-it">
       <li class="title">Formattazione</li>
       <li><i class="icon-caret-right small"></i> separa i paragrafi con un'interlinea</li>
-      <li><i class="icon-caret-right small"></i> per andare a capo utilizza <span class="keyword">&crarr;</span></li>
+      <li><i class="icon-caret-right small"></i> per andare a capo utilizza l'invio <span class="keyword">&crarr;</span></li>
       <li><i class="icon-caret-right small"></i> usa <span class="keyword">_corsivo_</span> per il <i>corsivo</i></li>
       <li><i class="icon-caret-right small"></i> usa <span class="keyword">**grassetto**</span> per il <b>grassetto</b></li>
       <li>
-        <i class="icon-caret-right small"></i> per gli spezzoni di codice usa<br>
+        <i class="icon-caret-right small"></i> per i blocchi di codice usa<br>
         <div class="keyword">```php<br>
           &nbsp;&nbsp;print "Hello World!";<br>
           ```
         </div>
       </li>
-      <li><i class="icon-caret-right small"></i> usa <span class="keyword">`keywords`</span> per le <span class="keyword">keywords</span> o per il codice in line</li>
+      <li><i class="icon-caret-right small"></i> usa <span class="keyword">`keywords`</span> per le <span class="keyword">keywords</span> o per il codice in linea</li>
       <li><i class="icon-caret-right small"></i> usa <span class="keyword">[link](http://foo.com)</span> per inserire un <a href="#">link</a></li>
       <li><i class="icon-caret-right small"></i> usa <span class="keyword">&gt;citazione</span> per fare una <blockquote>citazione</blockquote></li>
     </ul>
