@@ -166,7 +166,8 @@
       <li><i class="icon-caret-right small"></i> usa <span class="keyword">**grassetto**</span> per il <b>grassetto</b></li>
       <li>
         <i class="icon-caret-right small"></i> per i blocchi di codice usa<br>
-        <div class="keyword">```php<br>
+        <div class="keyword">
+          ```php<br>
           &nbsp;&nbsp;print "Hello World!";<br>
           ```
         </div>
