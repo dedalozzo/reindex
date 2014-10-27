@@ -149,14 +149,6 @@ class User extends Storable implements Extension\ICount {
 
 
   /**
-   * @brief Returns `true` in case the user is an administrator.
-   */
-  public function isAdmin() {
-    return isset($this->meta['admin']);
-  }
-
-
-  /**
    * @brief Promotes the user to moderator.
    */
   public function setAsModerator() {
@@ -175,10 +167,37 @@ class User extends Storable implements Extension\ICount {
 
 
   /**
+   * @brief Returns `true` in case the user is an administrator.
+   */
+  public function isAdmin() {
+    return isset($this->meta['admin']);
+  }
+
+
+  /**
    * @brief Returns `true` in case the user is a moderator.
+   * @details A user can be made moderator by election.
    */
   public function isModerator() {
     return isset($this->meta['moderator']);
+  }
+
+
+  /**
+   * @brief Returns `true` in case the user has the ability to edit contents.
+   * @details An user can obtain this privilege earning reputation.
+   */
+  public function isEditor() {
+    // todo
+  }
+
+
+  /**
+   * @brief Returns `true` in case the user has the ability to approve or reject suggested edits.
+   * @details An user can obtain this privilege earning reputation.
+   */
+  public function isReviewer() {
+    // todo
   }
 
   //!@}
