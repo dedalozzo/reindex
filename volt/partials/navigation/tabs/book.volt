@@ -5,5 +5,6 @@
   {% else %}
     {% set resource = 'libri' %}
   {% endif %}
-  {% set button = 'nuovo' %}
+  {% set buttonLabel = 'nuovo' %}
+  {% set buttonLink = 'nuovo/libro/' %}
 {% endblock %}

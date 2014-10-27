@@ -6,4 +6,5 @@
   'popular': 'popolari'
 ] %}
 {% set resource = 'tags' %}
-{% set button = 'nuovo' %}
+{% set buttonLabel = 'nuovo' %}
+{% set buttonLink = 'nuovo/tag/' %}
