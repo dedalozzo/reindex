@@ -57,10 +57,29 @@ abstract class Versionable extends Storable {
 
 
   /**
+   * @brief Returns `true` if this document is only a draft, `false` otherwise.
+   * @return bool
+   */
+  public function isDraft() {
+    return ($this->isMetadataPresent('draft')) ? TRUE : FALSE;
+  }
+
+
+  /**
    * @brief Approves this document revision, making of it the current version.
    */
   public function approve() {
     $this->meta['current'] = TRUE;
+  }
+
+
+  /**
+   * @brief Rejects this document revision.
+   * @param[in] The reason why the revision has been rejected.
+   */
+  public function reject($reason) {
+    $this->meta['reject'] = TRUE;
+    $this->meta['rejectReason'] = $reason;
   }
 
 
@@ -70,6 +89,18 @@ abstract class Versionable extends Storable {
    */
   public function revert($versionNumber = NULL) {
     // todo
+  }
+
+
+
+
+  public function isTheEditor(User $user) {
+
+  }
+
+
+  public function isFirstEdit() {
+
   }
 
 
