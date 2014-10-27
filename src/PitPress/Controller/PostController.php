@@ -59,7 +59,7 @@ class PostController extends BaseController {
 
 
   /**
-   * @brief Edit the post.
+   * @brief Edits the post.
    */
   public function editAction($id) {
     if (empty($id))
@@ -153,6 +153,38 @@ class PostController extends BaseController {
     $this->assets->addJs($codeMirrorPath."/mode/clike/clike.min.js", FALSE);
 
     $this->view->pick('views/post/edit');
+  }
+
+
+  /**
+   * @brief Creates a new link.
+   */
+  public function newLink() {
+
+  }
+
+
+  /**
+   * @brief Creates a new question.
+   */
+  public function newQuestion() {
+
+  }
+
+
+  /**
+   * @brief Creates a new article.
+   */
+  public function newArticle() {
+
+  }
+
+
+  /**
+   * @brief Creates a new book review.
+   */
+  public function newBook() {
+
   }
 
 }
