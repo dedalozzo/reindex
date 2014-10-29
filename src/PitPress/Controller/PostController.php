@@ -29,7 +29,25 @@ use PitPress\Helper\Time;
 class PostController extends BaseController {
 
 
- /**
+  /**
+   * @brief Adds CodeMirror Editor files.
+   */
+  protected function addCodeMirror() {
+    $codeMirrorPath = "//cdnjs.cloudflare.com/ajax/libs/codemirror/".$this->di['config']['assets']['codeMirrorVersion'];
+    $this->assets->addCss($codeMirrorPath."/codemirror.min.css", FALSE);
+    $this->assets->addJs($codeMirrorPath."/codemirror.min.js", FALSE);
+    $this->assets->addJs($codeMirrorPath."/addon/mode/overlay.min.js", FALSE);
+    $this->assets->addJs($codeMirrorPath."/mode/xml/xml.min.js", FALSE);
+    $this->assets->addJs($codeMirrorPath."/mode/markdown/markdown.min.js", FALSE);
+    $this->assets->addJs($codeMirrorPath."/mode/gfm/gfm.min.js", FALSE);
+    $this->assets->addJs($codeMirrorPath."/mode/javascript/javascript.min.js", FALSE);
+    $this->assets->addJs($codeMirrorPath."/mode/css/css.min.js", FALSE);
+    $this->assets->addJs($codeMirrorPath."/mode/htmlmixed/htmlmixed.min.js", FALSE);
+    $this->assets->addJs($codeMirrorPath."/mode/clike/clike.min.js", FALSE);
+  }
+
+
+  /**
    * @brief Displays the post.
    */
   public function showAction($year, $month, $day, $slug) {
@@ -138,19 +156,7 @@ class PostController extends BaseController {
 
     // Adds Selectize Plugin files.
     $this->assets->addJs("/pit-bootstrap/dist/js/selectize.min.js", FALSE);
-
-    // Adds CodeMirror Editor files.
-    $codeMirrorPath = "//cdnjs.cloudflare.com/ajax/libs/codemirror/".$this->di['config']['assets']['codeMirrorVersion'];
-    $this->assets->addCss($codeMirrorPath."/codemirror.min.css", FALSE);
-    $this->assets->addJs($codeMirrorPath."/codemirror.min.js", FALSE);
-    $this->assets->addJs($codeMirrorPath."/addon/mode/overlay.min.js", FALSE);
-    $this->assets->addJs($codeMirrorPath."/mode/xml/xml.min.js", FALSE);
-    $this->assets->addJs($codeMirrorPath."/mode/markdown/markdown.min.js", FALSE);
-    $this->assets->addJs($codeMirrorPath."/mode/gfm/gfm.min.js", FALSE);
-    $this->assets->addJs($codeMirrorPath."/mode/javascript/javascript.min.js", FALSE);
-    $this->assets->addJs($codeMirrorPath."/mode/css/css.min.js", FALSE);
-    $this->assets->addJs($codeMirrorPath."/mode/htmlmixed/htmlmixed.min.js", FALSE);
-    $this->assets->addJs($codeMirrorPath."/mode/clike/clike.min.js", FALSE);
+    $this->addCodeMirror();
 
     $this->view->pick('views/post/edit');
   }
@@ -159,7 +165,7 @@ class PostController extends BaseController {
   /**
    * @brief Creates a new link.
    */
-  public function newLink() {
+  public function newLinkAction() {
 
   }
 
@@ -167,7 +173,7 @@ class PostController extends BaseController {
   /**
    * @brief Creates a new question.
    */
-  public function newQuestion() {
+  public function newQuestionAction() {
 
   }
 
@@ -175,15 +181,61 @@ class PostController extends BaseController {
   /**
    * @brief Creates a new article.
    */
-  public function newArticle() {
+  public function newArticleAction() {
+    if (is_null($this->user))
+      return $this->dispatcher->forward(['controller' => 'auth', 'action' => 'signin']);
 
+    // The validation object must be created in any case.
+    $validation = new ValidationHelper();
+    $this->view->setVar('validation', $validation);
+
+    if ($this->request->isPost()) {
+
+      try {
+        $validation->setFilters("title", "trim");
+        $validation->add("title", new PresenceOf(["message" => "Il titolo è obbligatorio."]));
+
+        $validation->setFilters("body", "trim");
+        $validation->add("body", new PresenceOf(["message" => "Il corpo è obbligatorio."]));
+
+        $group = $validation->validate($_POST);
+        if (count($group) > 0) {
+          throw new InvalidFieldException("I campi sono incompleti o i valori indicati non sono validi. Gli errori sono segnalati in rosso sotto ai rispettivi campi d'inserimento.");
+        }
+
+        // Filters only the messages generated for the field 'name'.
+        /*foreach ($validation->getMessages()->filter('email') as $message) {
+          $this->flash->notice($message->getMessage());
+          break;
+        }*/
+
+        $title = $this->request->getPost('email');
+        $body = $this->request->getPost('body');
+      }
+      catch (\Exception $e) {
+        // Displays the error message.
+        $this->flash->error($e->getMessage());
+      }
+
+    }
+    else {
+    }
+
+    //$this->view->setVar('post', $post);
+    $this->view->setVar('title', 'Nuovo articolo');
+
+    $this->view->disableLevel(View::LEVEL_LAYOUT);
+
+    $this->addCodeMirror();
+
+    $this->view->pick('views/post/edit');
   }
 
 
   /**
    * @brief Creates a new book review.
    */
-  public function newBook() {
+  public function newBookAction() {
 
   }
 
