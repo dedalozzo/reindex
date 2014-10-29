@@ -93,6 +93,13 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   }
 
 
+  /**
+   * @brief Registers the post score.
+   * @param[in] string $set The name of the Redis set.
+   * @param[in] \DateTime $date The modification date.
+   * @param[in] int $score The score.
+   * @param[in] The post id.
+   */
   protected function addScore($set, \DateTime $date, $score, $id) {
     $this->redis->zAdd($set, $score, $id);
     $this->redis->zAdd($set.$date->format('_Ymd'), $score, $id);
