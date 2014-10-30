@@ -15,6 +15,7 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
 use ElephantOnCouch\Generator\UUID;
 
 use PitPress\Helper;
+use PitPress\Enum\DocStatus;
 
 
 /**
@@ -24,6 +25,15 @@ use PitPress\Helper;
 abstract class Versionable extends Storable {
 
   const NO_USER_LOGGED_IN = -1; //!< No user logged in. The user is a guest.
+
+
+  /**
+   * @brief Constructor.
+   */
+  public function __construct() {
+    parent::__construct();
+    $this->status = DocStatus::CREATED;
+  }
 
 
   /** @name Control Versioning Methods */
@@ -48,37 +58,49 @@ abstract class Versionable extends Storable {
 
 
   /**
-   * @brief Returns `true` if this document revision is the current one, `false` otherwise.
-   * @return bool
+   * @brief Marks the document as draft.
+   * @details When a user works on an article, he wants save many time the item before submit it for peer revision.
    */
-  public function isCurrent() {
-    return ($this->isMetadataPresent('current')) ? TRUE : FALSE;
+  public function markAsDraft() {
+    $this->meta['status'] = DocStatus::DRAFT;
   }
 
 
   /**
-   * @brief Returns `true` if this document is only a draft, `false` otherwise.
-   * @return bool
+   * @brief Submits the document for peer review.
    */
-  public function isDraft() {
-    return ($this->isMetadataPresent('draft')) ? TRUE : FALSE;
+  public function submit() {
+    $this->meta['status'] = DocStatus::SUBMITTED;
   }
 
 
   /**
-   * @brief Approves this document revision, making of it the current version.
+   * @brief Approves the document revision, making of it the current version.
    */
   public function approve() {
-    $this->meta['current'] = TRUE;
+    $this->meta['status'] = DocStatus::CURRENT;
   }
 
 
   /**
    * @brief Rejects this document revision.
+   * @details The post will be automatically deleted in 10 days.
    * @param[in] The reason why the revision has been rejected.
    */
   public function reject($reason) {
-    $this->meta['reject'] = TRUE;
+    // todo: send a notification to the user
+    $this->meta['status'] = DocStatus::REJECTED;
+    $this->meta['rejectReason'] = $reason;
+  }
+
+
+  /**
+   * @brief Asks the author to revise the item, because it's not ready for publishing.
+   * @param[in] The reason why the document has been returned for revision.
+   */
+  public function returnForRevision($reason) {
+    // todo: send a notification to the user
+    $this->meta['status'] = DocStatus::RETURNED;
     $this->meta['rejectReason'] = $reason;
   }
 
@@ -92,16 +114,61 @@ abstract class Versionable extends Storable {
   }
 
 
-
-
-  public function isTheEditor(User $user) {
-
+  /**
+   * @brief Returns `true` if this document revision is the current one, `false` otherwise.
+   * @return bool
+   */
+  public function isCurrent() {
+    return ($this->isMetadataPresent('status') && $this->getStatus() == DocStatus::CURRENT) ? TRUE : FALSE;
   }
 
 
-  public function isFirstEdit() {
-
+  /**
+   * @brief Returns `true` if this document is only a draft, `false` otherwise.
+   * @return bool
+   */
+  public function isDraft() {
+    return ($this->isMetadataPresent('status') && $this->getStatus() == DocStatus::DRAFT) ? TRUE : FALSE;
   }
+
+
+  /**
+   * @brief Returns `true` if this document has been submitted for peer review, `false` otherwise.
+   * @return bool
+   */
+  public function hasBeenSubmittedForPeerReview() {
+    return ($this->isMetadataPresent('status') && $this->getStatus() == DocStatus::SUBMITTED) ? TRUE : FALSE;
+  }
+
+
+  /**
+   * @brief Returns `true` if this document revision has been approved, `false` otherwise.
+   * @return bool
+   */
+  public function hasBeenApproved() {
+    return ($this->isMetadataPresent('status') && $this->getStatus() == DocStatus::APPROVED) ? TRUE : FALSE;
+  }
+
+
+  /**
+   * @brief Returns `true` if this document revision has been rejected, `false` otherwise.
+   * @return bool
+   */
+  public function hasBeenRejected() {
+    return ($this->isMetadataPresent('status') && $this->getStatus() == DocStatus::REJECTED) ? TRUE : FALSE;
+  }
+
+
+  /**
+   * @brief Returns `true` if this document has been returned for revision, `false` otherwise.
+   * @return bool
+   */
+  public function hasBeenReturnedForRevision() {
+    return ($this->isMetadataPresent('status') && $this->getStatus() == DocStatus::RETURNED) ? TRUE : FALSE;
+  }
+
+  //@}
+
 
 
   /**
@@ -186,6 +253,27 @@ abstract class Versionable extends Storable {
   }
 
 
+  public function getStatus() {
+    return $this->meta["status"];
+  }
+
+
+  public function issetStatus() {
+    return isset($this->meta['status']);
+  }
+
+
+  public function setStatus($value) {
+    $this->meta["status"] = $value;
+  }
+
+
+  public function unsetStatus() {
+    if ($this->isMetadataPresent('status'))
+      unset($this->meta['status']);
+  }
+
+  
   public function getUserId() {
     return $this->meta["userId"];
   }
