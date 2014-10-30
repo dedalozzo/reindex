@@ -21,6 +21,11 @@ use PitPress\Exception\InvalidFieldException;
 use PitPress\Helper\ValidationHelper;
 use PitPress\Helper\Time;
 
+use PitPress\Model\Link;
+use PitPress\Model\Question;
+use PitPress\Model\Book;
+use PitPress\Model\Article;
+
 
 /**
  * @brief Controller of Post actions.
@@ -209,8 +214,15 @@ class PostController extends BaseController {
           break;
         }*/
 
-        $title = $this->request->getPost('email');
-        $body = $this->request->getPost('body');
+        $title =
+        $body =
+
+        $article = Article::create();
+        $article->title = $this->request->getPost('email');
+        $article->body = $this->request->getPost('body');
+        $article->userId = $this->user->id;
+        //$article->
+
       }
       catch (\Exception $e) {
         // Displays the error message.
@@ -218,17 +230,19 @@ class PostController extends BaseController {
       }
 
     }
-    else {
-    }
+    else
+      $this->setReferrer();
 
     //$this->view->setVar('post', $post);
     $this->view->setVar('title', 'Nuovo articolo');
 
     $this->view->disableLevel(View::LEVEL_LAYOUT);
 
+    // Adds Selectize Plugin files.
+    $this->assets->addJs("/pit-bootstrap/dist/js/selectize.min.js", FALSE);
     $this->addCodeMirror();
 
-    $this->view->pick('views/post/edit');
+    $this->view->pick('views/post/new');
   }
 
 
