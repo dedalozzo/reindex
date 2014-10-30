@@ -45,42 +45,6 @@ class AuthController extends BaseController {
 
 
   /**
-   * @brief Redirects to the referrer page if any.
-   */
-  protected function redirectToReferrer($user = NULL) {
-    if ($this->session->has("referrer"))
-      return $this->response->redirect($this->session->get("referrer"), TRUE);
-    elseif (isset($user))
-      return $this->redirect("http://utenti." . $this->domainName . "/" . $user->username);
-    else
-      return $this->dispatcher->forward(
-        [
-          'controller' => 'error',
-          'action' => 'show404'
-        ]);
-  }
-
-
-  /**
-   * @brief Sets the referrer is any.
-   */
-  protected function setReferrer() {
-    $requestUri = "//".$this->domainName.$_SERVER['REQUEST_URI'];
-
-    // Sets the HTTP Referrer to be able to return to the previous page.
-    if (isset($_SERVER['HTTP_REFERER']))
-      $referrerUri = $_SERVER['HTTP_REFERER'];
-    else
-      $referrerUri = "";
-
-    if (!empty($referrerUri) && ($requestUri != $referrerUri))
-      $this->session->set("referrer", $referrerUri);
-    else
-      $this->session->remove("referrer");
-  }
-
-
-  /**
    * @brief Performs the Sign In.
    */
   protected function signIn() {
