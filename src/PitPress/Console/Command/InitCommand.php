@@ -108,7 +108,7 @@ MAP;
     function unversionPosts() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->status == 'current')
     $emit($doc->unversionId);
 };
 MAP;
@@ -127,7 +127,7 @@ MAP;
     function postsByUrl() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->status == 'current')
     $emit([$doc->year, $doc->month, $doc->day, $doc->slug]);
 };
 MAP;
@@ -145,7 +145,7 @@ MAP;
     function postsPerDate() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->status == 'current')
     $emit($doc->publishedAt);
 };
 MAP;
@@ -164,7 +164,7 @@ MAP;
     function postsPerDateByType() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->status == 'current')
     $emit([$doc->type, $doc->publishedAt]);
 };
 MAP;
@@ -183,7 +183,7 @@ MAP;
     function postsPerDateByTag() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current) && isset($doc->tags))
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->status == 'current' && isset($doc->tags))
     foreach ($doc->tags as $tagId)
       $emit([$tagId, $doc->publishedAt]);
 };
@@ -203,7 +203,7 @@ MAP;
     function postsPerDateByTagAndType() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current) && isset($doc->tags))
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->status == 'current' && isset($doc->tags))
     foreach ($doc->tags as $tagId)
       $emit([$tagId, $doc->type, $doc->publishedAt]);
 };
@@ -223,7 +223,7 @@ MAP;
     function postsPerDateByUser() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->status == 'current')
     $emit([$doc->userId, $doc->publishedAt]);
 };
 MAP;
@@ -242,7 +242,7 @@ MAP;
     function postsPerDateByUserAndType() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current))
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->status == 'current')
     $emit([$doc->userId, $doc->type, $doc->publishedAt]);
 };
 MAP;
@@ -260,7 +260,7 @@ MAP;
     function postsPerTag() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current) && isset($doc->tags))
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->status == 'current' && isset($doc->tags))
     foreach ($doc->tags as $tagId)
       $emit($tagId);
 };
@@ -305,7 +305,7 @@ MAP;
     function allNames() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'tag' && isset($doc->current))
+  if ($doc->type == 'tag' && $doc->status == 'current')
     $emit($doc->unversionId, $doc->name);
 };
 MAP;
@@ -322,7 +322,7 @@ MAP;
     function newestTags() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'tag' && isset($doc->current))
+  if ($doc->type == 'tag' && $doc->status == 'current')
     $emit($doc->createdAt);
 };
 MAP;
@@ -339,7 +339,7 @@ MAP;
     function tagsByName() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'tag' && isset($doc->current))
+  if ($doc->type == 'tag' && $doc->status == 'current')
     $emit($doc->name);
 };
 MAP;
@@ -356,7 +356,7 @@ MAP;
     function tagsPerPost() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && isset($doc->current) && isset($doc->tags))
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->status == 'current' && isset($doc->tags))
     foreach ($doc->tags as $tagId)
       $emit($doc->unversionId, $tagId);
 };
