@@ -8,6 +8,7 @@ class Versionable {
 
   /** @name Properties */
   //!@{
+  string $status //!< The document status.
   string $unversionId //!< The id pruned of its version number.
   string $versionNumber //!< The document version number.
   string $previousVersionNumber //!< The version number of the previous document revision.
