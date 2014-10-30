@@ -9,7 +9,7 @@
     <!-- <div class="alert alert-info">Le tue modifiche saranno poste in coda sino a che il processo di revisione paritaria (peer review) avrà luogo. Ogni modifica, purché costruttiva, è benvenuta. Grazie.</div> -->
     {{ flash.output() }}
 
-    <form action="//{{ domainName }}/accedi/" id="signinform" name="signinform" method="post" role="form">
+    <form action="//{{ domainName }}/nuovo/" id="editform" name="editform" method="post" role="form">
 
       <select class="half-gutter" name="version" id="select-version">
         {% for revision in revisions %}
@@ -60,6 +60,7 @@
             </li>
           </ul>
           {{ text_area("body") }}
+          <label>{{ validation.first("body") }}</label>
           <script type="text/javascript">
             var editor = CodeMirror.fromTextArea(document.getElementById("body"), {
               mode: 'gfm',
@@ -83,7 +84,6 @@
         </div>
       </div>
 
-      {% set tags = post.getTags() %}
       <select class="half-gutter" id="tags" name="tags[]" placeholder="Seleziona alcuni tags..."></select>
       <script>
         $('#tags').selectize({
@@ -158,35 +158,8 @@
   </div> <!-- column-left -->
 
   <aside class="column-right compressed">
-    <ul class="list vertical post-it">
-      <li class="title">Formattazione</li>
-      <li><i class="icon-caret-right small"></i> separa i paragrafi con un'interlinea</li>
-      <li><i class="icon-caret-right small"></i> per andare a capo utilizza l'invio <span class="keyword">&crarr;</span></li>
-      <li><i class="icon-caret-right small"></i> usa <span class="keyword">_corsivo_</span> per il <i>corsivo</i></li>
-      <li><i class="icon-caret-right small"></i> usa <span class="keyword">**grassetto**</span> per il <b>grassetto</b></li>
-      <li>
-        <i class="icon-caret-right small"></i> per i blocchi di codice usa<br>
-        <div class="keyword">
-          ```php<br>
-          &nbsp;&nbsp;print "Hello World!";<br>
-          ```
-        </div>
-      </li>
-      <li><i class="icon-caret-right small"></i> usa <span class="keyword">`keywords`</span> per le <span class="keyword">keywords</span> o per il codice in linea</li>
-      <li><i class="icon-caret-right small"></i> usa <span class="keyword">[link](http://foo.com)</span> per inserire un <a href="#">link</a></li>
-      <li><i class="icon-caret-right small"></i> usa <span class="keyword">&gt;citazione</span> per fare una <blockquote>citazione</blockquote></li>
-    </ul>
-    <ul class="list vertical post-it">
-      <li class="title">Utilizzo dei tags</li>
-      <li>Il tag è un'etichetta che relaziona un contenuto con altri simili.</li>
-      <li><i class="icon-caret-right small"></i> cerca di riutilizzare i tags esistenti</li>
-      <li><i class="icon-caret-right small"></i> usa abbreviazioni comuni</li>
-      <li><i class="icon-caret-right small"></i> evita di usare eventuali sinonimi</li>
-      <li><i class="icon-caret-right small"></i> crea nomi-composti usando il segno <span class="keyword">-</span></li>
-      <li><i class="icon-caret-right small"></i> usa un massimo di 10 tags</li>
-      <li><i class="icon-caret-right small"></i> il nome di un tag non può superare i 25 caratteri</li>
-      <li><i class="icon-caret-right small"></i> è consentito l'uso dei seguenti caratteri <span class="keyword">a-z 0-9 + # - .</span></li>
-    </ul>
+    {% include "partials/notes/formatting-rules.volt" %}
+    {% include "partials/notes/tags-usage.volt" %}
   </aside> <!-- column-right -->
 
 </div>
