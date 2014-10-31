@@ -113,6 +113,36 @@ class Text {
 
 
   /**
+   * @brief Generates a single word, stripping every `-` from a compound word.
+   * @param[in] string $word A compound word.
+   * @return array
+   * @warning This function works with UTF-8 strings.
+   */
+  public static function stick($word) {
+    return preg_replace('/-/su', '', $word);
+  }
+
+
+  /**
+   * @brief Given a string, returns all the unique contained substrings.
+   * @param[in] string $str The input string.
+   * @param[in] string $charset (optional) The charset used.
+   * @return array
+   * @warning This function works with UTF-8 strings.
+   */
+  public static function substrings($str, $charset = 'UTF-8') {
+    $length = mb_strlen($str, $charset);
+
+    $subs = [];
+    for ($i = 0; $i < $length; $i++)
+      for ($j = 1; $j <= $length; $j++)
+        $subs[] = mb_substr($str, $i, $j, $charset);
+
+    return array_unique($subs);
+  }
+
+
+  /**
    * @brief Prunes the ID of its version number, if any.
    * @param[in] string $id An UUID followed by a timestamp, like `3e96144b-3ebd-41e4-8a45-78cd9af1671d::1410886811`.
    * @return string Returns just `3e96144b-3ebd-41e4-8a45-78cd9af1671d`.
