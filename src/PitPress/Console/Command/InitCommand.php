@@ -319,6 +319,35 @@ MAP;
     $doc->addHandler(allNames());
 
 
+    function substrings() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'tag' && $doc->status == 'current') {
+    $str = preg_replace('/-/su', '', $doc->name);
+    $length = mb_strlen($str, 'UTF-8');
+
+    $subs = [];
+    for ($i = 0; $i < $length; $i++)
+      for ($j = 1; $j <= $length; $j++)
+        $subs[] = mb_substr($str, $i, $j, 'UTF-8');
+
+    $subs = array_unique($subs);
+
+    foreach ($subs as $substring)
+      $emit($substring);
+  }
+};
+MAP;
+
+      $handler = new ViewHandler("substrings");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(substrings());
+
+
     function newestTags() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
