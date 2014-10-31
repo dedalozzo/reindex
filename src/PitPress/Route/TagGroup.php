@@ -39,6 +39,9 @@ class TagGroup extends Group {
     $this->addGet('/per-nome/', ['action' => 'byName']);
     $this->addGet('/nuovi/', ['action' => 'newest']);
     $this->addGet('/sinonimi/', ['action' => 'synonyms']);
+
+    // AJAX calls.
+    $this->addPost('/filtra/', ['action' => 'filter']);
   }
 
 }
