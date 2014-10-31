@@ -27,7 +27,7 @@ trait TStar {
 
 
   public function isStarred(User $user = NULL, &$starId = NULL) {
-    // In case there is no user logged in returns false.
+    // In case there is no user logged in, returns false.
     if (is_null($user)) return FALSE;
 
     $opts = new ViewQueryOpts();
