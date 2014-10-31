@@ -167,4 +167,24 @@ class TagController extends ListController {
   }
 
 
+  /**
+   * @brief Given a partial name, loads the list of tags matching it.
+   * @return string A JSON encoded object.
+   */
+  public function filterAction() {
+    if ($this->request->hasPost('filter')) {
+      $opts = new ViewQueryOpts();
+      $opts->setKey($this->request->getPost('filter'));
+      $tags = $this->couch->queryView('tags', 'substrings', NULL, $opts)->asArray();
+
+      $entries = $this->getEntries(array_column($tags, 'id'));
+      echo json_encode($entries);
+
+      $this->view->disable();
+    }
+    else {
+      throw new \RuntimeException("Non hai specificato un query per la ricerca.");
+    }
+  }
+
 }
