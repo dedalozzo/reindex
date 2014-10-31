@@ -83,7 +83,7 @@ class AjaxController extends BaseController {
       $this->view->disable();
     }
     else {
-      throw new \DomainException("Stai tentando di effettuare una richiesta da un dominio sconosciuto.");
+      throw new \RuntimeException("Non hai specificato un id.");
     }
   }
 
@@ -100,7 +100,7 @@ class AjaxController extends BaseController {
       $this->view->disable();
     }
     else {
-      throw new \DomainException("Stai tentando di effettuare una richiesta da un dominio sconosciuto.");
+      throw new \RuntimeException("Non hai specificato un id.");
     }
   }
 
