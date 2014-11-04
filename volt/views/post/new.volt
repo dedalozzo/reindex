@@ -83,22 +83,29 @@
           $('#tags').selectize({
             plugins: ['remove_button'],
             persist: false,
-            create: true,
+            //create: true,
+            create: false,
             //theme: 'links',
             maxItems: null,
-            valueField: 'id',
-            searchField: 'title',
+            valueField: 'name',
+            labelField: 'name',
+            searchField: 'name',
             options: [],
             render: {
-              option: function(data, escape) {
-                return '<div class="option">' +
-                '<span class="title">' + escape(data.title) + '</span>' +
-                '</div>';
+              option: function(tag, escape) {
+                return '<ul class="list vertical mini-gutter">' +
+                         '<li>' +
+                           '<span class="tag hoverless">' + escape(tag.name) + '</span>' +
+                           '<span class="popularity"> × ' + tag.postsCount + '</span>' +
+                         '</li>' +
+                         '<li class="excerpt">' + escape(tag.excerpt || 'Nessuna descrizione disponibile.') + '</li>' +
+                       '</ul>';
               },
-              item: function(data, escape) {
-                return '<div class="item"><a class="tag" href="' + escape(data.url) + '">' + escape(data.title) + '</a></div>';
+              item: function(tag, escape) {
+                return '<div class="item"><a class="tag" href="' + '//{{ domainName }}/' + escape(tag.name) + '/">' + escape(tag.name) + '</a></div>';
               }
             },
+            /*
             create: function(input) {
               return {
                 id: 0,
@@ -106,16 +113,16 @@
                 url: '#'
               };
             },
+            */
             load: function(query, callback) {
               if (!query.length) return callback();
               $.ajax({
-                url: 'http://ajax.programmazione.me/tags/',
-                type: 'GET',
+                url: 'http://programmazione.me/tags/filtra/',
+                type: 'POST',
                 dataType: 'json',
                 data: {
-                  //q: query,
-                  //page_limit: 10,
-                  //apikey: '3qqmdwbuswut94jv4eua3j85'
+                  filter: query,
+                  page_limit: 10
                 },
                 error: function() {
                   callback();
