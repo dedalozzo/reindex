@@ -39,19 +39,17 @@
             <p>Se possiedi già un'utenza sul sito, puoi accedere usando le tue credenziali.</p>
             <form action="//{{ serverName }}/accedi/" id="signinform" name="signinform" method="post" role="form">
               <input type="hidden" name="{{ security.getTokenKey() }}" value="{{ security.getToken() }}"/>
-              <ul class="list vertical mbottom10">
-                <li>
-                  {{ email_field("email", "placeholder": "E-mail") }}
-                  <label>{{ validation.first("email") }}</label>
-                </li>
-                <li>
-                  {{ password_field("password", "placeholder": "Password") }}
-                  <label>{{ validation.first("password") }}</label>
-                </li>
-                <li class="pull-right">
-                  <button type="submit" name="signin" class="btn blue">Accedi</button>
-                </li>
-              </ul>
+              <div class="half-gutter">
+                {{ email_field("email", "placeholder": "E-mail") }}
+                <span class="error">{{ validation.first("email") }}</span>
+              </div>
+              <div class="half-gutter">
+                {{ password_field("password", "placeholder": "Password") }}
+                <span class="error">{{ validation.first("password") }}</span>
+              </div>
+              <div class="align-right">
+                <button type="submit" name="signin" class="btn blue">Accedi</button>
+              </div>
             </form>
           </div>
           <div>
@@ -71,27 +69,25 @@
         <div class="notebook-page{% if signup is defined %} active{% endif %}" id="signup">
           <div>
             <form action="//{{ serverName }}/accedi/" id="signupform" name="signupform" method="post" role="form">
-              <ul class="list vertical mbottom10">
-                <li>
-                  {{ text_field("username", "placeholder": "Nome utente") }}
-                  <label>{{ validation.first("username") }}</label>
-                </li>
-                <li>
-                  {{ email_field("email", "placeholder": "E-mail") }}
-                  <label>{{ validation.first("email") }}</label>
-                </li>
-                <li>
-                  {{ password_field("password", "placeholder": "Password") }}
-                  <label>{{ validation.first("password") }}</label>
-                </li>
-                <li>
-                  {{ password_field("confirmPassword", "placeholder": "Ripeti la password") }}
-                  <label>{{ validation.first("password2") }}</label>
-                </li>
-                <li class="pull-right">
-                  <button type="submit" name="signup" value="signup" class="btn blue">Registrati</button>
-                </li>
-              </ul>
+              <div class="half-gutter">
+                {{ text_field("username", "placeholder": "Nome utente") }}
+                <span class="error">{{ validation.first("username") }}</span>
+              </div>
+              <div class="half-gutter">
+                {{ email_field("email", "placeholder": "E-mail") }}
+                <span class="error">{{ validation.first("email") }}</span>
+              </div>
+              <div class="half-gutter">
+                {{ password_field("password", "placeholder": "Password") }}
+                <span class="error">{{ validation.first("password") }}</span>
+              </div>
+              <div class="half-gutter">
+                {{ password_field("confirmPassword", "placeholder": "Ripeti la password") }}
+                <span class="error">{{ validation.first("confirmPassword") }}</span>
+              </div>
+              <div class="align-right">
+                <button type="submit" name="signup" value="signup" class="btn blue">Registrati</button>
+              </div>
             </form>
           </div>
           <div>
