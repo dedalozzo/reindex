@@ -203,6 +203,8 @@ class PostController extends BaseController {
         $validation->setFilters("body", "trim");
         $validation->add("body", new PresenceOf(["message" => "Il corpo è obbligatorio."]));
 
+        $validation->add("tags[]", new PresenceOf(["message" => "Devi inserire almeno un tag."]));
+
         $group = $validation->validate($_POST);
         if (count($group) > 0) {
           throw new InvalidFieldException("I campi sono incompleti o i valori indicati non sono validi. Gli errori sono segnalati in rosso sotto ai rispettivi campi d'inserimento.");
@@ -214,14 +216,19 @@ class PostController extends BaseController {
           break;
         }*/
 
-        $title =
-        $body =
+        //$title =
+        //$body =
 
         $article = Article::create();
         $article->title = $this->request->getPost('email');
         $article->body = $this->request->getPost('body');
         $article->userId = $this->user->id;
-        //$article->
+
+        $this->monolog->addDebug("Article: ", $article);
+
+        //$ids = $this->request->getPost('body');
+
+        //$article->addMultipleTagsAtOnce($ids);
 
       }
       catch (\Exception $e) {
