@@ -80,7 +80,7 @@
 
         <div class="gutter">
           <select id="tags" name="tags[]" placeholder="Seleziona alcuni tags..."></select>
-          <span class="error">{{ validation.first("tags[]") }}</span>
+          <span class="error">{{ validation.first("tags") }}</span>
           <script>
             $('#tags').selectize({
               plugins: ['remove_button'],
