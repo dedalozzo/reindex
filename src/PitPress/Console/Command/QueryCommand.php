@@ -63,13 +63,13 @@ class QueryCommand extends AbstractCommand {
       To provide a complex key, instead, you must use --startkey=[\\\"book\\\",{}]. The {} symbol is a wildcard used in
       JavaScript to create an empty object.
       Don't put a space between the values of your complex key, because the console will consider them like new arguments.
-      Unfortunately, there is known bug that don't let you write something like --startkey=[\\\"my book\\\",{}].");
+      If your key contains a space, remember to backspace it like follows: --startkey=[\\\"my\ book\\\",{}].");
 
     $this->addOption("endkey",
       NULL,
       InputOption::VALUE_REQUIRED,
       "Defines the last key to be included in the range.
-      In case the key is a string, it must be quoted with double quotes and escaped, like --endkey=\\\"mykey\\\".");
+      In case the key is a string, it must be quoted with quotes or double quotes and escaped, like --endkey=\\\"mykey\\\".");
 
     $this->addOption("startkey-docid",
       NULL,
