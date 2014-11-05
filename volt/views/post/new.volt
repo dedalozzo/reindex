@@ -45,22 +45,24 @@
               </ul>
               {{ text_area("body") }}
               <script type="text/javascript">
+                /*
                 var minLines = 19;
                 var startingValue = '';
                 for (var i = 0; i < minLines; i++) {
                   startingValue += '\n';
                 }
+                */
 
                 var editor = CodeMirror.fromTextArea(document.getElementById("body"), {
                   mode: 'gfm',
                   lineNumbers: true,
                   lineWrapping: true,
                   theme: "default",
-                  value: startingValue,
+                  //value: startingValue,
                   viewportMargin: Infinity
                 });
 
-                editor.setValue(startingValue);
+                //editor.setValue(startingValue);
 
                 var charWidth = editor.defaultCharWidth(), basePadding = 4;
                 editor.on("renderLine", function(cm, line, elt) {
@@ -85,8 +87,8 @@
             $('#tags').selectize({
               plugins: ['remove_button'],
               persist: false,
-              //create: true,
-              create: false,
+              create: true,
+              //create: false,
               //theme: 'links',
               maxItems: null,
               valueField: 'name',
@@ -112,7 +114,7 @@
                 return {
                   id: 0,
                   title: input,
-                  url: '#'
+                  url: '//{{ domainName }}/' + input + '/'
                 };
               },
               */
