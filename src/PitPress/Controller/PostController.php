@@ -18,9 +18,11 @@ use Phalcon\Mvc\View;
 use Phalcon\Validation\Validator\PresenceOf;
 
 use PitPress\Exception\InvalidFieldException;
+use PitPress\Helper\Text;
 use PitPress\Helper\ValidationHelper;
 use PitPress\Helper\Time;
 
+use PitPress\Model\Tag;
 use PitPress\Model\Link;
 use PitPress\Model\Question;
 use PitPress\Model\Book;
@@ -210,26 +212,14 @@ class PostController extends BaseController {
           throw new InvalidFieldException("I campi sono incompleti o i valori indicati non sono validi. Gli errori sono segnalati in rosso sotto ai rispettivi campi d'inserimento.");
         }
 
-        // Filters only the messages generated for the field 'name'.
-        /*foreach ($validation->getMessages()->filter('email') as $message) {
-          $this->flash->notice($message->getMessage());
-          break;
-        }*/
-
-        //$title =
-        //$body =
-
         $article = Article::create();
-        $article->title = $this->request->getPost('email');
+        $article->title = $this->request->getPost('title');
         $article->body = $this->request->getPost('body');
         $article->userId = $this->user->id;
+        $article->addMultipleTagsAtOnce($this->request->getPost('tags'));
 
-        $this->monolog->addDebug("Article: ", $article);
-
-        //$ids = $this->request->getPost('body');
-
-        //$article->addMultipleTagsAtOnce($ids);
-
+        $article->approve();
+        $article->save();
       }
       catch (\Exception $e) {
         // Displays the error message.
