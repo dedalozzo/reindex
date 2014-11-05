@@ -203,7 +203,7 @@ class PostController extends BaseController {
         $validation->setFilters("body", "trim");
         $validation->add("body", new PresenceOf(["message" => "Il corpo è obbligatorio."]));
 
-        $validation->add("tags[]", new PresenceOf(["message" => "Devi inserire almeno un tag."]));
+        $validation->add("tags", new PresenceOf(["message" => "Devi inserire almeno un tag."]));
 
         $group = $validation->validate($_POST);
         if (count($group) > 0) {
