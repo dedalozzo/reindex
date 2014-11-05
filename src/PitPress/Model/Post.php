@@ -223,16 +223,36 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @brief Adds the specified tag to the list of tags.
    * @param[in] int $tagId The tag uuid.
    */
-  public function addTag($tagId) {
-    $this->meta['tags'][] = $tagId;
+  public function addTagId($tagId) {
+    $this->meta['tags'][] = Helper\Text::unversion($tagId);
   }
 
 
   /**
    * @brief Adds many tags at once to the list of tags.
+   * @param[in] array $names An array of strings, the tag names.
    */
-  public function addMultipleTagsAtOnce(array $tags) {
-    $this->meta['tags'] = array_unique(array_merge($this->meta['tags'], $tags));
+  public function addMultipleTagsAtOnce(array $names) {
+    $names = array_unique($names);
+
+    $opts = new ViewQueryOpts();
+    $opts->includeMissingKeys();
+    $rows = $this->couch->queryView("tags", "byName", $names, $opts)->asArray();
+
+    foreach ($rows as $row) {
+      // A tag hasn't been found, so creates it.
+      if (is_null($row['id'])) {
+        $tag = Tag::create();
+        $tag->name = $row['key'];
+        $tag->userId = $this->user->id;
+        $tag->approve();
+        $tag->save();
+
+        $this->addTagId($tag->unversionId);
+      }
+      else
+        $this->addTagId(Helper\Text::unversion($row['id']));
+    }
   }
 
 
