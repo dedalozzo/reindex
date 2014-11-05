@@ -44,7 +44,8 @@ class QueryCommand extends AbstractCommand {
       InputArgument::IS_ARRAY | InputArgument::OPTIONAL,
       "Used to retrieve just the view rows matching that set of keys. Rows are returned in the order of the specified
       keys. Combining this feature with --include-docs results in the so-called multi-document-fetch feature.
-      In case yours keys are string, they must be quoted with double quotes and escaped, like \\\"firstkey\\\", \\\"secondkey\\\".");
+      Keys must be separated by a space.
+      In case yours keys are string, they must be quoted or double quotes and escaped, like \\\"firstkey\\\" \\\"secondkey\\\".");
 
 
     // General options.
