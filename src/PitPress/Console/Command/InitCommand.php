@@ -83,9 +83,11 @@ function($doc) use ($emit) {
   if (isset($doc->supertype) && $doc->supertype == 'post')
     $emit($doc->_id, [
         'type' => $doc->type,
+        'status' => $doc->status,
         'title' => $doc->title,
         'excerpt' => $doc->excerpt,
         'slug' => $doc->slug,
+        'createdAt' => $doc->createdAt,
         'modifiedAt' => $doc->modifiedAt,
         'publishedAt' => $doc->publishedAt,
         'userId' => $doc->userId,
@@ -139,6 +141,24 @@ MAP;
     }
 
     $doc->addHandler(postsByUrl());
+
+
+    // @params: year, month, day, slug
+    function approvedRevisionsByUrl() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->status == 'approved')
+    $emit([$doc->year, $doc->month, $doc->day, $doc->slug]);
+};
+MAP;
+
+      $handler = new ViewHandler("approvedRevisionsByUrl");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(approvedRevisionsByUrl());
 
 
     // @params: NONE
