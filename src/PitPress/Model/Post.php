@@ -17,6 +17,7 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
 use PitPress\Extension;
 use PitPress\Property;
 use PitPress\Helper;
+use PitPress\Enum;
 
 use Phalcon\DI;
 
@@ -48,26 +49,33 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   /**
    * @copydoc Versionable::approve
    */
-  public function approve() {
+  public function approve($update = FALSE) {
     parent::approve();
 
-    if (!isset($this->publishedAt))
-      $this->publish();
+    if (!isset($this->publishedAt) || $update) {
+      $this->publishedAt = time();
+
+      // Used to group by year, month and day.
+      $this->meta['year'] = date("Y", $this->publishedAt);
+      $this->meta['month'] = date("m", $this->publishedAt);
+      $this->meta['day'] = date("d", $this->publishedAt);
+    }
+
+    $this->meta['slug'] = $this->getSlug();
   }
 
 
   /**
-   * @brief Updates the publishing date, the post slug and some internal metadata.
-   * @warning Don't call this method, unless you want refresh the publishing date, since this method is called by the
-   * Post::approve() function. It's public just because you may need to update the publishing date.
+   * @brief Marks the document as draft.
+   * @details When a user works on an article, he wants save many time the item before submit it for peer revision.
    */
-  public function publish() {
-    $this->publishedAt = time();
+  public function markAsDraft() {
+    $this->meta['status'] = Enum\DocStatus::DRAFT;
 
     // Used to group by year, month and day.
-    $this->meta['year'] = date("Y", $this->publishedAt);
-    $this->meta['month'] = date("m", $this->publishedAt);
-    $this->meta['day'] = date("d", $this->publishedAt);
+    $this->meta['year'] = date("Y", $this->createdAt);
+    $this->meta['month'] = date("m", $this->createdAt);
+    $this->meta['day'] = date("d", $this->createdAt);
 
     $this->meta['slug'] = $this->getSlug();
   }
