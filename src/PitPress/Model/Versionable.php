@@ -58,15 +58,6 @@ abstract class Versionable extends Storable {
 
 
   /**
-   * @brief Marks the document as draft.
-   * @details When a user works on an article, he wants save many time the item before submit it for peer revision.
-   */
-  public function markAsDraft() {
-    $this->meta['status'] = DocStatus::DRAFT;
-  }
-
-
-  /**
    * @brief Submits the document for peer review.
    */
   public function submit() {
@@ -111,6 +102,7 @@ abstract class Versionable extends Storable {
    */
   public function revert($versionNumber = NULL) {
     // todo
+    $this->meta['status'] = DocStatus::APPROVED;
   }
 
 
