@@ -13,6 +13,7 @@ namespace PitPress\Controller;
 
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
+use PitPress\Enum\DocStatus;
 use PitPress\Helper;
 use PitPress\Model\User;
 
@@ -76,7 +77,7 @@ abstract class ListController extends BaseController {
     for ($i = 0; $i < $postCount; $i++) {
       $entry = (object)($posts[$i]['value']);
       $entry->id = $posts[$i]['id'];
-      $entry->url = $this->buildPostUrl($entry->publishedAt, $entry->slug);
+      $entry->url = ($entry->status == DocStatus::CURRENT) ? $this->buildPostUrl($entry->publishedAt, $entry->slug) : $this->buildPostUrl($entry->createdAt, $entry->slug);
       $entry->whenHasBeenPublished = Helper\Time::when($entry->publishedAt);
       $entry->username = $users[$i]['value'][0];
       $entry->gravatar = User::getGravatar($users[$i]['value'][1]);
