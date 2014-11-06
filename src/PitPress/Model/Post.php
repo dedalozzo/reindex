@@ -41,14 +41,35 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @copydoc Storable::save
    */
   public function save() {
-    $this->meta['slug'] = $this->getSlug();
+    parent::save();
+  }
+
+
+  /**
+   * @copydoc Versionable::approve
+   */
+  public function approve() {
+    parent::approve();
+
+    if (!isset($this->publishedAt))
+      $this->publish();
+  }
+
+
+  /**
+   * @brief Updates the publishing date, the post slug and some internal metadata.
+   * @warning Don't call this method, unless you want refresh the publishing date, since this method is called by the
+   * Post::approve() function. It's public just because you may need to update the publishing date.
+   */
+  public function publish() {
+    $this->publishedAt = time();
 
     // Used to group by year, month and day.
     $this->meta['year'] = date("Y", $this->publishedAt);
     $this->meta['month'] = date("m", $this->publishedAt);
     $this->meta['day'] = date("d", $this->publishedAt);
 
-    parent::save();
+    $this->meta['slug'] = $this->getSlug();
   }
 
 
