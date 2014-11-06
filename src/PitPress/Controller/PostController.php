@@ -56,6 +56,9 @@ class PostController extends BaseController {
 
   /**
    * @brief Displays the post.
+   * @todo Before to send a 404, we have check if does a post exist for the provided url, because maybe it's an old
+   * revision of the same posts. Use the posts/approvedRevisionsByUrl view to check the existence, then make another
+   * query on the posts/unversion to get the postId, and finally use it to get the document.
    */
   public function showAction($year, $month, $day, $slug) {
     $opts = new ViewQueryOpts();
