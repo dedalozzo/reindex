@@ -171,7 +171,7 @@
       </div>
 
       <ul class="list btn-list gutter">
-        <li class="pull-right"><a href="//{{ serverName~post.getHref() }}" class="btn">ANNULLA</a></li>
+        <li class="pull-right"><a href="//{{ domainName~post.getHref() }}" class="btn">ANNULLA</a></li>
         <li class="pull-right"><button type="submit" name="signin" class="btn red">SALVA LE MODIFICHE</button></li>
       </ul>
 
