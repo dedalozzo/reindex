@@ -65,8 +65,6 @@ class IndexGroup extends Group {
     //$this->addGet('/([0-9]{4})/([0-9]{2})/', ['action' => 'perDate', 'year' => 1, 'month' => 2]);
     //$this->addGet('/([0-9]{4})/([0-9]{2})/([0-9]{2})/', ['action' => 'perDate', 'year' => 1, 'month' => 2, 'day' => 3]);
     //$this->addGet('/([0-9]{4})/(?:([0-9]{2})/(?:([0-9]{2})/){0,1}){0,1}', ['action' => 'perDate', 'year' => 1, 'month' => 2, 'day' => 3]);
-
-    //$this->addGet('/rss', ['action' => 'rss']);
   }
 
 
@@ -87,6 +85,7 @@ class IndexGroup extends Group {
     $this->addGet('/interessanti/', ['action' => 'interesting']);
     $this->addGet('/preferiti/', ['action' => 'favorite']);
     $this->addGet('/preferiti/{filter}/', ['action' => 'favorite']);
+    $this->add('/aggiungi', ['action' => 'new'])->via(['GET', 'POST']);
   }
 
 }
