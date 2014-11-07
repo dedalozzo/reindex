@@ -7,7 +7,7 @@
     {% set controllerPath = '' %}
   {% endif %}
   {% if buttonLabel is defined %}
-  <li class="pull-right icon"><a href="//{{ domainName~'/'~buttonLink }}" class="icon-plus icon-large"> {{ buttonLabel }}</a></li>
+  <li class="pull-right icon"><a href="//{{ domainName~buttonLink }}" class="icon-plus icon-large"> {{ buttonLabel }}</a></li>
   {% endif %}
   {% for name, actionPath in menu %}
   <li{{ (name == actionName) ? ' class="active pull-right"' : ' class="pull-right"' }}><a href="//{{ domainName~'/'~controllerPath~actionPath }}/">{{ actionPath|minustospace }}</a></li>
