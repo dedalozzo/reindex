@@ -16,7 +16,7 @@ use Phalcon\DI;
 
 
 /**
- * @brief Group of blog routes.
+ * @brief Group of post routes.
  * @nosubgrouping
  */
 class PostGroup extends Group {
@@ -26,7 +26,7 @@ class PostGroup extends Group {
     $this->setPaths(
       [
         'namespace' => 'PitPress\Controller',
-        'controller' => 'post'
+        'controller' => 'index' // We don't use post controller, but the index controller.
       ]);
 
     $this->setHostName(DI::getDefault()['config']['application']['domainName']);
