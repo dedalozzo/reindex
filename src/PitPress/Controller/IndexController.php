@@ -15,8 +15,10 @@ use ElephantOnCouch\Couch;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Helper;
+use PitPress\Exception\InvalidFieldException;
 
 use Phalcon\Mvc\View;
+use Phalcon\Validation\Validator\PresenceOf;
 use Phalcon\Tag;
 
 
@@ -137,6 +139,24 @@ class IndexController extends ListController {
     }
 
     $this->view->setVar('recentTags', $recentTags);
+  }
+
+
+  /**
+   * @brief Adds CodeMirror Editor files.
+   */
+  protected function addCodeMirror() {
+    $codeMirrorPath = "//cdnjs.cloudflare.com/ajax/libs/codemirror/".$this->di['config']['assets']['codeMirrorVersion'];
+    $this->assets->addCss($codeMirrorPath."/codemirror.min.css", FALSE);
+    $this->assets->addJs($codeMirrorPath."/codemirror.min.js", FALSE);
+    $this->assets->addJs($codeMirrorPath."/addon/mode/overlay.min.js", FALSE);
+    $this->assets->addJs($codeMirrorPath."/mode/xml/xml.min.js", FALSE);
+    $this->assets->addJs($codeMirrorPath."/mode/markdown/markdown.min.js", FALSE);
+    $this->assets->addJs($codeMirrorPath."/mode/gfm/gfm.min.js", FALSE);
+    $this->assets->addJs($codeMirrorPath."/mode/javascript/javascript.min.js", FALSE);
+    $this->assets->addJs($codeMirrorPath."/mode/css/css.min.js", FALSE);
+    $this->assets->addJs($codeMirrorPath."/mode/htmlmixed/htmlmixed.min.js", FALSE);
+    $this->assets->addJs($codeMirrorPath."/mode/clike/clike.min.js", FALSE);
   }
 
 
@@ -633,6 +653,132 @@ class IndexController extends ListController {
     $this->view->setVar('submenu', $filters);
     $this->view->setVar('submenuIndex', $index);
     $this->view->setVar('title', sprintf('%s preferiti', ucfirst($this->getLabel())));
+  }
+
+
+  /**
+   * @brief Displays the post.
+   * @todo Before to send a 404, we have check if does a post exist for the provided url, because maybe it's an old
+   * revision of the same posts. Use the posts/approvedRevisionsByUrl view to check the existence, then make another
+   * query on the posts/unversion to get the postId, and finally use it to get the document.
+   */
+  public function showAction($year, $month, $day, $slug) {
+    $opts = new ViewQueryOpts();
+    $opts->setKey([$year, $month, $day, $slug])->setLimit(1);
+    $rows = $this->couch->queryView("posts", "byUrl", NULL, $opts);
+
+    if ($rows->isEmpty())
+      return $this->dispatcher->forward(
+        [
+          'controller' => 'error',
+          'action' => 'show404'
+        ]);
+
+    $post = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $rows[0]['id']);
+    $post->incHits();
+    $post->html = $this->markdown->parse($post->body);
+
+    $this->view->setVar('post', $post);
+    $this->view->setVar('replies', $post->getReplies());
+    $this->view->setVar('title', $post->title);
+
+    $this->assets->addJs("/pit-bootstrap/dist/js/post.min.js", FALSE);
+
+    $this->view->pick('views/post/show');
+  }
+
+
+  /**
+   * @brief Edits the post.
+   */
+  public function editAction($id) {
+    if (empty($id))
+      return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+
+    if (is_null($this->user))
+      return $this->dispatcher->forward(['controller' => 'auth', 'action' => 'signin']);
+
+    // The validation object must be created in any case.
+    $validation = new Helper\ValidationHelper();
+    $this->view->setVar('validation', $validation);
+
+    if ($this->request->isPost()) {
+
+      try {
+        $validation->setFilters("title", "trim");
+        $validation->add("title", new PresenceOf(["message" => "Il titolo è obbligatorio."]));
+
+        $validation->setFilters("body", "trim");
+        $validation->add("body", new PresenceOf(["message" => "Il corpo è obbligatorio."]));
+
+        $group = $validation->validate($_POST);
+        if (count($group) > 0) {
+          throw new InvalidFieldException("I campi sono incompleti o i valori indicati non sono validi. Gli errori sono segnalati in rosso sotto ai rispettivi campi d'inserimento.");
+        }
+
+        // Filters only the messages generated for the field 'name'.
+        /*foreach ($validation->getMessages()->filter('email') as $message) {
+          $this->flash->notice($message->getMessage());
+          break;
+        }*/
+
+        $title = $this->request->getPost('email');
+        $body = $this->request->getPost('body');
+      }
+      catch (\Exception $e) {
+        // Displays the error message.
+        $this->flash->error($e->getMessage());
+      }
+
+    }
+    else {
+      $post = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $id);
+
+      $opts = new ViewQueryOpts();
+      $opts->setKey($post->unversionId)->doNotReduce();
+      $revisions = $this->couch->queryView("revisions", "perPost", NULL, $opts);
+
+      $keys = array_column(array_column($revisions->asArray(), 'value'), 'editorId');
+      $opts->reset();
+      $opts->includeMissingKeys();
+      $users = $this->couch->queryView("users", "allNames", $keys, $opts);
+
+      $versions = [];
+      $revisionCount = count($revisions);
+      for ($i = 0; $i < $revisionCount; $i++) {
+        $version = (object)($revisions[$i]['value']);
+        $version->id = $revisions[$i]['id'];
+        $version->whenHasBeenModified = Helper\Time::when($version->modifiedAt);
+        $version->editor = $users[$i]['value'][0];
+
+        $versions[$version->modifiedAt] = $version;
+      }
+
+      krsort($versions);
+
+      $this->tag->setDefault("title", $post->title);
+      $this->tag->setDefault("body", $post->body);
+    }
+
+    $this->view->setVar('post', $post);
+    $this->view->setVar('revisions', $versions);
+    $this->view->setVar('title', $post->title);
+
+    $this->view->disableLevel(View::LEVEL_LAYOUT);
+
+    // Adds Selectize Plugin files.
+    $this->assets->addJs("/pit-bootstrap/dist/js/selectize.min.js", FALSE);
+    $this->addCodeMirror();
+
+    $this->view->pick('views/post/edit');
+  }
+
+
+  /**
+   * @brief Creates a new post.
+   */
+  public function newAction() {
+
   }
 
 }
