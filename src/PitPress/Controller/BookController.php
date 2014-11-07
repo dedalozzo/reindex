@@ -34,4 +34,12 @@ class BookController extends IndexController {
     parent::popular($filter);
   }
 
+
+  /**
+   * @brief Creates a new book.
+   */
+  public function newAction() {
+    parent::newAction();
+  }
+
 }
