@@ -42,6 +42,7 @@ $di->setShared('router',
     $router->mount(new Route\PostGroup());
     $router->mount(new Route\ProfileGroup());
     $router->mount(new Route\FooterGroup());
+    $router->mount(new Route\RssGroup());
 
     return $router;
   }
