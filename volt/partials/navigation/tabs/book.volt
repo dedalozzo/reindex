@@ -6,4 +6,5 @@
     {% set resource = 'libri' %}
   {% endif %}
   {% set buttonLabel = 'nuovo' %}
+  {% set buttonLink = '/libri/aggiungi' %}
 {% endblock %}

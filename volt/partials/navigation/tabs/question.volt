@@ -21,3 +21,4 @@
   {% set resource = 'domande' %}
 {% endif %}
 {% set buttonLabel = 'nuova' %}
+{% set buttonLink = '/domande/aggiungi' %}

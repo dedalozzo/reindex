@@ -7,3 +7,4 @@
 ] %}
 {% set resource = 'tags' %}
 {% set buttonLabel = 'nuovo' %}
+{% set buttonLink = '/tags/aggiungi' %}

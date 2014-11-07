@@ -6,4 +6,5 @@
     {% set resource = 'links' %}
   {% endif %}
   {% set buttonLabel = 'nuovo' %}
+  {% set buttonLink = '/links/aggiungi' %}
 {% endblock %}
