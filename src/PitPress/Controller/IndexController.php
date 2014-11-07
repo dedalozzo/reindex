@@ -97,7 +97,7 @@ class IndexController extends ListController {
 
       $properties = $posts[$i]['value'];
       $entry->title = $properties['title'];
-      $entry->url = $this->buildPostUrl($properties['publishedAt'], $properties['slug']);
+      $entry->url = Helper\Url::build($properties['publishedAt'], $properties['slug']);
       $entry->whenHasBeenPublished = Helper\Time::when($properties['publishedAt']);
       $entry->score = is_null($scores[$i]['value']) ? 0 : $scores[$i]['value'];
       $entry->repliesCount = is_null($replies[$i]['value']) ? 0 : $replies[$i]['value'];
