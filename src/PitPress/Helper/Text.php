@@ -13,7 +13,6 @@ namespace PitPress\Helper;
 
 
 use Converter;
-use ElephantOnCouch\Doc\Doc;
 
 
 /**
