@@ -33,4 +33,4 @@ class LinkGroup extends IndexGroup {
     return '/links';
   }
 
-} 
+}
