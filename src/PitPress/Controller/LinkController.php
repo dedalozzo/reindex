@@ -28,4 +28,12 @@ class LinkController extends IndexController {
     return empty($filter) ? Helper\Time::TODAY : Helper\ArrayHelper::value($filter, $this->periods);
   }
 
+
+  /**
+   * @brief Creates a new link.
+   */
+  public function newAction() {
+    parent::newAction();
+  }
+
 }
