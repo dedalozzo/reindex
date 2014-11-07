@@ -187,4 +187,18 @@ class TagController extends ListController {
     }
   }
 
+
+  /**
+   * @brief Edits the tag.
+   */
+  public function editAction($id) {
+  }
+
+
+  /**
+   * @brief Creates a new tag.
+   */
+  public function newAction() {
+  }
+
 }
