@@ -7,4 +7,3 @@
 ] %}
 {% set resource = 'tags' %}
 {% set buttonLabel = 'nuovo' %}
-{% set buttonLink = 'nuovo/tag/' %}

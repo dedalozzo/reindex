@@ -6,5 +6,4 @@
     {% set resource = 'links' %}
   {% endif %}
   {% set buttonLabel = 'nuovo' %}
-  {% set buttonLink = 'nuovo/link/' %}
 {% endblock %}
