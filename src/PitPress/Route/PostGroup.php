@@ -36,12 +36,6 @@ class PostGroup extends Group {
 
     // Edits post.
     $this->add('/{id}/modifica/', ['action' => 'edit'])->via(['GET', 'POST']);
-
-    // Creates post.
-    $this->add('/nuovo/link/', ['action' => 'newLink'])->via(['GET', 'POST']);
-    $this->add('/nuova/domanda/', ['action' => 'newQuestion'])->via(['GET', 'POST']);
-    $this->add('/nuovo/articolo/', ['action' => 'newArticle'])->via(['GET', 'POST']);
-    $this->add('/nuovo/libro/', ['action' => 'newBook'])->via(['GET', 'POST']);
   }
 
 }
