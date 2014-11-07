@@ -1,22 +1,23 @@
 {% if entries is defined %}
+  {% set baseUrl = '//'~domainName %}
   {% for entry in entries %}
-    {% set userUrl = '//'~domainName~'/'~entry.username %}
+    {% set userUrl = baseUrl~'/'~entry.username %}
     <article id="{{ entry.id }}">
       <hr class="fade-short">
-      <div class="item-time">{{ entry.whenHasBeenPublished }}</div>
+      <div class="item-time">{{ entry.timestamp }}</div>
       <div class="item-tools">
         <a{% if entry.liked %} class="active"{% endif %} title="mi piace"><i class="icon-thumbs-up icon-large"></i></a><span>{{ entry.score }}</span>
-        <a href="{{ entry.url }}#comments"><i class="icon-comments icon-large"></i></a><span>{{ entry.repliesCount }}</span>
+        <a href="{{ baseUrl~entry.url }}#comments"><i class="icon-comments icon-large"></i></a><span>{{ entry.repliesCount }}</span>
       </div>
       <section class="item-content shift">
         <a class="item-title" href="{{ entry.url }}">{{ entry.title }}</a>
         <div class="item-excerpt">{{ entry.excerpt }}</div>
         <div class="ghost gutter">
           <ul class="list item-tags">
-            <li><a class="tag {{ entry.type }}" href="//{{ domainName~'/'~types[entry.type] }}/">{{ types[entry.type] }}</a></li>
+            <li><a class="tag {{ entry.type }}" href="{{ baseUrl~'/'~types[entry.type] }}/">{{ types[entry.type] }}</a></li>
             {% set tags = entry.tags %}
             {% for tag in tags %}
-              <li><a class="tag" href="//{{ serverName }}/{{ tag['value'] }}/">{{ tag['value'] }}</a></li>
+              <li><a class="tag" href="{{ baseUrl }}/{{ tag['value'] }}/">{{ tag['value'] }}</a></li>
             {% endfor %}
             <li class="space"></li>
           </ul>
