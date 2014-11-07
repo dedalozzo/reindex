@@ -77,8 +77,16 @@ abstract class ListController extends BaseController {
     for ($i = 0; $i < $postCount; $i++) {
       $entry = (object)($posts[$i]['value']);
       $entry->id = $posts[$i]['id'];
-      $entry->url = ($entry->status == DocStatus::CURRENT) ? $this->buildPostUrl($entry->publishedAt, $entry->slug) : $this->buildPostUrl($entry->createdAt, $entry->slug);
-      $entry->whenHasBeenPublished = Helper\Time::when($entry->publishedAt);
+
+      if ($entry->status == DocStatus::CURRENT) {
+        $entry->url = Helper\Url::build($entry->publishedAt, $entry->slug);
+        $entry->timestamp = Helper\Time::when($entry->publishedAt);
+      }
+      else {
+        $entry->url = Helper\Url::build($entry->createdAt, $entry->slug);
+        $entry->timestamp = Helper\Time::when($entry->createdAt);
+      }
+
       $entry->username = $users[$i]['value'][0];
       $entry->gravatar = User::getGravatar($users[$i]['value'][1]);
       $entry->hitsCount = $this->redis->hGet($entry->id, 'hits');
@@ -95,17 +103,6 @@ abstract class ListController extends BaseController {
     }
 
     return $entries;
-  }
-
-
-  /**
-   * @brief Builds the post url, given its publishing date and slug.
-   * @param[in] int $publishedAt The publishing timestamp.
-   * @param[in] string $slug The slug of the title.
-   * @return string The complete url of the post.
-   */
-  protected function buildPostUrl($publishedAt, $slug) {
-    return "http://".$this->domainName.date('/Y/m/d/', $publishedAt).$slug;
   }
 
 
