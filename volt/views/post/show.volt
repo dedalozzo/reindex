@@ -3,8 +3,8 @@
 {% block content %}
 <div id="content">
   {% include "partials/types.volt" %}
-  {% set usersBaseUrl = '//'~domainName~'/' %}
-  {% set userUrl = usersBaseUrl~post.username %}
+  {% set baseUrl = '//'~domainName~'/' %}
+  {% set userUrl = baseUrl~post.username %}
   {% set hitsCount = post.getHitsCount() %}
   {% set repliesCount = post.getRepliesCount() %}
 
@@ -14,7 +14,7 @@
 
     <article id="{{ post.id }}">
       <section class="item-content">
-        <div class="item-time">{{ post.whenHasBeenPublished() }}</div>
+        <div class="item-time">{{ post.hasBeenApproved() ? post.whenHasBeenPublished() : post.whenHasBeenCreated() }}</div>
 
         {% if post.type == 'book' %}
         <div class="item-meta">
@@ -99,7 +99,7 @@
         <ul class="list item-actors">
           {% set usersHaveVoted = post.getUsersHaveVoted() %}
           {% for userHasVoted in usersHaveVoted %}
-          <li><a href="{{ usersBaseUrl~userHasVoted.id }}"><img class="img-polaroid" title="{{ userHasVoted.username }}" src="{{ userHasVoted.gravatar }}&s=20" /></a></li>
+          <li><a href="{{ baseUrl~userHasVoted.id }}"><img class="img-polaroid" title="{{ userHasVoted.username }}" src="{{ userHasVoted.gravatar }}&s=20" /></a></li>
           {% endfor  %}
         </ul>
       </section>
@@ -113,7 +113,7 @@
 
     {% for reply in replies %}
     {% set username = reply.username %}
-    {% set userUrl = usersBaseUrl~username %}
+    {% set userUrl = baseUrl~username %}
 
     {% if not loop.first %}
     {% endif %}
