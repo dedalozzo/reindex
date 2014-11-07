@@ -13,7 +13,7 @@ use PitPress\Helper;
 use PitPress\Exception\InvalidFieldException;
 use PitPress\Model\Article;
 
-use Phalcon\Mvc\Model\Validator\PresenceOf;
+use Phalcon\Validation\Validator\PresenceOf;
 use Phalcon\Mvc\View;
 
 
