@@ -18,11 +18,10 @@ use Phalcon\Mvc\View;
 use Phalcon\Validation\Validator\PresenceOf;
 
 use PitPress\Exception\InvalidFieldException;
-use PitPress\Helper\Text;
-use PitPress\Helper\ValidationHelper;
-use PitPress\Helper\Time;
+use PitPress\Helper;
 
 use PitPress\Model\Tag;
+use PitPress\Model\Post;
 use PitPress\Model\Link;
 use PitPress\Model\Question;
 use PitPress\Model\Book;
@@ -97,7 +96,7 @@ class PostController extends BaseController {
       return $this->dispatcher->forward(['controller' => 'auth', 'action' => 'signin']);
 
     // The validation object must be created in any case.
-    $validation = new ValidationHelper();
+    $validation = new Helper\ValidationHelper();
     $this->view->setVar('validation', $validation);
 
     if ($this->request->isPost()) {
@@ -146,7 +145,7 @@ class PostController extends BaseController {
       for ($i = 0; $i < $revisionCount; $i++) {
         $version = (object)($revisions[$i]['value']);
         $version->id = $revisions[$i]['id'];
-        $version->whenHasBeenModified = Time::when($version->modifiedAt);
+        $version->whenHasBeenModified = Helper\Time::when($version->modifiedAt);
         $version->editor = $users[$i]['value'][0];
 
         $versions[$version->modifiedAt] = $version;
@@ -196,7 +195,7 @@ class PostController extends BaseController {
       return $this->dispatcher->forward(['controller' => 'auth', 'action' => 'signin']);
 
     // The validation object must be created in any case.
-    $validation = new ValidationHelper();
+    $validation = new Helper\ValidationHelper();
     $this->view->setVar('validation', $validation);
 
     if ($this->request->isPost()) {
@@ -223,6 +222,8 @@ class PostController extends BaseController {
 
         $article->approve();
         $article->save();
+
+        $this->redirect('http://'.$this->domainName.Helper\Url::build($article->publishedAt, $article->slug));
       }
       catch (\Exception $e) {
         // Displays the error message.
