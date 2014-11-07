@@ -39,6 +39,19 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
 
   /**
+   * @brief Generates the post slug.
+   * @return string
+   */
+  protected function buildSlug() {
+    $title = preg_replace('~[^\\pL\d]+~u', '-', $this->title);
+    $title = trim($title, '-');
+    $title = iconv('utf-8', 'ASCII//TRANSLIT', $title);
+    $title = strtolower($title);
+    return preg_replace('~[^-\w]+~', '', $title);
+  }
+
+
+  /**
    * @copydoc Storable::save
    */
   public function save() {
@@ -61,7 +74,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
       $this->meta['day'] = date("d", $this->publishedAt);
     }
 
-    $this->meta['slug'] = $this->getSlug();
+    $this->meta['slug'] = $this->buildSlug();
   }
 
 
@@ -77,7 +90,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     $this->meta['month'] = date("m", $this->createdAt);
     $this->meta['day'] = date("d", $this->createdAt);
 
-    $this->meta['slug'] = $this->getSlug();
+    $this->meta['slug'] = $this->buildSlug();
   }
 
 
@@ -91,16 +104,8 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   }
 
 
-  /**
-   * @brief Gets the post slug.
-   * @return string
-   */
   public function getSlug() {
-    $title = preg_replace('~[^\\pL\d]+~u', '-', $this->title);
-    $title = trim($title, '-');
-    $title = iconv('utf-8', 'ASCII//TRANSLIT', $title);
-    $title = strtolower($title);
-    return preg_replace('~[^-\w]+~', '', $title);
+    return $this->meta['slug'];
   }
 
 
@@ -118,7 +123,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @return string
    */
   public function getHref() {
-    return "/".date("Y/m/d", $this->publishedAt)."/".$this->getSlug();
+    return Helper\Url::build($this->publishedAt, $this->getSlug());
   }
 
 
