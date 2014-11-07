@@ -73,4 +73,12 @@ class QuestionController extends IndexController {
     $this->view->setVar('title', sprintf('%s aperte', ucfirst($this->getLabel())));
   }
 
+
+  /**
+   * @brief Creates a new question.
+   */
+  public function newAction() {
+    parent::newAction();
+  }
+
 }
