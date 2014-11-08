@@ -45,7 +45,7 @@ class UpdateCommand extends AbstractCommand {
 
     foreach ($ids as $id) {
       $post = $this->couch->getDoc(Couch::STD_DOC_PATH, $id);
-      $post->updatePopularity();
+      $post->zAddPopularity();
 
       $progress->advance();
     }
