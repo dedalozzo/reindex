@@ -367,7 +367,7 @@ class ImportCommand extends AbstractCommand {
         $this->monolog->addCritical(sprintf("Invalid JSON: Comment %s - Item %s", $item->idComment, $item->idItem));
       }
 
-      $post->updateTimestamp($replay->modifiedAt);
+      $post->zAddTimestamp($replay->modifiedAt);
     }
 
     mysqli_free_result($result);
