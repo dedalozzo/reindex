@@ -278,7 +278,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
       if (is_null($row['id'])) {
         $tag = Tag::create();
         $tag->name = $row['key'];
-        $tag->userId = $this->user->id;
+        $tag->userId = $this->userId;
         $tag->approve();
         $tag->save();
 
