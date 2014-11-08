@@ -127,14 +127,17 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   }
 
 
+  /** @name Popularity Management Methods */
+  //!@{
+
   /**
-   * @brief Registers the post score.
+   * @brief Adds the post score to the Redis db.
    * @param[in] string $set The name of the Redis set.
    * @param[in] \DateTime $date The modification date.
    * @param[in] int $score The score.
    * @param[in] The post id.
    */
-  protected function addScore($set, \DateTime $date, $score, $id) {
+  protected function zAddScore($set, \DateTime $date, $score, $id) {
     $this->redis->zAdd($set, $score, $id);
     $this->redis->zAdd($set.$date->format('_Ymd'), $score, $id);
     $this->redis->zAdd($set.$date->format('_Ym'), $score, $id);
@@ -144,9 +147,24 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
 
   /**
-   * @brief Updates the post popularity.
+   * @brief Removes the post score from the Redis db.
+   * @param[in] string $set The name of the Redis set.
+   * @param[in] \DateTime $date The modification date.
+   * @param[in] The post id.
    */
-  public function updatePopularity() {
+  protected function zRemScore($set, \DateTime $date, $id) {
+    $this->redis->zRem($set, $id);
+    $this->redis->zRem($set.$date->format('_Ymd'), $id);
+    $this->redis->zRem($set.$date->format('_Ym'), $id);
+    $this->redis->zRem($set.$date->format('_Y'), $id);
+    $this->redis->zRem($set.$date->format('_Y_w'), $id);
+  }
+
+
+  /**
+   * @brief Adds the post popularity to the Redis db.
+   */
+  public function zAddPopularity() {
     $config = $this->di['config'];
 
     $set = 'pop_';
@@ -155,27 +173,58 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     $id = $this->unversionId;
 
     // Order set with all the posts.
-    $this->addScore($set.'post', $date, $popularity, $id);
+    $this->zAddScore($set.'post', $date, $popularity, $id);
 
     // Order set with all the posts of a specific type: article, question, ecc.
-    $this->addScore($set.$this->type, $date, $popularity, $id);
+    $this->zAddScore($set.$this->type, $date, $popularity, $id);
 
     foreach ($this->tags as $tag) {
       $tagId = $tag['key']; // We need the unversion identifier.
 
       // Order set with all the posts related to a specific tag.
-      $this->addScore($set.$tagId.'_'.'post', $date, $popularity, $id);
+      $this->zAddScore($set.$tagId.'_'.'post', $date, $popularity, $id);
 
       // Order set with all the post of a specific type, related to a specific tag.
-      $this->addScore($set.$tagId.'_'.$this->type, $date, $popularity, $id);
+      $this->zAddScore($set.$tagId.'_'.$this->type, $date, $popularity, $id);
     }
   }
 
 
   /**
-   * @brief Updates the post timestamp.
+   * @brief Removes the post popularity from the Redis db.
    */
-  public function updateTimestamp($timestamp = NULL) {
+  public function zRemPopularity() {
+    $set = 'pop_';
+    $date = (new \DateTime())->setTimestamp($this->publishedAt);
+    $id = $this->unversionId;
+
+    // Order set with all the posts.
+    $this->zRemScore($set.'post', $date, $id);
+
+    // Order set with all the posts of a specific type: article, question, ecc.
+    $this->zRemScore($set.$this->type, $date, $id);
+
+    foreach ($this->tags as $tag) {
+      $tagId = $tag['key']; // We need the unversion identifier.
+
+      // Order set with all the posts related to a specific tag.
+      $this->zRemScore($set.$tagId.'_'.'post', $date, $id);
+
+      // Order set with all the post of a specific type, related to a specific tag.
+      $this->zRemScore($set.$tagId.'_'.$this->type, $date, $id);
+    }
+  }
+
+  //!@}
+
+
+  /** @name Timestamp Management Methods */
+  //!@{
+
+  /**
+   * @brief Adds the post timestamp to the Redis db.
+   */
+  public function zAddTimestamp($timestamp = NULL) {
     if (is_null($timestamp))
       $timestamp = $this->modifiedAt;
 
@@ -206,6 +255,41 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
       }
     }
   }
+
+
+  /**
+   * @brief Removes the post timestamp from the Redis db.
+   */
+  public function zRemTimestamp() {
+    $set = 'tmp_';
+    $id = $this->unversionId;
+
+    // Order set with all the posts.
+    $this->redis->zRem($set.'post', $id);
+
+    // Order set with all the posts of a specific type: article, question, ecc.
+    $this->redis->zRem($set.$this->type, $id);
+
+    if ($this->isMetadataPresent('tags')) {
+      $tags = $this->meta['tags'];
+
+      foreach ($tags as $tagId) {
+        // Order set with all the posts related to a specific tag.
+        $this->redis->zRem($set.$tagId.'_'.'post', $id);
+
+        // Order set with all the posts of a specific type, related to a specific tag.
+        $this->redis->zRem($set.$tagId.'_'.$this->type, $id);
+
+        // Used to get a list of tags recently updated.
+        $this->redis->zRem("tmp_tags".'_'.'post', $tagId);
+
+        // Used to get a list of tags, in relation to a specific type, recently updated.
+        $this->redis->zRem("tmp_tags".'_'.$this->type, $tagId);
+      }
+    }
+  }
+
+  //!@}
 
 
   /** @name Replaying Methods */
