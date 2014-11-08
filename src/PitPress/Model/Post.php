@@ -31,6 +31,9 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   use Extension\TCount, Extension\TStar, Extension\TVote, Extension\TSubscribe;
   use Property\TDescription;
 
+  const POP_SET = 'pop_';
+  const UPD_SET = 'upd_';
+
 
   public function __construct() {
     parent::__construct();
@@ -167,25 +170,24 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   public function zAddPopularity() {
     $config = $this->di['config'];
 
-    $set = 'pop_';
     $date = (new \DateTime())->setTimestamp($this->publishedAt);
     $popularity = ($this->getScore() * $config->scoring->voteCoefficient) + ($this->getRepliesCount() * $config->scoring->replyCoefficient) + ($this->getHitsCount() * $config->scoring->hitCoefficient);
     $id = $this->unversionId;
 
     // Order set with all the posts.
-    $this->zAddScore($set.'post', $date, $popularity, $id);
+    $this->zAddScore(self::POP_SET.'post', $date, $popularity, $id);
 
     // Order set with all the posts of a specific type: article, question, ecc.
-    $this->zAddScore($set.$this->type, $date, $popularity, $id);
+    $this->zAddScore(self::POP_SET.$this->type, $date, $popularity, $id);
 
     foreach ($this->tags as $tag) {
       $tagId = $tag['key']; // We need the unversion identifier.
 
       // Order set with all the posts related to a specific tag.
-      $this->zAddScore($set.$tagId.'_'.'post', $date, $popularity, $id);
+      $this->zAddScore(self::POP_SET.$tagId.'_'.'post', $date, $popularity, $id);
 
       // Order set with all the post of a specific type, related to a specific tag.
-      $this->zAddScore($set.$tagId.'_'.$this->type, $date, $popularity, $id);
+      $this->zAddScore(self::POP_SET.$tagId.'_'.$this->type, $date, $popularity, $id);
     }
   }
 
@@ -194,97 +196,94 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @brief Removes the post popularity from the Redis db.
    */
   public function zRemPopularity() {
-    $set = 'pop_';
     $date = (new \DateTime())->setTimestamp($this->publishedAt);
     $id = $this->unversionId;
 
     // Order set with all the posts.
-    $this->zRemScore($set.'post', $date, $id);
+    $this->zRemScore(self::POP_SET.'post', $date, $id);
 
     // Order set with all the posts of a specific type: article, question, ecc.
-    $this->zRemScore($set.$this->type, $date, $id);
+    $this->zRemScore(self::POP_SET.$this->type, $date, $id);
 
     foreach ($this->tags as $tag) {
       $tagId = $tag['key']; // We need the unversion identifier.
 
       // Order set with all the posts related to a specific tag.
-      $this->zRemScore($set.$tagId.'_'.'post', $date, $id);
+      $this->zRemScore(self::POP_SET.$tagId.'_'.'post', $date, $id);
 
       // Order set with all the post of a specific type, related to a specific tag.
-      $this->zRemScore($set.$tagId.'_'.$this->type, $date, $id);
+      $this->zRemScore(self::POP_SET.$tagId.'_'.$this->type, $date, $id);
     }
   }
 
   //!@}
 
 
-  /** @name Timestamp Management Methods */
+  /** @name Last Update Management Methods */
   //!@{
 
   /**
-   * @brief Adds the post timestamp to the Redis db.
+   * @brief Adds the post last update timestamp to the Redis db.
    */
-  public function zAddTimestamp($timestamp = NULL) {
+  public function zAddLastUpdate($timestamp = NULL) {
     if (is_null($timestamp))
       $timestamp = $this->modifiedAt;
 
-    $set = 'tmp_';
     $id = $this->unversionId;
 
     // Order set with all the posts.
-    $this->redis->zAdd($set.'post', $timestamp, $id);
+    $this->redis->zAdd(self::UPD_SET.'post', $timestamp, $id);
 
     // Order set with all the posts of a specific type: article, question, ecc.
-    $this->redis->zAdd($set.$this->type, $timestamp, $id);
+    $this->redis->zAdd(self::UPD_SET.$this->type, $timestamp, $id);
 
     if ($this->isMetadataPresent('tags')) {
       $tags = $this->meta['tags'];
 
       foreach ($tags as $tagId) {
         // Order set with all the posts related to a specific tag.
-        $this->redis->zAdd($set.$tagId.'_'.'post', $timestamp, $id);
+        $this->redis->zAdd(self::UPD_SET.$tagId.'_'.'post', $timestamp, $id);
 
         // Order set with all the posts of a specific type, related to a specific tag.
-        $this->redis->zAdd($set.$tagId.'_'.$this->type, $timestamp, $id);
+        $this->redis->zAdd(self::UPD_SET.$tagId.'_'.$this->type, $timestamp, $id);
 
         // Used to get a list of tags recently updated.
-        $this->redis->zAdd("tmp_tags".'_'.'post', $timestamp, $tagId);
+        $this->redis->zAdd(self::UPD_SET.'tags'.'_'.'post', $timestamp, $tagId);
 
         // Used to get a list of tags, in relation to a specific type, recently updated.
-        $this->redis->zAdd("tmp_tags".'_'.$this->type, $timestamp, $tagId);
+        $this->redis->zAdd(self::UPD_SET.'tags'.'_'.$this->type, $timestamp, $tagId);
       }
     }
   }
 
 
   /**
-   * @brief Removes the post timestamp from the Redis db.
+   * @brief Removes the post last update timestamp from the Redis db.
    */
-  public function zRemTimestamp() {
-    $set = 'tmp_';
+  public function zRemLastUpdate() {
     $id = $this->unversionId;
 
     // Order set with all the posts.
-    $this->redis->zRem($set.'post', $id);
+    $this->redis->zRem(self::UPD_SET.'post', $id);
 
     // Order set with all the posts of a specific type: article, question, ecc.
-    $this->redis->zRem($set.$this->type, $id);
+    $this->redis->zRem(self::UPD_SET.$this->type, $id);
 
     if ($this->isMetadataPresent('tags')) {
       $tags = $this->meta['tags'];
 
       foreach ($tags as $tagId) {
         // Order set with all the posts related to a specific tag.
-        $this->redis->zRem($set.$tagId.'_'.'post', $id);
+        $this->redis->zRem(self::UPD_SET.$tagId.'_'.'post', $id);
 
         // Order set with all the posts of a specific type, related to a specific tag.
-        $this->redis->zRem($set.$tagId.'_'.$this->type, $id);
+        $this->redis->zRem(self::UPD_SET.$tagId.'_'.$this->type, $id);
 
         // Used to get a list of tags recently updated.
-        $this->redis->zRem("tmp_tags".'_'.'post', $tagId);
+        $this->redis->zRem(self::UPD_SET.'tags'.'_'.'post', $tagId);
 
         // Used to get a list of tags, in relation to a specific type, recently updated.
-        $this->redis->zRem("tmp_tags".'_'.$this->type, $tagId);
+        $this->redis->zRem(self::UPD_SET.'tags'.'_'.$this->type, $tagId);
       }
     }
   }
