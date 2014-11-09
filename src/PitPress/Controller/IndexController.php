@@ -16,6 +16,7 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Helper;
 use PitPress\Exception\InvalidFieldException;
+use PitPress\Model\Post;
 
 use Phalcon\Mvc\View;
 use Phalcon\Validation\Validator\PresenceOf;
@@ -118,9 +119,9 @@ class IndexController extends ListController {
     $recentTags = [];
 
     if ($this->isSameClass())
-      $set = "tmp_tags".'_'.'post';
+      $set = Post::UPD_SET.'tags'.'_'.'post';
     else
-      $set = "tmp_tags".'_'.$this->type;
+      $set = Post::UPD_SET.'tags'.'_'.$this->type;
 
     $ids = $this->redis->zRevRangeByScore($set, '+inf', 0, ['limit' => [0, $count-1]]);
 
@@ -423,9 +424,9 @@ class IndexController extends ListController {
     $date = Helper\Time::aWhileBack($period, "_");
 
     if ($this->isSameClass())
-      $set = "pop_".$unversionTagId."post".$date;
+      $set = Post::POP_SET.$unversionTagId."post".$date;
     else
-      $set = "pop_".$unversionTagId.$this->type.$date;
+      $set = Post::POP_SET.$unversionTagId.$this->type.$date;
 
     $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
     $keys = $this->redis->zRevRangeByScore($set, '+inf', 0, ['limit' => [$offset, $this->resultsPerPage-1]]);
@@ -478,9 +479,9 @@ class IndexController extends ListController {
 
   protected function active($unversionTagId = NULL) {
     if ($this->isSameClass())
-      $set = "tmp_".$unversionTagId."post";
+      $set = Post::UPD_SET.$unversionTagId."post";
     else
-      $set = "tmp_".$unversionTagId.$this->type;
+      $set = Post::UPD_SET.$unversionTagId.$this->type;
 
     $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
     $keys = $this->redis->zRevRangeByScore($set, '+inf', 0, ['limit' => [$offset, $this->resultsPerPage-1]]);
