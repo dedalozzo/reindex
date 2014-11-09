@@ -68,14 +68,13 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   public function approve($update = FALSE) {
     parent::approve();
 
-    if (!isset($this->publishedAt) || $update) {
+    if (!isset($this->publishedAt) or $update)
       $this->publishedAt = time();
 
-      // Used to group by year, month and day.
-      $this->meta['year'] = date("Y", $this->publishedAt);
-      $this->meta['month'] = date("m", $this->publishedAt);
-      $this->meta['day'] = date("d", $this->publishedAt);
-    }
+    // Used to group by year, month and day.
+    $this->meta['year'] = date("Y", $this->publishedAt);
+    $this->meta['month'] = date("m", $this->publishedAt);
+    $this->meta['day'] = date("d", $this->publishedAt);
 
     $this->meta['slug'] = $this->buildSlug();
   }
