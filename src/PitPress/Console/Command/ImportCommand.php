@@ -284,7 +284,7 @@ class ImportCommand extends AbstractCommand {
 
     while ($item = mysqli_fetch_object($result)) {
       //$doc = Classification::create($post, $item->tagId, (int)$item->unixTime);
-      $post->addTag($item->tagId);
+      $post->addTagId($item->tagId);
     }
 
     mysqli_free_result($result);
@@ -367,7 +367,7 @@ class ImportCommand extends AbstractCommand {
         $this->monolog->addCritical(sprintf("Invalid JSON: Comment %s - Item %s", $item->idComment, $item->idItem));
       }
 
-      $post->zAddTimestamp($replay->modifiedAt);
+      $post->zAddLastUpdate($replay->modifiedAt);
     }
 
     mysqli_free_result($result);
