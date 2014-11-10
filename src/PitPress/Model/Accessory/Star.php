@@ -33,17 +33,17 @@ class Star extends Doc {
     $instance->meta["itemType"] = $item->type;
 
     // Articles, questions, books have a unique supertype: post.
-    if ($item->isMetadataPresent('itemSupertype'))
+    if ($item->isMetadataPresent('supertype'))
       $instance->meta["itemSupertype"] = $item->supertype;
 
     // A post can be published or not.
-    if ($item->isMetadataPresent('itemPublishedAt'))
+    if ($item->isMetadataPresent('publishedAt'))
       $instance->meta["itemPublishedAt"] = $item->publishedAt;
 
     if (is_null($timestamp))
-      $instance->meta["addedAt"] = time();
+      $instance->meta["itemAddedAt"] = time();
     else
-      $instance->meta["addedAt"] = $timestamp;
+      $instance->meta["itemAddedAt"] = $timestamp;
 
     return $instance;
   }
