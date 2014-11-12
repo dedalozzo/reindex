@@ -8,6 +8,7 @@ class Post {
 
   /** @name Properties */
   //!@{
+  int $legacyId //!< Legacy identifier, in case you import from an old password.
   string $title; //!< Title.
   string $publishedAt; //!< Publishing timestamp.
   //!@}
