@@ -132,16 +132,6 @@ class ImportCommand extends AbstractCommand {
     $article->title = Text::convertCharset($item->title, TRUE);
     $article->body = $this->convertText($item->body, $item->idItem);
 
-    try {
-      $article->html = $this->markdown->parse($article->body);
-    }
-    catch(\Exception $e) {
-      $this->monolog->addCritical($e);
-      $this->monolog->addCritical(sprintf("Invalid Markdown: %s - %s", $article->id, $article->title));
-    }
-
-    $purged = Text::purge($article->html);
-    $article->excerpt = Text::truncate($purged);
     $this->importClassifications($article);
 
     // We finally save the article.
@@ -201,18 +191,6 @@ class ImportCommand extends AbstractCommand {
       $book->link = Text::convertCharset($matches[1]);
 
     $book->body = Text::bbcodeToMarkdown($review, $item->id);
-
-    try {
-      $book->html = $this->markdown->parse($book->body);
-    }
-    catch(\Exception $e) {
-      $this->monolog->addCritical($e);
-      $this->monolog->addCritical(sprintf("Invalid Markdown: %s - %s", $book->id, $book->title));
-    }
-
-    $purged = Text::purge($book->html);
-    $book->excerpt = Text::truncate($purged);
-
     $book->positive = Text::bbcodeToMarkdown($positive, $item->id);
     $book->negative = Text::bbcodeToMarkdown($negative, $item->id);
 
@@ -347,11 +325,7 @@ class ImportCommand extends AbstractCommand {
         $replay->createdAt = (int)$item->unixTime;
         $replay->postId = $post->unversionId;
         $replay->userId = $item->userId;
-
-        $utf8 = Text::convertCharset($item->body);
-        $bbcode = Text::htmlToBBCode($utf8, $item->idComment);
-        $replay->body = Text::bbcodeToMarkdown($bbcode, $item->idComment);
-
+        $replay->body = $this->convertText($item->body, $item->idComment);
         $replay->html = $this->markdown->parse($replay->body);
       }
       catch(\Exception $e) {
@@ -435,23 +409,12 @@ class ImportCommand extends AbstractCommand {
 
     $article->body = $body;
 
-    try {
-      $article->html = $this->markdown->parse($article->body);
-    }
-    catch(\Exception $e) {
-      $this->monolog->addCritical($e);
-      $this->monolog->addCritical(sprintf("Invalid Markdown: %s - %s", $article->id, $article->title));
-    }
-
     // We finally save the article.
     try {
-      $purged = Text::purge($article->html);
-      $article->excerpt = Text::truncate($purged);
-
       // We remove temporary the HTML, because it raises a JSON error trying to save it in CouchDB.
       // I don't know why, a double PHP_EOL is required, otherwise any subtitles containing the `à` character will
       // generate a JSON conversion error. Maybe it is a CouchDB bug or maybe it's an Hoedown bug. todo
-      $article->html = "";
+      //$article->html = "";
 
       $this->importClassifications($article);
 
