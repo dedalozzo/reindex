@@ -29,14 +29,17 @@ use Phalcon\DI;
  */
 abstract class Post extends Versionable implements Extension\ICount, Extension\IStar, Extension\IVote, Extension\ISubscribe {
   use Extension\TCount, Extension\TStar, Extension\TVote, Extension\TSubscribe;
-  use Property\TDescription;
+  use Property\TExcerpt, Property\TBody, Property\TDescription;
 
   const POP_SET = 'pop_';
   const UPD_SET = 'upd_';
 
+  protected $markdown; // Stores the Markdown parser instance.
+
 
   public function __construct() {
     parent::__construct();
+    $this->markdown = $this->di['markdown'];
     $this->meta['supertype'] = 'post';
   }
 
@@ -60,6 +63,17 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    */
   public function save($deferred = FALSE) {
     parent::save();
+
+    try {
+      $this->html = $this->markdown->parse($this->body);
+    }
+    catch(\Exception $e) {
+      $this->monolog->addCritical($e);
+      $this->monolog->addCritical(sprintf("Invalid Markdown: %s - %s", $this->id, $this->title));
+    }
+
+    $purged = Helper\Text::purge($this->html);
+    $this->excerpt = Helper\Text::truncate($purged);
 
     $this->zRemLastUpdate();
     $this->zRemPopularity();
@@ -419,6 +433,27 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   public function unsetSupertype() {
     if ($this->isMetadataPresent('supertype'))
       unset($this->meta['supertype']);
+  }
+
+
+  public function getLegacyId() {
+    return $this->meta['legacyId'];
+  }
+
+
+  public function issetLegacyId() {
+    return isset($this->meta['legacyId']);
+  }
+
+
+  public function setLegacyId($value) {
+    $this->meta['legacyId'] = $value;
+  }
+
+
+  public function unsetLegacyId() {
+    if ($this->isMetadataPresent('legacyId'))
+      unset($this->meta['legacyId']);
   }
 
 
