@@ -11,16 +11,11 @@
 namespace PitPress\Model;
 
 
-use PitPress\Property;
-
-
 /*
  * @brief
  * @nosubgrouping
  */
 class Link extends Post {
-  use Property\TExcerpt;
-
 
   protected function needForApproval() {
     return TRUE;
@@ -71,6 +66,5 @@ class Link extends Post {
   }
 
   //! @endcond
-
-
+  
 }
