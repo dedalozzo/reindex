@@ -55,10 +55,21 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
 
   /**
-   * @copydoc Storable::save
+   * @brief Saves the post.
+   * @param[in] bool $deferred When `true` doesn't update the post popularity.
    */
-  public function save() {
+  public function save($deferred = FALSE) {
     parent::save();
+
+    $this->zRemLastUpdate();
+    $this->zRemPopularity();
+
+    if ($this->status == Enum\DocStatus::CURRENT) {
+      $this->zAddLastUpdate();
+
+      if (!$deferred)
+        $this->zAddPopularity();
+    }
   }
 
 
