@@ -147,7 +147,7 @@ class ImportCommand extends AbstractCommand {
     // We finally save the article.
     try {
       $article->approve();
-      $article->save();
+      $article->save(TRUE);
     }
     catch(\Exception $e) {
       $this->monolog->addCritical(sprintf("Invalid JSON: %s - %s", $article->id, $article->title));
@@ -221,7 +221,7 @@ class ImportCommand extends AbstractCommand {
     // We finally save the book.
     try {
       $book->approve();
-      $book->save();
+      $book->save(TRUE);
     }
     catch(\Exception $e) {
       $this->monolog->addCritical(sprintf("Invalid JSON: %s - %s", $book->id, $book->title));
@@ -456,7 +456,7 @@ class ImportCommand extends AbstractCommand {
       $this->importClassifications($article);
 
       $article->approve();
-      $article->save();
+      $article->save(TRUE);
     }
     catch(\Exception $e) {
       $this->monolog->addCritical(sprintf("Invalid JSON: %s - %s", $article->id, $article->title));
