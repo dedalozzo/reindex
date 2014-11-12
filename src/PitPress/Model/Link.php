@@ -66,5 +66,5 @@ class Link extends Post {
   }
 
   //! @endcond
-  
+
 }
