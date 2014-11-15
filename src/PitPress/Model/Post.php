@@ -35,11 +35,13 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   const UPD_SET = 'upd_';
 
   protected $markdown; // Stores the Markdown parser instance.
+  protected $monolog; // Stores the logger instance.
 
 
   public function __construct() {
     parent::__construct();
     $this->markdown = $this->di['markdown'];
+    $this->monolog = $this->di['monolog'];
     $this->meta['supertype'] = 'post';
   }
 
@@ -62,18 +64,11 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @param[in] bool $deferred When `true` doesn't update the post popularity.
    */
   public function save($deferred = FALSE) {
-    parent::save();
-
-    try {
-      $this->html = $this->markdown->parse($this->body);
-    }
-    catch(\Exception $e) {
-      $this->monolog->addCritical($e);
-      $this->monolog->addCritical(sprintf("Invalid Markdown: %s - %s", $this->id, $this->title));
-    }
-
+    $this->html = $this->markdown->parse($this->body);
     $purged = Helper\Text::purge($this->html);
     $this->excerpt = Helper\Text::truncate($purged);
+
+    parent::save();
 
     $this->zRemLastUpdate();
     $this->zRemPopularity();
