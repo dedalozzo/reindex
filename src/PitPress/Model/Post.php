@@ -34,6 +34,10 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   const POP_SET = 'pop_';
   const UPD_SET = 'upd_';
 
+  const NONE_PL = "none"; //!< The post is unprotected.
+  const CLOSED_PL = "closed"; //!< The post is closed.
+  const LOCKED_PL = "locked"; //!< The post is locked.
+
   protected $markdown; // Stores the Markdown parser instance.
   protected $monolog; // Stores the logger instance.
 
@@ -42,7 +46,10 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     parent::__construct();
     $this->markdown = $this->di['markdown'];
     $this->monolog = $this->di['monolog'];
-    $this->meta['supertype'] = 'post';
+
+    $this->supertype = 'post';
+    $this->visible = TRUE;
+    $this->protection = 'none';
   }
 
 
@@ -84,8 +91,10 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
   /**
    * @brief Deletes the document and all its revisions from the database.
-   * @warning You can't save the document after deletion. To mark a document as deleted use Doc::MarkAsDeleted and then
+   * @warning You can't save the document after deletion. To mark a document as deleted use Doc.markAsDeleted and then
    * save the document.
+   * @attention This operation is irreversible.
+   * @see http://meta.stackexchange.com/questions/5221/how-does-deleting-work-what-can-cause-a-post-to-be-deleted-and-what-does-that
    */
   public function delete() {
     $opts = new ViewQueryOpts();
@@ -100,18 +109,53 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   }
 
 
+  /**
+   * @brief Closes the post. No more answers or comments can be added.
+   * @see http://meta.stackexchange.com/questions/10582/what-is-a-closed-or-on-hold-question
+   */
   public function close() {
-
+    $this->protection = self::CLOSED_PL;
   }
 
 
+  /**
+   * @brief Reopens a closed post.
+   */
+  public function reopen() {
+    $this->protection = self::NONE_PL;
+  }
+
+
+  /**
+   * @brief Locks the post.
+   * @see http://meta.stackexchange.com/questions/22228/what-is-a-locked-post
+   */
+  public function lock() {
+    $this->protection = self::LOCKED_PL;
+  }
+
+
+  /**
+   * @brief Unlocks the post.
+   */
+  public function unlock() {
+    $this->protection = self::NONE_PL;
+  }
+
+
+  /**
+   * @brief Hides the post.
+   */
   public function hide() {
-
+    $this->visible = FALSE;
   }
 
 
-  public function protect() {
-
+  /**
+   * @brief Makes the post to be listed.
+   */
+  public function show() {
+    $this->visible = TRUE;
   }
 
 
@@ -461,6 +505,48 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   public function unsetSupertype() {
     if ($this->isMetadataPresent('supertype'))
       unset($this->meta['supertype']);
+  }
+
+
+  public function getVisible() {
+    return $this->meta['visible'];
+  }
+
+
+  public function issetVisible() {
+    return isset($this->meta['visible']);
+  }
+
+
+  public function setVisible($value) {
+    $this->meta['visible'] = $value;
+  }
+
+
+  public function unsetVisible() {
+    if ($this->isMetadataPresent('visible'))
+      unset($this->meta['visible']);
+  }
+
+  
+  public function getProtection() {
+    return $this->meta['protection'];
+  }
+
+
+  public function issetProtection() {
+    return isset($this->meta['protection']);
+  }
+
+
+  public function setProtection($value) {
+    $this->meta['protection'] = $value;
+  }
+
+
+  public function unsetProtection() {
+    if ($this->isMetadataPresent('protection'))
+      unset($this->meta['protection']);
   }
 
 
