@@ -14,7 +14,7 @@ namespace PitPress\Extension;
 use PitPress\Model\User;
 
 
-/*
+/**
  * @brief Defines starring methods.
  * @nosubgrouping
  */
@@ -24,7 +24,7 @@ interface IStar {
   //!@{
 
   const STARRED = 1; //!< The post has been added to your favorites.
-  const UNSTARRED = 2; //!< The vote has been removed from your favorites.
+  const UNSTARRED = 2; //!< The post has been removed from your favorites.
 
   //!@}
 
