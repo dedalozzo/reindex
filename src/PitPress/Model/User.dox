@@ -8,6 +8,7 @@ class User  {
 
   /** @name Properties */
   //!@{
+
   string $username; //!< The username.
   string $firstName; //!< First name.
   string $lastName; //!< Last surname.
@@ -26,6 +27,7 @@ class User  {
   // boolean $termsOfService;
   // boolean $privacyPolicy;
   // boolean $cookiePolicy;
+
   //!@}
 
 }

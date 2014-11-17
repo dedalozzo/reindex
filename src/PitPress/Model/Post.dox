@@ -8,11 +8,13 @@ class Post {
 
   /** @name Properties */
   //!@{
+
   bool $visible; //!< When `true` the post is listed, otherwise is not listed.
   string $protection; //!< Level of protection.
   int $legacyId; //!< Legacy identifier, in case you import from an old password.
   string $title; //!< Title.
   string $publishedAt; //!< Publishing timestamp.
+
   //!@}
 
 }

@@ -8,6 +8,7 @@ class Versionable {
 
   /** @name Properties */
   //!@{
+
   string $status //!< The document status.
   string $unversionId //!< The id pruned of its version number.
   string $versionNumber //!< The document version number.
@@ -16,6 +17,7 @@ class Versionable {
   string $userId; //!< The user id of whom created the content.
   string $editorId; //!< The user id of whom created the content.
   string $editSummary; //! A brief explanation of an edit to a versionable content.
+
   //!@}
 
 }
