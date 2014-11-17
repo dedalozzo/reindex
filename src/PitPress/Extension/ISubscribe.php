@@ -20,7 +20,7 @@ use PitPress\Model\User;
  */
 interface ISubscribe {
 
-  /*** @name Subscribing Methods */
+  /** @name Subscribing Methods */
   //!@{
 
   /**
