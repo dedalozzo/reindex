@@ -31,12 +31,22 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   use Extension\TCount, Extension\TStar, Extension\TVote, Extension\TSubscribe;
   use Property\TExcerpt, Property\TBody, Property\TDescription;
 
+  /** @name Redis Set Names */
+  //!@{
+
   const POP_SET = 'pop_';
   const UPD_SET = 'upd_';
 
-  const NONE_PL = "none"; //!< The post is unprotected.
-  const CLOSED_PL = "closed"; //!< The post is closed.
-  const LOCKED_PL = "locked"; //!< The post is locked.
+  //!@}
+
+  /** @name Protection Levels */
+  //!@{
+
+  const NONE_PL = 'none'; //!< The post is unprotected.
+  const CLOSED_PL = 'closed'; //!< The post is closed.
+  const LOCKED_PL = 'locked'; //!< The post is locked.
+
+  //!@}
 
   protected $markdown; // Stores the Markdown parser instance.
   protected $monolog; // Stores the logger instance.
@@ -109,6 +119,9 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   }
 
 
+  /** @name Protection Methods */
+  //!@{
+
   /**
    * @brief Closes the post. No more answers or comments can be added.
    * @see http://meta.stackexchange.com/questions/10582/what-is-a-closed-or-on-hold-question
@@ -127,6 +140,14 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
 
   /**
+   * @brief Returns `true` if the post is closed.
+   */
+  public function isClosed() {
+    return ($this->protection == self::CLOSED_PL) ? TRUE : FALSE;
+  }
+
+
+  /**
    * @brief Locks the post.
    * @see http://meta.stackexchange.com/questions/22228/what-is-a-locked-post
    */
@@ -141,6 +162,16 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   public function unlock() {
     $this->protection = self::NONE_PL;
   }
+
+
+  /**
+   * @brief Returns `true` if the post is locked.
+   */
+  public function isLocked() {
+    return ($this->protection == self::LOCKED_PL) ? TRUE : FALSE;
+  }
+
+  //!@}
 
 
   /**
