@@ -206,14 +206,39 @@ class User extends Storable implements Extension\ICount {
   /** @name Ban Management Methods */
   //!@{
 
+
+  /**
+   * @brief Returns `true` if the ban is expired, otherwise `false`.
+   */
+  protected function isBanExpired() {
+    if ($this->isMetadataPresent('bannedFor') == 'ever') {
+      return FALSE;
+    }
+    else {
+      $expireOn = (new \DateTime())->setTimestamp($this->meta['bannedOn'])->add(sprintf('P%dD', $this->meta['bannedFor']))->getTimestamp();
+
+      if (time() > $expireOn)
+        return TRUE;
+      else
+        return FALSE;
+    }
+  }
+
+
   /**
    * @brief Bans the user.
-   * @param[in] integer $days The ban duration in days.
+   * @param[in] integer $days The ban duration in days. When zero, the ban is permanent.
    */
-  public function ban($days) {
-    $this->meta['bannedOn'] = time();
-    $this->meta['bannedFor'] = $days;
+  public function ban($days = 0) {
     $this->meta['banned'] = TRUE;
+    $this->meta['bannedOn'] = time();
+
+    if ($days)
+      $this->meta['bannedFor'] = $days;
+    else
+      $this->meta['bannedFor'] = 'ever';
+
+    $this->save();
   }
 
 
@@ -221,16 +246,33 @@ class User extends Storable implements Extension\ICount {
    * @brief Removes the ban.
    */
   public function unban() {
-    if ($this->isMetadataPresent('banned'))
+    if ($this->isMetadataPresent('banned')) {
       unset($this->meta['banned']);
+      unset($this->meta['bannedOn']);
+      unset($this->meta['bannedFor']);
+    }
+
+    $this->save();
   }
 
 
   /**
    * @brief Returns `true` if the user has been banned.
+   * @details When expired, removes the ban.
    */
   public function isBanned() {
-    return isset($this->meta['banned']);
+    if ($this->isMetadataPresent('banned')) {
+
+      if ($this->isBanExpired()) {
+        $this->unban();
+        return FALSE;
+      }
+      else // It's a permanent ban.
+        return TRUE;
+
+    }
+    else
+      return FALSE;
   }
 
   //!@}
