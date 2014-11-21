@@ -14,6 +14,9 @@ namespace PitPress\Console\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use Phalcon\Version as PhalconVersion;
+use PitPress\Version as PitPressVersion;
+
 
 /**
  * @brief Displays information about PitPress, like version, database, etc.
@@ -39,15 +42,38 @@ class AboutCommand extends AbstractCommand {
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
     $couch = $this->di['couchdb'];
+    $redis = $this->di['redis'];
 
-    echo "[server]".PHP_EOL.PHP_EOL;
-    echo $couch->getServerInfo();
+    echo ucfirst($this->di['config']->application->domainName).PHP_EOL;
     echo PHP_EOL;
-    echo "[client]".PHP_EOL.PHP_EOL;
+
+    echo "[libraries]".PHP_EOL;
+    echo "PitPress ".PitPressVersion::getNumber().PHP_EOL;
+    echo "PHP ".phpversion().PHP_EOL;
+    echo "Phalcon ".PhalconVersion::get().PHP_EOL;
     echo $couch->getClientInfo();
     echo PHP_EOL;
-    echo "[database]".PHP_EOL.PHP_EOL;
+
+    echo "[couchdb]".PHP_EOL;
+    echo $couch->getServerInfo();
+    echo PHP_EOL;
     echo $couch->getDbInfo();
+    echo PHP_EOL;
+
+    echo "[redis]".PHP_EOL;
+    $redisInfo = $redis->info();
+    echo "Redis ".$redisInfo['redis_version'].PHP_EOL;
+    echo PHP_EOL;
+    echo "Arch. Bits: ".$redisInfo['arch_bits'].PHP_EOL;
+    echo "Uptime (seconds): ".$redisInfo['uptime_in_seconds'].PHP_EOL;
+    echo "Uptime (days): ".$redisInfo['uptime_in_days'].PHP_EOL;
+    echo "Connected Client: ".$redisInfo['connected_clients'].PHP_EOL;
+    echo "Connected Slaves: ".$redisInfo['connected_slaves'].PHP_EOL;
+    echo "Used Memory: ".$redisInfo['used_memory'].PHP_EOL;
+    echo "Total Connections Received: ".$redisInfo['total_connections_received'].PHP_EOL;
+    echo "Total Commands Processed: ".$redisInfo['total_commands_processed'].PHP_EOL;
+    echo "Role: ".$redisInfo['role'].PHP_EOL;
+    echo PHP_EOL;
 
     parent::execute($input, $output);
   }
