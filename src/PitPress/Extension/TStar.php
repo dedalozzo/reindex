@@ -15,9 +15,8 @@ use ElephantOnCouch\Couch;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Model\Accessory\Star;
-use PitPress\Model\User;
-use PitPress\Model\Versionable;
 use PitPress\Helper\Text;
+use PitPress\Security\Guardian;
 
 
 /**
@@ -26,12 +25,12 @@ use PitPress\Helper\Text;
 trait TStar {
 
 
-  public function isStarred(User $user = NULL, &$starId = NULL) {
+  public function isStarred(&$starId = NULL) {
     // In case there is no user logged in, returns false.
-    if (is_null($user)) return FALSE;
+    if ($this->guardian->isGuest()) return FALSE;
 
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([Text::unversion($this->id), $user->id]);
+    $opts->doNotReduce()->setLimit(1)->setKey([Text::unversion($this->id), $this->guardian->getCurrentUser()->id]);
 
     $result = $this->couch->queryView("stars", "perItem", NULL, $opts);
 
@@ -44,16 +43,16 @@ trait TStar {
   }
 
 
-  public function star(User $user = NULL) {
-    if (is_null($user)) return Versionable::NO_USER_LOGGED_IN;
+  public function star() {
+    if ($this->guardian->isGuest()) return Guardian::NO_USER_LOGGED_IN;
 
-    if ($this->isStarred($user, $starId)) {
+    if ($this->isStarred($starId)) {
       $star = $this->couch->getDoc(Couch::STD_DOC_PATH, $starId);
       $this->couch->deleteDoc(Couch::STD_DOC_PATH, $starId, $star->rev);
       return IStar::UNSTARRED;
     }
     else {
-      $doc = Star::create($user->id, $this);
+      $doc = Star::create($this->guardian->getCurrentUser()->id, $this);
       $this->couch->saveDoc($doc);
       return IStar::STARRED;
     }
