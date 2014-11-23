@@ -17,6 +17,7 @@ use ElephantOnCouch\Couch;
 use Phalcon\DI;
 
 use PitPress\Helper;
+use PitPress\Security\Guardian;
 
 
 /**
@@ -28,6 +29,7 @@ abstract class Storable extends Doc {
   protected $di; // Stores the default Dependency Injector.
   protected $couch; // Stores the ElephantOnCouch client instance.
   protected $redis; // Stores the Redis client instance.
+  protected $guardian;
 
 
   /**
@@ -37,6 +39,7 @@ abstract class Storable extends Doc {
     $this->di = DI::getDefault();
     $this->couch = $this->di['couchdb'];
     $this->redis = $this->di['redis'];
+    $this->guardian = $this->di['guardian'];
   }
 
 
