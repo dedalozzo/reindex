@@ -37,35 +37,31 @@ interface IVote {
 
   /**
    * @brief Likes a post. Same as voteUp().
-   * @param[in] User $user The current user logged in.
    * @return int The voting status.
    */
-  public function like(User $user);
+  public function like();
 
 
   /**
    * @brief Vote up a post.
-   * @param[in] User $user The current user logged in.
    * @return int The voting status.
    */
-  public function voteUp(User $user);
+  public function voteUp();
 
 
   /**
    * @brief Vote down a post.
-   * @param[in] User $user The current user logged in.
    * @return int The voting status.
    */
-  public function voteDown(User $user);
+  public function voteDown();
 
 
   /**
    * @brief Returns `true` if the user has voted else otherwise.
-   * @param[in] User $user The current user logged in.
    * @param[out] string $voteId The vote ID.
    * @return bool
    */
-  public function didUserVote(User $user, &$voteId = NULL);
+  public function didUserVote(&$voteId = NULL);
 
 
   /**
