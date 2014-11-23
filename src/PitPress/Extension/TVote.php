@@ -17,7 +17,7 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
 use PitPress\Helper\Text;
 use PitPress\Model\Accessory\Vote;
 use PitPress\Model\User;
-use PitPress\Model\Versionable;
+use PitPress\Security\Guardian;
 
 use Phalcon\DI;
 
@@ -34,11 +34,11 @@ trait TVote {
    * @param[in] string $value The vote.
    * @return int The voting status.
    */
-  protected function vote(User $user = NULL, $value) {
-    if (is_null($user)) return Versionable::NO_USER_LOGGED_IN;
-    if ($user->id == $this->userId) return IVote::CANNOT_VOTE_YOUR_OWN_POST;
+  protected function vote($value) {
+    if ($this->guardian->isGuest()) return Guardian::NO_USER_LOGGED_IN;
+    if ($this->guardian->getCurrentUser()->id == $this->userId) return IVote::CANNOT_VOTE_YOUR_OWN_POST;
 
-    $voted = $this->didUserVote($user, $voteId);
+    $voted = $this->didUserVote($voteId);
 
     if ($voted) {
       // Gets the vote.
@@ -68,34 +68,34 @@ trait TVote {
         return IVote::UNCHANGED;
     }
     else {
-      $vote = Vote::create(Text::unversion($this->id), $user->id, $value);
+      $vote = Vote::create(Text::unversion($this->id), $this->guardian->getCurrentUser()->id, $value);
       $this->couch->saveDoc($vote);
       return IVote::REGISTERED;
     }
   }
 
 
-  public function voteUp(User $user = NULL) {
-    return $this->vote($user, 1);
+  public function voteUp() {
+    return $this->vote(1);
   }
 
 
-  public function voteDown(User $user = NULL) {
-    return $this->vote($user, -1);
+  public function voteDown() {
+    return $this->vote(-1);
   }
 
 
-  public function like(User $user = NULL) {
-    return $this->vote($user, 1);
+  public function like() {
+    return $this->vote(1);
   }
 
 
-  public function didUserVote(User $user = NULL, &$voteId = NULL) {
+  public function didUserVote(&$voteId = NULL) {
     // In case there is no user logged in returns false.
-    if (is_null($user)) return FALSE;
+    if ($this->guardian->isGuest()) return FALSE;
 
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([Text::unversion($this->id), $user->id]);
+    $opts->doNotReduce()->setLimit(1)->setKey([Text::unversion($this->id), $this->guardian->getCurrentUser()->id]);
 
     $result = $this->couch->queryView("votes", "perItemAndUser", NULL, $opts);
 
