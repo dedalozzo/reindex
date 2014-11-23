@@ -27,6 +27,7 @@ abstract class BaseController extends Controller {
   protected $redis;
   protected $monolog;
   protected $assets;
+  protected $guardian;
 
   protected $domainName;
   protected $serverName;
@@ -114,8 +115,8 @@ abstract class BaseController extends Controller {
     $this->redis = $this->di['redis'];
     $this->monolog = $this->di['monolog'];
     $this->assets = $this->di['assets'];
-
     $this->guardian = $this->di['guardian'];
+
     $this->user = $this->guardian->getCurrentUser();
 
     // It is just the primary domain, for example: `programmazione.it`.
