@@ -29,6 +29,9 @@ use Phalcon\Tag;
  */
 class IndexController extends ListController {
 
+  // Actions that aren't listing actions.
+  protected static $actions = ['show', 'edit', 'new'];
+
 
   protected function getLabel() {
     return 'contributi';
@@ -161,32 +164,48 @@ class IndexController extends ListController {
   }
 
 
+  /**
+   * @brief Returns `true` when the called action is a listing action.
+   */
+  protected function isListing() {
+    if (!in_array($this->actionName, static::$actions))
+      return TRUE;
+    else
+      return FALSE;
+  }
+
+
   public function initialize() {
     parent::initialize();
 
-    $this->type = $this->controllerName;
-    $this->resultsPerPage = $this->di['config']->application->postsPerPage;
+    if ($this->isListing()) {
+      $this->type = $this->controllerName;
+      $this->resultsPerPage = $this->di['config']->application->postsPerPage;
 
-    $this->monolog->addDebug(sprintf('Type: %s', $this->type));
+      $this->monolog->addDebug(sprintf('Type: %s', $this->type));
 
-    $this->assets->addJs("/pit-bootstrap/dist/js/tab.min.js", FALSE);
+      $this->assets->addJs("/pit-bootstrap/dist/js/tab.min.js", FALSE);
+      $this->assets->addJs("/pit-bootstrap/dist/js/list.min.js", FALSE);
 
-    $this->view->pick('views/index');
+      $this->view->pick('views/index');
+    }
   }
 
 
   public function afterExecuteRoute() {
     parent::afterExecuteRoute();
 
-    $this->recentTags();
+    if ($this->isListing()) {
+      $this->recentTags();
 
-    // The entries label is printed below the entries count.
-    $this->view->setVar('entriesLabel', $this->getLabel());
+      // The entries label is printed below the entries count.
+      $this->view->setVar('entriesLabel', $this->getLabel());
 
-    // Those are the notebook pages, printed using the `updates.volt` widget.
-    $this->view->setVar('questions', $this->getInfo('perDateByType', 'question'));
-    $this->view->setVar('articles', $this->getInfo('perDateByType', 'article'));
-    $this->view->setVar('books', $this->getInfo('perDateByType', 'book'));
+      // Those are the notebook pages, printed using the `updates.volt` widget.
+      $this->view->setVar('questions', $this->getInfo('perDateByType', 'question'));
+      $this->view->setVar('articles', $this->getInfo('perDateByType', 'article'));
+      $this->view->setVar('books', $this->getInfo('perDateByType', 'book'));
+    }
   }
 
 
