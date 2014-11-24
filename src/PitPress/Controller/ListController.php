@@ -129,8 +129,6 @@ abstract class ListController extends BaseController {
 
   public function initialize() {
     parent::initialize();
-
-    $this->assets->addJs("/pit-bootstrap/dist/js/list.min.js", FALSE);
   }
 
 
