@@ -78,7 +78,7 @@ class AjaxController extends BaseController {
   public function likeAction() {
     if ($this->request->hasPost('id')) {
       $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
-      echo json_encode($doc->like($this->user));
+      echo json_encode($doc->like());
 
       $this->view->disable();
     }
@@ -95,7 +95,7 @@ class AjaxController extends BaseController {
   public function starAction() {
     if ($this->request->hasPost('id')) {
       $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
-      echo json_encode($doc->star($this->user));
+      echo json_encode($doc->star());
 
       $this->view->disable();
     }
