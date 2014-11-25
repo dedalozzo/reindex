@@ -104,4 +104,9 @@ class AjaxController extends BaseController {
     }
   }
 
+
+  public function deleteAction() {
+
+  }
+
 }
