@@ -23,4 +23,5 @@ class DocStatus {
   const SUBMITTED = "submitted"; //!< The document has been submitted for publishing.
   const RETURNED = "returned"; //!< The document has been returned for revision.
   const REJECTED = "rejected"; //!< The document revision has been rejected.
+  const DELETED = "deleted"; //!< The document has been deleted.
 }
