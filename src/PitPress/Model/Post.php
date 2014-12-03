@@ -99,26 +99,6 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   }
 
 
-  /**
-   * @brief Deletes the document and all its revisions from the database.
-   * @warning You can't save the document after deletion. To mark a document as deleted use Doc.markAsDeleted and then
-   * save the document.
-   * @attention This operation is irreversible.
-   * @see http://meta.stackexchange.com/questions/5221/how-does-deleting-work-what-can-cause-a-post-to-be-deleted-and-what-does-that
-   */
-  public function delete() {
-    $opts = new ViewQueryOpts();
-    $opts->setKey($this->unversionId)->doNotReduce();
-    $revisions = $this->couch->queryView("revisions", "perPost", NULL, $opts)->asArray();
-    $ids = array_column($revisions, 'id');
-
-    foreach ($ids as $id) {
-      $rev = $this->couch->getDocETag($id);
-      $this->couch->deleteDoc(Couch::STD_DOC_PATH, $id, $rev);
-    }
-  }
-
-
   /** @name Protection Methods */
   //!@{
 
