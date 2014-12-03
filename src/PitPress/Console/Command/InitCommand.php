@@ -429,11 +429,11 @@ MAP;
     $doc = DesignDoc::create('revisions');
 
 
-    // @params: postId
-    function revisionsPerPost() {
+    // @params: itemId
+    function revisionsPerItem() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post') {
+  if (isset($doc->versionable)) {
 
     $editorId = isset($doc->editorId) ? $doc->editorId : $doc->userId;
     $editSummary = isset($doc->editSummary) ? $doc->editSummary : '';
@@ -447,13 +447,13 @@ function($doc) use ($emit) {
 };
 MAP;
 
-      $handler = new ViewHandler("perPost");
+      $handler = new ViewHandler("perItem");
       $handler->mapFn = $map;
 
       return $handler;
     }
 
-    $doc->addHandler(revisionsPerPost());
+    $doc->addHandler(revisionsPerItem());
 
 
     $this->couch->saveDoc($doc);
@@ -602,7 +602,6 @@ MAP;
 
 
     // @params itemId, [userId]
-    // @methods: VersionedItem.isStarred(), VersionedItem.getSubscribersCount()
     function subscriptionsPerItem() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
