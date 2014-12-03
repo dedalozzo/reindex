@@ -31,6 +31,7 @@ abstract class Versionable extends Storable {
   public function __construct() {
     parent::__construct();
     $this->status = DocStatus::CREATED;
+    $this->meta['versionable'] = TRUE;
   }
 
 
@@ -52,6 +53,28 @@ abstract class Versionable extends Storable {
       $instance->setId($id);
 
     return $instance;
+  }
+
+
+  /**
+   * @brief Deletes the document.
+   * @attention This method just marks the document as deleted, it doesn't really delete it.
+   */
+  public function delete() {
+    $this->meta['prevStatus'] = $this->meta['status'];
+    $this->meta['status'] = DocStatus::DELETED;
+  }
+
+
+  /**
+   * @brief Undeletes the document and restore its status before deletion.
+   */
+  public function undelete() {
+    // In case the document has been deleted, restore it to its previous status.
+    if ($this->meta['status'] == DocStatus::DELETED) {
+      $this->meta['status'] = $this->meta['prevStatus'];
+      unset($this->meta['prevStatus']);
+    }
   }
 
 
