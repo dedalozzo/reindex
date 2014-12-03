@@ -756,7 +756,7 @@ class IndexController extends ListController {
 
       $opts = new ViewQueryOpts();
       $opts->setKey($post->unversionId)->doNotReduce();
-      $revisions = $this->couch->queryView("revisions", "perPost", NULL, $opts);
+      $revisions = $this->couch->queryView("revisions", "perItem", NULL, $opts);
 
       $keys = array_column(array_column($revisions->asArray(), 'value'), 'editorId');
       $opts->reset();
