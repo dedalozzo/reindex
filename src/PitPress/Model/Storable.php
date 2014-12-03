@@ -29,7 +29,7 @@ abstract class Storable extends Doc {
   protected $di; // Stores the default Dependency Injector.
   protected $couch; // Stores the ElephantOnCouch client instance.
   protected $redis; // Stores the Redis client instance.
-  protected $guardian;
+  protected $guardian; // Stores the Guardian instance.
 
 
   /**
@@ -54,16 +54,6 @@ abstract class Storable extends Doc {
       $this->createdAt = $this->modifiedAt;
 
     $this->couch->saveDoc($this);
-  }
-
-
-  /**
-   * @brief Deletes the item from the database.
-   * @warning You can't save the document after deletion. To mark a document as deleted use Doc::MarkAsDeleted and then
-   * save the document.
-   */
-  public function delete() {
-    $this->couch->deleteDoc(Couch::STD_DOC_PATH, $this->id, $this->rev);
   }
 
 
