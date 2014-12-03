@@ -17,6 +17,7 @@ namespace PitPress\Model;
  */
 class Answer extends Reply {
 
+
   /**
    * @brief Marks the item as duplicate of another item.
    */
