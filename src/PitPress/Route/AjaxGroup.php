@@ -33,6 +33,8 @@ class AjaxGroup extends Group {
 
     $this->addPost('/like/', ['action' => 'like']);
     $this->addPost('/star/', ['action' => 'star']);
+    $this->addPost('/move-to-trash/', ['action' => 'moveToTrash']);
+    $this->addPost('/restore/', ['action' => 'restore']);
   }
 
 }
