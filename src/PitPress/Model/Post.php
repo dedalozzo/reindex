@@ -189,22 +189,6 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
 
   /**
-   * @brief Marks the document as draft.
-   * @details When a user works on an article, he wants save many time the item before submit it for peer revision.
-   */
-  public function markAsDraft() {
-    $this->meta['status'] = Enum\DocStatus::DRAFT;
-
-    // Used to group by year, month and day.
-    $this->meta['year'] = date("Y", $this->createdAt);
-    $this->meta['month'] = date("m", $this->createdAt);
-    $this->meta['day'] = date("d", $this->createdAt);
-
-    $this->meta['slug'] = $this->buildSlug();
-  }
-
-
-  /**
    * @brief Returns a measure of the time passed since the publishing date. In case is passed more than a day, returns
    * a human readable date.
    * @return string
