@@ -105,8 +105,40 @@ class AjaxController extends BaseController {
   }
 
 
-  public function deleteAction() {
+  /**
+   * @brief Moves the document to trash.
+   * @return int
+   */
+  public function moveToTrashAction() {
+    if ($this->request->hasPost('id')) {
+      $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
+      echo json_encode($doc->moveToTrash());
+      $doc->save();
 
+      $this->view->disable();
+    }
+    else {
+      throw new \RuntimeException("Non hai specificato un id.");
+    }
+
+  }
+
+
+  /**
+   * @brief Restores the document.
+   * @return int
+   */
+  public function restoreAction() {
+    if ($this->request->hasPost('id')) {
+      $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
+      echo json_encode($doc->restore());
+      $doc->save();
+
+      $this->view->disable();
+    }
+    else {
+      throw new \RuntimeException("Non hai specificato un id.");
+    }
   }
 
 }
