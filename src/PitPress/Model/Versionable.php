@@ -57,19 +57,19 @@ abstract class Versionable extends Storable {
 
 
   /**
-   * @brief Deletes the document.
+   * @brief Moves the document to the trash.
    * @attention This method just marks the document as deleted, it doesn't really delete it.
    */
-  public function delete() {
+  public function moveToTrash() {
     $this->meta['prevStatus'] = $this->meta['status'];
     $this->meta['status'] = DocStatus::DELETED;
   }
 
 
   /**
-   * @brief Undeletes the document and restore its status before deletion.
+   * @brief Restores the document to its previous status, removing it from trash.
    */
-  public function undelete() {
+  public function restore() {
     // In case the document has been deleted, restore it to its previous status.
     if ($this->meta['status'] == DocStatus::DELETED) {
       $this->meta['status'] = $this->meta['prevStatus'];
@@ -137,11 +137,11 @@ abstract class Versionable extends Storable {
 
 
   /**
-   * @brief Returns `true` if this document is only a draft, `false` otherwise.
+   * @brief Returns `true` if this document has been put into the trash, `false` otherwise.
    * @return bool
    */
-  public function isDraft() {
-    return ($this->isMetadataPresent('status') && $this->getStatus() == DocStatus::DRAFT) ? TRUE : FALSE;
+  public function isGarbage() {
+    return ($this->isMetadataPresent('status') && $this->getStatus() == DocStatus::DELETED) ? TRUE : FALSE;
   }
 
 
