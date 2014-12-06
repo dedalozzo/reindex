@@ -58,7 +58,6 @@ abstract class Versionable extends Storable {
 
   /**
    * @brief Moves the document to the trash.
-   * @attention This method just marks the document as deleted, it doesn't really delete it.
    */
   public function moveToTrash() {
     $this->meta['prevStatus'] = $this->meta['status'];
