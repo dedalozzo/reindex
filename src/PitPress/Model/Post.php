@@ -116,6 +116,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    */
   public function reopen() {
     $this->protection = self::NONE_PL;
+    $this->unsetMetadata('protectorId');
   }
 
 
@@ -133,6 +134,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    */
   public function lock() {
     $this->protection = self::LOCKED_PL;
+    $this->metadata['protectorId'] = $this->guardian->getCurrentUser()->id;
   }
 
 
@@ -141,6 +143,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    */
   public function unlock() {
     $this->protection = self::NONE_PL;
+    $this->unsetMetadata('protectorId');
   }
 
 
@@ -149,6 +152,15 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    */
   public function isLocked() {
     return ($this->protection == self::LOCKED_PL) ? TRUE : FALSE;
+  }
+
+
+  /**
+   * @brief Returns the id of the user who protected the post.
+   * @return string
+   */
+  public function getProtectorId() {
+    return ($this->isMetadataPresent('protectorId')) ? $this->meta['protectorId'] : NULL;
   }
 
   //!@}
