@@ -90,7 +90,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     $this->zRemLastUpdate();
     $this->zRemPopularity();
 
-    if ($this->status == Enum\DocStatus::CURRENT) {
+    if ($this->isCurrent()) {
       $this->zAddLastUpdate();
 
       if (!$deferred)
