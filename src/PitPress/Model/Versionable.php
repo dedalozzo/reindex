@@ -132,6 +132,15 @@ abstract class Versionable extends Storable {
 
 
   /**
+   * @brief Returns `true` if this document has just been created, `false` otherwise.
+   * @return bool
+   */
+  public function hasBeenCreated() {
+    return $this->statusMatch(DocStatus::CREATED);
+  }
+
+
+  /**
    * @brief Returns `true` if this document revision is the current one, `false` otherwise.
    * @return bool
    */
@@ -203,6 +212,10 @@ abstract class Versionable extends Storable {
    * @copydoc Storable.save
    */
   public function save() {
+    // We force the document status in case it hasn't been changed.
+    if ($this->hasBeenCreated())
+      $this->status = DocStatus::SUBMITTED;
+
     // Put your code here.
     parent::save();
   }
