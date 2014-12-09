@@ -59,7 +59,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
     $this->supertype = 'post';
     $this->visible = TRUE;
-    $this->protection = 'none';
+    $this->protection = self::NONE_PL;
   }
 
 
@@ -112,15 +112,6 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
 
   /**
-   * @brief Reopens a closed post.
-   */
-  public function reopen() {
-    $this->protection = self::NONE_PL;
-    $this->unsetMetadata('protectorId');
-  }
-
-
-  /**
    * @brief Returns `true` if the post is closed.
    */
   public function isClosed() {
@@ -139,19 +130,19 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
 
   /**
-   * @brief Unlocks the post.
-   */
-  public function unlock() {
-    $this->protection = self::NONE_PL;
-    $this->unsetMetadata('protectorId');
-  }
-
-
-  /**
    * @brief Returns `true` if the post is locked.
    */
   public function isLocked() {
     return ($this->protection == self::LOCKED_PL) ? TRUE : FALSE;
+  }
+
+
+  /**
+   * @brief Removes the post protection.
+   */
+  public function removeProtection() {
+    $this->protection = self::NONE_PL;
+    $this->unsetMetadata('protectorId');
   }
 
 
