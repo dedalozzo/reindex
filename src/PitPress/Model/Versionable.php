@@ -126,12 +126,17 @@ abstract class Versionable extends Storable {
   }
 
 
+  protected function statusMatch($status) {
+    return ($this->isMetadataPresent('status') && $this->getStatus() == $status) ? TRUE : FALSE;
+  }
+
+
   /**
    * @brief Returns `true` if this document revision is the current one, `false` otherwise.
    * @return bool
    */
   public function isCurrent() {
-    return ($this->isMetadataPresent('status') && $this->getStatus() == DocStatus::CURRENT) ? TRUE : FALSE;
+    return $this->statusMatch(DocStatus::CURRENT);
   }
 
 
@@ -140,7 +145,7 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function isGarbage() {
-    return ($this->isMetadataPresent('status') && $this->getStatus() == DocStatus::DELETED) ? TRUE : FALSE;
+    return $this->statusMatch(DocStatus::DELETED);
   }
 
 
@@ -149,7 +154,7 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function hasBeenSubmittedForPeerReview() {
-    return ($this->isMetadataPresent('status') && $this->getStatus() == DocStatus::SUBMITTED) ? TRUE : FALSE;
+    return $this->statusMatch(DocStatus::SUBMITTED);
   }
 
 
@@ -158,7 +163,7 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function hasBeenApproved() {
-    return ($this->isMetadataPresent('status') && $this->getStatus() == DocStatus::APPROVED) ? TRUE : FALSE;
+    return $this->statusMatch(DocStatus::APPROVED);
   }
 
 
@@ -167,7 +172,7 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function hasBeenRejected() {
-    return ($this->isMetadataPresent('status') && $this->getStatus() == DocStatus::REJECTED) ? TRUE : FALSE;
+    return $this->statusMatch(DocStatus::REJECTED);
   }
 
 
@@ -176,7 +181,7 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function hasBeenReturnedForRevision() {
-    return ($this->isMetadataPresent('status') && $this->getStatus() == DocStatus::RETURNED) ? TRUE : FALSE;
+    return $this->statusMatch(DocStatus::RETURNED);
   }
 
   //@}
