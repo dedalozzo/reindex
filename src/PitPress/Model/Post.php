@@ -270,6 +270,10 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   }
 
 
+  /**
+   * @brief Gets the post slug.
+   * @return string
+   */
   public function getSlug() {
     return $this->meta['slug'];
   }
