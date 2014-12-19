@@ -14,9 +14,9 @@ namespace PitPress\Extension;
 use ElephantOnCouch\Couch;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
+use PitPress\Exception;
 use PitPress\Model\Accessory\Star;
 use PitPress\Helper\Text;
-use PitPress\Security\Guardian;
 
 
 /**
@@ -44,7 +44,7 @@ trait TStar {
 
 
   public function star() {
-    if ($this->guardian->isGuest()) return Guardian::NO_USER_LOGGED_IN;
+    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
 
     if ($this->isStarred($starId)) {
       $star = $this->couch->getDoc(Couch::STD_DOC_PATH, $starId);
