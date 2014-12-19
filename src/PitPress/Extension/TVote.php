@@ -17,7 +17,7 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
 use PitPress\Helper\Text;
 use PitPress\Model\Accessory\Vote;
 use PitPress\Model\User;
-use PitPress\Security\Guardian;
+use PitPress\Exception;
 
 use Phalcon\DI;
 
@@ -35,8 +35,8 @@ trait TVote {
    * @return int The voting status.
    */
   protected function vote($value) {
-    if ($this->guardian->isGuest()) return Guardian::NO_USER_LOGGED_IN;
-    if ($this->guardian->getCurrentUser()->id == $this->userId) return IVote::CANNOT_VOTE_YOUR_OWN_POST;
+    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if ($this->guardian->getCurrentUser()->id == $this->userId) throw new Exception\CannotVoteYourOwnPostException('Non puoi votare il tuo stesso post.');
 
     $voted = $this->didUserVote($voteId);
 
