@@ -182,6 +182,15 @@ abstract class Versionable extends Storable {
 
 
   /**
+   * @brief Returns `true` in case the provided status matches the current version status.
+   * @return bool
+   */
+  protected function statusMatch($status) {
+    return ($this->meta["status"] == $status) ? TRUE : FALSE;
+  }
+
+
+  /**
    * @brief Returns the version status.
    * @return string
    */
@@ -195,7 +204,7 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function hasBeenCreated() {
-    return ($this->meta["status"] == DocStatus::CREATED) ? TRUE : FALSE;
+    return $this->statusMatch(DocStatus::CREATED);
   }
 
 
@@ -204,7 +213,7 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function isDraft() {
-    return ($this->meta['status'] == DocStatus::DRAFT) ? TRUE : FALSE;
+    return $this->statusMatch(DocStatus::DRAFT);
   }
 
 
@@ -213,7 +222,7 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function isCurrent() {
-    return ($this->meta["status"] == DocStatus::CURRENT) ? TRUE : FALSE;
+    return $this->statusMatch(DocStatus::CURRENT);
   }
 
 
@@ -222,7 +231,7 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function hasBeenMovedToTrash() {
-    return ($this->meta["status"] == DocStatus::DELETED) ? TRUE : FALSE;
+    return $this->statusMatch(DocStatus::DELETED);
   }
 
 
@@ -231,7 +240,7 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function hasBeenSubmittedForPeerReview() {
-    return ($this->meta["status"] == DocStatus::SUBMITTED) ? TRUE : FALSE;
+    return $this->statusMatch(DocStatus::SUBMITTED);
   }
 
 
@@ -240,7 +249,7 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function hasBeenApproved() {
-    return ($this->meta["status"] == DocStatus::APPROVED) ? TRUE : FALSE;
+    return $this->statusMatch(DocStatus::APPROVED);
   }
 
 
@@ -249,7 +258,7 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function hasBeenRejected() {
-    return ($this->meta["status"] == DocStatus::REJECTED) ? TRUE : FALSE;
+    return $this->statusMatch(DocStatus::REJECTED);
   }
 
 
@@ -258,7 +267,7 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function hasBeenReturnedForRevision() {
-    return ($this->meta["status"] == DocStatus::RETURNED) ? TRUE : FALSE;
+    return $this->statusMatch(DocStatus::RETURNED);
   }
 
   //@}
