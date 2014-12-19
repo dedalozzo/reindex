@@ -23,7 +23,6 @@ interface IVote {
   /** @name Voting Status */
   //!@{
 
-  const UNCHANGED = 0; //!< The vote hasn't changed. You tried to replace the vote too late.
   const REGISTERED = 1; //!< The vote has been registered. You never voted before, so there is nothing to undo or replace.
   const DELETED = 2; //!< The vote has been deleted. For example you do a like then you unlike.
   const REPLACED = 3; //!< The vote has been replaced. For example you do a vote up, then you vote down.
