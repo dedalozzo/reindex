@@ -15,6 +15,7 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
 use ElephantOnCouch\Generator\UUID;
 
 use PitPress\Helper;
+use PitPress\Exception;
 use PitPress\Enum\DocStatus;
 
 
@@ -30,7 +31,7 @@ abstract class Versionable extends Storable {
    */
   public function __construct() {
     parent::__construct();
-    $this->status = DocStatus::CREATED;
+    $this->meta["status"] = DocStatus::CREATED;
     $this->meta['versionable'] = TRUE;
   }
 
@@ -57,31 +58,19 @@ abstract class Versionable extends Storable {
 
 
   /**
-   * @brief Moves the document to the trash.
-   */
-  public function moveToTrash() {
-    $this->meta['prevStatus'] = $this->meta['status'];
-    $this->meta['status'] = DocStatus::DELETED;
-  }
-
-
-  /**
-   * @brief Restores the document to its previous status, removing it from trash.
-   */
-  public function restore() {
-    // In case the document has been deleted, restore it to its previous status.
-    if ($this->meta['status'] == DocStatus::DELETED) {
-      $this->meta['status'] = $this->meta['prevStatus'];
-      unset($this->meta['prevStatus']);
-    }
-  }
-
-
-  /**
    * @brief Submits the document for peer review.
    */
   public function submit() {
-    $this->meta['status'] = DocStatus::SUBMITTED;
+    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if ($this->hasBeenSubmittedForPeerReview()) return;
+
+    if ($this->userId == $this->guardian->getCurrentUser()->id)
+      if ($this->hasBeenCreated() or $this->isDraft())
+        $this->meta['status'] = DocStatus::SUBMITTED;
+      else
+        throw new Exception\IncompatibleStatusException("Stato incompatible con l'operazione richiesta.");
+    else
+      throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
   }
 
 
@@ -89,7 +78,34 @@ abstract class Versionable extends Storable {
    * @brief Approves the document revision, making of it the current version.
    */
   public function approve() {
-    $this->meta['status'] = DocStatus::CURRENT;
+    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+
+    if ($this->guardian->getCurrentUser()->isModerator())
+      if ($this->hasBeenCreated() or $this->isDraft() or $this->hasBeenSubmittedForPeerReview())
+        $this->meta['status'] = DocStatus::CURRENT;
+      else
+        throw new Exception\IncompatibleStatusException("Stato incompatible con l'operazione richiesta.");
+    else
+      throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
+  }
+
+
+  /**
+   * @brief Asks the author to revise the item, because it's not ready for publishing.
+   * @param[in] The reason why the document has been returned for revision.
+   */
+  public function returnForRevision($reason) {
+    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if ($this->hasBeenReturnedForRevision()) return;
+
+    if (($this->guardian->getCurrentUser()->isModerator() && $this->hasBeenSubmittedForPeerReview()) or
+        ($this->guardian->getCurrentUser()->isAdmin() && $this->isCurrent())) {
+      $this->meta['status'] = DocStatus::RETURNED;
+      $this->meta['rejectReason'] = $reason;
+      // todo: send a notification to the user
+    }
+    else
+      throw new Exception\IncompatibleStatusException("Stato incompatible con l'operazione richiesta.");
   }
 
 
@@ -99,20 +115,18 @@ abstract class Versionable extends Storable {
    * @param[in] The reason why the revision has been rejected.
    */
   public function reject($reason) {
-    // todo: send a notification to the user
-    $this->meta['status'] = DocStatus::REJECTED;
-    $this->meta['rejectReason'] = $reason;
-  }
+    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
 
-
-  /**
-   * @brief Asks the author to revise the item, because it's not ready for publishing.
-   * @param[in] The reason why the document has been returned for revision.
-   */
-  public function returnForRevision($reason) {
-    // todo: send a notification to the user
-    $this->meta['status'] = DocStatus::RETURNED;
-    $this->meta['rejectReason'] = $reason;
+    if ($this->guardian->getCurrentUser()->isModerator())
+      if ($this->hasBeenSubmittedForPeerReview()) {
+        $this->meta['status'] = DocStatus::REJECTED;
+        $this->meta['rejectReason'] = $reason;
+        // todo: send a notification to the user
+      }
+      else
+        throw new Exception\IncompatibleStatusException("Stato incompatible con l'operazione richiesta.");
+    else
+      throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
   }
 
 
@@ -121,13 +135,58 @@ abstract class Versionable extends Storable {
    * @param[in] Reverts to the specified version. If a version is not specified it takes the previous one.
    */
   public function revert($versionNumber = NULL) {
-    // todo
-    $this->meta['status'] = DocStatus::APPROVED;
+    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+
+    if ($this->guardian->getCurrentUser()->isModerator()) {
+      $this->meta['status'] = DocStatus::APPROVED;
+      // todo
+    }
+    else
+      throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
   }
 
 
-  protected function statusMatch($status) {
-    return ($this->isMetadataPresent('status') && $this->getStatus() == $status) ? TRUE : FALSE;
+  /**
+   * @brief Moves the document to the trash.
+   */
+  public function moveToTrash() {
+    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if ($this->hasBeenMovedToTrash()) return;
+
+    if (($this->guardian->getCurrentUser()->isModerator() && $this->isCurrent()) or
+        (($this->userId == $this->guardian->getCurrentUser()->id) && $this->isDraft())) {
+      $this->meta['prevStatus'] = $this->meta['status'];
+      $this->meta['status'] = DocStatus::DELETED;
+    }
+    else
+      throw new Exception\IncompatibleStatusException("Stato incompatible con l'operazione richiesta.");
+  }
+
+
+  /**
+   * @brief Restores the document to its previous status, removing it from trash.
+   */
+  public function restore() {
+    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+
+    if ($this->hasBeenMovedToTrash() and
+        ($this->guardian->getCurrentUser()->isModerator() && ($this->trashmanId == $this->guardian->getCurrentUser()->id)) or
+        $this->guardian->getCurrentUser()->isAdmin()) {
+      // In case the document has been deleted, restore it to its previous status.
+      $this->meta['status'] = $this->meta['prevStatus'];
+      unset($this->meta['prevStatus']);
+    }
+    else
+      throw new Exception\IncompatibleStatusException("Stato incompatible con l'operazione richiesta.");
+  }
+
+
+  /**
+   * @brief Returns the version status.
+   * @return string
+   */
+  public function getStatus() {
+    return $this->meta["status"];
   }
 
 
@@ -136,7 +195,16 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function hasBeenCreated() {
-    return $this->statusMatch(DocStatus::CREATED);
+    return ($this->meta["status"] == DocStatus::CREATED) ? TRUE : FALSE;
+  }
+
+
+  /**
+   * @brief Returns `true` if this document is only a draft, `false` otherwise.
+   * @return bool
+   */
+  public function isDraft() {
+    return ($this->meta['status'] == DocStatus::DRAFT) ? TRUE : FALSE;
   }
 
 
@@ -145,7 +213,7 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function isCurrent() {
-    return $this->statusMatch(DocStatus::CURRENT);
+    return ($this->meta["status"] == DocStatus::CURRENT) ? TRUE : FALSE;
   }
 
 
@@ -153,8 +221,8 @@ abstract class Versionable extends Storable {
    * @brief Returns `true` if this document has been put into the trash, `false` otherwise.
    * @return bool
    */
-  public function isGarbage() {
-    return $this->statusMatch(DocStatus::DELETED);
+  public function hasBeenMovedToTrash() {
+    return ($this->meta["status"] == DocStatus::DELETED) ? TRUE : FALSE;
   }
 
 
@@ -163,7 +231,7 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function hasBeenSubmittedForPeerReview() {
-    return $this->statusMatch(DocStatus::SUBMITTED);
+    return ($this->meta["status"] == DocStatus::SUBMITTED) ? TRUE : FALSE;
   }
 
 
@@ -172,7 +240,7 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function hasBeenApproved() {
-    return $this->statusMatch(DocStatus::APPROVED);
+    return ($this->meta["status"] == DocStatus::APPROVED) ? TRUE : FALSE;
   }
 
 
@@ -181,7 +249,7 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function hasBeenRejected() {
-    return $this->statusMatch(DocStatus::REJECTED);
+    return ($this->meta["status"] == DocStatus::REJECTED) ? TRUE : FALSE;
   }
 
 
@@ -190,7 +258,7 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function hasBeenReturnedForRevision() {
-    return $this->statusMatch(DocStatus::RETURNED);
+    return ($this->meta["status"] == DocStatus::RETURNED) ? TRUE : FALSE;
   }
 
   //@}
@@ -214,7 +282,7 @@ abstract class Versionable extends Storable {
   public function save() {
     // We force the document status in case it hasn't been changed.
     if ($this->hasBeenCreated())
-      $this->status = DocStatus::SUBMITTED;
+      $this->meta["status"] = DocStatus::SUBMITTED;
 
     // Put your code here.
     parent::save();
@@ -283,27 +351,6 @@ abstract class Versionable extends Storable {
   }
 
 
-  public function getStatus() {
-    return $this->meta["status"];
-  }
-
-
-  public function issetStatus() {
-    return isset($this->meta['status']);
-  }
-
-
-  public function setStatus($value) {
-    $this->meta["status"] = $value;
-  }
-
-
-  public function unsetStatus() {
-    if ($this->isMetadataPresent('status'))
-      unset($this->meta['status']);
-  }
-
-  
   public function getUserId() {
     return $this->meta["userId"];
   }
