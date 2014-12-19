@@ -12,6 +12,7 @@ namespace PitPress\Model;
 
 
 use PitPress\Enum;
+use PitPress\Exception;
 
 
 /**
@@ -21,29 +22,31 @@ use PitPress\Enum;
 class Article extends Post {
 
 
+  public function save($deferred = FALSE) {
+    parent::save();
+  }
+
+
   /**
    * @brief Marks the document as draft.
    * @details When a user works on an article, he wants save many time the item before submit it for peer revision.
    */
   public function markAsDraft() {
-    $this->meta['status'] = Enum\DocStatus::DRAFT;
+    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if ($this->isDraft()) return;
 
-    // Used to group by year, month and day.
-    $this->meta['year'] = date("Y", $this->createdAt);
-    $this->meta['month'] = date("m", $this->createdAt);
-    $this->meta['day'] = date("d", $this->createdAt);
+    if ($this->hasBeenCreated() && ($this->userId == $this->guardian->getCurrentUser()->id)) {
+      $this->meta['status'] = Enum\DocStatus::DRAFT;
 
-    $this->meta['slug'] = $this->buildSlug();
+      // Used to group by year, month and day.
+      $this->meta['year'] = date("Y", $this->createdAt);
+      $this->meta['month'] = date("m", $this->createdAt);
+      $this->meta['day'] = date("d", $this->createdAt);
+
+      $this->meta['slug'] = $this->buildSlug();
+    }
+    else
+      throw new Exception\IncompatibleStatusException("Stato incompatible con l'operazione richiesta.");
   }
-
-
-  /**
-   * @brief Returns `true` if this document is only a draft, `false` otherwise.
-   * @return bool
-   */
-  public function isDraft() {
-    return ($this->isMetadataPresent('status') && $this->getStatus() == DocStatus::DRAFT) ? TRUE : FALSE;
-  }
-
 
 }
