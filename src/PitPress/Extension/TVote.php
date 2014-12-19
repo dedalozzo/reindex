@@ -65,7 +65,7 @@ trait TVote {
 
       }
       else
-        return IVote::UNCHANGED;
+        throw new Exception\GracePeriodExpiredException("Non puoi cambiare il tuo voto perché è trascorso il tempo massimo.");
     }
     else {
       $vote = Vote::create(Text::unversion($this->id), $this->guardian->getCurrentUser()->id, $value);
