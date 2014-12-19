@@ -18,6 +18,7 @@ use PitPress\Extension;
 use PitPress\Property;
 use PitPress\Helper;
 use PitPress\Enum;
+use PitPress\Exception;
 
 use Phalcon\DI;
 
@@ -42,7 +43,6 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   /** @name Protection Levels */
   //!@{
 
-  const NONE_PL = 'none'; //!< The post is unprotected.
   const CLOSED_PL = 'closed'; //!< The post is closed.
   const LOCKED_PL = 'locked'; //!< The post is locked.
 
@@ -57,9 +57,8 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     $this->markdown = $this->di['markdown'];
     $this->monolog = $this->di['monolog'];
 
-    $this->supertype = 'post';
-    $this->visible = TRUE;
-    $this->protection = self::NONE_PL;
+    $this->meta['supertype'] = 'post';
+    $this->meta['visible'] = TRUE;
   }
 
 
@@ -103,11 +102,28 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   //!@{
 
   /**
+   * @brief Returns `true` if the post has some kind of protection.
+   */
+  public function isProtected() {
+    return $this->isMetadataPresent('protected');
+  }
+
+
+  /**
    * @brief Closes the post. No more answers or comments can be added.
    * @see http://meta.stackexchange.com/questions/10582/what-is-a-closed-or-on-hold-question
    */
   public function close() {
-    $this->protection = self::CLOSED_PL;
+    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if ($this->isClosed()) return;
+
+    if ($this->guardian->getCurrentUser()->isModerator())
+      if ($this->isCurrent() or $this->isDraft())
+        $this->meta['protection'] = self::CLOSED_PL;
+      else
+        throw new Exception\IncompatibleStatusException("Stato incompatible con l'operazione richiesta.");
+    else
+      throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
   }
 
 
@@ -115,7 +131,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @brief Returns `true` if the post is closed.
    */
   public function isClosed() {
-    return ($this->protection == self::CLOSED_PL) ? TRUE : FALSE;
+    return ($this->meta['protection'] == self::CLOSED_PL) ? TRUE : FALSE;
   }
 
 
@@ -124,8 +140,18 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @see http://meta.stackexchange.com/questions/22228/what-is-a-locked-post
    */
   public function lock() {
-    $this->protection = self::LOCKED_PL;
-    $this->metadata['protectorId'] = $this->guardian->getCurrentUser()->id;
+    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if ($this->isLocked()) return;
+
+    if ($this->guardian->getCurrentUser()->isModerator())
+      if ($this->isCurrent() or $this->isDraft()) {
+        $this->meta['protection'] = self::LOCKED_PL;
+        $this->meta['protectorId'] = $this->guardian->getCurrentUser()->id;
+      }
+      else
+        throw new Exception\IncompatibleStatusException("Stato incompatible con l'operazione richiesta.");
+    else
+      throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
   }
 
 
@@ -140,9 +166,20 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   /**
    * @brief Removes the post protection.
    */
-  public function removeProtection() {
-    $this->protection = self::NONE_PL;
-    $this->unsetMetadata('protectorId');
+  public function unprotect() {
+    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if (!$this->isProtected()) return;
+
+    if ($this->guardian->getCurrentUser()->isAdmin() or
+        ($this->protectorId == $this->guardian->getCurrentUser()->id && $this->guardian->getCurrentUser()->isModerator()))
+      if ($this->isCurrent() or $this->isDraft()) {
+        $this->unsetMetadata('protection');
+        $this->unsetMetadata('protectorId');
+      }
+      else
+        throw new Exception\IncompatibleStatusException("Stato incompatible con l'operazione richiesta.");
+    else
+      throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
   }
 
 
@@ -157,11 +194,23 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   //!@}
 
 
+  /** @name Visibility Methods */
+  //!@{
+
   /**
    * @brief Hides the post.
    */
   public function hide() {
-    $this->visible = FALSE;
+    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if (!$this->isVisible()) return;
+
+    if ($this->guardian->getCurrentUser()->isAdmin())
+      if ($this->isCurrent() or $this->isDraft())
+        $this->meta['visible'] = FALSE;
+      else
+        throw new Exception\IncompatibleStatusException("Stato incompatible con l'operazione richiesta.");
+    else
+      throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
   }
 
 
@@ -169,8 +218,28 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @brief Makes the post to be listed.
    */
   public function show() {
-    $this->visible = TRUE;
+    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if ($this->isVisible()) return;
+
+    if ($this->guardian->getCurrentUser()->isAdmin())
+      if ($this->isCurrent() or $this->isDraft())
+        $this->meta['visible'] = TRUE;
+      else
+        throw new Exception\IncompatibleStatusException("Stato incompatible con l'operazione richiesta.");
+    else
+      throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
   }
+
+
+  /**
+   * @brief Makes the post to be listed.
+   * @return bool
+   */
+  public function isVisible() {
+    return $this->meta['visible'];
+  }
+
+  //!@}
 
 
   /**
@@ -484,69 +553,6 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
 
   //! @cond HIDDEN_SYMBOLS
-
-  public function getSupertype() {
-    return $this->meta['supertype'];
-  }
-
-
-  public function issetSupertype() {
-    return isset($this->meta['supertype']);
-  }
-
-
-  public function setSupertype($value) {
-    $this->meta['supertype'] = $value;
-  }
-
-
-  public function unsetSupertype() {
-    if ($this->isMetadataPresent('supertype'))
-      unset($this->meta['supertype']);
-  }
-
-
-  public function getVisible() {
-    return $this->meta['visible'];
-  }
-
-
-  public function issetVisible() {
-    return isset($this->meta['visible']);
-  }
-
-
-  public function setVisible($value) {
-    $this->meta['visible'] = $value;
-  }
-
-
-  public function unsetVisible() {
-    if ($this->isMetadataPresent('visible'))
-      unset($this->meta['visible']);
-  }
-
-  
-  public function getProtection() {
-    return $this->meta['protection'];
-  }
-
-
-  public function issetProtection() {
-    return isset($this->meta['protection']);
-  }
-
-
-  public function setProtection($value) {
-    $this->meta['protection'] = $value;
-  }
-
-
-  public function unsetProtection() {
-    if ($this->isMetadataPresent('protection'))
-      unset($this->meta['protection']);
-  }
-
 
   public function getLegacyId() {
     return $this->meta['legacyId'];
