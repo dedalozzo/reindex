@@ -76,14 +76,18 @@ class AjaxController extends BaseController {
    * @return int
    */
   public function likeAction() {
-    if ($this->request->hasPost('id')) {
-      $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
-      echo json_encode($doc->like());
+    try {
+      if ($this->request->hasPost('id')) {
+        $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
+        echo json_encode($doc->like());
 
-      $this->view->disable();
+        $this->view->disable();
+      }
+      else
+        throw new \RuntimeException("La risorsa non è più disponibile.");
     }
-    else {
-      throw new \RuntimeException("Non hai specificato un id.");
+    catch (\Exception $e) {
+      echo json_encode($e->getMessage());
     }
   }
 
@@ -93,14 +97,18 @@ class AjaxController extends BaseController {
    * @return int
    */
   public function starAction() {
-    if ($this->request->hasPost('id')) {
-      $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
-      echo json_encode($doc->star());
+    try {
+      if ($this->request->hasPost('id')) {
+        $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
+        echo json_encode($doc->star());
 
-      $this->view->disable();
+        $this->view->disable();
+      }
+      else
+        throw new \RuntimeException("La risorsa non è più disponibile.");
     }
-    else {
-      throw new \RuntimeException("Non hai specificato un id.");
+    catch (\Exception $e) {
+      echo json_encode($e->getMessage());
     }
   }
 
@@ -110,17 +118,19 @@ class AjaxController extends BaseController {
    * @return int
    */
   public function moveToTrashAction() {
-    if ($this->request->hasPost('id')) {
-      $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
-      echo json_encode($doc->moveToTrash());
-      $doc->save();
+    try {
+      if ($this->request->hasPost('id')) {
+        $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
+        echo json_encode($doc->moveToTrash());
+        $doc->save();
 
-      $this->view->disable();
+        $this->view->disable();
+      } else
+        throw new \RuntimeException("La risorsa non è più disponibile.");
     }
-    else {
-      throw new \RuntimeException("Non hai specificato un id.");
+    catch (\Exception $e) {
+      echo json_encode($e->getMessage());
     }
-
   }
 
 
@@ -129,15 +139,18 @@ class AjaxController extends BaseController {
    * @return int
    */
   public function restoreAction() {
-    if ($this->request->hasPost('id')) {
-      $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
-      echo json_encode($doc->restore());
-      $doc->save();
+    try {
+      if ($this->request->hasPost('id')) {
+        $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
+        echo json_encode($doc->restore());
+        $doc->save();
 
-      $this->view->disable();
+        $this->view->disable();
+      } else
+        throw new \RuntimeException("La risorsa non è più disponibile.");
     }
-    else {
-      throw new \RuntimeException("Non hai specificato un id.");
+    catch (\Exception $e) {
+      echo json_encode($e->getMessage());
     }
   }
 
