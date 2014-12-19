@@ -23,7 +23,6 @@ interface IVote {
   /** @name Voting Status */
   //!@{
 
-  const CANNOT_VOTE_YOUR_OWN_POST = -2; //!< The user cannot vote a post that belongs to himself.
   const UNCHANGED = 0; //!< The vote hasn't changed. You tried to replace the vote too late.
   const REGISTERED = 1; //!< The vote has been registered. You never voted before, so there is nothing to undo or replace.
   const DELETED = 2; //!< The vote has been deleted. For example you do a like then you unlike.
