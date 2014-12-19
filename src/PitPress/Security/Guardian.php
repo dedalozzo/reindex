@@ -20,8 +20,6 @@ use PitPress\Model\User;
  */
 class Guardian {
 
-  const NO_USER_LOGGED_IN = -1; //!< No user logged in. The user is a guest.
-
   private static $initialized = FALSE;
 
   protected static $currentUser;
