@@ -117,7 +117,7 @@ abstract class BaseController extends Controller {
     $this->assets = $this->di['assets'];
     $this->guardian = $this->di['guardian'];
 
-    $this->user = $this->guardian->getCurrentUser();
+    $this->user = $this->guardian->getUser();
 
     // It is just the primary domain, for example: `programmazione.it`.
     $this->domainName = $this->di['config']['application']['domainName'];
