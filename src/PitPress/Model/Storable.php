@@ -39,7 +39,7 @@ abstract class Storable extends Doc {
     $this->di = DI::getDefault();
     $this->couch = $this->di['couchdb'];
     $this->redis = $this->di['redis'];
-    $this->guardian = $this->di['guardian'];
+    $this->user = $this->di['guardian']->getUser();
   }
 
 
