@@ -14,8 +14,8 @@ class Versionable {
   string $versionNumber; //!< The document version number.
   string $previousVersionNumber; //!< The version number of the previous document revision.
   string $username; //!< The author username.
-  string $userId; //!< The user id of whom created the content.
-  string $editorId; //!< The user id of whom created the content.
+  string $creatorId; //!< The user id of whom created the content.
+  string $editorId; //!< The user id of whom modified the content.
   string $editSummary; //!< A brief explanation of an edit to a versionable content.
 
   //!@}
