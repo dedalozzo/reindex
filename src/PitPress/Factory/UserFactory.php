@@ -18,6 +18,7 @@ use Phalcon\DI;
 
 use ElephantOnCouch\Couch;
 use ElephantOnCouch\Opt\ViewQueryOpts;
+use PitPress\Security\AnonymousUser;
 
 
 /**
@@ -54,11 +55,11 @@ class UserFactory {
         setcookie("id", "", time(), "/", $di['config']['application']->serverName);
         setcookie("token", "", time(), "/", $di['config']['application']->serverName);
 
-        return NULL;
+        return new AnonymousUser();
       }
     }
     else
-      return NULL;
+      return new AnonymousUser();
   }
 
 
