@@ -64,7 +64,7 @@ abstract class Versionable extends Storable {
     if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
     if ($this->hasBeenSubmittedForPeerReview()) return;
 
-    if ($this->userId == $this->guardian->getCurrentUser()->id)
+    if ($this->creatorId == $this->guardian->getCurrentUser()->id)
       if ($this->hasBeenCreated() or $this->isDraft())
         $this->meta['status'] = DocStatus::SUBMITTED;
       else
@@ -154,7 +154,7 @@ abstract class Versionable extends Storable {
     if ($this->hasBeenMovedToTrash()) return;
 
     if (($this->guardian->getCurrentUser()->isModerator() && $this->isCurrent()) or
-        (($this->userId == $this->guardian->getCurrentUser()->id) && $this->isDraft())) {
+        (($this->creatorId == $this->guardian->getCurrentUser()->id) && $this->isDraft())) {
       $this->meta['prevStatus'] = $this->meta['status'];
       $this->meta['status'] = DocStatus::DELETED;
     }
@@ -167,11 +167,11 @@ abstract class Versionable extends Storable {
    * @brief Restores the document to its previous status, removing it from trash.
    */
   public function restore() {
-    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
 
     if ($this->hasBeenMovedToTrash() and
-        ($this->guardian->getCurrentUser()->isModerator() && ($this->trashmanId == $this->guardian->getCurrentUser()->id)) or
-        $this->guardian->getCurrentUser()->isAdmin()) {
+        ($this->user->isModerator() && ($this->trashmanId == $this->user->id)) or
+        $this->user->isAdmin()) {
       // In case the document has been deleted, restore it to its previous status.
       $this->meta['status'] = $this->meta['prevStatus'];
       unset($this->meta['prevStatus']);
@@ -182,11 +182,26 @@ abstract class Versionable extends Storable {
 
 
   /**
+   * @brief Gets information about all the previous versions.
+   * @return array
+   */
+  public function getPastVersionsInfo() {
+    // todo
+  }
+
+  //@}
+
+
+  /** @name Status Checking Methods */
+  //!@{
+
+  /**
    * @brief Returns `true` in case the provided status matches the current version status.
+   * @param[in] string $status The status to check.
    * @return bool
    */
-  protected function statusMatch($status) {
-    return ($this->meta["status"] == $status) ? TRUE : FALSE;
+  protected function checkStatus($status) {
+    return ($this->meta["status"] === $status) ? TRUE : FALSE;
   }
 
 
@@ -204,7 +219,7 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function hasBeenCreated() {
-    return $this->statusMatch(DocStatus::CREATED);
+    return $this->checkStatus(DocStatus::CREATED);
   }
 
 
@@ -213,7 +228,7 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function isDraft() {
-    return $this->statusMatch(DocStatus::DRAFT);
+    return $this->checkStatus(DocStatus::DRAFT);
   }
 
 
@@ -222,7 +237,7 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function isCurrent() {
-    return $this->statusMatch(DocStatus::CURRENT);
+    return $this->checkStatus(DocStatus::CURRENT);
   }
 
 
@@ -231,7 +246,7 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function hasBeenMovedToTrash() {
-    return $this->statusMatch(DocStatus::DELETED);
+    return $this->checkStatus(DocStatus::DELETED);
   }
 
 
@@ -240,7 +255,7 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function hasBeenSubmittedForPeerReview() {
-    return $this->statusMatch(DocStatus::SUBMITTED);
+    return $this->checkStatus(DocStatus::SUBMITTED);
   }
 
 
@@ -249,7 +264,7 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function hasBeenApproved() {
-    return $this->statusMatch(DocStatus::APPROVED);
+    return $this->checkStatus(DocStatus::APPROVED);
   }
 
 
@@ -258,7 +273,7 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function hasBeenRejected() {
-    return $this->statusMatch(DocStatus::REJECTED);
+    return $this->checkStatus(DocStatus::REJECTED);
   }
 
 
@@ -267,22 +282,10 @@ abstract class Versionable extends Storable {
    * @return bool
    */
   public function hasBeenReturnedForRevision() {
-    return $this->statusMatch(DocStatus::RETURNED);
+    return $this->checkStatus(DocStatus::RETURNED);
   }
 
   //@}
-
-
-
-  /**
-   * @brief Gets information about all the previous versions.
-   * @return array
-   */
-  public function getPastVersionsInfo() {
-    // todo
-  }
-
-  //!@}
 
 
   /**
@@ -303,7 +306,7 @@ abstract class Versionable extends Storable {
    */
   public function getUsername() {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setKey($this->userId);
+    $opts->doNotReduce()->setKey($this->creatorId);
     return $this->couch->queryView("users", "allNames", NULL, $opts)[0]['value'][0];
   }
 
@@ -314,7 +317,7 @@ abstract class Versionable extends Storable {
    */
   public function getGravatar() {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setKey($this->userId);
+    $opts->doNotReduce()->setKey($this->creatorId);
     $email = $this->couch->queryView("users", "allNames", NULL, $opts)[0]['value'][1];
     return 'http://gravatar.com/avatar/'.md5(strtolower($email)).'?d=identicon';
   }
@@ -360,24 +363,24 @@ abstract class Versionable extends Storable {
   }
 
 
-  public function getUserId() {
-    return $this->meta["userId"];
+  public function getCreatorId() {
+    return $this->meta["creatorId"];
   }
 
 
-  public function issetUserId() {
-    return isset($this->meta['userId']);
+  public function issetCreatorId() {
+    return isset($this->meta['creatorId']);
   }
 
 
-  public function setUserId($value) {
-    $this->meta["userId"] = $value;
+  public function setCreatorId($value) {
+    $this->meta["creatorId"] = $value;
   }
 
 
-  public function unsetUserId() {
-    if ($this->isMetadataPresent('userId'))
-      unset($this->meta['userId']);
+  public function unsetCreatorId() {
+    if ($this->isMetadataPresent('creatorId'))
+      unset($this->meta['creatorId']);
   }
 
 
