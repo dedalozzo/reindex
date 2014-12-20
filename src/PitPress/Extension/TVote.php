@@ -35,8 +35,8 @@ trait TVote {
    * @return int The voting status.
    */
   protected function vote($value) {
-    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
-    if ($this->guardian->getCurrentUser()->id == $this->userId) throw new Exception\CannotVoteYourOwnPostException('Non puoi votare il tuo stesso post.');
+    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if ($this->user->match($this->creatorId)) throw new Exception\CannotVoteYourOwnPostException('Non puoi votare il tuo stesso post.');
 
     $voted = $this->didUserVote($voteId);
 
@@ -68,7 +68,7 @@ trait TVote {
         throw new Exception\GracePeriodExpiredException("Non puoi cambiare il tuo voto perché è trascorso il tempo massimo.");
     }
     else {
-      $vote = Vote::create(Text::unversion($this->id), $this->guardian->getCurrentUser()->id, $value);
+      $vote = Vote::create(Text::unversion($this->id), $this->user->id, $value);
       $this->couch->saveDoc($vote);
       return IVote::REGISTERED;
     }
@@ -92,10 +92,10 @@ trait TVote {
 
   public function didUserVote(&$voteId = NULL) {
     // In case there is no user logged in returns false.
-    if ($this->guardian->isGuest()) return FALSE;
+    if ($this->user->isGuest()) return FALSE;
 
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([Text::unversion($this->id), $this->guardian->getCurrentUser()->id]);
+    $opts->doNotReduce()->setLimit(1)->setKey([Text::unversion($this->id), $this->user->id]);
 
     $result = $this->couch->queryView("votes", "perItemAndUser", NULL, $opts);
 
