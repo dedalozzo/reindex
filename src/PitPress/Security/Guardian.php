@@ -10,8 +10,10 @@
 namespace PitPress\Security;
 
 
+use ElephantOnCouch\Extension;;
+
 use PitPress\Factory\UserFactory;
-use PitPress\Model\User;
+
 
 
 /**
@@ -19,17 +21,18 @@ use PitPress\Model\User;
  * @nosubgrouping
  */
 class Guardian {
+  use Extension\TProperty;
 
   private static $initialized = FALSE;
 
-  protected static $currentUser;
+  protected $user;
 
 
   public function __construct($config) {
 
     if (!self::$initialized) {
       self::$initialized = TRUE;
-      self::$currentUser = UserFactory::getFromCookie();
+      $this->user = UserFactory::getFromCookie();
     }
 
   }
@@ -37,28 +40,19 @@ class Guardian {
 
   /**
    * @brief Returns the logged in user.
-   * @return \PitPress\Model\User
+   * @return IUser
    */
-  public function getCurrentUser() {
-    return self::$currentUser;
-  }
-
-
-  /**
-   * @brief Returns `true` if the current visitor is just a guest.
-   * @return bool
-   */
-  public function isGuest() {
-    return is_null(self::$currentUser);
+  public function getUser() {
+    return $this->user;
   }
 
 
   /**
    * @brief Impersonates the given user.
-   * @param[in] \PitPress\Model\User $user
+   * @param[in] IUser $user
    */
-  public function impersonate(User $user) {
-    self::$currentUser = $user;
+  public function impersonate(IUser $user) {
+    $this->user = $user;
   }
 
 }
