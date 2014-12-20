@@ -70,7 +70,7 @@ class ArticleController extends IndexController {
         $article = Article::create();
         $article->title = $this->request->getPost('title');
         $article->body = $this->request->getPost('body');
-        $article->userId = $this->user->id;
+        $article->creatorId = $this->user->id;
         $article->addMultipleTagsAtOnce($this->request->getPost('tags'));
 
         $article->approve();
