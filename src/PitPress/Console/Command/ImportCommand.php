@@ -126,7 +126,7 @@ class ImportCommand extends AbstractCommand {
     $article = Article::create($item->id);
 
     $article->type = 'article';
-    $article->userId = $item->userId;
+    $article->creatorId = $item->userId;
     $article->createdAt = (int)$item->unixTime;
     $article->publishedAt = $article->createdAt;
     $article->title = Text::convertCharset($item->title, TRUE);
@@ -158,7 +158,7 @@ class ImportCommand extends AbstractCommand {
     $book = Book::create($item->id);
 
     $book->type = 'book';
-    $book->userId = $item->userId;
+    $book->creatorId = $item->userId;
     $book->createdAt = (int)$item->unixTime;
     $book->publishedAt = $book->createdAt;
 
@@ -237,7 +237,7 @@ class ImportCommand extends AbstractCommand {
 
       $tag->createdAt = (int)$item->unixTime;
       $tag->name = Text::convertCharset(strtolower(str_replace(" ", "-", stripslashes($item->name))));
-      $tag->userId = $userId;
+      $tag->creatorId = $userId;
 
       $tag->approve();
 
@@ -279,7 +279,7 @@ class ImportCommand extends AbstractCommand {
 
     while ($item = mysqli_fetch_object($result)) {
       $post->id = $item->itemId;
-      $post->userId = $item->userId;
+      $post->creatorId = $item->userId;
       $post->createdAt = (int)$item->publishedAt;
       $post->publishedAt = $post->createdAt;
 
@@ -324,7 +324,7 @@ class ImportCommand extends AbstractCommand {
         $replay->id = UUID::generate(UUID::UUID_RANDOM, UUID::FMT_STRING);
         $replay->createdAt = (int)$item->unixTime;
         $replay->postId = $post->unversionId;
-        $replay->userId = $item->userId;
+        $replay->creatorId = $item->userId;
         $replay->body = $this->convertText($item->body, $item->idComment);
         $replay->html = $this->markdown->parse($replay->body);
       }
@@ -379,7 +379,7 @@ class ImportCommand extends AbstractCommand {
       if (empty($body)) {
         $article->id = $page->id;
         $article->type = 'article';
-        $article->userId = $page->userId;
+        $article->creatorId = $page->userId;
         $article->createdAt = (int)$page->unixTime;
         $article->publishedAt = $article->createdAt;
         $article->title = $this->pruneTitle($title, $subtitle);
