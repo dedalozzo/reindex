@@ -67,10 +67,10 @@ abstract class ListController extends BaseController {
     $replies = $this->couch->queryView("replies", "perPost", $ids, $opts);
 
     // Users.
-    $userIds = array_column(array_column($posts->asArray(), 'value'), 'userId');
+    $creatorIds = array_column(array_column($posts->asArray(), 'value'), 'creatorId');
     $opts->reset();
     $opts->doNotReduce()->includeMissingKeys();
-    $users = $this->couch->queryView("users", "allNames", $userIds, $opts);
+    $users = $this->couch->queryView("users", "allNames", $creatorIds, $opts);
 
     $entries = [];
     $postCount = count($posts);
