@@ -167,11 +167,10 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @brief Removes the post protection.
    */
   public function unprotect() {
-    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
     if (!$this->isProtected()) return;
 
-    if ($this->guardian->getCurrentUser()->isAdmin() or
-        ($this->protectorId == $this->guardian->getCurrentUser()->id && $this->guardian->getCurrentUser()->isModerator()))
+    if ($this->user->isAdmin() or ($this->user->isModerator() && $this->user->match($this->protectorId)))
       if ($this->isCurrent() or $this->isDraft()) {
         $this->unsetMetadata('protection');
         $this->unsetMetadata('protectorId');
@@ -201,10 +200,10 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @brief Hides the post.
    */
   public function hide() {
-    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
     if (!$this->isVisible()) return;
 
-    if ($this->guardian->getCurrentUser()->isAdmin())
+    if ($this->user->isAdmin())
       if ($this->isCurrent() or $this->isDraft())
         $this->meta['visible'] = FALSE;
       else
@@ -218,10 +217,10 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @brief Makes the post to be listed.
    */
   public function show() {
-    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
     if ($this->isVisible()) return;
 
-    if ($this->guardian->getCurrentUser()->isAdmin())
+    if ($this->user->isAdmin())
       if ($this->isCurrent() or $this->isDraft())
         $this->meta['visible'] = TRUE;
       else
@@ -528,7 +527,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
       if (is_null($row['id'])) {
         $tag = Tag::create();
         $tag->name = $row['key'];
-        $tag->userId = $this->userId;
+        $tag->creatorId = $this->creatorId;
         $tag->approve();
         $tag->save();
 
