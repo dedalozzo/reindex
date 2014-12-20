@@ -27,10 +27,10 @@ trait TStar {
 
   public function isStarred(&$starId = NULL) {
     // In case there is no user logged in, returns false.
-    if ($this->guardian->isGuest()) return FALSE;
+    if ($this->user->isGuest()) return FALSE;
 
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([Text::unversion($this->id), $this->guardian->getCurrentUser()->id]);
+    $opts->doNotReduce()->setLimit(1)->setKey([Text::unversion($this->id), $this->user->id]);
 
     $result = $this->couch->queryView("stars", "perItem", NULL, $opts);
 
@@ -44,7 +44,7 @@ trait TStar {
 
 
   public function star() {
-    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
 
     if ($this->isStarred($starId)) {
       $star = $this->couch->getDoc(Couch::STD_DOC_PATH, $starId);
@@ -52,7 +52,7 @@ trait TStar {
       return IStar::UNSTARRED;
     }
     else {
-      $doc = Star::create($this->guardian->getCurrentUser()->id, $this);
+      $doc = Star::create($this->user->id, $this);
       $this->couch->saveDoc($doc);
       return IStar::STARRED;
     }
