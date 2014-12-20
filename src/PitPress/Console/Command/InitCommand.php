@@ -90,7 +90,7 @@ function($doc) use ($emit) {
         'createdAt' => $doc->createdAt,
         'modifiedAt' => $doc->modifiedAt,
         'publishedAt' => $doc->publishedAt,
-        'userId' => $doc->userId,
+        'creatorId' => $doc->creatorId,
         'tags' => $doc->tags
       ]);
 };
@@ -239,12 +239,12 @@ MAP;
     $doc->addHandler(postsPerDateByTagAndType());
 
 
-    // @params: userId
+    // @params: creatorId
     function postsPerDateByUser() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->status == 'current')
-    $emit([$doc->userId, $doc->publishedAt]);
+    $emit([$doc->creatorId, $doc->publishedAt]);
 };
 MAP;
 
@@ -258,12 +258,12 @@ MAP;
     $doc->addHandler(postsPerDateByUser());
 
 
-    // @params: userId, type
+    // @params: creatorId, type
     function postsPerDateByUserAndType() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->status == 'current')
-    $emit([$doc->userId, $doc->type, $doc->publishedAt]);
+    $emit([$doc->creatorId, $doc->type, $doc->publishedAt]);
 };
 MAP;
 
@@ -435,7 +435,7 @@ MAP;
 function($doc) use ($emit) {
   if (isset($doc->versionable)) {
 
-    $editorId = isset($doc->editorId) ? $doc->editorId : $doc->userId;
+    $editorId = isset($doc->editorId) ? $doc->editorId : $doc->creatorId;
     $editSummary = isset($doc->editSummary) ? $doc->editSummary : '';
 
     $emit($doc->unversionId, [
