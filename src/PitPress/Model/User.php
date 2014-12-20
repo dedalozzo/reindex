@@ -14,13 +14,14 @@ namespace PitPress\Model;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Extension;
+use PitPress\Security\IUser;
 
 
 /**
  * @brief This class is used to represent a registered user.
  * @nosubgrouping
  */
-class User extends Storable implements Extension\ICount {
+class User extends Storable implements IUser, Extension\ICount {
   use Extension\TCount;
 
 
@@ -118,7 +119,7 @@ class User extends Storable implements Extension\ICount {
 
 
   /**
-   * @brief Returns `true` if the user has been confirmed.
+   * @copydoc IUser.isConfirmed()
    */
   public function isConfirmed() {
     return isset($this->meta['confirmed']);
@@ -129,6 +130,17 @@ class User extends Storable implements Extension\ICount {
 
   /** @name Access Control Management Methods */
   //!@{
+
+  /**
+   * @brief Returns `true` if the provided user id matches the current one.
+   * @details This method is useful to check the ownership of a post, for example.
+   * @param[in] string $userId The user id to match.
+   * @raturn bool
+   */
+  public function match($userId) {
+    return ($this->id === $userId) ? TRUE : FALSE;
+  }
+
 
   /**
    * @brief Promotes the user to administrator.
@@ -167,16 +179,16 @@ class User extends Storable implements Extension\ICount {
 
 
   /**
-   * @brief Returns `true` in case the user is an administrator.
+   * @brief This implementation returns always `false`.
+   * @return bool
    */
-  public function isAdmin() {
-    return isset($this->meta['admin']);
+  public function isGuest() {
+    return FALSE;
   }
 
 
   /**
-   * @brief Returns `true` in case the user is a moderator.
-   * @details A user can be made moderator by election.
+   * @copydoc IUser.isModerator()
    */
   public function isModerator() {
     return isset($this->meta['moderator']);
@@ -184,8 +196,15 @@ class User extends Storable implements Extension\ICount {
 
 
   /**
-   * @brief Returns `true` in case the user has the ability to edit contents.
-   * @details An user can obtain this privilege earning reputation.
+   * @copydoc IUser.isAdmin()
+   */
+  public function isAdmin() {
+    return isset($this->meta['admin']);
+  }
+
+
+  /**
+   * @copydoc IUser.isEditor()
    */
   public function isEditor() {
     // todo
@@ -193,8 +212,7 @@ class User extends Storable implements Extension\ICount {
 
 
   /**
-   * @brief Returns `true` in case the user has the ability to approve or reject suggested edits.
-   * @details An user can obtain this privilege earning reputation.
+   * @copydoc IUser.isReviewer()
    */
   public function isReviewer() {
     // todo
