@@ -14,6 +14,7 @@ class Post {
   int $legacyId; //!< Legacy identifier, in case you import from an old password.
   string $title; //!< Title.
   string $publishedAt; //!< Publishing timestamp.
+  string $protectorId; //!< The user id of whom protected the content.
 
   //!@}
 
