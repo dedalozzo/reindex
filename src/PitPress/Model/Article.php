@@ -32,10 +32,10 @@ class Article extends Post {
    * @details When a user works on an article, he wants save many time the item before submit it for peer revision.
    */
   public function markAsDraft() {
-    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
     if ($this->isDraft()) return;
 
-    if ($this->hasBeenCreated() && ($this->userId == $this->guardian->getCurrentUser()->id)) {
+    if ($this->hasBeenCreated() && $this->user->match($this->creatorId)) {
       $this->meta['status'] = Enum\DocStatus::DRAFT;
 
       // Used to group by year, month and day.
