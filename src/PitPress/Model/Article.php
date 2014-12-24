@@ -23,7 +23,7 @@ class Article extends Post {
 
 
   public function save($deferred = FALSE) {
-    parent::save();
+    parent::save($deferred);
   }
 
 
