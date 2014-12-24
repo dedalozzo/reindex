@@ -25,7 +25,6 @@ $di->setShared('markdown',
           Hoedown::SKIP_HTML => TRUE, // Strip all HTML tags.
           Hoedown::ESCAPE => FALSE, // Escape all HTML.
           //Hoedown::EXPAND_TABS => FALSE, // todo
-          Hoedown::SAFELINK	=> FALSE, // Only allow links to safe protocols.
           Hoedown::HARD_WRAP => FALSE, //	Render each linebreak as <br>.
           Hoedown::USE_XHTML => FALSE, // Render XHTML.
           Hoedown::TASK_LIST => FALSE, // Render task lists.
