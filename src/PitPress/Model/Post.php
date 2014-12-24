@@ -48,6 +48,10 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
   //!@}
 
+  // Since the user can add new tags in a second moment, we must store in a member the original tags, otherwise the zRem
+  // methods will not work properly.
+  private $zRemTags;
+
   protected $markdown; // Stores the Markdown parser instance.
   protected $monolog; // Stores the logger instance.
 
@@ -59,6 +63,8 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
     $this->meta['supertype'] = 'post';
     $this->meta['visible'] = TRUE;
+
+    $this->zRemTags = ($this->isMetadataPresent('tags')) ? $this->getMetadata('tags') : [];
   }
 
 
@@ -346,14 +352,16 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     // Order set with all the posts of a specific type: article, question, ecc.
     $this->zAddScore(self::POP_SET.$this->type, $date, $popularity, $id);
 
-    foreach ($this->tags as $tag) {
-      $tagId = $tag['key']; // We need the unversion identifier.
+    if ($this->isMetadataPresent('tags')) {
+      $tags = $this->meta['tags'];
 
-      // Order set with all the posts related to a specific tag.
-      $this->zAddScore(self::POP_SET.$tagId.'_'.'post', $date, $popularity, $id);
+      foreach ($tags as $tagId) {
+        // Order set with all the posts related to a specific tag.
+        $this->zAddScore(self::POP_SET.$tagId.'_'.'post', $date, $popularity, $id);
 
-      // Order set with all the post of a specific type, related to a specific tag.
-      $this->zAddScore(self::POP_SET.$tagId.'_'.$this->type, $date, $popularity, $id);
+        // Order set with all the post of a specific type, related to a specific tag.
+        $this->zAddScore(self::POP_SET.$tagId.'_'.$this->type, $date, $popularity, $id);
+      }
     }
   }
 
@@ -371,14 +379,12 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     // Order set with all the posts of a specific type: article, question, ecc.
     $this->zRemScore(self::POP_SET.$this->type, $date, $id);
 
-    foreach ($this->tags as $tag) {
-      $tagId = $tag['key']; // We need the unversion identifier.
-
+    foreach ($this->zRemTags as $tagId) {
       // Order set with all the posts related to a specific tag.
-      $this->zRemScore(self::POP_SET.$tagId.'_'.'post', $date, $id);
+      $this->zRemScore(self::POP_SET . $tagId . '_' . 'post', $date, $id);
 
       // Order set with all the post of a specific type, related to a specific tag.
-      $this->zRemScore(self::POP_SET.$tagId.'_'.$this->type, $date, $id);
+      $this->zRemScore(self::POP_SET . $tagId . '_' . $this->type, $date, $id);
     }
   }
 
@@ -435,22 +441,18 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     // Order set with all the posts of a specific type: article, question, ecc.
     $this->redis->zRem(self::UPD_SET.$this->type, $id);
 
-    if ($this->isMetadataPresent('tags')) {
-      $tags = $this->meta['tags'];
+    foreach ($this->zRemTags as $tagId) {
+      // Order set with all the posts related to a specific tag.
+      $this->redis->zRem(self::UPD_SET.$tagId.'_'.'post', $id);
 
-      foreach ($tags as $tagId) {
-        // Order set with all the posts related to a specific tag.
-        $this->redis->zRem(self::UPD_SET.$tagId.'_'.'post', $id);
+      // Order set with all the posts of a specific type, related to a specific tag.
+      $this->redis->zRem(self::UPD_SET.$tagId.'_'.$this->type, $id);
 
-        // Order set with all the posts of a specific type, related to a specific tag.
-        $this->redis->zRem(self::UPD_SET.$tagId.'_'.$this->type, $id);
+      // Used to get a list of tags recently updated.
+      $this->redis->zRem(self::UPD_SET.'tags'.'_'.'post', $tagId);
 
-        // Used to get a list of tags recently updated.
-        $this->redis->zRem(self::UPD_SET.'tags'.'_'.'post', $tagId);
-
-        // Used to get a list of tags, in relation to a specific type, recently updated.
-        $this->redis->zRem(self::UPD_SET.'tags'.'_'.$this->type, $tagId);
-      }
+      // Used to get a list of tags, in relation to a specific type, recently updated.
+      $this->redis->zRem(self::UPD_SET.'tags'.'_'.$this->type, $tagId);
     }
   }
 
