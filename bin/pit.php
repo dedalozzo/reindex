@@ -20,6 +20,8 @@ use Monolog\ErrorHandler;
 use Monolog\Handler\StreamHandler;
 
 
+error_reporting(E_ALL & ~E_NOTICE);
+
 try {
   $root = realpath(__DIR__."/../");
 
@@ -47,6 +49,7 @@ try {
   require $root."/services/redis.php";
   require $root."/services/mysql.php";
   require $root."/services/markdown.php";
+  require $root."/services/guardian.php";
 
   // Creates the application object.
   $console = new PitPressConsole('PitPress Console', '0.1.0');
