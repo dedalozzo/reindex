@@ -25,6 +25,7 @@ use PitPress\Model\Reply;
 use PitPress\Model\Accessory\Star;
 use PitPress\Model\Accessory\Subscription;
 use PitPress\Helper\Text;
+use PitPress\Security\System;
 
 use ElephantOnCouch\Generator\UUID;
 
@@ -136,6 +137,7 @@ class ImportCommand extends AbstractCommand {
 
     // We finally save the article.
     try {
+      $article->user = new System();
       $article->approve();
       $article->save(TRUE);
     }
@@ -198,6 +200,7 @@ class ImportCommand extends AbstractCommand {
 
     // We finally save the book.
     try {
+      $book->user = new System();
       $book->approve();
       $book->save(TRUE);
     }
@@ -239,6 +242,7 @@ class ImportCommand extends AbstractCommand {
       $tag->name = Text::convertCharset(strtolower(str_replace(" ", "-", stripslashes($item->name))));
       $tag->creatorId = $userId;
 
+      $tag->user = new System();
       $tag->approve();
 
       $this->couch->saveDoc($tag);
@@ -418,6 +422,7 @@ class ImportCommand extends AbstractCommand {
 
       $this->importClassifications($article);
 
+      $article->user = new System();
       $article->approve();
       $article->save(TRUE);
     }
