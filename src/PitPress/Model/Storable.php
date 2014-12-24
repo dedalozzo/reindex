@@ -12,12 +12,10 @@ namespace PitPress\Model;
 
 
 use ElephantOnCouch\Doc\Doc;
-use ElephantOnCouch\Couch;
 
 use Phalcon\DI;
 
 use PitPress\Helper;
-use PitPress\Security\Guardian;
 
 
 /**
@@ -29,7 +27,8 @@ abstract class Storable extends Doc {
   protected $di; // Stores the default Dependency Injector.
   protected $couch; // Stores the ElephantOnCouch client instance.
   protected $redis; // Stores the Redis client instance.
-  protected $guardian; // Stores the Guardian instance.
+
+  protected $user; // Stores the current user.
 
 
   /**
