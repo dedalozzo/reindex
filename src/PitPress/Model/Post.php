@@ -114,10 +114,10 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @see http://meta.stackexchange.com/questions/10582/what-is-a-closed-or-on-hold-question
    */
   public function close() {
-    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
     if ($this->isClosed()) return;
 
-    if ($this->guardian->getCurrentUser()->isModerator())
+    if ($this->user->isModerator())
       if ($this->isCurrent() or $this->isDraft())
         $this->meta['protection'] = self::CLOSED_PL;
       else
@@ -140,13 +140,13 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @see http://meta.stackexchange.com/questions/22228/what-is-a-locked-post
    */
   public function lock() {
-    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
     if ($this->isLocked()) return;
 
-    if ($this->guardian->getCurrentUser()->isModerator())
+    if ($this->user->isModerator())
       if ($this->isCurrent() or $this->isDraft()) {
         $this->meta['protection'] = self::LOCKED_PL;
-        $this->meta['protectorId'] = $this->guardian->getCurrentUser()->id;
+        $this->meta['protectorId'] = $this->user->id;
       }
       else
         throw new Exception\IncompatibleStatusException("Stato incompatible con l'operazione richiesta.");
