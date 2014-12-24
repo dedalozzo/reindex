@@ -27,6 +27,7 @@ class BadgeLoader {
   protected $guardian;
   protected $couch;
   protected $monolog;
+  protected $user;
   protected $folder;
   protected $badges = [];
 
@@ -35,6 +36,7 @@ class BadgeLoader {
     $this->guardian = $di['guardian'];
     $this->couch = $di['couchdb'];
     $this->monolog = $di['monolog'];
+    $this->user = $this->guardian->getUser();
     $this->folder = $folder;
     $this->scanForBadges();
   }
@@ -52,7 +54,7 @@ class BadgeLoader {
 
       $keys = [];
       foreach ($classes as $class)
-        $keys[] = [$class, $this->guardian->getCurrentUser()->id];
+        $keys[] = [$class, $this->user->id];
 
       $result = $this->couch->queryView("badges", "perClassAndUser", $keys, $opts);
     }
@@ -69,7 +71,7 @@ class BadgeLoader {
 
 
   private function setEarnedCount() {
-    if (!is_null($this->guardian->getCurrentUser()))
+    if (!$this->user->isGuest())
       $this->setAwardedCount(TRUE);
   }
 
