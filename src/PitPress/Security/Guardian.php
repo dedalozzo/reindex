@@ -23,18 +23,13 @@ use PitPress\Factory\UserFactory;
 class Guardian {
   use Extension\TProperty;
 
-  private static $initialized = FALSE;
-
-  protected $user;
+  protected static $user = NULL;
 
 
   public function __construct($config) {
 
-    if (!self::$initialized) {
-      self::$initialized = TRUE;
-      $this->user = UserFactory::getFromCookie();
-    }
-
+    if (is_null(self::$user))
+      self::$user = UserFactory::getFromCookie();
   }
 
 
@@ -43,7 +38,7 @@ class Guardian {
    * @return IUser
    */
   public function getUser() {
-    return $this->user;
+    return self::$user;
   }
 
 
@@ -52,7 +47,7 @@ class Guardian {
    * @param[in] IUser $user
    */
   public function impersonate(IUser $user) {
-    $this->user = $user;
+    self::$user = $user;
   }
 
 }
