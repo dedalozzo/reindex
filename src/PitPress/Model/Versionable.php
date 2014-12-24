@@ -205,6 +205,15 @@ abstract class Versionable extends Storable {
 
 
   /**
+   * @brief Returns the version status.
+   * @return string
+   */
+  public function getStatus() {
+    return $this->meta["status"];
+  }
+
+
+  /**
    * @brief Returns `true` if this document has just been created, `false` otherwise.
    * @return bool
    */
@@ -413,27 +422,6 @@ abstract class Versionable extends Storable {
   public function unsetEditSummary() {
     if ($this->isMetadataPresent('editSummary'))
       unset($this->meta['editSummary']);
-  }
-
-
-  public function getStatus() {
-    return $this->meta["status"];
-  }
-
-
-  public function issetStatus() {
-    return isset($this->meta['status']);
-  }
-
-
-  public function setStatus($value) {
-    $this->meta["status"] = $value;
-  }
-
-
-  public function unsetStatus() {
-    if ($this->isMetadataPresent('status'))
-      unset($this->meta['status']);
   }
 
   //! @endcond
