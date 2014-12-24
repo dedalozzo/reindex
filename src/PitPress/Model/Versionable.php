@@ -61,10 +61,10 @@ abstract class Versionable extends Storable {
    * @brief Submits the document for peer review.
    */
   public function submit() {
-    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
     if ($this->hasBeenSubmittedForPeerReview()) return;
 
-    if ($this->creatorId == $this->guardian->getCurrentUser()->id)
+    if ($this->user->match($this->creatorId))
       if ($this->hasBeenCreated() or $this->isDraft())
         $this->meta['status'] = DocStatus::SUBMITTED;
       else
@@ -78,9 +78,9 @@ abstract class Versionable extends Storable {
    * @brief Approves the document revision, making of it the current version.
    */
   public function approve() {
-    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
 
-    if ($this->guardian->getCurrentUser()->isModerator())
+    if ($this->user->isModerator())
       if ($this->hasBeenCreated() or $this->isDraft() or $this->hasBeenSubmittedForPeerReview())
         $this->meta['status'] = DocStatus::CURRENT;
       else
@@ -95,11 +95,11 @@ abstract class Versionable extends Storable {
    * @param[in] The reason why the document has been returned for revision.
    */
   public function returnForRevision($reason) {
-    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
     if ($this->hasBeenReturnedForRevision()) return;
 
-    if (($this->guardian->getCurrentUser()->isModerator() && $this->hasBeenSubmittedForPeerReview()) or
-        ($this->guardian->getCurrentUser()->isAdmin() && $this->isCurrent())) {
+    if (($this->user->isModerator() && $this->hasBeenSubmittedForPeerReview()) or
+        ($this->user->isAdmin() && $this->isCurrent())) {
       $this->meta['status'] = DocStatus::RETURNED;
       $this->meta['rejectReason'] = $reason;
       // todo: send a notification to the user
@@ -115,9 +115,9 @@ abstract class Versionable extends Storable {
    * @param[in] The reason why the revision has been rejected.
    */
   public function reject($reason) {
-    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
 
-    if ($this->guardian->getCurrentUser()->isModerator())
+    if ($this->user->isModerator())
       if ($this->hasBeenSubmittedForPeerReview()) {
         $this->meta['status'] = DocStatus::REJECTED;
         $this->meta['rejectReason'] = $reason;
@@ -135,9 +135,9 @@ abstract class Versionable extends Storable {
    * @param[in] Reverts to the specified version. If a version is not specified it takes the previous one.
    */
   public function revert($versionNumber = NULL) {
-    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
 
-    if ($this->guardian->getCurrentUser()->isModerator()) {
+    if ($this->user->isModerator()) {
       $this->meta['status'] = DocStatus::APPROVED;
       // todo
     }
@@ -150,11 +150,10 @@ abstract class Versionable extends Storable {
    * @brief Moves the document to the trash.
    */
   public function moveToTrash() {
-    if ($this->guardian->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
     if ($this->hasBeenMovedToTrash()) return;
 
-    if (($this->guardian->getCurrentUser()->isModerator() && $this->isCurrent()) or
-        (($this->creatorId == $this->guardian->getCurrentUser()->id) && $this->isDraft())) {
+    if (($this->user->isModerator() && $this->isCurrent()) or ($this->user->match($this->creatorId) && $this->isDraft())) {
       $this->meta['prevStatus'] = $this->meta['status'];
       $this->meta['status'] = DocStatus::DELETED;
     }
