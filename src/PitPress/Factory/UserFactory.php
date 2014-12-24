@@ -19,6 +19,7 @@ use Phalcon\DI;
 use ElephantOnCouch\Couch;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 use PitPress\Security\AnonymousUser;
+use PitPress\Security\System;
 
 
 /**
@@ -33,6 +34,9 @@ class UserFactory {
    * @return User An instance of the user has been recognized by his cookie.
    */
   public static function getFromCookie() {
+    // A console script runs as System user.
+    if (php_sapi_name() == 'cli') return new System();
+
     $di = DI::getDefault();
     $couch = $di['couchdb'];
     $security = $di['security'];
