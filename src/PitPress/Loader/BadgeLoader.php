@@ -42,14 +42,14 @@ class BadgeLoader {
   }
 
 
-  private function setAwardedCount($forCurrentUser = FALSE) {
+  private function setAwardedCount($forUser = FALSE) {
     $opts = new ViewQueryOpts();
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
 
     $classes = array_column($this->badges, 'class');
 
-    if ($forCurrentUser) {
+    if ($forUser) {
       $field = 'earned';
 
       $keys = [];
