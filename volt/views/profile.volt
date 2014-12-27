@@ -12,22 +12,22 @@
   <div class="ghost gutter-plus" style="margin-top: 200px;">
     <div style="position: relative;">
       <img id="avatar" class="img-polaroid pull-left" src="{{ user.getGravatar(user.email) }}&s=160">
-      {% if currentUser is defined and user.id == currentUser.id %}
+      {% if user.isMember() and user.match(profile.id) %}
       <a class="change-avatar" href="http://it.gravatar.com/"><i class="icon-camera"></i>CAMBIA FOTO</a>
       {% endif %}
     </div>
-    <div class="full-name">{% if user.firstName is defined %}{{ user.firstName }}{% endif %} {% if user.lastName is defined %}{{ user.lastName }}{% endif %}</div>
+    <div class="full-name">{% if profile.firstName is defined %}{{ profile.firstName }}{% endif %} {% if profile.lastName is defined %}{{ profile.lastName }}{% endif %}</div>
     <div class="pull-right" style="margin-top: 148px;">
-      {% if currentUser is defined and (user.id == currentUser.id or currentUser.isAdmin()) %}
+      {% if user.isMember() and (user.match(profile.id) or user.isAdmin()) %}
       <a class="btn blue" href="#"><i class="icon-user"></i> MODIFICA</a>
       {% endif %}
-      {% if currentUser is defined and currentUser.isAdmin() %}
+      {% if user.isAdmin() %}
       <a class="btn" href="#"><i class="icon-flag"></i> BANNA</a>
       {% endif %}
     </div>
   </div>
 
-  {% set resourceName = user.username %}
+  {% set resourceName = profile.username %}
   {% set controllerPath = '/' %}
   {% include "partials/navigation/tabs/profile.volt" %}
   {% include "partials/navigation/tabs.volt" %}
@@ -59,15 +59,15 @@
 
     {#
     <blockquote>
-      {% if user.firstName is defined %}
-        Mi chiamo {{ user.firstName|upper }} {{ user.lastName|upper }}.
+      {% if profile.firstName is defined %}
+        Mi chiamo {{ profile.firstName|upper }} {{ profile.lastName|upper }}.
       {% else %}
-        {{ user.username }}
+        {{ profile.username }}
       {% endif %}
-      {% if user.birthday is defined %}
-        Ho {{ user.getAge() }} anni.
+      {% if profile.birthday is defined %}
+        Ho {{ profile.getAge() }} anni.
       {% endif %}
-      Mi sono iscritto il {{ user.getElapsedTimeSinceRegistration()|lower }}.
+      Mi sono iscritto il {{ profile.getElapsedTimeSinceRegistration()|lower }}.
       {% if lastVisit != "" %}
         La mia ultima visita risale al {{ lastVisit|lower }}.
       {% endif %}
