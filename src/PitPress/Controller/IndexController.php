@@ -213,7 +213,7 @@ class IndexController extends ListController {
    * @brief Page index.
    */
   public function indexAction() {
-    if (isset($this->user)) {
+    if ($this->user->isMember()) {
       $this->view->setVar('title', 'Home');
       $this->actionName = 'newest';
 
