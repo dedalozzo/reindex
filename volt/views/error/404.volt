@@ -24,8 +24,8 @@
       </p>
     </div>
 
-    {% if currentUser is defined %}
-      {% set username = currentUser.username %}
+    {% if user.isMember() %}
+      {% set username = user.username %}
     {% else %}
       {% set username = 'ospite' %}
     {% endif %}
