@@ -8,7 +8,7 @@
   {% set hitsCount = post.getHitsCount() %}
   {% set repliesCount = post.getRepliesCount() %}
 
-  <div id="page-title"><button class="btn btn-star {% if post.isStarred(currentUser) %} active{% endif %}" title="aggiungi ai preferiti"><i class="icon-star icon-largest"></i></button> {{ post.title }}</div>
+  <div id="page-title"><button class="btn btn-star {% if post.isStarred(user) %} active{% endif %}" title="aggiungi ai preferiti"><i class="icon-star icon-largest"></i></button> {{ post.title }}</div>
   <hr class="fade-long">
   <div class="column-left">
 
@@ -61,10 +61,10 @@
           </section>
         </div>
         <ul class="list item-buttons gutter">
-          <li><button class="btn btn-like {% if post.didUserVote(currentUser) %} active{% endif %}" title="mi piace"><i class="icon-thumbs-up icon-largest"></i></button></li>
+          <li><button class="btn btn-like {% if post.didUserVote(user) %} active{% endif %}" title="mi piace"><i class="icon-thumbs-up icon-largest"></i></button></li>
           <li><button class="btn btn-link score">{{ post.getScore() }}</button></li>
           <li class="space"></li>
-          <li><button class="btn btn-star {% if post.isStarred(currentUser) %} active{% endif %}" title="aggiungi ai preferiti"><i class="icon-star icon-large"></i></button></li>
+          <li><button class="btn btn-star {% if post.isStarred(user) %} active{% endif %}" title="aggiungi ai preferiti"><i class="icon-star icon-large"></i></button></li>
           <li>
             <button class="btn btn-icon blue" title="condividi la domanda" data-dropdown="#dropdown-share"><i class="icon-share icon-large"></i></button>
             <div id="dropdown-share" class="dropdown dropdown-relative dropdown-tip">
@@ -138,7 +138,7 @@
         </section>
       </div>
       <ul class="list item-buttons gutter">
-        <li><button class="btn btn-like {% if reply.didUserVote(currentUser) %} active {% endif %} red" title="la risposta mi piace"><i class="icon-thumbs-up icon-largest"></i></button></li>
+        <li><button class="btn btn-like {% if reply.didUserVote(user) %} active {% endif %} red" title="la risposta mi piace"><i class="icon-thumbs-up icon-largest"></i></button></li>
         <li><button class="btn btn-link score">{{ reply.getScore() }}</button></li>
         <li><button class="btn btn-accept" title="accetta la risposta"><i class="icon-ok icon-largest"></i></button></li>
         <li class="space"></li>
