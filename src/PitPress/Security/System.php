@@ -44,6 +44,15 @@ class System implements IUser {
 
 
   /**
+   * @brief This implementation returns always `false`.
+   * @return bool
+   */
+  public function isMember() {
+    return FALSE;
+  }
+
+
+  /**
    * @brief This implementation returns always `true`.
    * @return bool
    */
