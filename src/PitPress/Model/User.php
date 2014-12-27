@@ -188,6 +188,15 @@ class User extends Storable implements IUser, Extension\ICount {
 
 
   /**
+   * @brief This implementation returns always `true`.
+   * @return bool
+   */
+  public function isMember() {
+    return TRUE;
+  }
+
+
+  /**
    * @copydoc IUser.isModerator()
    */
   public function isModerator() {
