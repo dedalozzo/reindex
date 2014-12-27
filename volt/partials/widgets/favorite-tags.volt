@@ -1,5 +1,5 @@
-{% if currentUser is defined %}
-  {% set favoriteTags = currentUser.getFavoriteTags() %}
+{% if user.isMember() %}
+  {% set favoriteTags = user.getFavoriteTags() %}
   {% if !(favoriteTags is empty) %}
   <ul class="list item-tags gutter-minus">
     <li class="title">Tags preferiti</li>
