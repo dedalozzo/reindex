@@ -45,7 +45,7 @@ abstract class ListController extends BaseController {
     Helper\ArrayHelper::unversion($ids);
 
     // Likes.
-    if (isset($this->user)) {
+    if ($this->user->isMember()) {
       $opts->reset();
       $opts->doNotReduce()->includeMissingKeys();
 
@@ -92,7 +92,7 @@ abstract class ListController extends BaseController {
       $entry->hitsCount = $this->redis->hGet($entry->id, 'hits');
       $entry->score = is_null($scores[$i]['value']) ? 0 : $scores[$i]['value'];
       $entry->repliesCount = is_null($replies[$i]['value']) ? 0 : $replies[$i]['value'];
-      $entry->liked = is_null($this->user) || is_null($likes[$i]['value']) ? FALSE : TRUE;
+      $entry->liked = $this->user->isGuest() || is_null($likes[$i]['value']) ? FALSE : TRUE;
 
       // Tags.
       $opts->reset();
