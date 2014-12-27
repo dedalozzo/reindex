@@ -38,6 +38,13 @@ interface IUser {
 
 
   /**
+   * @brief Returns `true` in case the user is a community's member.
+   * @return bool
+   */
+  function isMember();
+
+
+  /**
    * @brief Returns `true` in case the user is a moderator.
    * @return bool
    */
