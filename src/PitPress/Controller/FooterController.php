@@ -42,6 +42,7 @@ class FooterController extends BaseController {
    * @brief Displays a page with the legal info.
    */
   public function legalAction() {
+    //phpinfo();
     return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
     $this->view->disableLevel(View::LEVEL_LAYOUT);
   }
