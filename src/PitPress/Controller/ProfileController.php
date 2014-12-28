@@ -40,7 +40,7 @@ class ProfileController extends ListController {
     $user = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $result[0]['value']);
     $user->incHits();
 
-    $this->view->setVar('user', $user);
+    $this->view->setVar('profile', $user);
 
     return $user;
   }
