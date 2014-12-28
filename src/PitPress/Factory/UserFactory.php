@@ -11,15 +11,16 @@
 //! This is the namespace of all classes that implement the factory pattern.
 namespace PitPress\Factory;
 
-
-use PitPress\Model\User;
-
 use Phalcon\DI;
 
 use ElephantOnCouch\Couch;
 use ElephantOnCouch\Opt\ViewQueryOpts;
+use ElephantOnCouch\Exception\ServerErrorException;
+
+use PitPress\Model\User;
 use PitPress\Security\AnonymousUser;
 use PitPress\Security\System;
+use PitPress\Helper\Cookie;
 
 
 /**
@@ -27,6 +28,7 @@ use PitPress\Security\System;
  * @nosubgrouping
  */
 class UserFactory {
+
 
   /**
    * @brief This function tries to recognize a user from his ID and the secret token. In case the user has been
@@ -45,20 +47,19 @@ class UserFactory {
       $id = $_COOKIE['id'];
       $token = $_COOKIE['token'];
 
-      // Gets the user.
-      $user = $couch->getDoc(Couch::STD_DOC_PATH, $id);
+      try {
+        // Gets the user.
+        $user = $couch->getDoc(Couch::STD_DOC_PATH, $id);
+      }
+      catch(ServerErrorException $e) { // The user doesn't exist anymore.
+        Cookie::delete();
+        return new AnonymousUser();
+      }
 
       if ($security->checkHash($user->id.$_SERVER['REMOTE_ADDR'], $token))
         return $user;
       else {
-        // To avoid Internet Explorer 6.x implementation issues.
-        header('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
-        header('P3P: CP="IDC DSP COR CURa ADMa OUR IND PHY ONL COM STA"');
-
-        // Deletes the cookies.
-        setcookie("id", "", time(), "/", $di['config']['application']->serverName);
-        setcookie("token", "", time(), "/", $di['config']['application']->serverName);
-
+        Cookie::delete();
         return new AnonymousUser();
       }
     }
