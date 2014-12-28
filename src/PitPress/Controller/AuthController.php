@@ -27,6 +27,7 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
 use PitPress\Exception\InvalidEmailException;
 use PitPress\Exception\InvalidFieldException;
 use PitPress\Helper\ValidationHelper;
+use PitPress\Helper\Cookie;
 use PitPress\Model\User;
 use PitPress\Validator\Password;
 use PitPress\Validator\Username;
@@ -108,27 +109,14 @@ class AuthController extends BaseController {
         // Creates a token based on the user id and his IP address, obviously encrypted.
         $token = $this->security->hash($user->id.$user->internetProtocolAddress);
 
-        // To avoid Internet Explorer 6.x implementation issues. I don't fuckin care about IE 6 but this code worked so
-        // let's use it.
-        header('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
-        header('P3P: CP="IDC DSP COR CURa ADMa OUR IND PHY ONL COM STA"');
-
-        // Finally let's write the id and the token.
-        setcookie("id", $user->id, mktime(0, 0, 0, 12, 12, 2030), "/", $this->domainName);
-        setcookie("token", $token, mktime(0, 0, 0, 12, 12, 2030), "/", $this->domainName);
+        Cookie::set($user->id, $token);
 
         $user->save();
 
         return $this->redirectToReferrer($user);
       }
       catch (\Exception $e) {
-        // To avoid Internet Explorer 6.x implementation issues.
-        header('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
-        header('P3P: CP="IDC DSP COR CURa ADMa OUR IND PHY ONL COM STA"');
-
-        // Deletes the cookies.
-        setcookie("id", "", time(), "/", $this->domainName);
-        setcookie("token", "", time(), "/", $this->domainName);
+        Cookie::delete();
 
         // Displays the error message.
         $this->flash->error($e->getMessage());
@@ -217,7 +205,7 @@ class AuthController extends BaseController {
    * @brief Displays the logon form.
    */
   public function logonAction() {
-    if (isset($this->user))
+    if ($this->user->isMember())
       return $this->dispatcher->forward(
         [
           'controller' => 'error',
@@ -241,17 +229,10 @@ class AuthController extends BaseController {
    * @brief Sign out.
    */
   public function signOutAction() {
-    if (is_null($this->user))
+    if ($this->user->isGuest())
       return $this->redirect();
 
-    // To avoid Internet Explorer 6.x implementation issues.
-    header('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
-    header('P3P: CP="IDC DSP COR CURa ADMa OUR IND PHY ONL COM STA"');
-
-    // Sets a null cookie and redirect to the home page.
-    setcookie("id", "", 0, "/", $this->domainName);
-    setcookie("token", "", 0, "/", $this->domainName);
-    setcookie("test", "", 0, "/", $this->domainName);
+    Cookie::delete();
 
     // Displays the error message.
     $this->flash->success("Disconnessione avvenuta con successo.");
