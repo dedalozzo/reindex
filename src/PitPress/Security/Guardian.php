@@ -23,13 +23,16 @@ use PitPress\Factory\UserFactory;
 class Guardian {
   use Extension\TProperty;
 
+  private static $initialized = FALSE;
   protected static $user = NULL;
 
 
   public function __construct($config) {
 
-    if (is_null(self::$user))
+    if (!self::$initialized) {
+      self::$initialized = TRUE;
       self::$user = UserFactory::getFromCookie();
+    }
   }
 
 
