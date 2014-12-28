@@ -39,6 +39,7 @@ class FooterGroup extends Group {
     $this->addGet('/lavoro/', ['action' => 'career']);
     $this->addGet('/pubblicita/', ['action' => 'advertising']);
     $this->addGet('/contatti/', ['action' => 'contact']);
+    $this->addGet('/info/', ['action' => 'info']);
   }
 
 }
