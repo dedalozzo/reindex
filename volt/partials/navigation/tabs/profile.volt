@@ -1,4 +1,4 @@
-{% set resource = user.username %}
+{% set resource = profile.username %}
 {% set menu = [
   'activities': 'attività',
   'projects': 'progetti',
