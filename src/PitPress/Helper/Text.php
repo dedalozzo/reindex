@@ -23,6 +23,7 @@ class Text {
 
   const SEPARATOR = '::'; //!< Used to separate the ID from the version number.
 
+
   /**
    * @brief Converts a string from a charset to another one.
    * @details The default conversion is from `Windows-1252` to `UTF-8`. `Windows-1252` or `CP-1252` is a character
@@ -36,7 +37,7 @@ class Text {
    * @return string
    * @attention Doesn't matter if the varchar fields of your MySQL tables are encoded in `LATIN1`, in fact, if someone
    * ever posted a document from Windows Word containing smart characters, like curly quotes or smart apostrophes, the
-   * real charset use is `Windows-1252`.
+   * real charset used is `Windows-1252`.
    * @warning This function doesn't use `LATIN1` or `ISO-8859-1` as default, because `Windows-1251` and `Windows-1252`
    * will only succeed if the entire string consists of high-byte characters in a certain range. That means you'll never
    * get the right conversion because the text will appear as `ISO-8859-1` even if it is `Windows-1252`. See the bug
