@@ -11,7 +11,7 @@
 <div id="content" style="background-image: url(//www.utepprintstore.com/wp-content/uploads/Desktop-Background-1024x768.jpg); background-size: 970px 410px; background-repeat: no-repeat;">
   <div class="ghost gutter-plus" style="margin-top: 200px;">
     <div style="position: relative;">
-      <img id="avatar" class="img-polaroid pull-left" src="{{ user.getGravatar(user.email) }}&s=160">
+      <img id="avatar" class="img-polaroid pull-left" src="{{ profile.getGravatar(profile.email) }}&s=160">
       {% if user.isMember() and user.match(profile.id) %}
       <a class="change-avatar" href="http://it.gravatar.com/"><i class="icon-camera"></i>CAMBIA FOTO</a>
       {% endif %}
@@ -27,7 +27,6 @@
     </div>
   </div>
 
-  {% set resourceName = profile.username %}
   {% set controllerPath = '/' %}
   {% include "partials/navigation/tabs/profile.volt" %}
   {% include "partials/navigation/tabs.volt" %}
