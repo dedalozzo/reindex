@@ -205,12 +205,7 @@ class AuthController extends BaseController {
    * @brief Displays the logon form.
    */
   public function logonAction() {
-    if ($this->user->isMember())
-      return $this->dispatcher->forward(
-        [
-          'controller' => 'error',
-          'action' => 'show404'
-        ]);
+    if ($this->user->isMember()) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     if ($this->request->getPost('signup'))
       $this->signUp();
