@@ -696,7 +696,7 @@ class IndexController extends ListController {
 
     $post = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $rows[0]['id']);
     $post->incHits();
-    $post->html = $this->markdown->parse($post->body);
+    //$post->html = $this->markdown->parse($post->body);
 
     $this->view->setVar('post', $post);
     $this->view->setVar('replies', $post->getReplies());
