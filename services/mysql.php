@@ -12,6 +12,7 @@
 $di->setShared('mysql',
   function() use ($config) {
     $mysql = mysqli_connect($config->mysql->host, $config->mysql->user, $config->mysql->password) or die(mysqli_error($mysql));
+    mysqli_set_charset($mysql, $config->mysql->charset) or die(mysql_error($mysql));
     mysqli_select_db($mysql, $config->mysql->database) or die(mysql_error($mysql));
 
     return $mysql;
