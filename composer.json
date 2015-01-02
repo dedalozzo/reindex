@@ -18,7 +18,7 @@
         "3f/pygmentize": "dev-master",
         "3f/converter": "dev-master",
         "symfony/console": "2.4.6",
-        "lusitanian/oauth": "~0.2",
+        "lusitanian/oauth": "~0.3",
         "monolog/monolog": "1.9.1",
         "filp/whoops": "dev-master",
         "simplepie/simplepie": "dev-master"
