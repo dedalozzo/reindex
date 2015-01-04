@@ -14,7 +14,6 @@ use ElephantOnCouch\Extension;;
 
 use PitPress\Factory\UserFactory;
 use PitPress\Exception\NotEnoughPrivilegesException;
-use PitPress\Model\User;
 
 
 /**
