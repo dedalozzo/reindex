@@ -14,6 +14,7 @@ use ElephantOnCouch\Extension;;
 
 use PitPress\Factory\UserFactory;
 use PitPress\Exception\NotEnoughPrivilegesException;
+use PitPress\Security\User\IUser;
 
 
 /**
@@ -46,17 +47,30 @@ class Guardian {
 
 
   /**
+   * @brief Returns `true` is the current user can impersonate the specified user, `false` otherwise.
+   * @details An admin can impersonate any member, but he can't impersonate another admin. A member (even an admin) can
+   * impersonate a guest. No one can impersonate itself and a guest, of course, can't impersonate anyone.
+   * @param[in] IUser $user
+   * @return bool
+   */
+  private function canImpersonate(IUser $user) {
+    if (self::$user->isAdmin() && $user->isMember() && !$user->isAdmin())
+      return TRUE;
+    elseif (self::$user->isMember() && $user->isGuest())
+      return TRUE;
+    else return FALSE;
+  }
+
+
+  /**
    * @brief Impersonates the given user.
    * @param[in] IUser $user
    */
   public function impersonate(IUser $user) {
-
-    if ((self::$user->isAdmin() && $user->isAdmin()) or
-        (self::$user->isMember() && $user->isMember()) or
-        (self::$user->isGuest()))
-      throw new NotEnoughPrivilegesException('Non hai sufficienti privilegi per impersonare un altro utente.');
-    else
+    if ($this->canImpersonate($user))
       self::$user = $user;
+    else
+      throw new NotEnoughPrivilegesException('Non hai sufficienti privilegi per impersonare un altro utente.');
   }
 
 }
