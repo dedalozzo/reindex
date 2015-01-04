@@ -1,19 +1,19 @@
 <?php
 
-//! @file System.php
-//! @brief This file contains the System class.
+//! @file AnonymousUser.php
+//! @brief This file contains the AnonymousUser class.
 //! @details
 //! @author Filippo F. Fadda
 
 
-namespace PitPress\Security;
+namespace PitPress\Security\User;
 
 
 /**
- * @brief A special user used to perform special task.
+ * @brief This class represents an anonymous user.
  * @nosubgrouping
  */
-class System implements IUser {
+class AnonymousUser implements IUser {
 
 
   /**
@@ -26,20 +26,20 @@ class System implements IUser {
 
 
   /**
-   * @brief This implementation returns always `true`.
+   * @brief This implementation returns always `false`.
    * @return bool
    */
   public function isConfirmed() {
-    return TRUE;
+    return FALSE;
   }
 
 
   /**
-   * @brief This implementation returns always `false`.
+   * @brief This implementation returns always `true`.
    * @return bool
    */
   public function isGuest() {
-    return FALSE;
+    return TRUE;
   }
 
 
@@ -53,38 +53,38 @@ class System implements IUser {
 
 
   /**
-   * @brief This implementation returns always `true`.
+   * @brief This implementation returns always `false`.
    * @return bool
    */
   public function isModerator() {
-    return TRUE;
+    return FALSE;
   }
 
 
   /**
-   * @brief This implementation returns always `true`.
+   * @brief This implementation returns always `false`.
    * @return bool
    */
   public function isAdmin() {
-    return TRUE;
+    return FALSE;
   }
 
 
   /**
-   * @brief This implementation returns always `true`.
+   * @brief This implementation returns always `false`.
    * @return bool
    */
   public function isEditor() {
-    return TRUE;
+    return FALSE;
   }
 
 
   /**
-   * @brief This implementation returns always `true`.
+   * @brief This implementation returns always `false`.
    * @return bool
    */
   public function isReviewer() {
-    return TRUE;
+    return FALSE;
   }
 
 }

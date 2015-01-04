@@ -6,7 +6,8 @@
 //! @author Filippo F. Fadda
 
 
-namespace PitPress\Security;
+//! PitPress users namespace.
+namespace PitPress\Security\User;
 
 
 /**
