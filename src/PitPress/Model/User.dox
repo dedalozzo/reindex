@@ -17,6 +17,8 @@ class User  {
   string $password; //!< Password chosen by the user.
   string $hash; //!< String hash sent via e-mail to the user to confirm that his e-mail is real.
   string $internetProtocolAddress; //!< The IP address of the user.
+  string $locale; //!< Users's language
+  string $timeOffset; //!< Time offset.
 
   integer $gender; //!< Sex.
   integer $birthday; //!< Date of birth.
