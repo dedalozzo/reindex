@@ -13,7 +13,8 @@ namespace PitPress\Security;
 use ElephantOnCouch\Extension;;
 
 use PitPress\Factory\UserFactory;
-
+use PitPress\Exception\NotEnoughPrivilegesException;
+use PitPress\Model\User;
 
 
 /**
@@ -50,7 +51,13 @@ class Guardian {
    * @param[in] IUser $user
    */
   public function impersonate(IUser $user) {
-    self::$user = $user;
+
+    if ((self::$user->isAdmin() && $user->isAdmin()) or
+        (self::$user->isMember() && $user->isMember()) or
+        (self::$user->isGuest()))
+      throw new NotEnoughPrivilegesException('Non hai sufficienti privilegi per impersonare un altro utente.');
+    else
+      self::$user = $user;
   }
 
 }
