@@ -14,7 +14,8 @@ namespace PitPress\Model;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Extension;
-use PitPress\Security\IUser;
+use PitPress\Security\User\IUser;
+use PitPress\Security\Provider\IProvider;
 
 
 /**
@@ -23,6 +24,45 @@ use PitPress\Security\IUser;
  */
 class User extends Storable implements IUser, Extension\ICount {
   use Extension\TCount;
+
+
+  /**
+   * @brief Searches for the user identified by the specified id, related to a specific provider. If any returns it,
+   * otherwise return `false`.
+   * @param[in] IProvider $provider
+   * @return User|bool An user instance or `false`
+   */
+  public static function findByProviderId(IProvider $provider) {
+    // todo
+  }
+
+
+  /**
+   * @brief Searches for the user identified by the specified email, if any returns it, otherwise return `false`.
+   * @param[in] array $emails
+   * @return User|bool An user instance or `false`
+   */
+  public static function findByEmails(array $emails) {
+    // todo
+  }
+
+
+  /**
+   * @brief Searches for the user identified by the specified email, if any returns it, otherwise return `false`.
+   * @param[in] IProvider $provider The provider instance.
+   */
+  public function addProvider(IProvider $provider) {
+    // todo
+  }
+
+
+  /**
+   * @brief Removes the specified provider and all its information.
+   * @param[in] string $name The Provider's name
+   */
+  public function removeProvider($name) {
+    // todo
+  }
 
 
   /**
@@ -514,6 +554,90 @@ class User extends Storable implements IUser, Extension\ICount {
   public function unsetHash() {
     if ($this->isMetadataPresent('hash'))
       unset($this->meta['hash']);
+  }
+
+  
+  public function getLocale() {
+    return $this->meta['locale'];
+  }
+
+
+  public function issetLocale() {
+    return isset($this->meta['locale']);
+  }
+
+
+  public function setLocale($value) {
+    $this->meta['locale'] = $value;
+  }
+
+
+  public function unsetLocale() {
+    if ($this->isMetadataPresent('locale'))
+      unset($this->meta['locale']);
+  }
+
+
+  public function getTimeOffset() {
+    return $this->meta['timeOffset'];
+  }
+
+
+  public function issetTimeOffset() {
+    return isset($this->meta['timeOffset']);
+  }
+
+
+  public function setTimeOffset($value) {
+    $this->meta['timeOffset'] = $value;
+  }
+
+
+  public function unsetTimeOffset() {
+    if ($this->isMetadataPresent('timeOffset'))
+      unset($this->meta['timeOffset']);
+  }
+
+
+  public function getFacebookId() {
+    return $this->meta['facebookId'];
+  }
+
+
+  public function issetFacebookId() {
+    return isset($this->meta['facebookId']);
+  }
+
+
+  public function setFacebookId($value) {
+    $this->meta['facebookId'] = $value;
+  }
+
+
+  public function unsetFacebookId() {
+    if ($this->isMetadataPresent('facebookId'))
+      unset($this->meta['facebookId']);
+  }
+
+
+  public function getGithubId() {
+    return $this->meta['githubId'];
+  }
+
+
+  public function issetGithubId() {
+    return isset($this->meta['githubId']);
+  }
+
+
+  public function setGithubId($value) {
+    $this->meta['githubId'] = $value;
+  }
+
+
+  public function unsetGithubId() {
+    if ($this->isMetadataPresent('githubId'))
+      unset($this->meta['githubId']);
   }
 
   //! @endcond
