@@ -10,7 +10,8 @@
 namespace PitPress\Security;
 
 
-use ElephantOnCouch\Extension;;
+use ElephantOnCouch\Extension;
+use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Factory\UserFactory;
 use PitPress\Exception\NotEnoughPrivilegesException;
@@ -25,15 +26,20 @@ class Guardian {
   use Extension\TProperty;
 
   private static $initialized = FALSE;
+
   protected static $user = NULL;
 
+  private $couch;
 
-  public function __construct($config) {
+
+  public function __construct($config, $di) {
 
     if (!self::$initialized) {
       self::$initialized = TRUE;
-      self::$user = UserFactory::getFromCookie();
+      self::$user = UserFactory::fromCookie();
     }
+
+    $this->couch = $di['couchdb'];
   }
 
 
@@ -71,6 +77,21 @@ class Guardian {
       self::$user = $user;
     else
       throw new NotEnoughPrivilegesException('Non hai sufficienti privilegi per impersonare un altro utente.');
+  }
+
+
+  /**
+   * @brief Returns `true` in case the username has not been used by anyone, `false` otherwise.
+   * @param[in] string $username The username.
+   * @return bool
+   */
+  public function isAvailable($username) {
+    $opts = new ViewQueryOpts();
+    $opts->setLimit(1)->setKey($username);
+
+    $result = $this->couch->queryView("users", "byUsername", NULL, $opts);
+
+    return ($result->isEmpty()) ? TRUE : FALSE;
   }
 
 }
