@@ -14,12 +14,10 @@ namespace PitPress\Factory;
 use Phalcon\DI;
 
 use ElephantOnCouch\Couch;
-use ElephantOnCouch\Opt\ViewQueryOpts;
 use ElephantOnCouch\Exception\ServerErrorException;
 
-use PitPress\Model\User;
-use PitPress\Security\User\AnonymousUser;
-use PitPress\Security\User\System;
+use PitPress\Security\User;
+use PitPress\Security\Provider\IProvider;
 use PitPress\Helper\Cookie;
 
 
@@ -31,13 +29,13 @@ class UserFactory {
 
 
   /**
-   * @brief This function tries to recognize a user from his ID and the secret token. In case the user has been
-   * recognized, an user object is returned, else this function returns `null`.
-   * @return User An instance of the user has been recognized by his cookie.
+   * @brief This function tries to recognize a user from his id and the secret token. In case the user has been
+   * recognized, an User object is returned, else this function returns an AnonymousUser instance.
+   * @return User\IUser An instance of the user has been recognized by his cookie.
    */
-  public static function getFromCookie() {
+  public static function fromCookie() {
     // A console script runs as System user.
-    if (php_sapi_name() == 'cli') return new System();
+    if (php_sapi_name() == 'cli') return new User\System();
 
     $di = DI::getDefault();
     $couch = $di['couchdb'];
@@ -53,39 +51,40 @@ class UserFactory {
       }
       catch(ServerErrorException $e) { // The user doesn't exist anymore.
         Cookie::delete();
-        return new AnonymousUser();
+        return new User\AnonymousUser();
       }
 
       if ($security->checkHash($user->id.$_SERVER['REMOTE_ADDR'], $token))
         return $user;
       else {
         Cookie::delete();
-        return new AnonymousUser();
+        return new User\AnonymousUser();
       }
     }
     else
-      return new AnonymousUser();
+      return new User\AnonymousUser();
   }
 
 
   /**
-   * @brief Returns `true` in case exist a user registered with specified username, `false` otherwise.
-   * @param[in] string $username The username.
-   * @return bool
+   * @brief Searches for the user identified by the specified id, related to a specific provider. If any returns it,
+   * otherwise return an AnonymousUser instance.
+   * @param[in] IProvider $provider
+   * @return User\IUser An user instance.
    */
-  public static function isUsernameTaken($username) {
-    $di = DI::getDefault();
-    $couch = $di['couchdb'];
+  public static function fromProvider(IProvider $provider) {
+    // todo
+  }
 
-    $opts = new ViewQueryOpts();
-    $opts->setLimit(1)->setKey($username);
 
-    $result = $couch->queryView("users", "byUsername", NULL, $opts);
-
-    if ($result->isEmpty())
-      return FALSE;
-    else
-      return TRUE;
+  /**
+   * @brief Searches for the user identified by the specified emails, if any returns it, otherwise return an AnonymousUser
+   * instance.
+   * @param[in] array $emails
+   * @return User\IUser An user instance.
+   */
+  public static function fromEmails(array $emails) {
+    // todo
   }
 
 }
