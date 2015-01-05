@@ -52,7 +52,7 @@ try {
   require $root."/services/guardian.php";
 
   // Creates the application object.
-  $console = new PitPressConsole('PitPress Console', '0.1.0');
+  $console = new PitPressConsole('PitPress Console', \PitPress\Version::getNumber());
   $console->setCatchExceptions(FALSE);
 
   // Sets the dependency injector component.
