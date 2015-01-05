@@ -46,13 +46,6 @@ interface IUser {
 
 
   /**
-   * @brief Returns `true` in case the user is a moderator.
-   * @return bool
-   */
-  function isModerator();
-
-
-  /**
    * @brief Returns `true` in case the user is an administrator.
    * @return bool
    */
@@ -60,11 +53,10 @@ interface IUser {
 
 
   /**
-   * @brief Returns `true` in case the user is an editor.
-   * @details An user can obtain this privilege earning reputation.
+   * @brief Returns `true` in case the user is a moderator.
    * @return bool
    */
-  function isEditor();
+  function isModerator();
 
 
   /**
@@ -73,5 +65,13 @@ interface IUser {
    * @return bool
    */
   function isReviewer();
+
+
+  /**
+   * @brief Returns `true` in case the user is an editor.
+   * @details An user can obtain this privilege earning reputation.
+   * @return bool
+   */
+  function isEditor();
 
 }
