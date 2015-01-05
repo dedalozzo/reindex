@@ -14,7 +14,9 @@ namespace PitPress\Model;
 use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Extension;
+use PitPress\Exception;
 use PitPress\Security\User\IUser;
+use PitPress\Security\User\System;
 use PitPress\Security\Provider\IProvider;
 
 
@@ -151,38 +153,99 @@ class User extends Storable implements IUser, Extension\ICount {
   //!@{
 
   /**
-   * @brief Promotes the user to administrator.
+   * @brief Grants the administrator privileges.
+   * @attention Only the System user can grant the administrator privileges.
    */
-  public function setAsAdmin() {
-    $this->unsetAsModerator();
-    $this->meta['admin'] = TRUE;
+  public function grantAdmin() {
+    if ($this->user instanceof System)
+      $this->meta['admin'] = TRUE;
+    else
+      throw new Exception\NotEnoughPrivilegesException("I privilegi di amministratore possono essere assegnati dall'utente di sistema.");
   }
 
 
   /**
-   * @brief Reverts the administrator to a normal user.
+   * @brief Revokes the administrator privileges.
+   * @attention Only the System user can revoke the administrator privileges.
    */
-  public function unsetAsAdmin() {
-    if ($this->isMetadataPresent('admin'))
-      unset($this->meta['admin']);
+  public function revokeAdmin() {
+    if ($this->user instanceof System) {
+      if ($this->isMetadataPresent('admin'))
+        unset($this->meta['admin']);
+    }
+    else
+      throw new Exception\NotEnoughPrivilegesException("I privilegi di amministratore possono essere revocati dall'utente di sistema.");
   }
 
 
   /**
-   * @brief Promotes the user to moderator.
+   * @brief Grants the moderator privileges.
+   * @attention Only an admin can grant the moderator privileges (or System of course).
    */
-  public function setAsModerator() {
-    if (!$this->isAdmin())
+  public function grantModerator() {
+    if ($this->user->isAdmin() or $this->user instanceof System)
       $this->meta['moderator'] = TRUE;
+    else
+      throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
   }
 
 
   /**
-   * @brief Reverts the moderator to a normal user.
+   * @brief Revokes the moderator privileges.
+   * @attention Only an admin can revoke the moderator privileges (or System of course).
    */
-  public function unsetAsModerator() {
-    if ($this->isMetadataPresent('moderator'))
-      unset($this->meta['moderator']);
+  public function revokeModerator() {
+    if ($this->user->isAdmin() or $this->user instanceof System) {
+      if ($this->isMetadataPresent('moderator'))
+        unset($this->meta['moderator']);
+    }
+    else
+      throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
+  }
+
+
+  /**
+   * @brief Grants the reviewer privileges.
+   */
+  public function grantReviewer() {
+    $this->meta['reviewer'] = TRUE;
+  }
+
+
+  /**
+   * @brief Revokes the reviewer privileges.
+   */
+  public function revokeReviewer() {
+    if ($this->isMetadataPresent('reviewer'))
+      unset($this->meta['reviewer']);
+  }
+
+
+  /**
+   * @brief Grants the editor privileges.
+   */
+  public function grantEditor() {
+    $this->meta['editor'] = TRUE;
+  }
+
+
+  /**
+   * @brief Revokes the editor privileges.
+   */
+  public function revokeEditor() {
+    if ($this->isMetadataPresent('editor'))
+      unset($this->meta['editor']);
+  }
+
+
+  /**
+   * @brief Revokes all privileges.
+   */
+  public function revokeAll() {
+    $this->revokeAdmin();
+    $this->revokeModerator();
+    $this->revokeReviewer();
+    $this->revokeEditor();
   }
 
 
@@ -205,14 +268,6 @@ class User extends Storable implements IUser, Extension\ICount {
 
 
   /**
-   * @copydoc IUser::isModerator()
-   */
-  public function isModerator() {
-    return isset($this->meta['moderator']);
-  }
-
-
-  /**
    * @copydoc IUser::isAdmin()
    */
   public function isAdmin() {
@@ -221,10 +276,10 @@ class User extends Storable implements IUser, Extension\ICount {
 
 
   /**
-   * @copydoc IUser::isEditor()
+   * @copydoc IUser::isModerator()
    */
-  public function isEditor() {
-    // todo
+  public function isModerator() {
+    return $this->isAdmin() or isset($this->meta['moderator']);
   }
 
 
@@ -232,7 +287,15 @@ class User extends Storable implements IUser, Extension\ICount {
    * @copydoc IUser::isReviewer()
    */
   public function isReviewer() {
-    // todo
+    return $this->isModerator() or isset($this->meta['reviewer']);
+  }
+
+
+  /**
+   * @copydoc IUser::isEditor()
+   */
+  public function isEditor() {
+    return $this->isReviewer() or isset($this->meta['editor']);
   }
 
   //!@}
