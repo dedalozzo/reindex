@@ -27,27 +27,6 @@ class User extends Storable implements IUser, Extension\ICount {
 
 
   /**
-   * @brief Searches for the user identified by the specified id, related to a specific provider. If any returns it,
-   * otherwise return `false`.
-   * @param[in] IProvider $provider
-   * @return User|bool An user instance or `false`
-   */
-  public static function findByProviderId(IProvider $provider) {
-    // todo
-  }
-
-
-  /**
-   * @brief Searches for the user identified by the specified email, if any returns it, otherwise return `false`.
-   * @param[in] array $emails
-   * @return User|bool An user instance or `false`
-   */
-  public static function findByEmails(array $emails) {
-    // todo
-  }
-
-
-  /**
    * @brief Searches for the user identified by the specified email, if any returns it, otherwise return `false`.
    * @param[in] IProvider $provider The provider instance.
    */
@@ -159,7 +138,7 @@ class User extends Storable implements IUser, Extension\ICount {
 
 
   /**
-   * @copydoc IUser.isConfirmed()
+   * @copydoc IUser::isConfirmed()
    */
   public function isConfirmed() {
     return isset($this->meta['confirmed']);
@@ -170,17 +149,6 @@ class User extends Storable implements IUser, Extension\ICount {
 
   /** @name Access Control Management Methods */
   //!@{
-
-  /**
-   * @brief Returns `true` if the provided user id matches the current one.
-   * @details This method is useful to check the ownership of a post, for example.
-   * @param[in] string $userId The user id to match.
-   * @raturn bool
-   */
-  public function match($userId) {
-    return ($this->id === $userId) ? TRUE : FALSE;
-  }
-
 
   /**
    * @brief Promotes the user to administrator.
@@ -237,7 +205,7 @@ class User extends Storable implements IUser, Extension\ICount {
 
 
   /**
-   * @copydoc IUser.isModerator()
+   * @copydoc IUser::isModerator()
    */
   public function isModerator() {
     return isset($this->meta['moderator']);
@@ -245,7 +213,7 @@ class User extends Storable implements IUser, Extension\ICount {
 
 
   /**
-   * @copydoc IUser.isAdmin()
+   * @copydoc IUser::isAdmin()
    */
   public function isAdmin() {
     return isset($this->meta['admin']);
@@ -253,7 +221,7 @@ class User extends Storable implements IUser, Extension\ICount {
 
 
   /**
-   * @copydoc IUser.isEditor()
+   * @copydoc IUser::isEditor()
    */
   public function isEditor() {
     // todo
@@ -261,7 +229,7 @@ class User extends Storable implements IUser, Extension\ICount {
 
 
   /**
-   * @copydoc IUser.isReviewer()
+   * @copydoc IUser::isReviewer()
    */
   public function isReviewer() {
     // todo
@@ -276,6 +244,7 @@ class User extends Storable implements IUser, Extension\ICount {
 
   /**
    * @brief Returns `true` if the ban is expired, otherwise `false`.
+   * @return bool
    */
   protected function isBanExpired() {
     if ($this->isMetadataPresent('bannedFor') == 'ever') {
@@ -283,11 +252,7 @@ class User extends Storable implements IUser, Extension\ICount {
     }
     else {
       $expireOn = (new \DateTime())->setTimestamp($this->meta['bannedOn'])->add(sprintf('P%dD', $this->meta['bannedFor']))->getTimestamp();
-
-      if (time() > $expireOn)
-        return TRUE;
-      else
-        return FALSE;
+      return (time() > $expireOn) ? TRUE : FALSE;
     }
   }
 
@@ -326,6 +291,7 @@ class User extends Storable implements IUser, Extension\ICount {
   /**
    * @brief Returns `true` if the user has been banned.
    * @details When expired, removes the ban.
+   * @return bool
    */
   public function isBanned() {
     if ($this->isMetadataPresent('banned')) {
