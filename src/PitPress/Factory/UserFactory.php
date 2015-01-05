@@ -14,6 +14,7 @@ namespace PitPress\Factory;
 use Phalcon\DI;
 
 use ElephantOnCouch\Couch;
+use ElephantOnCouch\Opt\ViewQueryOpts;
 use ElephantOnCouch\Exception\ServerErrorException;
 
 use PitPress\Security\User;
@@ -73,7 +74,17 @@ class UserFactory {
    * @return User\IUser An user instance.
    */
   public static function fromProvider(IProvider $provider) {
-    // todo
+    $di = DI::getDefault();
+    $couch = $di['couchdb'];
+
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->setLimit(1);
+    $result = $couch->queryView("users", "byProvider", [$provider->getName(), $provider->getId()], $opts);
+
+    if (!$result->isEmpty())
+      return $couch->getDoc(Couch::STD_DOC_PATH, $result[0]['id']);
+    else
+      return new User\AnonymousUser();
   }
 
 
