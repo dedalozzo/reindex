@@ -51,9 +51,8 @@ class Cookie {
     header('P3P: CP="IDC DSP COR CURa ADMa OUR IND PHY ONL COM STA"');
 
     // Deletes the cookies.
-    setcookie("id", "", time(), "/", $di['config']['application']->domainName);
-    setcookie("token", "", time(), "/", $di['config']['application']->domainName);
-    setcookie("test", "", 0, "/", $di['config']['application']->domainName);
+    setcookie("id", "", 0, "/", $di['config']['application']->domainName);
+    setcookie("token", "", 0, "/", $di['config']['application']->domainName);
   }
 
 }
