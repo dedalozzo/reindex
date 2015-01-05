@@ -13,8 +13,8 @@ use PitPress\Security;
 
 // Creates an instance of Guardian and return it.
 $di->setShared('guardian',
-  function() use ($config) {
-    $guardian = new Security\Guardian($config);
+  function() use ($config, $di) {
+    $guardian = new Security\Guardian($config, $di);
 
     return $guardian;
   }
