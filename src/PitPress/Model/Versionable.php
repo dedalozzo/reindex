@@ -288,7 +288,7 @@ abstract class Versionable extends Storable {
 
 
   /**
-   * @copydoc Storable.save
+   * @copydoc Storable::save()
    */
   public function save() {
     // We force the document status in case it hasn't been changed.
