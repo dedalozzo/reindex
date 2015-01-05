@@ -29,24 +29,6 @@ class User extends Storable implements IUser, Extension\ICount {
 
 
   /**
-   * @brief Searches for the user identified by the specified email, if any returns it, otherwise return `false`.
-   * @param[in] IProvider $provider The provider instance.
-   */
-  public function addProvider(IProvider $provider) {
-    // todo
-  }
-
-
-  /**
-   * @brief Removes the specified provider and all its information.
-   * @param[in] string $name The Provider's name
-   */
-  public function removeProvider($name) {
-    // todo
-  }
-
-
-  /**
    * @brief Given a e-mail, returns the gravatar URL for the corresponding user.
    * @param[in] string $email The user e-mail.
    * @return string
@@ -304,7 +286,6 @@ class User extends Storable implements IUser, Extension\ICount {
   /** @name Ban Management Methods */
   //!@{
 
-
   /**
    * @brief Returns `true` if the ban is expired, otherwise `false`.
    * @return bool
@@ -369,6 +350,29 @@ class User extends Storable implements IUser, Extension\ICount {
     }
     else
       return FALSE;
+  }
+
+  //!@}
+
+
+  /** @name Providers Management Methods */
+  //!@{
+
+  /**
+   * @brief Searches for the user identified by the specified email, if any returns it, otherwise return `false`.
+   * @param[in] IProvider $provider The provider instance.
+   */
+  public function addProvider(IProvider $provider) {
+    // todo
+  }
+
+
+  /**
+   * @brief Removes the specified provider and all its information.
+   * @param[in] string $name The Provider's name
+   */
+  public function removeProvider($name) {
+    // todo
   }
 
   //!@}
