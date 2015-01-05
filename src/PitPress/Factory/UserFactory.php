@@ -18,8 +18,8 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
 use ElephantOnCouch\Exception\ServerErrorException;
 
 use PitPress\Model\User;
-use PitPress\Security\AnonymousUser;
-use PitPress\Security\System;
+use PitPress\Security\User\AnonymousUser;
+use PitPress\Security\User\System;
 use PitPress\Helper\Cookie;
 
 
