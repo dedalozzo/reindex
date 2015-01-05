@@ -95,7 +95,17 @@ class UserFactory {
    * @return User\IUser An user instance.
    */
   public static function fromEmails(array $emails) {
-    // todo
+    $di = DI::getDefault();
+    $couch = $di['couchdb'];
+
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->setLimit(1);
+    $result = $couch->queryView("users", "byEmail", $emails, $opts);
+
+    if (!$result->isEmpty())
+      return $couch->getDoc(Couch::STD_DOC_PATH, $result[0]['id']);
+    else
+      return new User\AnonymousUser();
   }
 
 }
