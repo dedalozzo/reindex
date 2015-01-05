@@ -248,7 +248,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
 
   /**
-   * @copydoc Versionable::approve
+   * @copydoc Versionable::approve()
    */
   public function approve($update = FALSE) {
     parent::approve();
