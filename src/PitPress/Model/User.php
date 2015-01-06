@@ -165,7 +165,7 @@ class User extends Storable implements IUser, Extension\ICount {
    * @attention Only an admin can grant the moderator privileges (or System of course).
    */
   public function grantModerator() {
-    if ($this->user->isAdmin() or $this->user instanceof System)
+    if (($this->user->isAdmin() && !$this->user->match($this->id)) or $this->user instanceof System)
       $this->meta['moderator'] = TRUE;
     else
       throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
@@ -177,7 +177,7 @@ class User extends Storable implements IUser, Extension\ICount {
    * @attention Only an admin can revoke the moderator privileges (or System of course).
    */
   public function revokeModerator() {
-    if ($this->user->isAdmin() or $this->user instanceof System) {
+    if (($this->user->isAdmin() && !$this->user->match($this->id)) or $this->user instanceof System) {
       if ($this->isMetadataPresent('moderator'))
         unset($this->meta['moderator']);
     }
@@ -302,10 +302,34 @@ class User extends Storable implements IUser, Extension\ICount {
 
 
   /**
+   * @brief Returns `true` if the user logged in is allowed to ban the current user, `false` otherwise.
+   * @return bool
+   */
+  protected function canBeBanned() {
+    if ($this->user->isAdmin() && !$this->isAdmin() && !$this->user->match($this->id))
+      return TRUE;
+    elseif ($this->user->isModerator() && !$this->isModerator() && !$this->user->match($this->id))
+      return TRUE;
+    else
+      return FALSE;
+  }
+
+
+  /**
+   * @brief Alias of canBeBanned().
+   */
+  protected function canBeUnBanned() {
+    $this->canBeBanned();
+  }
+
+
+  /**
    * @brief Bans the user.
    * @param[in] integer $days The ban duration in days. When zero, the ban is permanent.
    */
   public function ban($days = 0) {
+    if (!$this->canBeBanned()) throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
+
     $this->meta['banned'] = TRUE;
     $this->meta['bannedOn'] = time();
 
@@ -320,8 +344,11 @@ class User extends Storable implements IUser, Extension\ICount {
 
   /**
    * @brief Removes the ban.
+   * @param[in] bool $ignore When `true` ignores the security check.
    */
-  public function unban() {
+  public function unban($ignore = FALSE) {
+    if (!$this->canBeUnBanned() && !$ignore) throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
+
     if ($this->isMetadataPresent('banned')) {
       unset($this->meta['banned']);
       unset($this->meta['bannedOn']);
@@ -341,7 +368,7 @@ class User extends Storable implements IUser, Extension\ICount {
     if ($this->isMetadataPresent('banned')) {
 
       if ($this->isBanExpired()) {
-        $this->unban();
+        $this->unban(TRUE);
         return FALSE;
       }
       else // It's a permanent ban.
