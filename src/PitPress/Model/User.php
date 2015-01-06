@@ -658,48 +658,6 @@ class User extends Storable implements IUser, Extension\ICount {
       unset($this->meta['timeOffset']);
   }
 
-
-  public function getFacebookId() {
-    return $this->meta['facebookId'];
-  }
-
-
-  public function issetFacebookId() {
-    return isset($this->meta['facebookId']);
-  }
-
-
-  public function setFacebookId($value) {
-    $this->meta['facebookId'] = $value;
-  }
-
-
-  public function unsetFacebookId() {
-    if ($this->isMetadataPresent('facebookId'))
-      unset($this->meta['facebookId']);
-  }
-
-
-  public function getGithubId() {
-    return $this->meta['githubId'];
-  }
-
-
-  public function issetGithubId() {
-    return isset($this->meta['githubId']);
-  }
-
-
-  public function setGithubId($value) {
-    $this->meta['githubId'] = $value;
-  }
-
-
-  public function unsetGithubId() {
-    if ($this->isMetadataPresent('githubId'))
-      unset($this->meta['githubId']);
-  }
-
   //! @endcond
 
 }
