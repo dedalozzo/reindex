@@ -53,6 +53,21 @@ class Guardian {
 
 
   /**
+   * @brief Returns `true` in case the username has not been used by anyone, `false` otherwise.
+   * @param[in] string $username The username.
+   * @return bool
+   */
+  public function isAvailable($username) {
+    $opts = new ViewQueryOpts();
+    $opts->setLimit(1)->setKey($username);
+
+    $result = $this->couch->queryView("users", "byUsername", NULL, $opts);
+
+    return ($result->isEmpty()) ? TRUE : FALSE;
+  }
+
+
+  /**
    * @brief Returns `true` is the current user can impersonate the specified user, `false` otherwise.
    * @details An admin can impersonate any member, but he can't impersonate another admin. A member (even an admin) can
    * impersonate a guest. No one can impersonate itself and a guest, of course, can't impersonate anyone.
@@ -64,7 +79,8 @@ class Guardian {
       return TRUE;
     elseif (self::$user->isMember() && $user->isGuest())
       return TRUE;
-    else return FALSE;
+    else
+      return FALSE;
   }
 
 
@@ -77,21 +93,6 @@ class Guardian {
       self::$user = $user;
     else
       throw new NotEnoughPrivilegesException('Non hai sufficienti privilegi per impersonare un altro utente.');
-  }
-
-
-  /**
-   * @brief Returns `true` in case the username has not been used by anyone, `false` otherwise.
-   * @param[in] string $username The username.
-   * @return bool
-   */
-  public function isAvailable($username) {
-    $opts = new ViewQueryOpts();
-    $opts->setLimit(1)->setKey($username);
-
-    $result = $this->couch->queryView("users", "byUsername", NULL, $opts);
-
-    return ($result->isEmpty()) ? TRUE : FALSE;
   }
 
 }
