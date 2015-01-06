@@ -75,7 +75,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   protected function buildSlug() {
     $title = preg_replace('~[^\\pL\d]+~u', '-', $this->title);
     $title = trim($title, '-');
-    $title = iconv('utf-8', 'ASCII//TRANSLIT', $title);
+    $title = Helper\Text::convertCharset($title, FALSE, 'utf-8', 'ASCII//TRANSLIT');
     $title = strtolower($title);
     return preg_replace('~[^-\w]+~', '', $title);
   }
