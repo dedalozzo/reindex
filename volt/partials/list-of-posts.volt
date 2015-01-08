@@ -17,7 +17,7 @@
             <li><a class="tag {{ entry.type }}" href="{{ baseUrl~'/'~types[entry.type] }}/">{{ types[entry.type] }}</a></li>
             {% set tags = entry.tags %}
             {% for tag in tags %}
-              <li><a class="tag" href="{{ baseUrl }}/{{ tag['value'] }}/">{{ tag['value'] }}</a></li>
+              <li><a class="tag" href="{{ baseUrl }}/{{ tag['value'] }}/{% if resource is defined %}{{ types[entry.type] }}/{% endif %}">{{ tag['value'] }}</a></li>
             {% endfor %}
             <li class="space"></li>
           </ul>
