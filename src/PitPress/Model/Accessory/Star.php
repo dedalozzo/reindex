@@ -33,8 +33,12 @@ class Star extends Doc {
     $instance->meta["itemType"] = $item->type;
 
     // Articles, questions, books have a unique supertype: post.
-    if ($item->isMetadataPresent('supertype'))
+    if ($item->isMetadataPresent('supertype')) {
       $instance->meta["itemSupertype"] = $item->getMetadata('supertype');
+
+      if ($item->isMetadataPresent('index'))
+        $instance->meta["index"] = $item->getMetadata('index');
+    }
 
     // A post can be published or not.
     if ($item->isMetadataPresent('publishedAt'))
