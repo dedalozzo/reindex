@@ -48,6 +48,8 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
   //!@}
 
+  const INDEX = FALSE; //!< A generic post doesn't appear on the home page.
+
   // Since the user can add new tags in a second moment, we must store in a member the original tags, otherwise the zRem
   // methods will not work properly.
   private $zRemTags;
@@ -62,6 +64,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     $this->monolog = $this->di['monolog'];
 
     $this->meta['supertype'] = 'post';
+    $this->meta['index'] = static::INDEX; // We use static because the INDEX constant is overridden by subclasses.
     $this->meta['visible'] = TRUE;
 
     $this->zRemTags = ($this->isMetadataPresent('tags')) ? $this->getMetadata('tags') : [];
@@ -347,7 +350,8 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     $id = $this->unversionId;
 
     // Order set with all the posts.
-    $this->zAddScore(self::POP_SET.'post', $date, $popularity, $id);
+    if (static::INDEX)
+      $this->zAddScore(self::POP_SET.'post', $date, $popularity, $id);
 
     // Order set with all the posts of a specific type: article, question, ecc.
     $this->zAddScore(self::POP_SET.$this->type, $date, $popularity, $id);
@@ -357,7 +361,8 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
       foreach ($tags as $tagId) {
         // Order set with all the posts related to a specific tag.
-        $this->zAddScore(self::POP_SET.$tagId.'_'.'post', $date, $popularity, $id);
+        if (static::INDEX)
+          $this->zAddScore(self::POP_SET.$tagId.'_'.'post', $date, $popularity, $id);
 
         // Order set with all the post of a specific type, related to a specific tag.
         $this->zAddScore(self::POP_SET.$tagId.'_'.$this->type, $date, $popularity, $id);
@@ -374,14 +379,16 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     $id = $this->unversionId;
 
     // Order set with all the posts.
-    $this->zRemScore(self::POP_SET.'post', $date, $id);
+    if (static::INDEX)
+      $this->zRemScore(self::POP_SET.'post', $date, $id);
 
     // Order set with all the posts of a specific type: article, question, ecc.
     $this->zRemScore(self::POP_SET.$this->type, $date, $id);
 
     foreach ($this->zRemTags as $tagId) {
       // Order set with all the posts related to a specific tag.
-      $this->zRemScore(self::POP_SET . $tagId . '_' . 'post', $date, $id);
+      if (static::INDEX)
+        $this->zRemScore(self::POP_SET . $tagId . '_' . 'post', $date, $id);
 
       // Order set with all the post of a specific type, related to a specific tag.
       $this->zRemScore(self::POP_SET . $tagId . '_' . $this->type, $date, $id);
@@ -404,7 +411,8 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     $id = $this->unversionId;
 
     // Order set with all the posts.
-    $this->redis->zAdd(self::UPD_SET.'post', $timestamp, $id);
+    if (static::INDEX)
+      $this->redis->zAdd(self::UPD_SET.'post', $timestamp, $id);
 
     // Order set with all the posts of a specific type: article, question, ecc.
     $this->redis->zAdd(self::UPD_SET.$this->type, $timestamp, $id);
@@ -413,14 +421,17 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
       $tags = $this->meta['tags'];
 
       foreach ($tags as $tagId) {
-        // Order set with all the posts related to a specific tag.
-        $this->redis->zAdd(self::UPD_SET.$tagId.'_'.'post', $timestamp, $id);
+        // Filters posts which should appear on the home page.
+        if (static::INDEX) {
+          // Order set with all the posts related to a specific tag.
+          $this->redis->zAdd(self::UPD_SET . $tagId . '_' . 'post', $timestamp, $id);
+
+          // Used to get a list of tags recently updated.
+          $this->redis->zAdd(self::UPD_SET . 'tags' . '_' . 'post', $timestamp, $tagId);
+        }
 
         // Order set with all the posts of a specific type, related to a specific tag.
         $this->redis->zAdd(self::UPD_SET.$tagId.'_'.$this->type, $timestamp, $id);
-
-        // Used to get a list of tags recently updated.
-        $this->redis->zAdd(self::UPD_SET.'tags'.'_'.'post', $timestamp, $tagId);
 
         // Used to get a list of tags, in relation to a specific type, recently updated.
         $this->redis->zAdd(self::UPD_SET.'tags'.'_'.$this->type, $timestamp, $tagId);
@@ -442,14 +453,17 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     $this->redis->zRem(self::UPD_SET.$this->type, $id);
 
     foreach ($this->zRemTags as $tagId) {
-      // Order set with all the posts related to a specific tag.
-      $this->redis->zRem(self::UPD_SET.$tagId.'_'.'post', $id);
+      // Filters posts which should appear on the home page.
+      if (static::INDEX) {
+        // Order set with all the posts related to a specific tag.
+        $this->redis->zRem(self::UPD_SET . $tagId . '_' . 'post', $id);
+
+        // Used to get a list of tags recently updated.
+        $this->redis->zRem(self::UPD_SET . 'tags' . '_' . 'post', $tagId);
+      }
 
       // Order set with all the posts of a specific type, related to a specific tag.
       $this->redis->zRem(self::UPD_SET.$tagId.'_'.$this->type, $id);
-
-      // Used to get a list of tags recently updated.
-      $this->redis->zRem(self::UPD_SET.'tags'.'_'.'post', $tagId);
 
       // Used to get a list of tags, in relation to a specific type, recently updated.
       $this->redis->zRem(self::UPD_SET.'tags'.'_'.$this->type, $tagId);
