@@ -165,7 +165,7 @@ MAP;
     function postsPerDate() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->status == 'current')
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->index && $doc->status == 'current')
     $emit($doc->publishedAt);
 };
 MAP;
@@ -203,7 +203,7 @@ MAP;
     function postsPerDateByTag() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->status == 'current' && isset($doc->tags))
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->index && $doc->status == 'current' && isset($doc->tags))
     foreach ($doc->tags as $tagId)
       $emit([$tagId, $doc->publishedAt]);
 };
@@ -243,7 +243,7 @@ MAP;
     function postsPerDateByUser() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->status == 'current')
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->index && $doc->status == 'current')
     $emit([$doc->creatorId, $doc->publishedAt]);
 };
 MAP;
@@ -724,7 +724,7 @@ MAP;
     function favoritesPerAddedAt() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'star' && isset($doc->itemSupertype) && $doc->itemSupertype == 'post')
+  if ($doc->type == 'star' && isset($doc->itemSupertype) && $doc->itemSupertype == 'post' && $doc->index)
     $emit([$doc->userId, $doc->itemAddedAt], $doc->itemId);
 };
 MAP;
@@ -762,7 +762,7 @@ MAP;
     function favoritesPerPublishedAt() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'star' && isset($doc->itemSupertype) && $doc->itemSupertype == 'post')
+  if ($doc->type == 'star' && isset($doc->itemSupertype) && $doc->itemSupertype == 'post' && $doc->index)
     $emit([$doc->userId, $doc->itemPublishedAt], $doc->itemId);
 };
 MAP;
