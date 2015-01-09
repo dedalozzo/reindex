@@ -21,6 +21,8 @@ use PitPress\Exception;
  */
 class Article extends Post {
 
+  const INDEX = TRUE; //!< An article post appears on the home page.
+
 
   public function save($deferred = FALSE) {
     parent::save($deferred);
