@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-<div id="content" style="background-image: url(//www.utepprintstore.com/wp-content/uploads/Desktop-Background-1024x768.jpg); background-size: 970px 410px; background-repeat: no-repeat;">
+<div id="content" style="background-image: url(//assets.worldwildlife.org/photos/1028/images/story_full_width/western-lowland-gorilla-heroHI_279168.jpg?1345535856); background-size: 970px 410px; background-repeat: no-repeat;">
   <div class="ghost gutter-plus" style="margin-top: 200px;">
     <div style="position: relative;">
       <img id="avatar" class="img-polaroid pull-left" src="{{ profile.getGravatar(profile.email) }}&s=160">
