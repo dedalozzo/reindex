@@ -6,6 +6,7 @@
   {% set baseUrl = '//'~domainName~'/' %}
   {% set userUrl = baseUrl~post.username %}
   {% set hitsCount = post.getHitsCount() %}
+  {% set score = post.getScore() %}
   {% set repliesCount = post.getRepliesCount() %}
 
   <div id="page-title"><button class="btn btn-star {% if post.isStarred(user) %} active{% endif %}" title="aggiungi ai preferiti"><i class="icon-star icon-largest"></i></button> {{ post.title }}</div>
@@ -14,8 +15,14 @@
 
     <article id="{{ post.id }}">
       <section class="item-content">
-        <div class="item-time">{{ post.hasBeenApproved() ? post.whenHasBeenPublished() : post.whenHasBeenCreated() }}</div>
-
+        <ul class="list item-info">
+          <li>{{ post.hasBeenApproved() ? post.whenHasBeenPublished() : post.whenHasBeenCreated() }}</li>
+          <li>
+            {{ hitsCount }}&nbsp;&nbsp;
+            <i class="icon-thumbs-up"></i>&nbsp;{{ score }}&nbsp;&nbsp;
+            <i class="icon-comments"></i>&nbsp;{{ repliesCount }}
+          </li>
+        </ul>
         {% if post.type == 'book' %}
         <div class="item-meta">
           <img class="img-polaroid" src="//programmazione.it/picture.php?idItem=48456&amp;id=52558c0458cae" alt="Copertina">
@@ -62,7 +69,7 @@
         </div>
         <ul class="list item-buttons gutter">
           <li><button class="btn btn-like {% if post.didUserVote(user) %} active{% endif %}" title="mi piace"><i class="icon-thumbs-up icon-largest"></i></button></li>
-          <li><button class="btn btn-link score">{{ post.getScore() }}</button></li>
+          <li><button class="btn btn-link score">{{ score }}</button></li>
           <li class="space"></li>
           <li><button class="btn btn-star {% if post.isStarred(user) %} active{% endif %}" title="aggiungi ai preferiti"><i class="icon-star icon-large"></i></button></li>
           <li>
@@ -119,7 +126,7 @@
     {% endif %}
 
     <hr class="fade-short">
-    <div class="item-time">{{ reply.whenHasBeenCreated() }}</div>
+    <div class="item-info">{{ reply.whenHasBeenCreated() }}</div>
     <div class="item-content">
       <div class="item-body">
         {{ reply.html }}
