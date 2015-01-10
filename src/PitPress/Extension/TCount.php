@@ -22,7 +22,7 @@ trait TCount {
 
   public function getHitsCount() {
     if (isset($this->rev))
-      return number_format($this->redis->hGet(Text::unversion($this->id), 'hits'), 0, ",", ".");
+      return Text::formatNumber($this->redis->hGet(Text::unversion($this->id), 'hits'));
     else
       return 0;
   }
