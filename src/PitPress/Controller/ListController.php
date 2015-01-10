@@ -89,7 +89,7 @@ abstract class ListController extends BaseController {
 
       $entry->username = $users[$i]['value'][0];
       $entry->gravatar = User::getGravatar($users[$i]['value'][1]);
-      $entry->hitsCount = $this->redis->hGet($entry->id, 'hits');
+      $entry->hitsCount = Helper\Text::formatNumber($this->redis->hGet(Helper\Text::unversion($entry->id), 'hits'));
       $entry->score = is_null($scores[$i]['value']) ? 0 : $scores[$i]['value'];
       $entry->repliesCount = is_null($replies[$i]['value']) ? 0 : $replies[$i]['value'];
       $entry->liked = $this->user->isGuest() || is_null($likes[$i]['value']) ? FALSE : TRUE;
