@@ -11,6 +11,8 @@ namespace PitPress\Helper;
 
 use Phalcon\DI;
 
+use PitPress\Model\User;
+
 
 /**
  * @brief This helper class contains routines to handle cookies.
@@ -21,11 +23,14 @@ class Cookie {
 
   /**
    * @brief Creates a new cookie using the provided id and token.
-   * @param[in] string $id The user id.
-   * @param[in] string token A generated token.
+   * @param[in] User $user An User.
    */
-  public static function set($id, $token) {
+  public static function set(User $user) {
     $di = DI::getDefault();
+    $security = $di['security'];
+
+    // Creates a token based on the user id and his IP address, obviously encrypted.
+    $token = $security->hash($user->id.$user->internetProtocolAddress);
 
     // To avoid Internet Explorer 6.x implementation issues. I don't fuckin care about IE 6 but this code worked for
     // years, so let's use it.
@@ -33,7 +38,7 @@ class Cookie {
     header('P3P: CP="IDC DSP COR CURa ADMa OUR IND PHY ONL COM STA"');
 
     // Finally let's write the id and the token.
-    setcookie("id", $id, mktime(0, 0, 0, 12, 12, 2030), "/", $di['config']['application']->domainName);
+    setcookie("id", $user->id, mktime(0, 0, 0, 12, 12, 2030), "/", $di['config']['application']->domainName);
     setcookie("token", $token, mktime(0, 0, 0, 12, 12, 2030), "/", $di['config']['application']->domainName);
   }
 
