@@ -1,15 +1,15 @@
 <?php
 
-//! @file FacebookProvider.php
-//! @brief This file contains the FacebookProvider class.
+//! @file FacebookConsumer.php
+//! @brief This file contains the FacebookConsumer class.
 //! @details
 //! @author Filippo F. Fadda
 
 
-namespace PitPress\Security\Provider;
+namespace PitPress\Security\Consumer;
 
 
-class FacebookProvider extends AbstractProvider implements IProvider {
+class FacebookConsumer extends OAuth2Consumer implements IConsumer {
 
 
   /**
@@ -17,7 +17,7 @@ class FacebookProvider extends AbstractProvider implements IProvider {
    * @return string
    */
   function getName() {
-    //! @todo: Implement getName() method.
+    return "facebook";
   }
 
 
@@ -26,7 +26,7 @@ class FacebookProvider extends AbstractProvider implements IProvider {
    * @return string
    */
   function getId() {
-    //! @todo: Implement getId() method.
+    return isset($this->meta['facebookid']) ? $this->meta['facebookid'] : NULL;
   }
 
 
