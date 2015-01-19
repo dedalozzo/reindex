@@ -1,23 +1,20 @@
 <?php
 
-//! @file IProvider.php
-//! @brief This file contains the IProvider class.
+//! @file IConsumer.php
+//! @brief This file contains the IConsumer class.
 //! @details
 //! @author Filippo F. Fadda
 
 
 //! OAuth service providers namespace.
-namespace PitPress\Security\Provider;
-
-
-use PitPress\Model\User;
+namespace PitPress\Security\Consumer;
 
 
 /**
  * @brief This interface defines common methods between every class who represent an OAuth Service Provider.
  * @nosubgrouping
  */
-interface IProvider {
+interface IConsumer {
 
 
   /**
@@ -32,6 +29,20 @@ interface IProvider {
    * @return string
    */
   function getId();
+
+
+  /**
+   * @brief Returns the primary e-mail.
+   * @return string
+   */
+  function getPrimaryEmail();
+
+
+  /**
+   * @brief Returns `true` in case the user's email has been verified, `false` otherwise.
+   * @return string
+   */
+  function isVerified();
 
 
   /**
@@ -70,17 +81,10 @@ interface IProvider {
 
 
   /**
-   * @brief Returns `true` in case the user's email has been verified, `false` otherwise.
-   * @return string
-   */
-  function isVerified();
-
-
-  /**
-   * @brief Returns the user's emails.
+   * @brief Returns the user's secondary e-mails.
    * @return array
    */
-  function getEmails();
+  function getSecondaryEmails();
 
 
   /**
