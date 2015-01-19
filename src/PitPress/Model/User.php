@@ -17,7 +17,7 @@ use PitPress\Extension;
 use PitPress\Exception;
 use PitPress\Security\User\IUser;
 use PitPress\Security\User\System;
-use PitPress\Security\Provider\IProvider;
+use PitPress\Security\Consumer\IConsumer;
 
 
 /**
@@ -387,18 +387,18 @@ class User extends Storable implements IUser, Extension\ICount {
 
   /**
    * @brief Searches for the user identified by the specified email, if any returns it, otherwise return `false`.
-   * @param[in] IProvider $provider The provider instance.
+   * @param[in] IConsumer $consumer The consumer instance.
    */
-  public function addProvider(IProvider $provider) {
+  public function addConsumer(IConsumer $consumer) {
     // todo
   }
 
 
   /**
    * @brief Removes the specified provider and all its information.
-   * @param[in] string $name The Provider's name
+   * @param[in] string $name The consumer's name
    */
-  public function removeProvider($name) {
+  public function removeConsumer($name) {
     // todo
   }
 
