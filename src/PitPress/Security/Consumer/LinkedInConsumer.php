@@ -1,15 +1,15 @@
 <?php
 
-//! @file LinkedInProvider.php
-//! @brief This file contains the LinkedInProvider class.
+//! @file LinkedInConsumer.php
+//! @brief This file contains the LinkedInConsumer class.
 //! @details
 //! @author Filippo F. Fadda
 
 
-namespace PitPress\Security\Provider;
+namespace PitPress\Security\Consumer;
 
 
-class LinkedInProvider extends AbstractProvider implements IProvider {
+class LinkedInConsumer extends OAuth2Consumer implements IConsumer {
 
 
   /**
