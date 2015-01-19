@@ -1,15 +1,15 @@
 <?php
 
-//! @file GitHubProvider.php
-//! @brief This file contains the GitHubProvider class.
+//! @file GitHubConsumer.php
+//! @brief This file contains the GitHubConsumer class.
 //! @details
 //! @author Filippo F. Fadda
 
 
-namespace PitPress\Security\Provider;
+namespace PitPress\Security\Consumer;
 
 
-class GitHubProvider extends AbstractProvider implements IProvider {
+class GitHubConsumer extends OAuth2Consumer implements IConsumer {
 
 
   /**
