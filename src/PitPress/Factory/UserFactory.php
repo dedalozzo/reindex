@@ -18,7 +18,7 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
 use ElephantOnCouch\Exception\ServerErrorException;
 
 use PitPress\Security\User;
-use PitPress\Security\Provider\IProvider;
+use PitPress\Security\Consumer\IConsumer;
 use PitPress\Helper\Cookie;
 
 
@@ -68,18 +68,18 @@ class UserFactory {
 
 
   /**
-   * @brief Searches for the user identified by the specified id, related to a specific provider. If any returns it,
+   * @brief Searches for the user identified by the specified id, related to a specific consumer. If any returns it,
    * otherwise return an AnonymousUser instance.
-   * @param[in] IProvider $provider
+   * @param[in] IConsumer $consumer A consumer instance.
    * @return User\IUser An user instance.
    */
-  public static function fromProvider(IProvider $provider) {
+  public static function fromConsumer(IConsumer $consumer) {
     $di = DI::getDefault();
     $couch = $di['couchdb'];
 
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(1);
-    $result = $couch->queryView("users", "byProvider", [$provider->getName(), $provider->getId()], $opts);
+    $result = $couch->queryView("users", "byProvider", [$consumer->getName(), $consumer->getId()], $opts);
 
     if (!$result->isEmpty())
       return $couch->getDoc(Couch::STD_DOC_PATH, $result[0]['id']);
