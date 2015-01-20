@@ -163,6 +163,47 @@ class Text {
 
 
   /**
+   * @brief Separates the given full name into first name and last name.
+   * @param[in] string $fullName A person full name.
+   * @return array An associative array.
+   */
+  public static function splitFullName($fullName) {
+    $result = [];
+
+    $r = explode(' ', $fullName);
+    $size = count($r);
+
+    //check first for period, assume salutation if so
+    if (mb_strpos($r[0], '.') === FALSE) {
+      $result['salutation'] = '';
+      $result['first'] = $r[0];
+    }
+    else {
+      $result['salutation'] = $r[0];
+      $result['first'] = $r[1];
+    }
+
+    //check last for period, assume suffix if so
+    if (mb_strpos($r[$size - 1], '.') === FALSE)
+      $result['suffix'] = '';
+    else
+      $result['suffix'] = $r[$size - 1];
+
+    // Combines remains into last.
+    $start = ($result['salutation']) ? 2 : 1;
+    $end = ($result['suffix']) ? $size - 2 : $size - 1;
+
+    $last = '';
+    for ($i = $start; $i <= $end; $i++)
+      $last .= ' '.$r[$i];
+
+    $result['last'] = trim($last);
+
+    return $result;
+  }
+
+
+  /**
    * @brief Removes unwanted MS Word smart characters from a string.
    * @param[in] string $text The text to be sanitized.
    * @return string The sanitized text.
