@@ -14,6 +14,10 @@ use OAuth\Common\Consumer\Credentials;
 use OAuth\ServiceFactory;
 
 
+/**
+ * @brief Ancestor class of each OAuth2 consumer class.
+ * @nosubgrouping
+ */
 abstract class OAuth2Consumer {
 
   protected $meta;
