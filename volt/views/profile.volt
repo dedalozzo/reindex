@@ -41,8 +41,8 @@
   </div> <!-- /column-left -->
 
   <div class="column-right">
-    {% set lastVisit = user.getLastvisit() %}
-    {% set hitsCount = user.getHitsCount() %}
+    {# {% set lastVisit = user.getLastvisit() %} #}
+    {# {% set hitsCount = user.getHitsCount() %} #}
 
     <div class="reputation big">
       <table>
