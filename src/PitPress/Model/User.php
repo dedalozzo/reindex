@@ -382,23 +382,26 @@ class User extends Storable implements IUser, Extension\ICount {
   //!@}
 
 
-  /** @name Providers Management Methods */
+  /** @name Login Management Methods */
   //!@{
 
   /**
    * @brief Searches for the user identified by the specified email, if any returns it, otherwise return `false`.
-   * @param[in] IConsumer $consumer The consumer instance.
+   * @param[in] string $providerName The provider name.
+   * @param[in] string $userId The user id.
+   * @param[in] string $email The user's email.
    */
-  public function addConsumer(IConsumer $consumer) {
+  public function addLogin($providerName, $userId, $email) {
     // todo
   }
 
 
   /**
    * @brief Removes the specified provider and all its information.
-   * @param[in] string $name The consumer's name
+   * @param[in] string $providerName The consumer name.
+   * @param[in] string $userId The user id.
    */
-  public function removeConsumer($name) {
+  public function removeLogin($providerName, $userId) {
     // todo
   }
 
