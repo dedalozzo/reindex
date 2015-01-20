@@ -1,15 +1,15 @@
 <?php
 
-//! @file GooglePlusProvider.php
-//! @brief This file contains the GooglePlusProvider class.
+//! @file GooglePlusConsumer.php
+//! @brief This file contains the GooglePlusConsumer class.
 //! @details
 //! @author Filippo F. Fadda
 
 
-namespace PitPress\Security\Provider;
+namespace PitPress\Security\Consumer;
 
 
-class GooglePlusProvider extends AbstractProvider implements IProvider {
+class GooglePlusConsumer extends OAuth2Consumer implements IConsumer {
 
 
   /**
