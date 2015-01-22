@@ -17,7 +17,6 @@ use PitPress\Extension;
 use PitPress\Exception;
 use PitPress\Security\User\IUser;
 use PitPress\Security\User\System;
-use PitPress\Security\Consumer\IConsumer;
 
 
 /**
