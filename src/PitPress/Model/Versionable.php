@@ -12,7 +12,6 @@ namespace PitPress\Model;
 
 
 use ElephantOnCouch\Opt\ViewQueryOpts;
-use ElephantOnCouch\Generator\UUID;
 
 use PitPress\Helper;
 use PitPress\Exception;
@@ -38,23 +37,6 @@ abstract class Versionable extends Storable {
 
   /** @name Control Versioning Methods */
   //!@{
-
-  /**
-   * @brief Creates an instance of the class, modifying opportunely the ID, appending a version number.
-   * @details Versioned items, in fact, share the same ID, but a version number is added to differentiate them.
-   * @param[in] string $id When provided, appends the version number, else a new ID is generated.
-   * @return object
-   */
-  public static function create($id = NULL) {
-    $instance = new static();
-
-    if (is_null($id))
-      $instance->setId(UUID::generate(UUID::UUID_RANDOM, UUID::FMT_STRING));
-    else
-      $instance->setId($id);
-
-    return $instance;
-  }
 
 
   /**

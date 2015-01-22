@@ -16,6 +16,7 @@ use ElephantOnCouch\Doc\Doc;
 use Phalcon\DI;
 
 use PitPress\Helper;
+use ElephantOnCouch\Generator\UUID;
 
 
 /**
@@ -39,6 +40,23 @@ abstract class Storable extends Doc {
     $this->couch = $this->di['couchdb'];
     $this->redis = $this->di['redis'];
     $this->user = $this->di['guardian']->getUser();
+  }
+
+
+  /**
+   * @brief Creates an instance of the class, using the provided ID if any, or generating a new one.
+   * @param[in] string $id The optional ID.
+   * @return object
+   */
+  public static function create($id = NULL) {
+    $instance = new static();
+
+    if (is_null($id))
+      $instance->setId(UUID::generate(UUID::UUID_RANDOM, UUID::FMT_STRING));
+    else
+      $instance->setId($id);
+
+    return $instance;
   }
 
 
