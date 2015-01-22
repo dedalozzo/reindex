@@ -9,105 +9,61 @@
 namespace PitPress\Security\Consumer;
 
 
-class GitHubConsumer extends OAuth2Consumer implements IConsumer {
+use PitPress\Model\User;
 
 
-  /**
-   * @brief Returns the provider's name.
-   * @return string
-   */
-  function getName() {
-    //! @todo: Implement getName() method.
+/**
+ * @brief GitHub consumer implementation.
+ * @nosubgrouping
+ */
+class GitHubConsumer extends OAuth2Consumer {
+
+
+  protected function update(User $user, array $userData) {
+    // id
+    // login
+    // emails[0]
+    // company
+    // bio
+    // html_url
+    // dateOfBirth [none]
+    // gender [none]
+    // updated_at
+    // firstName (generated from name)
+    // lastName (generated from name)
+    // locale [none]
+    // timeOffset [none]
+
+    $user->setMetadata('username', $this->guessUsername($userData['publicProfileUrl']), FALSE, FALSE);
+    $user->setMetadata('email', @$userData['emailAddress'], FALSE, FALSE);
+    $user->setMetadata('firstName', @$userData['firstName'], FALSE, FALSE);
+    $user->setMetadata('lastName', @$userData['lastName'], FALSE, FALSE);
+    $user->setMetadata('birthday', @$userData['dateOfBirth'], FALSE, FALSE);
+    $user->setMetadata('headline', @$userData['headline'], FALSE, FALSE);
+    $user->setMetadata('about', @$userData['summary'], FALSE, FALSE);
+    $user->setMetadata('profileUrl', @$userData['publicProfileUrl'], FALSE, FALSE);
+    $user->setMetadata('headline', @$userData['headline'], FALSE, FALSE);
+
+    $user->addLogin($this->getName(), $userData['id'], $userData['publicProfileUrl']);
+    $user->internetProtocolAddress = $_SERVER['REMOTE_ADDR'];
+    $user->save();
   }
 
 
-  /**
-   * @brief Returns the user's id.
-   * @return string
-   */
-  function getId() {
-    //! @todo: Implement getId() method.
+  public function consume() {
+    $userData = $this->fetch('/people/~:(id,email-address,first-name,last-name,public-profile-url,headline,summary,date-of-birth)?format=json');
+    $this->validate('id', 'emailAddress', $userData);
+    $this->process($userData, $userData['id']);
   }
 
 
-  /**
-   * @brief Returns the username.
-   * @return string
-   */
-  function getUsername() {
-    //! @todo: Implement getUsername() method.
+  public function getName() {
+    return 'github';
   }
 
 
-  /**
-   * @brief Returns the user's first name.
-   * @return string
-   */
-  function getFirstName() {
-    //! @todo: Implement getFirstName() method.
-  }
-
-
-  /**
-   * @brief Returns the user's last name.
-   * @return string
-   */
-  function getLastName() {
-    //! @todo: Implement getLastName() method.
-  }
-
-
-  /**
-   * @brief Returns the user's language setting.
-   * @return string
-   */
-  function getLocale() {
-    //! @todo: Implement getLocale() method.
-  }
-
-
-  /**
-   * @brief Returns the user's time offset.
-   * @return integer
-   */
-  function getTimeOffSet() {
-    //! @todo: Implement getTimeOffSet() method.
-  }
-
-
-  /**
-   * @brief Returns `true` in case the user's email has been verified, `false` otherwise.
-   * @return string
-   */
-  function isVerified() {
-    //! @todo: Implement isVerified() method.
-  }
-
-
-  /**
-   * @brief Returns the user's emails.
-   * @return array
-   */
-  function getEmails() {
-    //! @todo: Implement getEmails() method.
-  }
-
-
-  /**
-   * @brief Returns the user friends list.
-   * @return array
-   */
-  function getFriends() {
-    //! @todo: Implement getFriends() method.
-  }
-
-
-  /**
-   * @brief Returns extra data.
-   * @return array
-   */
-  function getExtra() {
-    //! @todo: Implement getExtra() method.
+  public function getScope() {
+    return [];
   }
 
 }
