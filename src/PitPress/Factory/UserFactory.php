@@ -68,18 +68,19 @@ class UserFactory {
 
 
   /**
-   * @brief Searches for the user identified by the specified id, related to a specific consumer. If any returns it,
+   * @brief Searches for the user identified by the identifier associated with the specific provider. If any returns it,
    * otherwise return an AnonymousUser instance.
-   * @param[in] IConsumer $consumer A consumer instance.
+   * @param[in] string $providerName The provider name.
+   * @param[in] string $userId The user identifier used by the provider.
    * @return User\IUser An user instance.
    */
-  public static function fromConsumer(IConsumer $consumer) {
+  public static function fromLogin($providerName, $userId) {
     $di = DI::getDefault();
     $couch = $di['couchdb'];
 
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(1);
-    $result = $couch->queryView("users", "byProvider", [$consumer->getName(), $consumer->getId()], $opts);
+    $result = $couch->queryView("users", "byProvider", [$providerName, $userId], $opts);
 
     if (!$result->isEmpty())
       return $couch->getDoc(Couch::STD_DOC_PATH, $result[0]['id']);
@@ -89,18 +90,17 @@ class UserFactory {
 
 
   /**
-   * @brief Searches for the user identified by the specified emails, if any returns it, otherwise return an AnonymousUser
-   * instance.
-   * @param[in] array $emails
+   * @brief Searches for the user identified by e-mail, if any returns it, otherwise return an AnonymousUser instance.
+   * @param[in] string $email The user email.
    * @return User\IUser An user instance.
    */
-  public static function fromEmails(array $emails) {
+  public static function fromEmail($email) {
     $di = DI::getDefault();
     $couch = $di['couchdb'];
 
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(1);
-    $result = $couch->queryView("users", "byEmail", $emails, $opts);
+    $result = $couch->queryView("users", "byEmail", $email, $opts);
 
     if (!$result->isEmpty())
       return $couch->getDoc(Couch::STD_DOC_PATH, $result[0]['id']);
