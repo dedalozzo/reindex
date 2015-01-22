@@ -9,105 +9,68 @@
 namespace PitPress\Security\Consumer;
 
 
-class FacebookConsumer extends OAuth2Consumer implements IConsumer {
+use PitPress\Model\User;
+use PitPress\Exception;
 
 
-  /**
-   * @brief Returns the provider's name.
-   * @return string
-   */
-  function getName() {
-    return "facebook";
+class FacebookConsumer extends OAuth2Consumer {
+
+
+  // Facebook, like LinkedIn, doesn't provide a username, but PitPress needs one. So we guess the username using the
+  // user public profile url. In case the username has already been taken, we add a sequence number to the end.
+  private function guessUsername($publicProfileUrl) {
+    if (preg_match('%.+/in/(?P<username>.+)%i', $publicProfileUrl, $matches))
+      return $matches['username'];
+    else
+      throw new Exception\InvalidFieldException("Le informazioni fornite da LinkedIn sono incomplete.");
   }
 
 
-  /**
-   * @brief Returns the user's id.
-   * @return string
-   */
-  function getId() {
-    return isset($this->meta['facebookid']) ? $this->meta['facebookid'] : NULL;
+  protected function update(User $user, array $userData) {
+    // id
+    // username [none]
+    // email
+    // company [none]
+    // about
+    // link
+    // birthday
+    // gender
+    // updated_time
+    // first_name
+    // last_name
+    // locale
+    // timezone
+
+    $user->setMetadata('username', $this->guessUsername($userData['publicProfileUrl']), FALSE, FALSE);
+    $user->setMetadata('email', @$userData['emailAddress'], FALSE, FALSE);
+    $user->setMetadata('firstName', @$userData['firstName'], FALSE, FALSE);
+    $user->setMetadata('lastName', @$userData['lastName'], FALSE, FALSE);
+    $user->setMetadata('birthday', @$userData['dateOfBirth'], FALSE, FALSE);
+    $user->setMetadata('headline', @$userData['headline'], FALSE, FALSE);
+    $user->setMetadata('about', @$userData['summary'], FALSE, FALSE);
+    $user->setMetadata('profileUrl', @$userData['publicProfileUrl'], FALSE, FALSE);
+    $user->setMetadata('headline', @$userData['headline'], FALSE, FALSE);
+
+    $user->addLogin($this->getName(), $userData['id'], $userData['publicProfileUrl']);
+    $user->internetProtocolAddress = $_SERVER['REMOTE_ADDR'];
+    $user->save();
   }
 
 
-  /**
-   * @brief Returns the username.
-   * @return string
-   */
-  function getUsername() {
-    //! @todo: Implement getUsername() method.
+  public function consume() {
+    $userData = $this->fetch('/people/~:(id,email-address,first-name,last-name,public-profile-url,headline,summary,date-of-birth)?format=json');
+    $this->validate('id', 'emailAddress', $userData);
+    $this->process($userData, $userData['id']);
   }
 
 
-  /**
-   * @brief Returns the user's first name.
-   * @return string
-   */
-  function getFirstName() {
-    //! @todo: Implement getFirstName() method.
+  public function getName() {
+    return 'facebook';
   }
 
 
-  /**
-   * @brief Returns the user's last name.
-   * @return string
-   */
-  function getLastName() {
-    //! @todo: Implement getLastName() method.
-  }
-
-
-  /**
-   * @brief Returns the user's language setting.
-   * @return string
-   */
-  function getLocale() {
-    //! @todo: Implement getLocale() method.
-  }
-
-
-  /**
-   * @brief Returns the user's time offset.
-   * @return integer
-   */
-  function getTimeOffSet() {
-    //! @todo: Implement getTimeOffSet() method.
-  }
-
-
-  /**
-   * @brief Returns `true` in case the user's email has been verified, `false` otherwise.
-   * @return string
-   */
-  function isVerified() {
-    //! @todo: Implement isVerified() method.
-  }
-
-
-  /**
-   * @brief Returns the user's emails.
-   * @return array
-   */
-  function getEmails() {
-    //! @todo: Implement getEmails() method.
-  }
-
-
-  /**
-   * @brief Returns the user friends list.
-   * @return array
-   */
-  function getFriends() {
-    //! @todo: Implement getFriends() method.
-  }
-
-
-  /**
-   * @brief Returns extra data.
-   * @return array
-   */
-  function getExtra() {
-    //! @todo: Implement getExtra() method.
+  public function getScope() {
+    return [];
   }
 
 }
