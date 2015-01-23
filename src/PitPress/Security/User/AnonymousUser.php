@@ -26,15 +26,6 @@ class AnonymousUser implements IUser {
 
 
   /**
-   * @brief This implementation returns always `false`.
-   * @return bool
-   */
-  public function isConfirmed() {
-    return FALSE;
-  }
-
-
-  /**
    * @brief This implementation returns always `true`.
    * @return bool
    */
@@ -56,7 +47,7 @@ class AnonymousUser implements IUser {
    * @brief This implementation returns always `false`.
    * @return bool
    */
-  public function isModerator() {
+  public function isAdmin() {
     return FALSE;
   }
 
@@ -65,7 +56,7 @@ class AnonymousUser implements IUser {
    * @brief This implementation returns always `false`.
    * @return bool
    */
-  public function isAdmin() {
+  public function isModerator() {
     return FALSE;
   }
 
