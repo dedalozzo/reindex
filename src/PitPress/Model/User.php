@@ -30,6 +30,7 @@ class User extends Storable implements IUser, Extension\ICount {
   public function __construct() {
     parent::__construct();
     $this->meta['emails'] = [];
+    $this->meta['logins'] = [];
   }
 
 
