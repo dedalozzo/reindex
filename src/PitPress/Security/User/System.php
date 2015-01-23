@@ -26,15 +26,6 @@ class System implements IUser {
 
 
   /**
-   * @brief This implementation returns always `true`.
-   * @return bool
-   */
-  public function isConfirmed() {
-    return TRUE;
-  }
-
-
-  /**
    * @brief This implementation returns always `false`.
    * @return bool
    */
@@ -56,7 +47,7 @@ class System implements IUser {
    * @brief This implementation returns always `true`.
    * @return bool
    */
-  public function isModerator() {
+  public function isAdmin() {
     return TRUE;
   }
 
@@ -65,7 +56,7 @@ class System implements IUser {
    * @brief This implementation returns always `true`.
    * @return bool
    */
-  public function isAdmin() {
+  public function isModerator() {
     return TRUE;
   }
 
