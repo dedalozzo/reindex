@@ -31,14 +31,8 @@ class LinkedInConsumer extends OAuth2Consumer {
 
 
   protected function update(User $user, array $userData) {
-    // In case the user e-mail hasn't been verified, we override it.
-    if ($user->isVerified($user->primaryEmail))
-      $override = FALSE;
-    else
-      $override = TRUE;
-
     $user->setMetadata('username', $this->guessUsername($userData['publicProfileUrl']), FALSE, FALSE);
-    $user->setMetadata('email', @$userData['emailAddress'], $override, FALSE);
+    $user->setMetadata('email', @$userData['emailAddress'], $this->canReplacePrimaryEmail($user), FALSE);
     $user->setMetadata('firstName', @$userData['firstName'], FALSE, FALSE);
     $user->setMetadata('lastName', @$userData['lastName'], FALSE, FALSE);
     $user->setMetadata('birthday', @$userData['dateOfBirth'], FALSE, FALSE);
