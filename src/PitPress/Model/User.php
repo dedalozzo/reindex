@@ -109,6 +109,49 @@ class User extends Storable implements IUser, Extension\ICount {
   }
 
 
+  /**
+   * @brief Adds a bunch of potential friends to the list of friends.
+   * @todo Implement the AddFriends() method.
+   */
+  public function addFriends() {
+  }
+
+
+  /** @name E-mails Management Methods */
+  //!@{
+
+  /**
+   * @brief Returns all the e-mails associated with the current user.
+   * @return array An associative array using as keys the e-mail addresses, and as values if the address are verified or
+   * not.
+   */
+  public function getEmails() {
+    return $this->meta['emails'];
+  }
+
+
+  /**
+   * @brief Adds an e-mail address to the current user.
+   * @param[in] string $email An e-mail address.
+   * @param[in] bool $verified The e-mail address has been verified.
+   */
+  public function addEmail($email, $verified = FALSE) {
+    $this->meta['emails'][$email] = $verified;
+  }
+
+
+  /**
+   * @brief Removes the specified e-mail address from the current user.
+   * @param[in] string $email An e-mail address.
+   */
+  public function removeEmail($email) {
+    if (isset($this->meta['emails'][$email]))
+      unset($this->meta['emails'][$email]);
+  }
+
+  //!@}
+
+
   /** @name Confirmation Methods */
   //!@{
 
