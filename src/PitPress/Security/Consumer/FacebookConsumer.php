@@ -13,6 +13,10 @@ use PitPress\Model\User;
 use PitPress\Exception;
 
 
+/**
+ * @brief Facebook consumer implementation.
+ * @nosubgrouping
+ */
 class FacebookConsumer extends OAuth2Consumer {
 
 
@@ -57,10 +61,10 @@ class FacebookConsumer extends OAuth2Consumer {
   }
 
 
-  public function consume() {
+  public function join() {
     $userData = $this->fetch('/people/~:(id,email-address,first-name,last-name,public-profile-url,headline,summary,date-of-birth)?format=json');
     $this->validate('id', 'emailAddress', $userData);
-    $this->process($userData, $userData['id']);
+    $this->consume($userData['id'], $userData['emailAddress'], $userData);
   }
 
 
