@@ -31,7 +31,7 @@ class UserFactory {
 
   /**
    * @brief This function tries to recognize a user from his id and the secret token. In case the user has been
-   * recognized, an User object is returned, else this function returns an AnonymousUser instance.
+   * recognized, an User object is returned, else this function returns an Anonymous instance.
    * @return User\IUser An instance of the user has been recognized by his cookie.
    * @todo Raise an exception when the user is banned, because obviously he can't login.
    */
@@ -53,24 +53,24 @@ class UserFactory {
       }
       catch(ServerErrorException $e) { // The user doesn't exist anymore.
         Cookie::delete();
-        return new User\AnonymousUser();
+        return new User\Anonymous();
       }
 
       if ($security->checkHash($user->id.$_SERVER['REMOTE_ADDR'], $token))
         return $user;
       else {
         Cookie::delete();
-        return new User\AnonymousUser();
+        return new User\Anonymous();
       }
     }
     else
-      return new User\AnonymousUser();
+      return new User\Anonymous();
   }
 
 
   /**
    * @brief Searches for the user identified by the identifier associated with the specific provider. If any returns it,
-   * otherwise return an AnonymousUser instance.
+   * otherwise return an Anonymous instance.
    * @param[in] string $providerName The provider name.
    * @param[in] string $userId The user identifier used by the provider.
    * @return User\IUser An user instance.
@@ -86,12 +86,12 @@ class UserFactory {
     if (!$result->isEmpty())
       return $couch->getDoc(Couch::STD_DOC_PATH, $result[0]['id']);
     else
-      return new User\AnonymousUser();
+      return new User\Anonymous();
   }
 
 
   /**
-   * @brief Searches for the user identified by e-mail, if any returns it, otherwise return an AnonymousUser instance.
+   * @brief Searches for the user identified by e-mail, if any returns it, otherwise return an Anonymous instance.
    * @param[in] string $email The user email.
    * @return User\IUser An user instance.
    */
@@ -106,7 +106,7 @@ class UserFactory {
     if (!$result->isEmpty())
       return $couch->getDoc(Couch::STD_DOC_PATH, $result[0]['id']);
     else
-      return new User\AnonymousUser();
+      return new User\Anonymous();
   }
 
 }

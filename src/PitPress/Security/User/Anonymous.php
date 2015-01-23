@@ -1,7 +1,7 @@
 <?php
 
-//! @file AnonymousUser.php
-//! @brief This file contains the AnonymousUser class.
+//! @file Anonymous.php
+//! @brief This file contains the Anonymous class.
 //! @details
 //! @author Filippo F. Fadda
 
@@ -13,7 +13,7 @@ namespace PitPress\Security\User;
  * @brief This class represents an anonymous user.
  * @nosubgrouping
  */
-class AnonymousUser implements IUser {
+class Anonymous implements IUser {
 
 
   /**
