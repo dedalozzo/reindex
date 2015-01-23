@@ -898,7 +898,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'user') {
-    foreach ($doc->logins as loginName => $value)
+    foreach ($doc->logins as $loginName => $value)
       $emit($loginName);
   }
 };
