@@ -27,6 +27,12 @@ class User extends Storable implements IUser, Extension\ICount {
   use Extension\TCount;
 
 
+  public function __construct() {
+    parent::__construct();
+    $this->meta['emails'] = [];
+  }
+
+
   /**
    * @brief Given a e-mail, returns the gravatar URL for the corresponding user.
    * @param[in] string $email The user e-mail.
@@ -120,6 +126,12 @@ class User extends Storable implements IUser, Extension\ICount {
   /** @name E-mails Management Methods */
   //!@{
 
+
+  protected function setPrimaryEmail($value) {
+    $this->meta['primaryEmail'] = $value;
+  }
+
+
   /**
    * @brief Returns all the e-mails associated with the current user.
    * @return array An associative array using as keys the e-mail addresses, and as values if the address are verified or
@@ -137,37 +149,43 @@ class User extends Storable implements IUser, Extension\ICount {
    */
   public function addEmail($email, $verified = FALSE) {
     $this->meta['emails'][$email] = $verified;
+
+    if (count($this->meta['emails']) == 1)
+      $this->primaryEmail = $email;
   }
 
 
   /**
-   * @brief Removes the specified e-mail address from the current user.
+   * @brief Returns `true` in case the e-mail can be removed, `false` otherwise.
+   * @param[in] string $email An e-mail address.
+   * @param[in] bool
+   */
+  public function canRemoveEmail($email) {
+    if (array_key_exists($email, $this->meta['emails']) && count($this->meta['emails']) > 1
+        && (!$this->meta['emails'][$email] or array_count_values($this->meta['emails'][TRUE]) >= 2))
+      return TRUE;
+    else
+      return FALSE;
+  }
+
+
+  /**
+   * @brief Removes, when possible, the specified e-mail address from the list of e-mail addresses associated to the
+   * current user.
    * @param[in] string $email An e-mail address.
    */
   public function removeEmail($email) {
-    if (isset($this->meta['emails'][$email]))
+    if ($this->canRemoveEmail($email))
       unset($this->meta['emails'][$email]);
   }
 
-  //!@}
-
-
-  /** @name Confirmation Methods */
-  //!@{
 
   /**
-   * @brief Confirm the user.
+   * @brief Returns `true` if the user e-mail has been verified, `false` otherwise.
+   * @return bool
    */
-  public function confirm() {
-    $this->meta['confirmed'] = TRUE;
-  }
-
-
-  /**
-   * @copydoc IUser::isConfirmed()
-   */
-  public function isConfirmed() {
-    return isset($this->meta['confirmed']);
+  public function isVerifiedEmail($email) {
+    return (isset($this->meta['emails'][$email])) ? $this->meta['emails'][$email] : FALSE;
   }
 
   //!@}
@@ -428,23 +446,40 @@ class User extends Storable implements IUser, Extension\ICount {
   //!@{
 
   /**
-   * @brief Searches for the user identified by the specified email, if any returns it, otherwise return `false`.
-   * @param[in] string $providerName The provider name.
+   * @brief Returns a login name based on the user id and consumer name.
    * @param[in] string $userId The user id.
-   * @param[in] string $email The user's email.
+   * @param[in] string $consumerName The consumer name.
+   * @return string
    */
-  public function addLogin($providerName, $userId, $email) {
-    // todo
+  private function buildLoginName($userId, $consumerName) {
+    return $userId.'@'.$consumerName;
+  }
+
+
+  /**
+   * @brief Searches for the user identified by the specified email, if any returns it, otherwise return `false`.
+   * @param[in] string $consumerName The consumer name.
+   * @param[in] string $userId The user id.
+   * @param[in] string $userEmail The user's email.
+   * @param[in] string $profileUrl The user's profile URL.
+   */
+  public function addLogin($consumerName, $userId, $userEmail, $profileUrl) {
+    $login = $this->buildLoginName($userId, $consumerName);
+    $this->meta['logins'][$login] = [$consumerName, $userId, $userEmail, $profileUrl];
+    $this->addEmail($userEmail, TRUE);
   }
 
 
   /**
    * @brief Removes the specified provider and all its information.
-   * @param[in] string $providerName The consumer name.
+   * @param[in] string $consumerName The consumer name.
    * @param[in] string $userId The user id.
    */
-  public function removeLogin($providerName, $userId) {
-    // todo
+  public function removeLogin($consumerName, $userId) {
+    $login = $this->buildLoginName($userId, $consumerName);
+
+    if (isset($this->meta['logins'][$login]))
+      unset($this->meta['logins'][$login]);
   }
 
   //!@}
@@ -515,24 +550,13 @@ class User extends Storable implements IUser, Extension\ICount {
   }
 
 
-  public function getEmail() {
-    return $this->meta['email'];
+  public function getPrimaryEmail() {
+    return $this->meta['primaryEmail'];
   }
 
 
-  public function issetEmail() {
-    return isset($this->meta['email']);
-  }
-
-
-  public function setEmail($value) {
-    $this->meta['email'] = strtolower($value);
-  }
-
-
-  public function unsetEmail() {
-    if ($this->isMetadataPresent('email'))
-      unset($this->meta['email']);
+  public function issetPrimaryEmail() {
+    return isset($this->meta['primaryEmail']);
   }
 
 
