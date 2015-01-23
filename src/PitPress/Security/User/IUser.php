@@ -25,13 +25,6 @@ interface IUser {
 
 
   /**
-   * @brief Returns `true` if the user has been confirmed.
-   * @return bool
-   */
-  function isConfirmed();
-
-
-  /**
    * @brief Returns `true` in case the user is a guest.
    * @return bool
    */
