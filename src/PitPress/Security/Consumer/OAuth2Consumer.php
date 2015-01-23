@@ -184,6 +184,19 @@ abstract class OAuth2Consumer {
 
 
   /**
+   * @brief Returns `true` in case the user's primary e-mail hasn't been verified, `false` otherwise.
+   * @param[in] User $user The user instance.
+   * @return bool
+   */
+  protected function canReplacePrimaryEmail(User $user) {
+    if ($user->isVerifiedEmail($user->primaryEmail))
+      return FALSE;
+    else
+      return TRUE;
+  }
+
+
+  /**
    * @brief Updates the user object using the provided data.
    * @param[in] User $user The user instance.
    * @param param[in] array $userData An associative array with the user information.
