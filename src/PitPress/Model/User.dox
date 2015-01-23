@@ -13,14 +13,14 @@ class User  {
   string $firstName; //!< First name.
   string $lastName; //!< Last surname.
 
-  string $email; //!< E-mail.
+  string $primaryEmail; //!< Primary e-mail.
   string $password; //!< Password chosen by the user.
   string $hash; //!< String hash sent via e-mail to the user to confirm that his e-mail is real.
   string $internetProtocolAddress; //!< The IP address of the user.
   string $locale; //!< Users's language
   integer $timeOffset; //!< Time offset.
 
-  integer $gender; //!< Sex.
+  string $gender; //!< Sex.
   integer $birthday; //!< Date of birth.
   string $about; //!< A few words about the user.
 
