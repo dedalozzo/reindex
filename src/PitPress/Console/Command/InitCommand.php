@@ -894,6 +894,25 @@ MAP;
     $doc->addHandler(usersByEmail());
 
 
+    function usersByProvider() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'user') {
+    foreach ($doc->logins as loginName => $value)
+      $emit($loginName);
+  }
+};
+MAP;
+
+      $handler = new ViewHandler("byProvider");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(usersByProvider());
+
+
     // @params: [postId]
     function usersHaveVoted() {
       $map = <<<'MAP'
