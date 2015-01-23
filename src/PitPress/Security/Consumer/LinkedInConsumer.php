@@ -48,10 +48,10 @@ class LinkedInConsumer extends OAuth2Consumer {
   }
 
 
-  public function consume() {
+  public function join() {
     $userData = $this->fetch('/people/~:(id,email-address,first-name,last-name,public-profile-url,headline,summary,date-of-birth)?format=json');
     $this->validate('id', 'emailAddress', $userData);
-    $this->process($userData, $userData['id']);
+    $this->consume($userData['id'], $userData['emailAddress'], $userData);
   }
 
 
