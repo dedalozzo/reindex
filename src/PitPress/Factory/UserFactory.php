@@ -33,6 +33,7 @@ class UserFactory {
    * @brief This function tries to recognize a user from his id and the secret token. In case the user has been
    * recognized, an User object is returned, else this function returns an AnonymousUser instance.
    * @return User\IUser An instance of the user has been recognized by his cookie.
+   * @todo Raise an exception when the user is banned, because obviously he can't login.
    */
   public static function fromCookie() {
     // A console script runs as System user.
