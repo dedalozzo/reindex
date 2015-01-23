@@ -31,8 +31,14 @@ class LinkedInConsumer extends OAuth2Consumer {
 
 
   protected function update(User $user, array $userData) {
+    // In case the user e-mail hasn't been verified, we override it.
+    if ($user->isVerified($user->primaryEmail))
+      $override = FALSE;
+    else
+      $override = TRUE;
+
     $user->setMetadata('username', $this->guessUsername($userData['publicProfileUrl']), FALSE, FALSE);
-    $user->setMetadata('email', @$userData['emailAddress'], FALSE, FALSE);
+    $user->setMetadata('email', @$userData['emailAddress'], $override, FALSE);
     $user->setMetadata('firstName', @$userData['firstName'], FALSE, FALSE);
     $user->setMetadata('lastName', @$userData['lastName'], FALSE, FALSE);
     $user->setMetadata('birthday', @$userData['dateOfBirth'], FALSE, FALSE);
@@ -41,9 +47,8 @@ class LinkedInConsumer extends OAuth2Consumer {
     $user->setMetadata('profileUrl', @$userData['publicProfileUrl'], FALSE, FALSE);
     $user->setMetadata('headline', @$userData['headline'], FALSE, FALSE);
 
-    $user->addLogin($this->getName(), $userData['id'], $userData['publicProfileUrl']);
+    $user->addLogin($this->getName(), $userData['id'], $userData['emailAddress'], $userData['publicProfileUrl']);
     $user->internetProtocolAddress = $_SERVER['REMOTE_ADDR'];
-    $user->confirm();
     $user->save();
   }
 
@@ -62,6 +67,11 @@ class LinkedInConsumer extends OAuth2Consumer {
 
   public function getScope() {
     return ['r_fullprofile', 'r_emailaddress', 'r_contactinfo', 'r_network'];
+  }
+
+
+  public function getFriends() {
+
   }
 
 }
