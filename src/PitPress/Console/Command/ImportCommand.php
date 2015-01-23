@@ -25,7 +25,6 @@ use PitPress\Model\Reply;
 use PitPress\Model\Accessory\Star;
 use PitPress\Model\Accessory\Subscription;
 use PitPress\Helper\Text;
-use PitPress\Security\System;
 
 use ElephantOnCouch\Generator\UUID;
 
@@ -521,17 +520,24 @@ class ImportCommand extends AbstractCommand {
       $user->firstName = Text::convertCharset($item->firstName, TRUE);
       $user->lastName = Text::convertCharset($item->lastName, TRUE);
       $user->username = mb_strtolower(preg_replace('/\s+/u', '_', Text::convertCharset($item->username, TRUE)), 'utf-8');
-      $user->email = Text::convertCharset($item->email);
+      $user->addEmail(Text::convertCharset($item->email), (bool)$item->confirmed);
       $user->password = Text::convertCharset($item->password);
       $user->birthday = (int)$item->birthday;
-      $user->gender = $item->sex; // 0 => undefined, 1 => male, 2 => female.
+
+      // 0 => undefined, 1 => male, 2 => female.
+      switch ($item->sex) {
+        case 1:
+          $user->gender = 'm';
+          break;
+        case 2:
+          $user->gender = 'f';
+          break;
+      }
+
       $user->internetProtocolAddress = Text::convertCharset($item->ipAddress);
       $user->createdAt = (int)$item->createdAt;
       $user->modifiedAt = is_null($item->modifiedAt) ? $user->createdAt : (int)$item->modifiedAt;
       $user->hash = Text::convertCharset($item->confirmationHash);
-
-      if ($item->confirmed == 1)
-        $user->confirm();
 
       $this->couch->saveDoc($user);
 
