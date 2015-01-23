@@ -20,7 +20,7 @@ use PitPress\Model\User;
 use PitPress\Factory\UserFactory;
 use PitPress\Helper\Cookie;
 use PitPress\Helper\ValidationHelper;
-use PitPress\Exception\InvalidFieldException;
+use PitPress\Exception;
 
 
 /**
@@ -132,40 +132,53 @@ abstract class OAuth2Consumer {
 
     $group = $validation->validate($userData);
     if (count($group) > 0) {
-      throw new InvalidFieldException("Le informazioni fornite da LinkedIn sono incomplete.");
+      throw new Exception\InvalidFieldException("Le informazioni fornite da LinkedIn sono incomplete.");
     }
   }
 
 
   /**
-   * @brief Process the user data and his connections.
-   * @details In case the current user is a guest, checks if any user is registered with the `$userId`. If any exists,
-   * it performs the sign in, otherwise sign up the new user.
-   * @param[in] string $userId The user identifier used by the provider.
-   * @param[in] string $userEmail The user email.
-   * @param[in] array $userData An associative array with the user information.
-   * @param[in] array $userConnections An associative array with the user information.
+   * @brief Consumes the user data.
+   * @param param[in] string $userId The user identifier used by the provider.
+   * @param param[in] string $userEmail The user email.
+   * @param param[in] array $userData An associative array with the user information.
    */
-  protected function process($userId, $userEmail, array $userData, array $userConnecions = []) {
-    // Searches for the user associated with `$userId` or `$userEmail`.
-    $user = UserFactory::fromLogin($this->getName(), $userId);
-    if ($user->isGuest()) $user = UserFactory::fromEmail($userEmail);
+  protected function consume($userId, $userEmail, array $userData) {
+    $anonymous = $this->user->isGuest();
 
-    if ($this->user->isGuest()) {
-      if ($user->isMember())
+    $user = UserFactory::fromLogin($this->getName(), $userId);
+
+    if ($user->isMember()) {
+      if ($anonymous)
         $this->signIn($user, $userData);
+      elseif ($this->user->match($user->id))
+        $this->update($this->user, $userData);
+      else
+        throw new Exception\UserMismatchException(sprintf("Il tuo account %s è già associato ad un'altra utenza. Contatta il supporto tecnico all'indirizzo %s", $this->di['config'][$this->getName()]['name'], $this->di['config']['application']['supportEmail']));
+    }
+    else {
+      $user = UserFactory::fromEmail($userEmail);
+
+      if ($user->isMember()) {
+        if (!$anonymous) {
+          $emails = $this->user->getEmails();
+
+          if (array_key_exists($emails, $userEmail) && $emails[$userEmail])
+            $this->update($this->user, $userData);
+          else
+            throw new Exception\UserMismatchException(sprintf("L'e-mail del tuo account %s è già associata ad un'altra utenza attiva. <a href=\"#\">Recupera la tua password</a>.", ucfirst($this->getName())));
+        }
+        elseif (!$user->isConfirmed())
+          $this->signIn($user, $userData);
+        else
+          throw new Exception\UserMismatchException(sprintf("L'e-mail primaria del tuo account %1$s è già in uso, questo significa che hai già un'utenza attiva. Per ragioni di sicurezza il sistema non ti consente di autenticarti. <a href=\"#\">Recupera la tua password</a> e accedi utilizzando l'e-mail e la nuova password che ti verrà spedita all'indirizzo di posta associato al tuo account %1$s. Una volta fatto il sign in puoi collegare il tuo account %1$s.", $this->di['config'][$this->getName()]['name']));
+      }
       else {
-        if ($user->isGuest())
+        if ($anonymous)
           $this->signUp($userData);
         else
           $this->signIn($user, $userData);
       }
-    }
-    else {
-      if ($this->user->match($user->id))
-        $this->update($this->user, $userData);
-      else
-        throw new UserMismatchException(sprintf("Il tuo account %s è già associato ad un'altra utenza. Contatta il supporto tecnico all'indirizzo %s", ucfirst($this->getName(), $this->di['config']['application']['supportEmail'])));
     }
   }
 
@@ -173,15 +186,22 @@ abstract class OAuth2Consumer {
   /**
    * @brief Updates the user object using the provided data.
    * @param[in] User $user The user instance.
-   * @param[in] array $data An associative array with the user information.
+   * @param param[in] array $userData An associative array with the user information.
    */
   abstract protected function update(User $user, array $userData);
 
 
   /**
-   * @brief Consumes the user information.
+   * @brief The authenticated user joins the PitPress social network.
    */
-  abstract public function consume();
+  abstract public function join();
+
+
+  /**
+   * @brief Retrieves the user friends.
+   * @return array
+   */
+  abstract public function getFriends();
 
 
   /**
