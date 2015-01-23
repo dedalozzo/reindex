@@ -809,7 +809,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'user')
-    $emit($doc->_id, [$doc->username, $doc->email, $doc->creationDate]);
+    $emit($doc->_id, [$doc->username, $doc->primaryEmail, $doc->creationDate]);
 };
 MAP;
 
@@ -828,7 +828,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'user')
-    $emit($doc->_id, [$doc->username, $doc->email]);
+    $emit($doc->_id, [$doc->username, $doc->primaryEmail]);
 };
 MAP;
 
@@ -878,8 +878,10 @@ MAP;
     function usersByEmail() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'user')
-    $emit($doc->email);
+  if ($doc->type == 'user') {
+    foreach ($doc->emails as $email => $verified)
+      $emit($email, $verified);
+  }
 };
 MAP;
 
