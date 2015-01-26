@@ -81,7 +81,8 @@ class UserFactory {
 
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(1);
-    $result = $couch->queryView("users", "byProvider", [$providerName, $userId], $opts);
+    $keys[] = [$providerName, $userId];
+    $result = $couch->queryView("users", "byProvider", $keys, $opts);
 
     if (!$result->isEmpty())
       return $couch->getDoc(Couch::STD_DOC_PATH, $result[0]['id']);
@@ -100,8 +101,8 @@ class UserFactory {
     $couch = $di['couchdb'];
 
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1);
-    $result = $couch->queryView("users", "byEmail", $email, $opts);
+    $opts->setKey($email)->setLimit(1);
+    $result = $couch->queryView("users", "byEmail", NULL, $opts);
 
     if (!$result->isEmpty())
       return $couch->getDoc(Couch::STD_DOC_PATH, $result[0]['id']);
