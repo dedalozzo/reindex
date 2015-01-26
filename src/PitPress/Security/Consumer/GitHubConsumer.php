@@ -10,6 +10,7 @@ namespace PitPress\Security\Consumer;
 
 
 use PitPress\Model\User;
+use PitPress\Helper\Text;
 
 
 /**
@@ -18,42 +19,49 @@ use PitPress\Model\User;
  */
 class GitHubConsumer extends OAuth2Consumer {
 
+  /** @name Field Names */
+  //!@{
+  const ID = 'id';
+  const EMAIL = 'email';
+  const LOGIN = 'login';
+  const FIRST_NAME = 'first';
+  const LAST_NAME = 'last';
+  const HEADLINE = 'company';
+  const ABOUT = 'bio';
+  const PROFILE_URL = 'html_url';
+  //!@}
+
+
+  private function extractPrimaryEmail($emails) {
+
+  }
+
 
   protected function update(User $user, array $userData) {
-    // id
-    // login
-    // emails[0]
-    // company
-    // bio
-    // html_url
-    // dateOfBirth [none]
-    // gender [none]
-    // updated_at
-    // firstName (generated from name)
-    // lastName (generated from name)
-    // locale [none]
-    // timeOffset [none]
+    $user->setMetadata('username', $userData[static::LOGIN], FALSE, FALSE);
 
-    $user->setMetadata('username', $this->guessUsername($userData['publicProfileUrl']), FALSE, FALSE);
-    $user->setMetadata('email', @$userData['emailAddress'], FALSE, FALSE);
-    $user->setMetadata('firstName', @$userData['firstName'], FALSE, FALSE);
-    $user->setMetadata('lastName', @$userData['lastName'], FALSE, FALSE);
-    $user->setMetadata('birthday', @$userData['dateOfBirth'], FALSE, FALSE);
-    $user->setMetadata('headline', @$userData['headline'], FALSE, FALSE);
-    $user->setMetadata('about', @$userData['summary'], FALSE, FALSE);
-    $user->setMetadata('profileUrl', @$userData['publicProfileUrl'], FALSE, FALSE);
-    $user->setMetadata('headline', @$userData['headline'], FALSE, FALSE);
+    $names = Text::splitFullName(@$userData['name']);
+    $user->setMetadata('firstName', @$names[static::FIRST_NAME], FALSE, FALSE);
+    $user->setMetadata('lastName', @$names[static::LAST_NAME], FALSE, FALSE);
 
-    $user->addLogin($this->getName(), $userData['id'], $userData['publicProfileUrl']);
+    $user->setMetadata('headline', @$userData[static::HEADLINE], FALSE, FALSE);
+    $user->setMetadata('about', @$userData[static::ABOUT], FALSE, FALSE);
+    $user->setMetadata('profileUrl', @$userData[static::PROFILE_URL], FALSE, FALSE);
+
+    $user->addLogin($this->getName(), $userData[static::ID], $userData[static::EMAIL], $userData[static::PROFILE_URL]);
     $user->internetProtocolAddress = $_SERVER['REMOTE_ADDR'];
     $user->save();
   }
 
 
   public function join() {
-    $userData = $this->fetch('/people/~:(id,email-address,first-name,last-name,public-profile-url,headline,summary,date-of-birth)?format=json');
-    $this->validate('id', 'emailAddress', $userData);
-    $this->consume($userData['id'], $userData['emailAddress'], $userData);
+    $userData = $this->fetch('/user/');
+    $emails = $this->fetch('/user/emails~:(id,emaillogin,name,company,bio,html-url)?format=json');
+
+    $email = $this->extractPrimaryEmail(@$userData['email']);
+
+    $this->validate('id', 'email', $userData);
+    $this->consume($userData[static::ID], $userData[static::EMAIL], $userData);
   }
 
 
@@ -63,7 +71,12 @@ class GitHubConsumer extends OAuth2Consumer {
 
 
   public function getScope() {
-    return [];
+    return ['user', 'public_repo'];
+  }
+
+
+  public function getFriends() {
+
   }
 
 }
