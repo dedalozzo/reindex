@@ -19,52 +19,54 @@ use PitPress\Exception;
  */
 class FacebookConsumer extends OAuth2Consumer {
 
+  /** @name Field Names */
+  //!@{
+  const ID = 'id';
+  const EMAIL = 'email';
+  const FIRST_NAME = 'first_name';
+  const LAST_NAME = 'last_name';
+  const GENDER = 'gender';
+  const LOCALE = 'locale';
+  const TIME_OFFSET = 'timezone';
+  const PROFILE_URL = 'link';
+  //!@}
+
 
   // Facebook, like LinkedIn, doesn't provide a username, but PitPress needs one. So we guess the username using the
   // user public profile url. In case the username has already been taken, we add a sequence number to the end.
-  private function guessUsername($publicProfileUrl) {
-    if (preg_match('%.+/in/(?P<username>.+)%i', $publicProfileUrl, $matches))
+  // todo this is not finished
+  private function guessUsername($firstName, $lastName ) {
+    /*if (preg_match('%.+/in/(?P<username>.+)%i', $publicProfileUrl, $matches))
       return $matches['username'];
     else
-      throw new Exception\InvalidFieldException("Le informazioni fornite da LinkedIn sono incomplete.");
+      throw new Exception\InvalidFieldException("Le informazioni fornite da Facebook sono incomplete.");*/
+    return $firstName.$lastName;
+  }
+
+
+  private function getGender($value) {
+    return ($value === 'male') ? 'm' : 'f';
   }
 
 
   protected function update(User $user, array $userData) {
-    // id
-    // username [none]
-    // email
-    // company [none]
-    // about
-    // link
-    // birthday
-    // gender
-    // updated_time
-    // first_name
-    // last_name
-    // locale
-    // timezone
+    $user->setMetadata('username', $this->guessUsername(@$userData[static::FIRST_NAME], @$userData[static::LAST_NAME]), FALSE, FALSE);
+    $user->setMetadata('firstName', @$userData[static::FIRST_NAME], FALSE, FALSE);
+    $user->setMetadata('lastName', @$userData[static::LAST_NAME], FALSE, FALSE);
+    $user->setMetadata('gender', $this->getGender(@$userData[static::GENDER]), FALSE, FALSE);
+    $user->setMetadata('locale', @$userData[static::LOCALE], FALSE, FALSE);
+    $user->setMetadata('timeOffset', @$userData[static::TIME_OFFSET], FALSE, FALSE);
 
-    $user->setMetadata('username', $this->guessUsername($userData['publicProfileUrl']), FALSE, FALSE);
-    $user->setMetadata('email', @$userData['emailAddress'], FALSE, FALSE);
-    $user->setMetadata('firstName', @$userData['firstName'], FALSE, FALSE);
-    $user->setMetadata('lastName', @$userData['lastName'], FALSE, FALSE);
-    $user->setMetadata('birthday', @$userData['dateOfBirth'], FALSE, FALSE);
-    $user->setMetadata('headline', @$userData['headline'], FALSE, FALSE);
-    $user->setMetadata('about', @$userData['summary'], FALSE, FALSE);
-    $user->setMetadata('profileUrl', @$userData['publicProfileUrl'], FALSE, FALSE);
-    $user->setMetadata('headline', @$userData['headline'], FALSE, FALSE);
-
-    $user->addLogin($this->getName(), $userData['id'], $userData['publicProfileUrl']);
+    $user->addLogin($this->getName(), $userData[static::ID], $userData[static::EMAIL], $userData[static::PROFILE_URL]);
     $user->internetProtocolAddress = $_SERVER['REMOTE_ADDR'];
-    $user->save();
+    //$user->save();
   }
 
 
   public function join() {
-    $userData = $this->fetch('/people/~:(id,email-address,first-name,last-name,public-profile-url,headline,summary,date-of-birth)?format=json');
-    $this->validate('id', 'emailAddress', $userData);
-    $this->consume($userData['id'], $userData['emailAddress'], $userData);
+    $userData = $this->fetch('/me');
+    $this->validate($userData);
+    $this->consume($userData[static::ID], $userData[static::EMAIL], $userData);
   }
 
 
@@ -74,7 +76,12 @@ class FacebookConsumer extends OAuth2Consumer {
 
 
   public function getScope() {
-    return [];
+    return ['email', 'user_friends'];
+  }
+
+
+  public function getFriends() {
+    // /me/friends
   }
 
 }
