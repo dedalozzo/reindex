@@ -38,7 +38,7 @@ abstract class OAuth2Consumer {
   /**
    * @brief Connects to the service provider and request an access token.
    */
-  public function __costruct() {
+  public function __construct() {
     $this->di = DI::getDefault();
     $this->user = $this->di['guardian']->getUser();
 
@@ -168,10 +168,10 @@ abstract class OAuth2Consumer {
           else
             throw new Exception\UserMismatchException(sprintf("L'e-mail del tuo account %s è già associata ad un'altra utenza attiva. <a href=\"#\">Recupera la tua password</a>.", ucfirst($this->getName())));
         }
-        elseif (!$user->isVerified($userEmail))
+        elseif (!$user->isVerifiedEmail($userEmail))
           $this->signIn($user, $userData);
         else
-          throw new Exception\UserMismatchException(sprintf("L'e-mail primaria del tuo account %1$s è già in uso ed è stata verificata, dunque hai già un'utenza attiva. Per sicurezza il sistema non ti consente di autenticarti: qualcuno potrebbe infatti essersi impossessato del tuo account %1$s, al momento non associato al tuo profilo su questo sito. Se non ricordi la password, segui <a href=\"#\">la procedura di recupero</a> e accedi utilizzando l'e-mail e la nuova password che ti verrà spedita all'indirizzo di posta associato al tuo account %1$s. Una volta fatto il sign in puoi collegare il tuo account %1$s.", $this->di['config'][$this->getName()]['name']));
+          throw new Exception\UserMismatchException(sprintf('L\'e-mail primaria del tuo account %1$s è già in uso ed è stata verificata, dunque hai già un\'utenza attiva. Per sicurezza il sistema non ti consente di autenticarti: qualcuno potrebbe infatti essersi impossessato del tuo account %1$s, al momento non associato al tuo profilo su questo sito. Se non ricordi la password, segui <a href="#">la procedura di recupero</a> e accedi utilizzando l\'e-mail e la nuova password che ti verrà spedita all\'indirizzo di posta associato al tuo account %1$s. Una volta fatto il sign in puoi collegare il tuo account %1$s.', $this->di['config'][$this->getName()]['name']));
       }
       else {
         if ($anonymous)
