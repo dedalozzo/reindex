@@ -29,6 +29,12 @@ use PitPress\Exception;
  */
 abstract class OAuth2Consumer {
 
+  /** @name Field Names */
+  //!@{
+  const ID = 'id';
+  const EMAIL = 'email';
+  //!@}
+
   protected $di; // Stores the default Dependency Injector.
   protected $user; // Stores the current user.
   protected $service; // Stores the service used to connect to the provider.
@@ -121,14 +127,12 @@ abstract class OAuth2Consumer {
   /**
    * @brief Validates mandatory properties: id and email.
    * @details Each provider uses a different associative key to identify the user id and his own email.
-   * @param[in] string $assocKeyForId The associative key for the id value.
-   * @param[in] string $assocKeyForEmail The associative key for the email value.
    * @param[in] array $userData An associative array with the user information.
    */
-  protected function validate($assocKeyForId, $assocKeyForEmail, array $userData) {
+  protected function validate(array $userData) {
     $validation = new ValidationHelper();
-    $validation->add($assocKeyForId, new PresenceOf(["message" => "L'id è obbligatorio."]));
-    $validation->add($assocKeyForEmail, new PresenceOf(["message" => "L'e-mail è obbligatoria."]));
+    $validation->add(static::ID, new PresenceOf(["message" => "L'id è obbligatorio."]));
+    $validation->add(static::EMAIL, new PresenceOf(["message" => "L'e-mail è obbligatoria."]));
 
     $group = $validation->validate($userData);
     if (count($group) > 0) {
@@ -180,19 +184,6 @@ abstract class OAuth2Consumer {
           $this->signIn($user, $userData);
       }
     }
-  }
-
-
-  /**
-   * @brief Returns `true` in case the user's primary e-mail hasn't been verified, `false` otherwise.
-   * @param[in] User $user The user instance.
-   * @return bool
-   */
-  protected function canReplacePrimaryEmail(User $user) {
-    if ($user->isVerifiedEmail($user->primaryEmail))
-      return FALSE;
-    else
-      return TRUE;
   }
 
 
