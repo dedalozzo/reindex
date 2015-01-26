@@ -19,6 +19,18 @@ use PitPress\Exception;
  */
 class GooglePlusConsumer extends OAuth2Consumer {
 
+  /** @name Field Names */
+  //!@{
+  const ID = 'id';
+  const EMAIL = 'email';
+  const FIRST_NAME = 'first_name';
+  const LAST_NAME = 'last_name';
+  const GENDER = 'gender';
+  const LOCALE = 'locale';
+  const TIME_OFFSET = 'timezone';
+  const PROFILE_URL = 'link';
+  //!@}
+
 
   // Google, like Facebook, doesn't provide a username, but PitPress needs one. So we guess the username using the
   // user public profile url. In case the username has already been taken, we add a sequence number to the end.
@@ -32,6 +44,7 @@ class GooglePlusConsumer extends OAuth2Consumer {
 
   protected function update(User $user, array $userData) {
     $user->setMetadata('username', $this->guessUsername($userData['publicProfileUrl']), FALSE, FALSE);
+
     $user->setMetadata('email', @$userData['emailAddress'], FALSE, FALSE);
     $user->setMetadata('firstName', @$userData['firstName'], FALSE, FALSE);
     $user->setMetadata('lastName', @$userData['lastName'], FALSE, FALSE);
@@ -41,7 +54,7 @@ class GooglePlusConsumer extends OAuth2Consumer {
     $user->setMetadata('profileUrl', @$userData['publicProfileUrl'], FALSE, FALSE);
     $user->setMetadata('headline', @$userData['headline'], FALSE, FALSE);
 
-    $user->addLogin($this->getName(), $userData['id'], $userData['publicProfileUrl']);
+    $user->addLogin($this->getName(), $userData['id'], $email, $userData['publicProfileUrl']);
     $user->internetProtocolAddress = $_SERVER['REMOTE_ADDR'];
     $user->save();
   }
@@ -61,6 +74,11 @@ class GooglePlusConsumer extends OAuth2Consumer {
 
   public function getScope() {
     return [];
+  }
+
+
+  public function getFriends() {
+
   }
 
 }
