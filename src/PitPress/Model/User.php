@@ -127,7 +127,6 @@ class User extends Storable implements IUser, Extension\ICount {
   /** @name E-mails Management Methods */
   //!@{
 
-
   protected function setPrimaryEmail($value) {
     $this->meta['primaryEmail'] = $value;
   }
