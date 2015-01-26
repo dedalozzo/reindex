@@ -31,15 +31,14 @@ class LinkedInConsumer extends OAuth2Consumer {
 
 
   protected function update(User $user, array $userData) {
-    $user->setMetadata('username', $this->guessUsername($userData['publicProfileUrl']), FALSE, FALSE);
     $user->setMetadata('email', @$userData['emailAddress'], $this->canReplacePrimaryEmail($user), FALSE);
+    $user->setMetadata('username', $this->guessUsername($userData['publicProfileUrl']), FALSE, FALSE);
     $user->setMetadata('firstName', @$userData['firstName'], FALSE, FALSE);
     $user->setMetadata('lastName', @$userData['lastName'], FALSE, FALSE);
     $user->setMetadata('birthday', @$userData['dateOfBirth'], FALSE, FALSE);
     $user->setMetadata('headline', @$userData['headline'], FALSE, FALSE);
     $user->setMetadata('about', @$userData['summary'], FALSE, FALSE);
     $user->setMetadata('profileUrl', @$userData['publicProfileUrl'], FALSE, FALSE);
-    $user->setMetadata('headline', @$userData['headline'], FALSE, FALSE);
 
     $user->addLogin($this->getName(), $userData['id'], $userData['emailAddress'], $userData['publicProfileUrl']);
     $user->internetProtocolAddress = $_SERVER['REMOTE_ADDR'];
