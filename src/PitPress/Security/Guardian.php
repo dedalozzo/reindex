@@ -53,17 +53,17 @@ class Guardian {
 
 
   /**
-   * @brief Returns `true` in case the username has not been used by anyone, `false` otherwise.
+   * @brief Returns `true` in case the username is taken, `false` otherwise.
    * @param[in] string $username The username.
    * @return bool
    */
-  public function isAvailable($username) {
+  public function isTaken($username) {
     $opts = new ViewQueryOpts();
     $opts->setLimit(1)->setKey($username);
 
     $result = $this->couch->queryView("users", "byUsername", NULL, $opts);
 
-    return ($result->isEmpty()) ? TRUE : FALSE;
+    return ($result->isEmpty()) ? FALSE : TRUE;
   }
 
 
