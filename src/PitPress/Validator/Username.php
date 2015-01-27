@@ -12,6 +12,7 @@ namespace PitPress\Validator;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator;
 use Phalcon\Validation\Message;
+use Phalcon\DI;
 
 
 /**
@@ -21,6 +22,16 @@ use Phalcon\Validation\Message;
 class Username extends Validator implements Validation\ValidatorInterface {
   const MIN_LENGTH = 5;
   const MAX_LENGTH = 24;
+
+  private $di;
+  private $guardian;
+
+
+  public function __construct($options = NULL) {
+    parent::__construct($options);
+    $this->di = DI::getDefault();
+    $this->guardian = $this->di['guardian'];
+  }
 
 
   /**
@@ -40,6 +51,8 @@ class Username extends Validator implements Validation\ValidatorInterface {
       $message = sprintf("Il nome utente può contenere al massimo %d caratteri.", self::MAX_LENGTH);
     elseif (!preg_match('/^[\p{L}\p{Mn}\p{Pd}\'\x{2019}]+$/iu', $value))
       $message = "Il nome utente non deve contenere caratteri speciali, numeri o spazi.";
+    elseif ($this->guardian->isTaken($value))
+      $message = "Il nome utente è già in uso.";
     else
       return TRUE;
 
