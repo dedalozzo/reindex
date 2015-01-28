@@ -52,7 +52,7 @@ class Username extends Validator implements Validation\ValidatorInterface {
     elseif (!preg_match('/^[\p{L}\p{Mn}\p{Pd}\'\x{2019}]+$/iu', $value))
       $message = "Il nome utente non deve contenere caratteri speciali, numeri o spazi.";
     elseif ($this->guardian->isTaken($value))
-      $message = "Il nome utente è già in uso.";
+      $message = "Il nome utente non è disponibile.";
     else
       return TRUE;
 
