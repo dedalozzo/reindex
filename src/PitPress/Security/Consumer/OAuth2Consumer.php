@@ -46,7 +46,8 @@ abstract class OAuth2Consumer {
    */
   public function __construct() {
     $this->di = DI::getDefault();
-    $this->user = $this->di['guardian']->getUser();
+    $this->guardian = $this->di['guardian'];
+    $this->user = $this->guardian->user;
 
     $this->initialize();
 
@@ -184,6 +185,24 @@ abstract class OAuth2Consumer {
           $this->signIn($user, $userData);
       }
     }
+  }
+
+
+  /**
+   * @brief In case the username has already been taken, adds a sequence number to the end.
+   * @param[in] string $value A potential username value.
+   * @return string
+   */
+  protected function guessUsername($value) {
+    $temp = $value;
+    $counter = 1;
+
+    while ($this->guardian->isTaken($value)) {
+      $value = $temp . (string)$counter;
+      $counter++;
+    }
+
+    return $value;
   }
 
 
