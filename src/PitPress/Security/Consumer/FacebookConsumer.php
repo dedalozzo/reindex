@@ -32,15 +32,15 @@ class FacebookConsumer extends OAuth2Consumer {
   //!@}
 
 
-  // Facebook, like LinkedIn, doesn't provide a username, but PitPress needs one. So we guess the username using the
-  // user public profile url. In case the username has already been taken, we add a sequence number to the end.
-  // todo this is not finished
-  private function guessUsername($firstName, $lastName ) {
-    /*if (preg_match('%.+/in/(?P<username>.+)%i', $publicProfileUrl, $matches))
-      return $matches['username'];
-    else
-      throw new Exception\InvalidFieldException("Le informazioni fornite da Facebook sono incomplete.");*/
-    return $firstName.$lastName;
+  /**
+   * @brief Facebook, like LinkedIn, doesn't provide a username, but PitPress needs one. So we guess the username using
+   * first name and last name. In case the username has already been taken, adds a sequence number to the end.
+   * @param[in] array $userData User data.
+   * @return string
+   */
+  protected function guessUsername(array $userData) {
+    $username = strtolower($userData[static::FIRST_NAME].$userData[static::LAST_NAME]);
+    parent::guessUsername($username);
   }
 
 
@@ -50,9 +50,9 @@ class FacebookConsumer extends OAuth2Consumer {
 
 
   protected function update(User $user, array $userData) {
-    $user->setMetadata('username', $this->guessUsername(@$userData[static::FIRST_NAME], @$userData[static::LAST_NAME]), FALSE, FALSE);
-    $user->setMetadata('firstName', @$userData[static::FIRST_NAME], FALSE, FALSE);
-    $user->setMetadata('lastName', @$userData[static::LAST_NAME], FALSE, FALSE);
+    $user->setMetadata('username', $this->guessUsername($userData), FALSE, FALSE);
+    $user->setMetadata('firstName', $userData[static::FIRST_NAME], FALSE, FALSE);
+    $user->setMetadata('lastName', $userData[static::LAST_NAME], FALSE, FALSE);
     $user->setMetadata('gender', $this->getGender(@$userData[static::GENDER]), FALSE, FALSE);
     $user->setMetadata('locale', @$userData[static::LOCALE], FALSE, FALSE);
     $user->setMetadata('timeOffset', @$userData[static::TIME_OFFSET], FALSE, FALSE);
