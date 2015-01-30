@@ -30,10 +30,9 @@ abstract class Badge extends Storable {
    * @brief Creates an instance of the badge.
    * @details This function is used internally.
    */
-  public static function create(Activity $subject) {
-    $obj = new static();
-    $obj->subject = $subject;
-    return $obj;
+  public function __construct(Activity $subject = NULL) {
+    parent::__construct();
+    $this->subject = $subject;
   }
 
 
