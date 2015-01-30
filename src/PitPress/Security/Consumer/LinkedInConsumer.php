@@ -32,21 +32,26 @@ class LinkedInConsumer extends OAuth2Consumer {
   //!@}
 
 
-  // LinkedIn, like Facebook, doesn't provide a username, but PitPress needs one. So we guess the username using the
-  // user public profile url. In case the username has already been taken, we add a sequence number to the end.
-  // todo this is not finished
-  private function guessUsername($publicProfileUrl) {
-    if (preg_match('%.+/in/(?P<username>.+)%i', $publicProfileUrl, $matches))
-      return $matches['username'];
+  /**
+   * @brief LinkedIn, like Facebook, doesn't provide a username, but PitPress needs one. So we guess the username using
+   * the user public profile url. In case the username has already been taken, adds a sequence number to the end.
+   * @param[in] array $userData User data.
+   * @return string
+   */
+  protected function guessUsername(array $userData) {
+    if (preg_match('%.+/in/(?P<username>.+)%i', $userData[static::PROFILE_URL], $matches))
+      $username = $matches['username'];
     else
-      throw new InvalidFieldException("Le informazioni fornite da LinkedIn sono incomplete.");
+      $username = strtolower($userData[static::FIRST_NAME].$userData[static::LAST_NAME]);
+
+    parent::guessUsername($username);
   }
 
 
   protected function update(User $user, array $userData) {
-    $user->setMetadata('username', $this->guessUsername($userData[static::PROFILE_URL]), FALSE, FALSE);
-    $user->setMetadata('firstName', @$userData[static::FIRST_NAME], FALSE, FALSE);
-    $user->setMetadata('lastName', @$userData[static::LAST_NAME], FALSE, FALSE);
+    $user->setMetadata('username', $this->guessUsername($userData), FALSE, FALSE);
+    $user->setMetadata('firstName', $userData[static::FIRST_NAME], FALSE, FALSE);
+    $user->setMetadata('lastName', $userData[static::LAST_NAME], FALSE, FALSE);
     $user->setMetadata('birthday', @$userData[static::BIRTHDAY], FALSE, FALSE);
     $user->setMetadata('headline', @$userData[static::HEADLINE], FALSE, FALSE);
     $user->setMetadata('about', @$userData[static::ABOUT], FALSE, FALSE);
