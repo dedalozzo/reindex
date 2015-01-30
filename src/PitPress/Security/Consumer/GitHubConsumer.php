@@ -38,7 +38,7 @@ class GitHubConsumer extends OAuth2Consumer {
 
 
   protected function update(User $user, array $userData) {
-    $user->setMetadata('username', $userData[static::LOGIN], FALSE, FALSE);
+    $user->setMetadata('username', $this->guessUsername($userData[static::LOGIN]), FALSE, FALSE);
 
     $names = Text::splitFullName(@$userData['name']);
     $user->setMetadata('firstName', @$names[static::FIRST_NAME], FALSE, FALSE);
@@ -56,9 +56,9 @@ class GitHubConsumer extends OAuth2Consumer {
 
   public function join() {
     $userData = $this->fetch('/user/');
-    $emails = $this->fetch('/user/emails~:(id,emaillogin,name,company,bio,html-url)?format=json');
 
-    $email = $this->extractPrimaryEmail(@$userData['email']);
+    $emails = $this->fetch('/user/emails~:(id,emaillogin,name,company,bio,html-url)?format=json');
+    $userData['email'] = $this->extractPrimaryEmail($emails);
 
     $this->validate('id', 'email', $userData);
     $this->consume($userData[static::ID], $userData[static::EMAIL], $userData);
