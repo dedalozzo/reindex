@@ -11,7 +11,7 @@
   <tbody>
   {% for name, badge in badges %}
     <tr>
-      <td><a href="//{{ serverName~'/'~badge['name']|lower }}" class="badge"><i class="icon-certificate {{ badge['metal'] }}"></i> {{ badge['name'] }}</td>
+      <td><a href="//{{ serverName~'/'~controllerPath~badge['name']|lower }}" class="badge"><i class="icon-certificate {{ badge['metal'] }}"></i> {{ badge['name'] }}</td>
       <td>{{ badge['brief'] }}</td>
       <td>{{ badge['awarded'] }}</td>
       <td>{% if badge['earned'] > 0 %}<i class="icon-ok icon-large"></i>&nbsp;{% endif %}</td>
