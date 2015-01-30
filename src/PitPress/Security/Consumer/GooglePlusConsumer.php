@@ -32,9 +32,13 @@ class GooglePlusConsumer extends OAuth2Consumer {
   //!@}
 
 
-  // Google, like Facebook, doesn't provide a username, but PitPress needs one. So we guess the username using the
-  // user public profile url. In case the username has already been taken, we add a sequence number to the end.
-  private function guessUsername($publicProfileUrl) {
+  /**
+   * @brief Google+, like Facebook, doesn't provide a username, but PitPress needs one. So we guess the username using
+   * the user public profile url. In case the username has already been taken, adds a sequence number to the end.
+   * @param[in] array $userData User data.
+   * @return string
+   */
+  protected function guessUsername($publicProfileUrl) {
     if (preg_match('%.+/in/(?P<username>.+)%i', $publicProfileUrl, $matches))
       return $matches['username'];
     else
