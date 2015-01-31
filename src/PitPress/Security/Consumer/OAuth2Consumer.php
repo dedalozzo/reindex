@@ -33,6 +33,7 @@ abstract class OAuth2Consumer {
   //!@{
   const ID = 'id';
   const EMAIL = 'email';
+  const PROFILE_URL = 'profile_url';
   //!@}
 
   protected $di; // Stores the default Dependency Injector.
@@ -211,7 +212,18 @@ abstract class OAuth2Consumer {
    * @param[in] User $user The user instance.
    * @param param[in] array $userData An associative array with the user information.
    */
-  abstract protected function update(User $user, array $userData);
+  protected function update(User $user, array $userData) {
+    $user->addLogin($this->getName(), $userData[static::ID], $userData[static::PROFILE_URL], $userData[static::EMAIL], $this->isTrustworthy());
+    $user->internetProtocolAddress = $_SERVER['REMOTE_ADDR'];
+    $user->save();
+  }
+
+
+  /**
+   * @brief Returns `true` in case the linked provider is trustworthy, `false` otherwise.
+   * @return bool
+   */
+  abstract public function isTrustworthy();
 
 
   /**
