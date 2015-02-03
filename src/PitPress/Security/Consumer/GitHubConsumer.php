@@ -33,12 +33,27 @@ class GitHubConsumer extends OAuth2Consumer {
 
 
   private function extractPrimaryEmail($emails) {
+    // GitHub should return a list of e-mails and for each one specify if the e-mail is primary and verified. But
+    // unfortunately the API doesn't work like expected.
 
+    /*
+    $address = NULL;
+
+    foreach ($emails as $email)
+      if ($email['verified'] && $email['primary']) {
+        $address = $email['email'];
+        break;
+      }
+
+    return $address;
+    */
+
+    return $emails[0];
   }
 
 
   protected function update(User $user, array $userData) {
-    $user->setMetadata('username', $this->guessUsername($userData[static::LOGIN]), FALSE, FALSE);
+    $user->setMetadata('username', $this->buildUsername($userData[static::LOGIN]), FALSE, FALSE);
 
     $names = Text::splitFullName(@$userData['name']);
     $user->setMetadata('firstName', @$names[static::FIRST_NAME], FALSE, FALSE);
@@ -48,20 +63,27 @@ class GitHubConsumer extends OAuth2Consumer {
     $user->setMetadata('about', @$userData[static::ABOUT], FALSE, FALSE);
     $user->setMetadata('profileUrl', @$userData[static::PROFILE_URL], FALSE, FALSE);
 
-    $user->addLogin($this->getName(), $userData[static::ID], $userData[static::EMAIL], $userData[static::PROFILE_URL]);
-    $user->internetProtocolAddress = $_SERVER['REMOTE_ADDR'];
-    $user->save();
+    parent::update($user, $userData);
+  }
+
+
+  /**
+   * @brief GitHub can't be trust! This implementation returns `false`.
+   * @return bool
+   * @warning GitHub let you login using an e-mail that hasn't been verified.
+   */
+  public function isTrustworthy() {
+    return FALSE;
   }
 
 
   public function join() {
-    $userData = $this->fetch('/user/');
-
-    $emails = $this->fetch('/user/emails~:(id,emaillogin,name,company,bio,html-url)?format=json');
+    $userData = $this->fetch('/user');
+    $emails = $this->fetch('/user/emails');
     $userData['email'] = $this->extractPrimaryEmail($emails);
-
-    $this->validate('id', 'email', $userData);
+    $this->validate($userData);
     $this->consume($userData[static::ID], $userData[static::EMAIL], $userData);
+    print $userData[static::EMAIL];
   }
 
 
