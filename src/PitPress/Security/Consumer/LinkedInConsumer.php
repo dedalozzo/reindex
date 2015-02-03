@@ -38,13 +38,22 @@ class LinkedInConsumer extends OAuth2Consumer {
    * @param[in] array $userData User data.
    * @return string
    */
-  protected function guessUsername(array $userData) {
+  private function guessUsername(array $userData) {
     if (preg_match('%.+/in/(?P<username>.+)%i', $userData[static::PROFILE_URL], $matches))
       $username = $matches['username'];
     else
       $username = strtolower($userData[static::FIRST_NAME].$userData[static::LAST_NAME]);
 
-    parent::guessUsername($username);
+    return $this->buildUsername($username);
+  }
+
+
+  protected function onAuthorizationGranted() {
+    // Retrieves the CSRF state parameter.
+    $state = isset($_GET['state']) ? $_GET['state'] : NULL;
+
+    // This was a callback request from LinkedIn, get the token.
+    $token = $this->service->requestAccessToken($_GET['code'], $state);
   }
 
 
@@ -56,9 +65,16 @@ class LinkedInConsumer extends OAuth2Consumer {
     $user->setMetadata('headline', @$userData[static::HEADLINE], FALSE, FALSE);
     $user->setMetadata('about', @$userData[static::ABOUT], FALSE, FALSE);
 
-    $user->addLogin($this->getName(), $userData[static::ID], $userData[static::EMAIL], $userData[static::PROFILE_URL]);
-    $user->internetProtocolAddress = $_SERVER['REMOTE_ADDR'];
-    $user->save();
+    parent::update($user, $userData);
+  }
+
+
+  /**
+   * @brief LinkedIn is a trustworthy provider. This implementation returns `true`.
+   * @return bool
+   */
+  public function isTrustworthy() {
+    return TRUE;
   }
 
 
