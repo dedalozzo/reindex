@@ -74,6 +74,8 @@ try {
   $console->add(new Command\GenerateCommand());
   $console->add(new Command\RemoveCommand());
   $console->add(new Command\UpdateCommand());
+  $console->add(new Command\GrantCommand());
+  $console->add(new Command\RevokeCommand());
 
   $console->run();
 }
