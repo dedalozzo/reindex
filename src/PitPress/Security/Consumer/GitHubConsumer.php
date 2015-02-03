@@ -83,7 +83,6 @@ class GitHubConsumer extends OAuth2Consumer {
     $userData['email'] = $this->extractPrimaryEmail($emails);
     $this->validate($userData);
     $this->consume($userData[static::ID], $userData[static::EMAIL], $userData);
-    print $userData[static::EMAIL];
   }
 
 
