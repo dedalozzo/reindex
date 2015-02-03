@@ -29,11 +29,12 @@ use PitPress\Exception\InvalidFieldException;
 use PitPress\Helper\ValidationHelper;
 use PitPress\Helper\Cookie;
 use PitPress\Model\User;
+use PitPress\Security\Consumer;
 use PitPress\Validator\Password;
 use PitPress\Validator\Username;
 
 use PitPress\Exception\InvalidTokenException;
-use PitPress\Exception\UserNotConfirmedException;
+use PitPress\Exception\EmailNotVerifiedException;
 use PitPress\Exception\UserNotFoundException;
 use PitPress\Exception\WrongPasswordException;
 
@@ -96,20 +97,17 @@ class AuthController extends BaseController {
         // Gets the user.
         $user = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $rows[0]['id']);
 
-        // Checks if the user has confirmed his registration.
-        if (!$user->isConfirmed())
-          throw new UserNotConfirmedException("L'utente risulta iscritto, ma l'iscrizione non è ancora stata confermata. Segui le istruzioni ricevute nella e-mail di attivazione che ti è stata inviata. Se ancora non l'hai ricevuta, <a href=\"//".$this->domainName."/invia-email-attivazione/\">richiedi una nuova e-mail di attivazione</a>.");
+        // Checks if the user has verified his e-mail.
+        if (!$user->isVerifiedEmail($email))
+          throw new EmailNotVerifiedException("L'utente risulta iscritto, ma l'iscrizione non è ancora stata confermata. Segui le istruzioni ricevute nella e-mail di attivazione che ti è stata inviata. Se ancora non l'hai ricevuta, <a href=\"//".$this->domainName."/invia-email-attivazione/\">richiedi una nuova e-mail di attivazione</a>.");
 
-        if (($user->password != $password))
+        if ($user->password != $password)
           throw new WrongPasswordException("Non vi è nessun utente registrato con la login inserita o la password è errata. <a href=\"//".$this->domainName."/resetta-password/\">Hai dimenticato la password?</a>");
 
         // Updates the ip address with the current one.
         $user->internetProtocolAddress = $_SERVER['REMOTE_ADDR'];
 
-        // Creates a token based on the user id and his IP address, obviously encrypted.
-        $token = $this->security->hash($user->id.$user->internetProtocolAddress);
-
-        Cookie::set($user->id, $token);
+        Cookie::set($user);
 
         $user->save();
 
@@ -179,9 +177,9 @@ class AuthController extends BaseController {
         if (!$rows->isEmpty())
           throw new InvalidEmailException("Sei già registrato. <a href=\"#signin\">Fai il login!</a>");
 
-        $user = new User();
+        $user = new User(); // We don't use User::create() since the user must confirm his e-mail address to sign in.
         $user->username = $username;
-        $user->email = $email;
+        $user->addEmail($email);
         $user->password = $password;
 
         // Updates the ip address with the current one.
@@ -287,33 +285,26 @@ class AuthController extends BaseController {
    * @brief Sign in with Facebook.
    */
   public function facebookAction() {
-    $uriFactory = new UriFactory();
-    $currentUri = $uriFactory->createFromSuperGlobalArray($_SERVER);
-    $currentUri->setQuery('');
+    $consumer = new Consumer\FacebookConsumer();
+    $consumer->join();
+  }
 
-    $storage = new Session();
 
-    $credentials = new Credentials($this->di['config']['facebook']['key'], $this->di['config']['facebook']['secret'], $currentUri->getAbsoluteUri());
-    $serviceFactory = new ServiceFactory();
-    $service = $serviceFactory->createService('facebook', $credentials, $storage, []);
+  /**
+   * @brief Sign in with LinkedIn.
+   */
+  public function linkedinAction() {
+    $consumer = new Consumer\LinkedInConsumer();
+    $consumer->join();
+  }
 
-    if (!empty($_GET['code'])) {
-      // This was a callback request from facebook, get the token
-      $token = $service->requestAccessToken($_GET['code']);
 
-      // Send a request with it
-      $result = json_decode($service->request('/me'), TRUE);
-
-      // Show some of the resultant data
-      echo 'Your unique facebook user id is: ' . $result['id'] . ' and your name is ' . $result['name'];
-
-    }
-    else {
-      $url = $service->getAuthorizationUri();
-      //$this->response->redirect($url);
-      header('Location: ' . $url);
-    }
-
+  /**
+   * @brief Sign in with GitHub.
+   */
+  public function githubAction() {
+    $consumer = new Consumer\GitHubConsumer();
+    $consumer->join();
   }
 
 
@@ -340,71 +331,6 @@ class AuthController extends BaseController {
 
       // Show some of the resultant data
       echo 'Your unique google user id is: ' . $result['id'] . ' and your name is ' . $result['name'];
-
-    }
-    else {
-      $url = $service->getAuthorizationUri();
-      header('Location: ' . $url);
-    }
-
-  }
-
-
-  /**
-   * @brief Sign in with LinkedIn.
-   */
-  public function linkedinAction() {
-    $uriFactory = new UriFactory();
-    $currentUri = $uriFactory->createFromSuperGlobalArray($_SERVER);
-    $currentUri->setQuery('');
-
-    $storage = new Session();
-
-    $credentials = new Credentials($this->di['config']['linkedin']['key'], $this->di['config']['linkedin']['secret'], $currentUri->getAbsoluteUri());
-    $serviceFactory = new ServiceFactory();
-    $service = $serviceFactory->createService('linkedin', $credentials, $storage, ['r_basicprofile']);
-
-    if (!empty($_GET['code'])) {
-      // This was a callback request from linkedin, get the token
-      $token = $service->requestAccessToken($_GET['code']);
-
-      // Send a request with it. Please note that XML is the default format.
-      $result = json_decode($service->request('/people/~?format=json'), TRUE);
-
-      // Show some of the resultant data
-      echo 'Your linkedIn first name is ' . $result['firstName'] . ' and your last name is ' . $result['lastName'];
-
-    }
-    else {
-      // state is used to prevent CSRF, it's required
-      $url = $service->getAuthorizationUri(['state' => 'DCEEFWF45453sdffef424']);
-      header('Location: ' . $url);
-    }
-
-  }
-
-
-  /**
-   * @brief Sign in with GitHub.
-   */
-  public function githubAction() {
-    $uriFactory = new UriFactory();
-    $currentUri = $uriFactory->createFromSuperGlobalArray($_SERVER);
-    $currentUri->setQuery('');
-
-    $storage = new Session();
-
-    $credentials = new Credentials($this->di['config']['github']['key'], $this->di['config']['github']['secret'], $currentUri->getAbsoluteUri());
-    $serviceFactory = new ServiceFactory();
-    $service = $serviceFactory->createService('GitHub', $credentials, $storage, ['user']);
-
-    if (!empty($_GET['code'])) {
-      // This was a callback request from github, get the token
-      $service->requestAccessToken($_GET['code']);
-
-      $result = json_decode($service->request('user/emails'), TRUE);
-
-      echo 'The first email on your github account is ' . $result[0];
 
     }
     else {
