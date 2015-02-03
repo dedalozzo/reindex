@@ -38,9 +38,9 @@ class FacebookConsumer extends OAuth2Consumer {
    * @param[in] array $userData User data.
    * @return string
    */
-  protected function guessUsername(array $userData) {
+  private function guessUsername(array $userData) {
     $username = strtolower($userData[static::FIRST_NAME].$userData[static::LAST_NAME]);
-    parent::guessUsername($username);
+    return $this->buildUsername($username);
   }
 
 
@@ -57,9 +57,16 @@ class FacebookConsumer extends OAuth2Consumer {
     $user->setMetadata('locale', @$userData[static::LOCALE], FALSE, FALSE);
     $user->setMetadata('timeOffset', @$userData[static::TIME_OFFSET], FALSE, FALSE);
 
-    $user->addLogin($this->getName(), $userData[static::ID], $userData[static::EMAIL], $userData[static::PROFILE_URL]);
-    $user->internetProtocolAddress = $_SERVER['REMOTE_ADDR'];
-    //$user->save();
+    parent::update($user, $userData);
+  }
+
+
+  /**
+   * @brief Facebook is a trustworthy provider. This implementation returns `true`.
+   * @return bool
+   */
+  public function isTrustworthy() {
+    return TRUE;
   }
 
 
