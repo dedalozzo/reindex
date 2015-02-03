@@ -38,8 +38,9 @@ abstract class OAuth2Consumer {
 
   protected $di; // Stores the default Dependency Injector.
   protected $user; // Stores the current user.
+  protected $uri;
   protected $service; // Stores the service used to connect to the provider.
-  protected $token; // Stores the user token.
+  protected $storage;
 
 
   /**
@@ -51,11 +52,7 @@ abstract class OAuth2Consumer {
     $this->user = $this->guardian->user;
 
     $this->initialize();
-
-    if (empty($_GET['code']))
-      $this->showAuthorizationForm();
-    else
-      $this->requestAccessToken();
+    $this->execute();
   }
 
 
@@ -63,15 +60,15 @@ abstract class OAuth2Consumer {
    * @brief Initializes the consumer.
    */
   private function initialize() {
-    $uri = (new UriFactory())->createFromSuperGlobalArray($_SERVER);
-    $uri->setQuery('');
+    $this->uri = (new UriFactory())->createFromSuperGlobalArray($_SERVER);
+    $this->uri->setQuery('');
 
     $storage = new Session();
 
     $credentials = new Credentials(
       $this->di['config'][$this->getName()]['key'],
       $this->di['config'][$this->getName()]['secret'],
-      $uri->getAbsoluteUri()
+      $this->uri->getAbsoluteUri()
     );
 
     $this->service = (new ServiceFactory())->createService($this->getName(), $credentials, $storage, $this->getScope());
@@ -81,18 +78,45 @@ abstract class OAuth2Consumer {
   /**
    * @brief Redirects to service provider authorization form.
    */
-  protected function showAuthorizationForm() {
-    // State is used to prevent CSRF, it's required.
-    $uri = $this->service->getAuthorizationUri(['state' => 'DCEEFWF45453sdffef424']);
+  protected function askForAuthorization() {
+    $uri = $this->service->getAuthorizationUri();
     header('Location: '.$uri);
+    exit; // Don't proceed!
   }
 
 
   /**
-   * @brief Requests for an access token.
+   * @brief The user has granted the authorization to proceed.
    */
-  protected function requestAccessToken() {
-    $this->token = $this->service->requestAccessToken($_GET['code']);
+  protected function onAuthorizationGranted() {
+    $token = $this->service->requestAccessToken($_GET['code']);
+  }
+
+
+  /**
+   * @brief The user has denied the authorization to proceed.
+   */
+  protected function onAuthorizationDenied() {
+    $uri = $this->uri->getRelativeUri() . '?go=go';
+    header('Location: '.$uri);
+    exit; // Don't proceed!
+  }
+
+
+  /**
+   * @brief Executes the consumer authorization control flow.
+   */
+  protected function execute() {
+    if (isset($_GET['error'])) {
+      // LinkedIn returned an error
+      // print $_GET['error'] . ': ' . $_GET['error_description'];
+      $this->onAuthorizationDenied();
+      exit;
+    }
+    elseif (empty($_GET['code']))
+      $this->askForAuthorization();
+    else
+      $this->onAuthorizationGranted();
   }
 
 
@@ -194,7 +218,7 @@ abstract class OAuth2Consumer {
    * @param[in] string $value A potential username value.
    * @return string
    */
-  protected function guessUsername($value) {
+  protected function buildUsername($value) {
     $temp = $value;
     $counter = 1;
 
@@ -215,7 +239,7 @@ abstract class OAuth2Consumer {
   protected function update(User $user, array $userData) {
     $user->addLogin($this->getName(), $userData[static::ID], $userData[static::PROFILE_URL], $userData[static::EMAIL], $this->isTrustworthy());
     $user->internetProtocolAddress = $_SERVER['REMOTE_ADDR'];
-    $user->save();
+    //$user->save();
   }
 
 
