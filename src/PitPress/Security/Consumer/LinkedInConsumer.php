@@ -98,6 +98,7 @@ class LinkedInConsumer extends OAuth2Consumer {
   /**
    * @brief Returns the list of user connections.
    * @return array
+   * @todo Implement LinkedIn.getFriends() method.
    */
   public function getFriends() {
 
