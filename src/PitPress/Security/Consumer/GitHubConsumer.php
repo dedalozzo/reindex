@@ -61,7 +61,6 @@ class GitHubConsumer extends OAuth2Consumer {
 
     $user->setMetadata('headline', @$userData[static::HEADLINE], FALSE, FALSE);
     $user->setMetadata('about', @$userData[static::ABOUT], FALSE, FALSE);
-    $user->setMetadata('profileUrl', @$userData[static::PROFILE_URL], FALSE, FALSE);
 
     parent::update($user, $userData);
   }
@@ -96,8 +95,12 @@ class GitHubConsumer extends OAuth2Consumer {
   }
 
 
+  /**
+   * @brief GitHub doesn't provide a list of friends.
+   * @return array
+   */
   public function getFriends() {
-
+    return [];
   }
 
 }
