@@ -26,10 +26,15 @@ class GooglePlusConsumer extends OAuth2Consumer {
   const FIRST_NAME = 'first_name';
   const LAST_NAME = 'last_name';
   const GENDER = 'gender';
-  const LOCALE = 'locale';
-  const TIME_OFFSET = 'timezone';
-  const PROFILE_URL = 'link';
+  const NICKNAME = 'nickname';
+  const DISPLAY_NAME = 'displayName';
+  const PROFILE_URL = 'url';
   //!@}
+
+
+  private function extractPrimaryEmail($emails) {
+    return $emails[0]['value'];
+  }
 
 
   /**
@@ -38,36 +43,43 @@ class GooglePlusConsumer extends OAuth2Consumer {
    * @param[in] array $userData User data.
    * @return string
    */
-  protected function guessUsername($publicProfileUrl) {
-    if (preg_match('%.+/in/(?P<username>.+)%i', $publicProfileUrl, $matches))
-      return $matches['username'];
+  private function guessUsername(array $userData) {
+    if (isset($userData[static::NICKNAME]))
+      $username = strtolower($userData[static::NICKNAME]);
     else
-      throw new Exception\InvalidFieldException("Le informazioni fornite da LinkedIn sono incomplete.");
+      $username = strtolower($userData[static::DISPLAY_NAME]);
+
+    return $this->buildUsername($username);
   }
 
 
   protected function update(User $user, array $userData) {
-    $user->setMetadata('username', $this->guessUsername($userData['publicProfileUrl']), FALSE, FALSE);
+    $user->setMetadata('username', $this->guessUsername($userData), FALSE, FALSE);
+    $user->setMetadata('firstName', @$userData['name']['givenName'], FALSE, FALSE);
+    $user->setMetadata('lastName', @$userData['name']['familyName'], FALSE, FALSE);
+    $user->setMetadata('birthday', @$userData['birthday'], FALSE, FALSE);
+    $user->setMetadata('headline', @$userData['occupation'], FALSE, FALSE);
+    $user->setMetadata('about', @$userData['aboutMe'], FALSE, FALSE);
+    $user->setMetadata('profileUrl', @$userData['url'], FALSE, FALSE);
 
-    $user->setMetadata('email', @$userData['emailAddress'], FALSE, FALSE);
-    $user->setMetadata('firstName', @$userData['firstName'], FALSE, FALSE);
-    $user->setMetadata('lastName', @$userData['lastName'], FALSE, FALSE);
-    $user->setMetadata('birthday', @$userData['dateOfBirth'], FALSE, FALSE);
-    $user->setMetadata('headline', @$userData['headline'], FALSE, FALSE);
-    $user->setMetadata('about', @$userData['summary'], FALSE, FALSE);
-    $user->setMetadata('profileUrl', @$userData['publicProfileUrl'], FALSE, FALSE);
-    $user->setMetadata('headline', @$userData['headline'], FALSE, FALSE);
+    parent::update($user, $userData);
+  }
 
-    $user->addLogin($this->getName(), $userData['id'], $email, $userData['publicProfileUrl']);
-    $user->internetProtocolAddress = $_SERVER['REMOTE_ADDR'];
-    $user->save();
+
+  /**
+   * @brief Google+ is a trustworthy provider. This implementation returns `true`.
+   * @return bool
+   */
+  public function isTrustworthy() {
+    return TRUE;
   }
 
 
   public function join() {
-    $userData = $this->fetch('/people/~:(id,email-address,first-name,last-name,public-profile-url,headline,summary,date-of-birth)?format=json');
-    $this->validate('id', 'emailAddress', $userData);
-    $this->consume($userData['id'], $userData['emailAddress'], $userData);
+    $userData = $this->fetch('https://www.googleapis.com/plus/v1/people/me/?fields=name(givenName,familyName),gender,birthday,url,occupation,aboutMe,displayName,emails/value');
+    $userData['email'] = $this->extractPrimaryEmail($userData['emails']);
+    $this->validate($userData);
+    $this->consume($userData[static::ID], $userData[static::EMAIL], $userData);
   }
 
 
@@ -77,12 +89,16 @@ class GooglePlusConsumer extends OAuth2Consumer {
 
 
   public function getScope() {
-    return [];
+    return ['email', 'profile'];
   }
 
 
+  /**
+   * @brief We don't care about Google+ list of friends, because Google+ is not widely used.
+   * @return array
+   */
   public function getFriends() {
-
+    return [];
   }
 
 }
