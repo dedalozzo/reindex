@@ -237,7 +237,7 @@ abstract class OAuth2Consumer {
    * @param param[in] array $userData An associative array with the user information.
    */
   protected function update(User $user, array $userData) {
-    $user->addLogin($this->getName(), $userData[static::ID], $userData[static::PROFILE_URL], $userData[static::EMAIL], $this->isTrustworthy());
+    $user->addLogin($this->getName(), $userData[static::ID], @$userData[static::PROFILE_URL], $userData[static::EMAIL], $this->isTrustworthy());
     $user->internetProtocolAddress = $_SERVER['REMOTE_ADDR'];
     //$user->save();
   }
