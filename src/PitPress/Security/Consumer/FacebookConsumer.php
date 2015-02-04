@@ -87,6 +87,10 @@ class FacebookConsumer extends OAuth2Consumer {
   }
 
 
+  /**
+   * @brief Returns the list of the user friends.
+   * @return array
+   */
   public function getFriends() {
     // /me/friends
   }
