@@ -35,144 +35,6 @@ abstract class Versionable extends Storable {
   }
 
 
-  /** @name Control Versioning Methods */
-  //!@{
-
-
-  /**
-   * @brief Submits the document for peer review.
-   */
-  public function submit() {
-    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
-    if ($this->hasBeenSubmittedForPeerReview()) return;
-
-    if ($this->user->match($this->creatorId))
-      if ($this->hasBeenCreated() or $this->isDraft())
-        $this->meta['status'] = DocStatus::SUBMITTED;
-      else
-        throw new Exception\IncompatibleStatusException("Stato incompatible con l'operazione richiesta.");
-    else
-      throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
-  }
-
-
-  /**
-   * @brief Approves the document revision, making of it the current version.
-   */
-  public function approve() {
-    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
-
-    if ($this->user->isModerator())
-      if ($this->hasBeenCreated() or $this->isDraft() or $this->hasBeenSubmittedForPeerReview())
-        $this->meta['status'] = DocStatus::CURRENT;
-      else
-        throw new Exception\IncompatibleStatusException("Stato incompatible con l'operazione richiesta.");
-    else
-      throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
-  }
-
-
-  /**
-   * @brief Asks the author to revise the item, because it's not ready for publishing.
-   * @param[in] The reason why the document has been returned for revision.
-   */
-  public function returnForRevision($reason) {
-    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
-    if ($this->hasBeenReturnedForRevision()) return;
-
-    if (($this->user->isModerator() && $this->hasBeenSubmittedForPeerReview()) or
-        ($this->user->isAdmin() && $this->isCurrent())) {
-      $this->meta['status'] = DocStatus::RETURNED;
-      $this->meta['rejectReason'] = $reason;
-      // todo: send a notification to the user
-    }
-    else
-      throw new Exception\IncompatibleStatusException("Stato incompatible con l'operazione richiesta.");
-  }
-
-
-  /**
-   * @brief Rejects this document revision.
-   * @details The post will be automatically deleted in 10 days.
-   * @param[in] The reason why the revision has been rejected.
-   */
-  public function reject($reason) {
-    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
-
-    if ($this->user->isModerator())
-      if ($this->hasBeenSubmittedForPeerReview()) {
-        $this->meta['status'] = DocStatus::REJECTED;
-        $this->meta['rejectReason'] = $reason;
-        // todo: send a notification to the user
-      }
-      else
-        throw new Exception\IncompatibleStatusException("Stato incompatible con l'operazione richiesta.");
-    else
-      throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
-  }
-
-
-  /**
-   * @brief Reverts to the specified version.
-   * @param[in] Reverts to the specified version. If a version is not specified it takes the previous one.
-   */
-  public function revert($versionNumber = NULL) {
-    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
-
-    if ($this->user->isModerator()) {
-      $this->meta['status'] = DocStatus::APPROVED;
-      // todo
-    }
-    else
-      throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
-  }
-
-
-  /**
-   * @brief Moves the document to the trash.
-   */
-  public function moveToTrash() {
-    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
-    if ($this->hasBeenMovedToTrash()) return;
-
-    if (($this->user->isModerator() && $this->isCurrent()) or ($this->user->match($this->creatorId) && $this->isDraft())) {
-      $this->meta['prevStatus'] = $this->meta['status'];
-      $this->meta['status'] = DocStatus::DELETED;
-    }
-    else
-      throw new Exception\IncompatibleStatusException("Stato incompatible con l'operazione richiesta.");
-  }
-
-
-  /**
-   * @brief Restores the document to its previous status, removing it from trash.
-   */
-  public function restore() {
-    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
-
-    if ($this->hasBeenMovedToTrash() and
-        ($this->user->isModerator() && ($this->trashmanId == $this->user->id)) or
-        $this->user->isAdmin()) {
-      // In case the document has been deleted, restore it to its previous status.
-      $this->meta['status'] = $this->meta['prevStatus'];
-      unset($this->meta['prevStatus']);
-    }
-    else
-      throw new Exception\IncompatibleStatusException("Stato incompatible con l'operazione richiesta.");
-  }
-
-
-  /**
-   * @brief Gets information about all the previous versions.
-   * @return array
-   */
-  public function getPastVersionsInfo() {
-    // todo
-  }
-
-  //@}
-
-
   /** @name Status Checking Methods */
   //!@{
 
@@ -199,7 +61,7 @@ abstract class Versionable extends Storable {
    * @brief Returns `true` if this document has just been created, `false` otherwise.
    * @return bool
    */
-  public function hasBeenCreated() {
+  public function isCreated() {
     return $this->checkStatus(DocStatus::CREATED);
   }
 
@@ -226,7 +88,7 @@ abstract class Versionable extends Storable {
    * @brief Returns `true` if this document has been put into the trash, `false` otherwise.
    * @return bool
    */
-  public function hasBeenMovedToTrash() {
+  public function isMovedToTrash() {
     return $this->checkStatus(DocStatus::DELETED);
   }
 
@@ -235,7 +97,7 @@ abstract class Versionable extends Storable {
    * @brief Returns `true` if this document has been submitted for peer review, `false` otherwise.
    * @return bool
    */
-  public function hasBeenSubmittedForPeerReview() {
+  public function isSubmittedForPeerReview() {
     return $this->checkStatus(DocStatus::SUBMITTED);
   }
 
@@ -244,7 +106,7 @@ abstract class Versionable extends Storable {
    * @brief Returns `true` if this document revision has been approved, `false` otherwise.
    * @return bool
    */
-  public function hasBeenApproved() {
+  public function isApproved() {
     return $this->checkStatus(DocStatus::APPROVED);
   }
 
@@ -253,7 +115,7 @@ abstract class Versionable extends Storable {
    * @brief Returns `true` if this document revision has been rejected, `false` otherwise.
    * @return bool
    */
-  public function hasBeenRejected() {
+  public function isRejected() {
     return $this->checkStatus(DocStatus::REJECTED);
   }
 
@@ -262,8 +124,184 @@ abstract class Versionable extends Storable {
    * @brief Returns `true` if this document has been returned for revision, `false` otherwise.
    * @return bool
    */
-  public function hasBeenReturnedForRevision() {
+  public function isReturnedForRevision() {
     return $this->checkStatus(DocStatus::RETURNED);
+  }
+
+  //@}
+
+
+  /** @name Control Versioning Methods */
+  //!@{
+
+
+  /**
+   * @brief Returns `true` if the document can be submitted for peer review, `false` otherwise.
+   * @return bool
+   */
+  public function canBeSubmitted() {
+    if ($this->isSubmittedForPeerReview()) return FALSE;
+
+    if ($this->user->match($this->creatorId) && ($this->isCreated() or $this->isDraft()))
+      return TRUE;
+    else
+      return FALSE;
+  }
+
+
+  /**
+   * @brief Submits the document for peer review.
+   */
+  public function submit() {
+    $this->meta['status'] = DocStatus::SUBMITTED;
+  }
+
+
+  /**
+   * @brief Returns `true` if the document can be approved, `false` otherwise.
+   * @return bool
+   */
+  public function canBeApproved() {
+    if ($this->user->isModerator() && ($this->isCreated() or $this->isDraft() or $this->isSubmittedForPeerReview()))
+      return TRUE;
+    else
+      return FALSE;
+  }
+
+
+  /**
+   * @brief Approves the document revision, making of it the current version.
+   */
+  public function approve() {
+    $this->meta['status'] = DocStatus::CURRENT;
+  }
+
+
+  /**
+   * @brief Returns `true` if the user can ask the original author to revise the document, `false` otherwise.
+   * @return bool
+   */
+  public function canBeReturnedForRevision() {
+    if ($this->isReturnedForRevision()) return FALSE;
+
+    if (($this->user->isModerator() && $this->isSubmittedForPeerReview()) or
+        ($this->user->isAdmin() && $this->isCurrent()))
+      return TRUE;
+    else
+      return FALSE;
+  }
+
+
+  /**
+   * @brief Asks the author to revise the document, because it's not ready for publishing.
+   * @param[in] The reason why the document has been returned for revision.
+   */
+  public function returnForRevision($reason) {
+    $this->meta['status'] = DocStatus::RETURNED;
+    $this->meta['rejectReason'] = $reason;
+    // todo: send a notification to the user
+  }
+
+
+  /**
+   * @brief Returns `true` if the document revision can be rejected, `false` otherwise.
+   * @return bool
+   */
+  public function canBeRejected() {
+    if ($this->user->isModerator() && $this->isSubmittedForPeerReview())
+      return TRUE;
+    else
+      return FALSE;
+  }
+
+
+  /**
+   * @brief Rejects this document revision.
+   * @details The post will be automatically deleted in 10 days.
+   * @param[in] The reason why the revision has been rejected.
+   */
+  public function reject($reason) {
+    $this->meta['status'] = DocStatus::REJECTED;
+    $this->meta['rejectReason'] = $reason;
+    // todo: send a notification to the user
+  }
+
+
+  /**
+   * @brief Returns `true` if the document can be reverted to another version, `false` otherwise.
+   * @return bool
+   */
+  public function canBeReverted() {
+    if ($this->user->isModerator())
+      return TRUE;
+    else
+      return FALSE;
+  }
+
+
+  /**
+   * @brief Reverts to the specified version.
+   * @param[in] Reverts to the specified version. If a version is not specified it takes the previous one.
+   * @todo Implement the method Versionable.revert().
+   */
+  public function revert($versionNumber = NULL) {
+    $this->meta['status'] = DocStatus::APPROVED;
+  }
+
+
+  /**
+   * @brief Returns `true` if the document can be moved to trash, `false` otherwise.
+   * @return bool
+   */
+  public function canBeMovedToTrash() {
+    if ($this->isMovedToTrash()) return FALSE;
+
+    if (($this->user->isModerator() && $this->isCurrent()) or ($this->user->match($this->creatorId) && $this->isDraft()))
+      return TRUE;
+    else
+      return FALSE;
+  }
+
+
+  /**
+   * @brief Moves the document to the trash.
+   */
+  public function moveToTrash() {
+    $this->meta['prevStatus'] = $this->meta['status'];
+    $this->meta['status'] = DocStatus::DELETED;
+  }
+
+
+  /**
+   * @brief Returns `true` if the post can be moved to trash, `false` otherwise.
+   * @return bool
+   */
+  public function canBeRestored() {
+    if ($this->isMovedToTrash() and
+        ($this->user->isModerator() && ($this->trashmanId == $this->user->id)) or
+        $this->user->isAdmin())
+      return TRUE;
+    else
+      return FALSE;
+  }
+
+
+  /**
+   * @brief Restores the document to its previous status, removing it from trash.
+   */
+  public function restore() {
+      // In case the document has been deleted, restore it to its previous status.
+      $this->meta['status'] = $this->meta['prevStatus'];
+      unset($this->meta['prevStatus']);
+  }
+
+
+  /**
+   * @brief Gets information about all the previous versions.
+   * @return array
+   */
+  public function getPastVersionsInfo() {
+    // todo
   }
 
   //@}
@@ -274,7 +312,7 @@ abstract class Versionable extends Storable {
    */
   public function save() {
     // We force the document status in case it hasn't been changed.
-    if ($this->hasBeenCreated())
+    if ($this->isCreated())
       $this->meta["status"] = DocStatus::SUBMITTED;
 
     // Put your code here.
