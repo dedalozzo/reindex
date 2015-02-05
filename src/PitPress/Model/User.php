@@ -225,7 +225,7 @@ class User extends Storable implements IUser, Extension\ICount {
    * @attention Only an admin can grant the moderator privileges (or System of course).
    */
   public function grantModerator() {
-    if (($this->user->isAdmin() && !$this->user->match($this->id)) or $this->user instanceof System)
+    if ($this->user instanceof System or ($this->user->isAdmin() && !$this->user->match($this->id)))
       $this->meta['moderator'] = TRUE;
     else
       throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
@@ -237,7 +237,7 @@ class User extends Storable implements IUser, Extension\ICount {
    * @attention Only an admin can revoke the moderator privileges (or System of course).
    */
   public function revokeModerator() {
-    if (($this->user->isAdmin() && !$this->user->match($this->id)) or $this->user instanceof System) {
+    if ($this->user instanceof System or ($this->user->isAdmin() && !$this->user->match($this->id))) {
       if ($this->isMetadataPresent('moderator'))
         unset($this->meta['moderator']);
     }
