@@ -30,25 +30,32 @@ class Article extends Post {
 
 
   /**
+   * @brief Returns `true` if the post can be marked as draft, `false` otherwise.
+   * @return bool
+   */
+  public function canBeMarkedAsDraft() {
+    if ($this->isDraft()) return FALSE;
+
+    if ($this->isCreated() && $this->user->match($this->creatorId))
+      return TRUE;
+    else
+      return FALSE;
+  }
+
+
+  /**
    * @brief Marks the document as draft.
    * @details When a user works on an article, he wants save many time the item before submit it for peer revision.
    */
   public function markAsDraft() {
-    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
-    if ($this->isDraft()) return;
+    $this->meta['status'] = Enum\DocStatus::DRAFT;
 
-    if ($this->hasBeenCreated() && $this->user->match($this->creatorId)) {
-      $this->meta['status'] = Enum\DocStatus::DRAFT;
+    // Used to group by year, month and day.
+    $this->meta['year'] = date("Y", $this->createdAt);
+    $this->meta['month'] = date("m", $this->createdAt);
+    $this->meta['day'] = date("d", $this->createdAt);
 
-      // Used to group by year, month and day.
-      $this->meta['year'] = date("Y", $this->createdAt);
-      $this->meta['month'] = date("m", $this->createdAt);
-      $this->meta['day'] = date("d", $this->createdAt);
-
-      $this->meta['slug'] = $this->buildSlug();
-    }
-    else
-      throw new Exception\IncompatibleStatusException("Stato incompatible con l'operazione richiesta.");
+    $this->meta['slug'] = $this->buildSlug();
   }
 
 }
