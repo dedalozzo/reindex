@@ -11,11 +11,6 @@
 namespace PitPress\Controller;
 
 
-use OAuth\Common\Http\Uri\UriFactory;
-use OAuth\Common\Storage\Session;
-use OAuth\Common\Consumer\Credentials; 
-use OAuth\ServiceFactory;
-
 use Phalcon\Mvc\View;
 use Phalcon\Validation\Validator\PresenceOf;
 use Phalcon\Validation\Validator\Email;
@@ -26,17 +21,16 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Exception\InvalidEmailException;
 use PitPress\Exception\InvalidFieldException;
+use PitPress\Exception\InvalidTokenException;
+use PitPress\Exception\EmailNotVerifiedException;
+use PitPress\Exception\UserNotFoundException;
+use PitPress\Exception\WrongPasswordException;
 use PitPress\Helper\ValidationHelper;
 use PitPress\Helper\Cookie;
 use PitPress\Model\User;
 use PitPress\Security\Consumer;
 use PitPress\Validator\Password;
 use PitPress\Validator\Username;
-
-use PitPress\Exception\InvalidTokenException;
-use PitPress\Exception\EmailNotVerifiedException;
-use PitPress\Exception\UserNotFoundException;
-use PitPress\Exception\WrongPasswordException;
 
 
 /**
@@ -312,32 +306,8 @@ class AuthController extends BaseController {
    * @brief Sign in with Google+.
    */
   public function googleAction() {
-    $uriFactory = new UriFactory();
-    $currentUri = $uriFactory->createFromSuperGlobalArray($_SERVER);
-    $currentUri->setQuery('');
-
-    $storage = new Session();
-
-    $credentials = new Credentials($this->di['config']['google']['key'], $this->di['config']['google']['secret'], $currentUri->getAbsoluteUri());
-    $serviceFactory = new ServiceFactory();
-    $service = $serviceFactory->createService('google', $credentials, $storage, ['userinfo_email', 'userinfo_profile']);
-
-    if (!empty($_GET['code'])) {
-      // This was a callback request from google, get the token
-      $service->requestAccessToken($_GET['code']);
-
-      // Send a request with it
-      $result = json_decode($service->request('https://www.googleapis.com/oauth2/v1/userinfo'), TRUE);
-
-      // Show some of the resultant data
-      echo 'Your unique google user id is: ' . $result['id'] . ' and your name is ' . $result['name'];
-
-    }
-    else {
-      $url = $service->getAuthorizationUri();
-      header('Location: ' . $url);
-    }
-
+    $consumer = new Consumer\GooglePlusConsumer();
+    $consumer->join();
   }
 
 }
