@@ -111,7 +111,8 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   //!@{
 
   /**
-   * @brief Returns `true` if the post has some kind of protection.
+   * @brief Returns `true` if the post has some kind of protection, `false` otherwise.
+   * @return bool
    */
   public function isProtected() {
     return $this->isMetadataPresent('protected');
@@ -119,75 +120,11 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
 
   /**
-   * @brief Closes the post. No more answers or comments can be added.
-   * @see http://meta.stackexchange.com/questions/10582/what-is-a-closed-or-on-hold-question
+   * @brief Returns the protection if any.
+   * @return string
    */
-  public function close() {
-    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
-    if ($this->isClosed()) return;
-
-    if ($this->user->isModerator())
-      if ($this->isCurrent() or $this->isDraft())
-        $this->meta['protection'] = self::CLOSED_PL;
-      else
-        throw new Exception\IncompatibleStatusException("Stato incompatible con l'operazione richiesta.");
-    else
-      throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
-  }
-
-
-  /**
-   * @brief Returns `true` if the post is closed.
-   */
-  public function isClosed() {
-    return ($this->meta['protection'] == self::CLOSED_PL) ? TRUE : FALSE;
-  }
-
-
-  /**
-   * @brief Locks the post.
-   * @see http://meta.stackexchange.com/questions/22228/what-is-a-locked-post
-   */
-  public function lock() {
-    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
-    if ($this->isLocked()) return;
-
-    if ($this->user->isModerator())
-      if ($this->isCurrent() or $this->isDraft()) {
-        $this->meta['protection'] = self::LOCKED_PL;
-        $this->meta['protectorId'] = $this->user->id;
-      }
-      else
-        throw new Exception\IncompatibleStatusException("Stato incompatible con l'operazione richiesta.");
-    else
-      throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
-  }
-
-
-  /**
-   * @brief Returns `true` if the post is locked.
-   */
-  public function isLocked() {
-    return ($this->protection == self::LOCKED_PL) ? TRUE : FALSE;
-  }
-
-
-  /**
-   * @brief Removes the post protection.
-   */
-  public function unprotect() {
-    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
-    if (!$this->isProtected()) return;
-
-    if ($this->user->isAdmin() or ($this->user->isModerator() && $this->user->match($this->protectorId)))
-      if ($this->isCurrent() or $this->isDraft()) {
-        $this->unsetMetadata('protection');
-        $this->unsetMetadata('protectorId');
-      }
-      else
-        throw new Exception\IncompatibleStatusException("Stato incompatible con l'operazione richiesta.");
-    else
-      throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
+  public function getProtection() {
+    return ($this->isProtected()) ? $this->meta['protection'] : NULL;
   }
 
 
@@ -196,7 +133,83 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @return string
    */
   public function getProtectorId() {
-    return ($this->isMetadataPresent('protectorId')) ? $this->meta['protectorId'] : NULL;
+    return ($this->isProtected()) ? $this->meta['protectorId'] : NULL;
+  }
+
+
+  /**
+   * @brief Returns `true` if the post can be protected, `false` otherwise.
+   * @return bool
+   */
+  public function canBeProtected() {
+    if ($this->isProtected()) return FALSE;
+
+    if ($this->user->isModerator() && ($this->isCurrent() or $this->isDraft()))
+      return TRUE;
+    else
+      return FALSE;
+  }
+
+
+  /**
+   * @brief Returns `true` if the protection can be removed from the post, `false` otherwise.
+   * @return bool
+   */
+  public function canBeUnprotected() {
+    if (!$this->isProtected()) return FALSE;
+
+    if (($this->user->isAdmin() or ($this->user->isModerator() && $this->user->match($this->protectorId))) &&
+      ($this->isCurrent() or $this->isDraft()))
+      return TRUE;
+    else
+      return FALSE;
+  }
+
+
+  /**
+   * @brief Removes the post protection.
+   */
+  public function unprotect() {
+    $this->unsetMetadata('protection');
+    $this->unsetMetadata('protectorId');
+  }
+
+
+  /**
+   * @brief Returns `true` if the post is closed.
+   */
+  public function isClosed() {
+    return ($this->isProtected() && $this->meta['protection'] == self::CLOSED_PL) ? TRUE : FALSE;
+  }
+
+
+  /**
+   * @brief Closes the post.
+   * @details No more answers or comments can be added.
+   * @see http://meta.stackexchange.com/questions/10582/what-is-a-closed-or-on-hold-question
+   */
+  public function close() {
+    $this->meta['protection'] = self::CLOSED_PL;
+    $this->meta['protectorId'] = $this->user->id;
+  }
+
+
+  /**
+   * @brief Returns `true` if the post is locked.
+   */
+  public function isLocked() {
+    return ($this->isProtected() && $this->protection == self::LOCKED_PL) ? TRUE : FALSE;
+  }
+
+
+  /**
+   * @brief Locks the post.
+   * @details No more new answers (or comments), votes, edits, question comments.
+   * @see http://meta.stackexchange.com/questions/22228/what-is-a-locked-post
+   */
+  public function lock() {
+    $this->meta['protection'] = self::LOCKED_PL;
+    $this->meta['protectorId'] = $this->user->id;
   }
 
   //!@}
@@ -205,39 +218,6 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   /** @name Visibility Methods */
   //!@{
 
-  /**
-   * @brief Hides the post.
-   */
-  public function hide() {
-    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
-    if (!$this->isVisible()) return;
-
-    if ($this->user->isAdmin())
-      if ($this->isCurrent() or $this->isDraft())
-        $this->meta['visible'] = FALSE;
-      else
-        throw new Exception\IncompatibleStatusException("Stato incompatible con l'operazione richiesta.");
-    else
-      throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
-  }
-
-
-  /**
-   * @brief Makes the post to be listed.
-   */
-  public function show() {
-    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
-    if ($this->isVisible()) return;
-
-    if ($this->user->isAdmin())
-      if ($this->isCurrent() or $this->isDraft())
-        $this->meta['visible'] = TRUE;
-      else
-        throw new Exception\IncompatibleStatusException("Stato incompatible con l'operazione richiesta.");
-    else
-      throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
-  }
-
 
   /**
    * @brief Makes the post to be listed.
@@ -245,6 +225,34 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    */
   public function isVisible() {
     return $this->meta['visible'];
+  }
+
+
+  /**
+   * @brief Returns `true` if the user can hide or show the post, `false` otherwise.
+   * @return bool
+   */
+  public function canVisibilityBeChanged() {
+    if ($this->user->isAdmin() && ($this->isCurrent() or $this->isDraft()))
+      return TRUE;
+    else
+      return FALSE;
+  }
+
+
+  /**
+   * @brief Hides the post.
+   */
+  public function hide() {
+    $this->meta['visible'] = FALSE;
+  }
+
+
+  /**
+   * @brief Makes the post to be listed.
+   */
+  public function show() {
+    $this->meta['visible'] = TRUE;
   }
 
   //!@}
