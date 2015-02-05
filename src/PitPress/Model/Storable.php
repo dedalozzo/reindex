@@ -12,11 +12,11 @@ namespace PitPress\Model;
 
 
 use ElephantOnCouch\Doc\Doc;
+use ElephantOnCouch\Generator\UUID;
 
 use Phalcon\DI;
 
 use PitPress\Helper;
-use ElephantOnCouch\Generator\UUID;
 
 
 /**
