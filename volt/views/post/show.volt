@@ -16,7 +16,7 @@
     <article id="{{ post.id }}">
       <section class="item-content">
         <ul class="list item-info">
-          <li>{{ post.hasBeenApproved() ? post.whenHasBeenPublished() : post.whenHasBeenCreated() }}</li>
+          <li>{{ post.isApproved() ? post.whenHasBeenPublished() : post.whenHasBeenCreated() }}</li>
           <li>
             {{ hitsCount }}&nbsp;&nbsp;
             <i class="icon-thumbs-up"></i>&nbsp;{{ score }}&nbsp;&nbsp;
@@ -86,20 +86,43 @@
             </div>
           </li>
           <li><button class="btn btn-icon blue" title="segnala un problema riguardante la domanda"><i class="icon-flag icon-large"></i></button></li>
+          {% if post.canBeEdited() %}
           <li><a class="btn btn-icon blue" title="migliora la domanda modificandone il contenuto" href="//{{ serverName~'/'~post.id~'/modifica/' }}"><i class="icon-file-text icon-large"></i></a></li>
+          {% endif %}
+          {% if user.isModerator() %}
           <li>
-            <button class="btn btn-icon orange" title="strumenti di amministrazione" data-dropdown="#dropdown-admin"><i class="icon-gear icon-large"></i></button>
-            <div id="dropdown-admin" class="dropdown dropdown-relative dropdown-anchor-right dropdown-tip">
+            <button class="btn btn-icon orange" title="strumenti di amministrazione" data-dropdown="#dropdown-moderator"><i class="icon-gear icon-large"></i></button>
+            <div id="dropdown-moderator" class="dropdown dropdown-relative dropdown-anchor-right dropdown-tip">
               <ul class="dropdown-menu">
-                <li><button title="impedisci che vengono aggiunte ulteriori risposte alla domanda"><i class="icon-unlock"></i>Chiudi</button></li>
+                {% if post.canBeProtected() %}
+                <li><button title="impedisci che vengono aggiunte ulteriori risposte alla domanda"><i class="icon-lock"></i>Chiudi</button></li>
                 <li><button title="proteggi la domanda da eventuali modifiche"><i class="icon-umbrella"></i>Proteggi</button></li>
-                <li><button title="proteggi la domanda da eventuali modifiche"><i class="icon-eye-close"></i>Nascondi</button></li>
+                {% elseif post.canBeUnprotected() %}
+                  {% if post.isClosed() %}
+                <li><button title="riapri"><i class="icon-unlock"></i>Apri</button></li>
+                  {% elseif post.isLocked() %}
+                <li><button title="sproteggi"><i class="icon-sun"></i>Sproteggi</button></li>
+                  {% endif %}
+                {% endif %}
+                {% if post.canVisibilityBeChanged() %}
+                  {% if post.isVisible() %}
+                <li><button title="nascondi"><i class="icon-eye-close"></i>Nascondi</button></li>
+                  {% else %}
+                <li><button title="mostra"><i class="icon-eye-open"></i>Mostra</button></li>
+                  {% endif %}
+                {% endif %}
+                {% if post.canBeMovedToTrash() or post.canBeRestored() %}
                 <li class="dropdown-divider"></li>
-                <li><button title="appunta la domanda"><i class="icon-pushpin"></i>Appunta</button></li>
-                <li><button title="elimina la domanda"><i class="icon-trash"></i>Elimina</button></li>
+                  {% if post.isMovedToTrash() %}
+                <li><button title="elimina la domanda"><i class="icon-undo"></i>Recupera dal cestino</button></li>
+                  {% else %}
+                <li><button title="elimina la domanda"><i class="icon-trash"></i>Butta nel cestino</button></li>
+                  {% endif %}
+                {% endif %}
               </ul>
             </div>
           </li>
+          {% endif %}
           <li><button class="btn blue"><i class="icon-reply"></i> RISPONDI</button></li>
         </ul>
 
