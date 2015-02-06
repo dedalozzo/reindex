@@ -21,7 +21,7 @@ class Version {
 
   const MAJOR = '0'; //!< Major release number.
   const MINOR = '7'; //!< Minor release number.
-  const MAINTENANCE = '4'; //!< Maintenance release number (bug fixes only).
+  const MAINTENANCE = '5'; //!< Maintenance release number (bug fixes only).
 
 
   /**
