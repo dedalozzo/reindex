@@ -29,7 +29,7 @@ class AjaxGroup extends Group {
         'controller' => 'ajax'
       ]);
 
-    $this->setHostName('ajax.'.DI::getDefault()['config']['application']['domainName']);
+    $this->setHostName('api.'.DI::getDefault()['config']['application']['domainName']);
 
     $this->addPost('/like/', ['action' => 'like']);
     $this->addPost('/star/', ['action' => 'star']);
