@@ -131,9 +131,8 @@ abstract class Versionable extends Storable {
   //@}
 
 
-  /** @name Control Versioning Methods */
+  /** @name Access Control Methods */
   //!@{
-
 
   /**
    * @brief Returns `true` if the document can be submitted for peer review, `false` otherwise.
@@ -150,14 +149,6 @@ abstract class Versionable extends Storable {
 
 
   /**
-   * @brief Submits the document for peer review.
-   */
-  public function submit() {
-    $this->meta['status'] = DocStatus::SUBMITTED;
-  }
-
-
-  /**
    * @brief Returns `true` if the document can be approved, `false` otherwise.
    * @return bool
    */
@@ -170,14 +161,6 @@ abstract class Versionable extends Storable {
 
 
   /**
-   * @brief Approves the document revision, making of it the current version.
-   */
-  public function approve() {
-    $this->meta['status'] = DocStatus::CURRENT;
-  }
-
-
-  /**
    * @brief Returns `true` if the user can ask the original author to revise the document, `false` otherwise.
    * @return bool
    */
@@ -185,21 +168,10 @@ abstract class Versionable extends Storable {
     if ($this->isReturnedForRevision()) return FALSE;
 
     if (($this->user->isModerator() && $this->isSubmittedForPeerReview()) or
-        ($this->user->isAdmin() && $this->isCurrent()))
+      ($this->user->isAdmin() && $this->isCurrent()))
       return TRUE;
     else
       return FALSE;
-  }
-
-
-  /**
-   * @brief Asks the author to revise the document, because it's not ready for publishing.
-   * @param[in] The reason why the document has been returned for revision.
-   */
-  public function returnForRevision($reason) {
-    $this->meta['status'] = DocStatus::RETURNED;
-    $this->meta['rejectReason'] = $reason;
-    // todo: send a notification to the user
   }
 
 
@@ -216,18 +188,6 @@ abstract class Versionable extends Storable {
 
 
   /**
-   * @brief Rejects this document revision.
-   * @details The post will be automatically deleted in 10 days.
-   * @param[in] The reason why the revision has been rejected.
-   */
-  public function reject($reason) {
-    $this->meta['status'] = DocStatus::REJECTED;
-    $this->meta['rejectReason'] = $reason;
-    // todo: send a notification to the user
-  }
-
-
-  /**
    * @brief Returns `true` if the document can be reverted to another version, `false` otherwise.
    * @return bool
    */
@@ -236,16 +196,6 @@ abstract class Versionable extends Storable {
       return TRUE;
     else
       return FALSE;
-  }
-
-
-  /**
-   * @brief Reverts to the specified version.
-   * @param[in] Reverts to the specified version. If a version is not specified it takes the previous one.
-   * @todo Implement the method Versionable.revert().
-   */
-  public function revert($versionNumber = NULL) {
-    $this->meta['status'] = DocStatus::APPROVED;
   }
 
 
@@ -264,25 +214,80 @@ abstract class Versionable extends Storable {
 
 
   /**
-   * @brief Moves the document to the trash.
-   */
-  public function moveToTrash() {
-    $this->meta['prevStatus'] = $this->meta['status'];
-    $this->meta['status'] = DocStatus::DELETED;
-  }
-
-
-  /**
    * @brief Returns `true` if the post can be moved to trash, `false` otherwise.
    * @return bool
    */
   public function canBeRestored() {
     if ($this->isMovedToTrash() and
-        ($this->user->isModerator() && ($this->trashmanId == $this->user->id)) or
-        $this->user->isAdmin())
+      ($this->user->isModerator() && ($this->trashmanId == $this->user->id)) or
+      $this->user->isAdmin())
       return TRUE;
     else
       return FALSE;
+  }
+
+  //@}
+
+
+  /** @name Control Versioning Methods */
+  //!@{
+
+  /**
+   * @brief Submits the document for peer review.
+   */
+  public function submit() {
+    $this->meta['status'] = DocStatus::SUBMITTED;
+  }
+
+
+  /**
+   * @brief Approves the document revision, making of it the current version.
+   */
+  public function approve() {
+    $this->meta['status'] = DocStatus::CURRENT;
+  }
+
+
+  /**
+   * @brief Asks the author to revise the document, because it's not ready for publishing.
+   * @param[in] The reason why the document has been returned for revision.
+   */
+  public function returnForRevision($reason) {
+    $this->meta['status'] = DocStatus::RETURNED;
+    $this->meta['rejectReason'] = $reason;
+    // todo: send a notification to the user
+  }
+
+
+  /**
+   * @brief Rejects this document revision.
+   * @details The post will be automatically deleted in 10 days.
+   * @param[in] The reason why the revision has been rejected.
+   */
+  public function reject($reason) {
+    $this->meta['status'] = DocStatus::REJECTED;
+    $this->meta['rejectReason'] = $reason;
+    // todo: send a notification to the user
+  }
+
+
+  /**
+   * @brief Reverts to the specified version.
+   * @param[in] Reverts to the specified version. If a version is not specified it takes the previous one.
+   * @todo Implement the method Versionable.revert().
+   */
+  public function revert($versionNumber = NULL) {
+    $this->meta['status'] = DocStatus::APPROVED;
+  }
+
+
+  /**
+   * @brief Moves the document to the trash.
+   */
+  public function moveToTrash() {
+    $this->meta['prevStatus'] = $this->meta['status'];
+    $this->meta['status'] = DocStatus::DELETED;
+    $this->meta['dustmanId'] = $this->user->id;
   }
 
 
@@ -290,9 +295,10 @@ abstract class Versionable extends Storable {
    * @brief Restores the document to its previous status, removing it from trash.
    */
   public function restore() {
-      // In case the document has been deleted, restore it to its previous status.
-      $this->meta['status'] = $this->meta['prevStatus'];
-      unset($this->meta['prevStatus']);
+    // In case the document has been deleted, restore it to its previous status.
+    $this->meta['status'] = $this->meta['prevStatus'];
+    unset($this->meta['prevStatus']);
+    unset($this->meta['dustmanId']);
   }
 
 
@@ -421,6 +427,16 @@ abstract class Versionable extends Storable {
   public function unsetEditorId() {
     if ($this->isMetadataPresent('editorId'))
       unset($this->meta['editorId']);
+  }
+
+
+  public function getDustmanId() {
+    return $this->meta['dustmanId'];
+  }
+
+
+  public function issetDustmanId() {
+    return isset($this->meta['dustmanId']);
   }
 
 
