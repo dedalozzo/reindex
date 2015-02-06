@@ -165,7 +165,7 @@ MAP;
     function postsPerDate() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->index && $doc->status == 'current')
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->index && $doc->visible && $doc->status == 'current')
     $emit($doc->publishedAt);
 };
 MAP;
@@ -184,7 +184,7 @@ MAP;
     function postsPerDateByType() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->status == 'current')
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->visible && $doc->status == 'current')
     $emit([$doc->type, $doc->publishedAt]);
 };
 MAP;
@@ -203,7 +203,7 @@ MAP;
     function postsPerDateByTag() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->index && $doc->status == 'current' && isset($doc->tags))
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->index && $doc->visible && $doc->status == 'current' && isset($doc->tags))
     foreach ($doc->tags as $tagId)
       $emit([$tagId, $doc->publishedAt]);
 };
@@ -223,7 +223,7 @@ MAP;
     function postsPerDateByTagAndType() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->status == 'current' && isset($doc->tags))
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->visible && $doc->status == 'current' && isset($doc->tags))
     foreach ($doc->tags as $tagId)
       $emit([$tagId, $doc->type, $doc->publishedAt]);
 };
@@ -243,7 +243,7 @@ MAP;
     function postsPerDateByUser() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->index && $doc->status == 'current')
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->index && $doc->visible && $doc->status == 'current')
     $emit([$doc->creatorId, $doc->publishedAt]);
 };
 MAP;
@@ -262,7 +262,7 @@ MAP;
     function postsPerDateByUserAndType() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->status == 'current')
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->visible && $doc->status == 'current')
     $emit([$doc->creatorId, $doc->type, $doc->publishedAt]);
 };
 MAP;
