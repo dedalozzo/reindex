@@ -369,6 +369,8 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @brief Adds the post popularity to the Redis db.
    */
   public function zAddPopularity() {
+    if (!$this->isVisible()) return;
+
     $config = $this->di['config'];
 
     $date = (new \DateTime())->setTimestamp($this->publishedAt);
@@ -431,6 +433,8 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @brief Adds the post last update timestamp to the Redis db.
    */
   public function zAddLastUpdate($timestamp = NULL) {
+    if (!$this->isVisible()) return;
+
     if (is_null($timestamp))
       $timestamp = $this->modifiedAt;
 
