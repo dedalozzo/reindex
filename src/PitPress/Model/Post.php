@@ -107,33 +107,19 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   }
 
 
-  /** @name Protection Methods */
+  /** @name Access Control Methods */
   //!@{
 
   /**
-   * @brief Returns `true` if the post has some kind of protection, `false` otherwise.
+   * @brief Returns `true` if the document can be edited, `false` otherwise.
    * @return bool
    */
-  public function isProtected() {
-    return $this->isMetadataPresent('protected');
-  }
-
-
-  /**
-   * @brief Returns the protection if any.
-   * @return string
-   */
-  public function getProtection() {
-    return ($this->isProtected()) ? $this->meta['protection'] : NULL;
-  }
-
-
-  /**
-   * @brief Returns the id of the user who protected the post.
-   * @return string
-   */
-  public function getProtectorId() {
-    return ($this->isProtected()) ? $this->meta['protectorId'] : NULL;
+  public function canBeEdited() {
+    if (($this->user->isAdmin() or ($this->user->isEditor() && !$this->isLocked())) &&
+        ($this->isCurrent() or $this->isDraft()))
+      return TRUE;
+    else
+      return FALSE;
   }
 
 
@@ -163,6 +149,50 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
       return TRUE;
     else
       return FALSE;
+  }
+
+
+  /**
+   * @brief Returns `true` if the user can hide or show the post, `false` otherwise.
+   * @return bool
+   */
+  public function canVisibilityBeChanged() {
+    if ($this->user->isAdmin() && ($this->isCurrent() or $this->isDraft()))
+      return TRUE;
+    else
+      return FALSE;
+  }
+
+  //!@}
+
+
+  /** @name Protection Methods */
+  //!@{
+
+  /**
+   * @brief Returns `true` if the post has some kind of protection, `false` otherwise.
+   * @return bool
+   */
+  public function isProtected() {
+    return $this->isMetadataPresent('protected');
+  }
+
+
+  /**
+   * @brief Returns the protection if any.
+   * @return string
+   */
+  public function getProtection() {
+    return ($this->isProtected()) ? $this->meta['protection'] : NULL;
+  }
+
+
+  /**
+   * @brief Returns the id of the user who protected the post.
+   * @return string
+   */
+  public function getProtectorId() {
+    return ($this->isProtected()) ? $this->meta['protectorId'] : NULL;
   }
 
 
@@ -225,18 +255,6 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    */
   public function isVisible() {
     return $this->meta['visible'];
-  }
-
-
-  /**
-   * @brief Returns `true` if the user can hide or show the post, `false` otherwise.
-   * @return bool
-   */
-  public function canVisibilityBeChanged() {
-    if ($this->user->isAdmin() && ($this->isCurrent() or $this->isDraft()))
-      return TRUE;
-    else
-      return FALSE;
   }
 
 
