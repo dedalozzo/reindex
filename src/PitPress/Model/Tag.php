@@ -10,8 +10,11 @@
 
 namespace PitPress\Model;
 
+use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Extension;
+use PitPress\Property;
+use PitPress\Helper;
 
 
 /**
@@ -21,13 +24,89 @@ use PitPress\Extension;
  */
 class Tag extends Versionable implements Extension\ICount, Extension\IStar {
   use Extension\TCount, Extension\TStar;
+  use Property\TExcerpt, Property\TBody, Property\TDescription;
+
+
+  public function __construct() {
+    parent::__construct();
+    $this->synonym = FALSE;
+    $this->meta['synonyms'] = [];
+  }
+
+
+  /** @name Synonyms Management Methods */
+  //!@{
+
+  private function addMultipleSynonymsAtOnce(array $synonyms) {
+    $array = array_merge($this->meta['synonyms'], $synonyms);
+    $this->meta['synonyms'] = array_keys(array_flip($array));
+  }
 
 
   /**
-   * @brief Gets the item state.
+   * @brief Returns `true` in case this tag is marked as synonym, `false` otherwise.
+   * @details Note that the method tests the value of the meta variable.
+   * @return bool
    */
-  public function getState() {
-    return $this->meta['state'];
+  public function isSynonym() {
+    return isset($this->meta['synonyms']) ? TRUE : FALSE;
+  }
+
+
+  /**
+   * @brief Marks the tag as synonym deleting the synonyms metadata.
+   */
+  public function markAsSynonym() {
+    if (!$this->isSynonym())
+      unset($this->meta['synonyms']);
+  }
+
+
+  /**
+   * @brief Returns the ids of its synonyms.
+   * @return array An array of strings.
+   */
+  public function getSynonyms() {
+    return (!$this->isSynonym()) ? $this->meta['synonyms'] : [];
+  }
+
+
+  /**
+   * @brief Marks the provided tag a synonym of the current tag.
+   * @param[in] Tag $tag The tag you want add as synonym to the current tag.
+   */
+  public function addSynonym(Tag $tag) {
+    // You can't add a synonym to a synonym, neither you can add a master to a synonym.
+    if ($this->isSynonym() or !$this->isCurrent() or $tag->isSynonym() or !$tag->isCurrent()) return;
+
+    array_push($this->meta['synonyms'], $tag->unversionId);
+
+    $this->addMultipleSynonymsAtOnce($tag->getSynonyms());
+
+    $tag->markAsSynonym();
+    $tag->save();
+  }
+
+  //!@}
+
+
+  /**
+   * @brief Saves the tag.
+   */
+  public function save() {
+    if (!$this->isSynonym()) {
+      $this->html = $this->markdown->parse($this->body);
+      $purged = Helper\Text::purge($this->html);
+      $this->excerpt = Helper\Text::truncate($purged);
+    }
+    else {
+      // A synonym doesn't have a body and all that stuff, it has just a name.
+      unset($this->body);
+      unset($this->html);
+      unset($this->excerpt);
+    }
+
+    parent::save();
   }
 
 
@@ -44,7 +123,11 @@ class Tag extends Versionable implements Extension\ICount, Extension\IStar {
 
 
   public function setName($value) {
-    $this->meta['name'] = $value;
+    // A tag name can't be changed unless the tag has never been approved.
+    if ($this->isCreated())
+      $this->meta['name'] = $value;
+    else
+      throw new \RuntimeException("Il nome di un tag non può essere cambiato.");
   }
 
 
