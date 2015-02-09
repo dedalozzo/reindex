@@ -10,7 +10,6 @@
 
 namespace PitPress\Model;
 
-use ElephantOnCouch\Opt\ViewQueryOpts;
 
 use PitPress\Extension;
 use PitPress\Property;
@@ -29,7 +28,7 @@ class Tag extends Versionable implements Extension\ICount, Extension\IStar {
 
   public function __construct() {
     parent::__construct();
-    $this->synonym = FALSE;
+    $this->meta['master'] = TRUE;
     $this->meta['synonyms'] = [];
   }
 
@@ -45,11 +44,10 @@ class Tag extends Versionable implements Extension\ICount, Extension\IStar {
 
   /**
    * @brief Returns `true` in case this tag is marked as synonym, `false` otherwise.
-   * @details Note that the method tests the value of the meta variable.
    * @return bool
    */
   public function isSynonym() {
-    return isset($this->meta['synonyms']) ? TRUE : FALSE;
+    return !$this->meta['master'];
   }
 
 
@@ -57,7 +55,9 @@ class Tag extends Versionable implements Extension\ICount, Extension\IStar {
    * @brief Marks the tag as synonym deleting the synonyms metadata.
    */
   public function markAsSynonym() {
-    if (!$this->isSynonym())
+    $this->meta['master'] = FALSE;
+
+    if ($this->isMetadataPresent('synonyms'))
       unset($this->meta['synonyms']);
   }
 
