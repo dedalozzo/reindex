@@ -15,7 +15,7 @@ namespace PitPress\Console\Command;
  * @brief Revokes a privilege to a user.
  * @nosubgrouping
  */
-class RevokeCommand extends AbstractAssignCommand {
+class RevokeCommand extends AbstractPrivilegeCommand {
 
 
   /**

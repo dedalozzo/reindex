@@ -15,7 +15,7 @@ namespace PitPress\Console\Command;
  * @brief Grants a privilege to a user.
  * @nosubgrouping
  */
-class GrantCommand extends AbstractAssignCommand {
+class GrantCommand extends AbstractPrivilegeCommand {
 
 
   /**
