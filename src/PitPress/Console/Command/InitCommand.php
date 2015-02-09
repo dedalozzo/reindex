@@ -339,6 +339,27 @@ MAP;
     $doc->addHandler(allNames());
 
 
+    function synonyms() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'tag' && $doc->master) {
+    $emit($doc->unversionId, $doc->unversionId);
+
+    foreach ($doc->synonyms as $value)
+      $emit($value, $doc->unversionId);
+  }
+};
+MAP;
+
+      $handler = new ViewHandler("synonyms");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(synonyms());
+
+
     function substrings() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
@@ -400,25 +421,6 @@ MAP;
     }
 
     $doc->addHandler(tagsByName());
-
-
-    function tagsPerPost() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->status == 'current' && isset($doc->tags))
-    foreach ($doc->tags as $tagId)
-      $emit($doc->unversionId, $tagId);
-};
-MAP;
-
-      $handler = new ViewHandler("perPost");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount();
-
-      return $handler;
-    }
-
-    $doc->addHandler(tagsPerPost());
 
 
     $this->couch->saveDoc($doc);
