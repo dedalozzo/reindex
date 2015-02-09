@@ -94,10 +94,21 @@ abstract class ListController extends BaseController {
       $entry->repliesCount = is_null($replies[$i]['value']) ? 0 : $replies[$i]['value'];
       $entry->liked = $this->user->isGuest() || is_null($likes[$i]['value']) ? FALSE : TRUE;
 
-      // Tags.
-      $opts->reset();
-      $opts->doNotReduce();
-      $entry->tags = (!empty($entry->tags)) ? $this->couch->queryView("tags", "allNames", $entry->tags, $opts) : [];
+      if (!empty($entry->tags)) {
+        // Tags.
+        $opts->reset();
+        $opts->doNotReduce();
+
+        // Resolves the synonyms.
+        $synonyms = $this->couch->queryView("tags", "synonyms", $entry->tags, $opts);
+
+        // Extracts the masters.
+        $masters = array_unique(array_column($synonyms->asArray(), 'value'));
+
+        $entry->tags = $this->couch->queryView("tags", "allNames", $masters, $opts);
+      }
+      else
+        $entry->tags = [];
 
       $entries[] = $entry;
     }
