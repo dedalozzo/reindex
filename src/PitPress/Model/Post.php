@@ -589,11 +589,18 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @brief Gets the associated list of tags.
    */
   public function getTags() {
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce();
+    if ($this->isMetadataPresent('tags')) {
+      $opts = new ViewQueryOpts();
+      $opts->doNotReduce();
 
-    if ($this->isMetadataPresent('tags'))
-      return $this->couch->queryView("tags", "allNames", $this->meta['tags'], $opts);
+      // Resolves the synonyms.
+      $synonyms = $this->couch->queryView("tags", "synonyms", $this->meta['tags'], $opts);
+
+      // Extracts the masters.
+      $masters = array_unique(array_column($synonyms->asArray(), 'value'));
+
+      return $this->couch->queryView("tags", "allNames", $masters, $opts);
+    }
     else
       return [];
   }
