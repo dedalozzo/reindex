@@ -52,9 +52,9 @@ class Tag extends Versionable implements Extension\ICount, Extension\IStar {
 
 
   /**
-   * @brief Marks the tag as synonym deleting the synonyms metadata.
+   * @brief Transforms the tag into a synonym.
    */
-  public function markAsSynonym() {
+  public function transIntoSynonym() {
     $this->meta['master'] = FALSE;
 
     if ($this->isMetadataPresent('synonyms'))
@@ -83,7 +83,7 @@ class Tag extends Versionable implements Extension\ICount, Extension\IStar {
 
     $this->addMultipleSynonymsAtOnce($tag->getSynonyms());
 
-    $tag->markAsSynonym();
+    $tag->transIntoSynonym();
     $tag->save();
   }
 
