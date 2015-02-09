@@ -46,52 +46,6 @@ abstract class AbstractCommand extends Command implements InjectionAwareInterfac
 
 
   /**
-   * @brief Returns `true` in case `$arg` seems to be the string representation of an array, `false` otherwise.
-   * @param[in] $arg The command line argument.
-   */
-  protected function isArray($arg) {
-    if (preg_match('/\A[\[]([^\[\]]+)[\]]\z/i', $arg, $matches))
-      return TRUE;
-    else
-      return FALSE;
-  }
-
-
-  /**
-   * @brief Returns `true` in case `$arg` is enclosed between paired delimiters ('' or ""), `false` otherwise.
-   * @details In case the argument is a string, paired delimiters are removed.
-   * @param[in|out] $arg The command line argument.
-   */
-  protected function isString(&$arg) {
-    if (preg_match('/\A[\'"]([^\'"]+)[\'"]\z/i', $arg, $matches)) {
-      $arg = $matches[1];
-      return TRUE;
-    }
-    else
-      return FALSE;
-  }
-
-
-  /**
-   * @brief Casts the argument to the right format and jsonify it when necessary.
-   * @param[in] $arg The command line argument.
-   * @param[in] boolean $encode (optional) JSON encodes `$arg`.
-   */
-  protected function castArg($arg, $encode = TRUE) {
-    if ($this->isArray($arg))
-      return $arg;
-    elseif ($this->isString($arg)) {
-      if ($encode)
-        return json_encode($arg);
-      else
-        return $arg;
-    }
-    else
-      return $arg + 0;
-  }
-
-
-  /**
    * @brief Executes the command.
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
