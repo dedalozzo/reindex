@@ -1,11 +1,12 @@
-pit query posts/all &
-pit query tags/all &
-pit query revisions/perItem --limit=1 &
-pit query votes/perItem &
-pit query stars/perItem &
-pit query subscriptions/perItem --limit=1 &
-pit query reputation/perUser &
-pit query favorites/perAddedAt --limit=1 &
-pit query users/allNames --limit=1 &
-pit query replies/newestPerPost &
-pit query badges/perClass &
+couch use pitpress
+couch query posts/all &
+couch query tags/all &
+couch query revisions/perItem --limit=1 &
+couch query votes/perItem &
+couch query stars/perItem &
+couch query subscriptions/perItem --limit=1 &
+couch query reputation/perUser &
+couch query favorites/perAddedAt --limit=1 &
+couch query users/allNames --limit=1 &
+couch query replies/newestPerPost &
+couch query badges/perClass &
