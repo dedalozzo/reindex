@@ -392,7 +392,7 @@ MAP;
     function newestTags() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'tag' && $doc->status == 'current')
+  if ($doc->type == 'tag' && $doc->status == 'current' && $doc->master)
     $emit($doc->createdAt);
 };
 MAP;
@@ -409,7 +409,7 @@ MAP;
     function tagsByName() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'tag' && $doc->status == 'current')
+  if ($doc->type == 'tag' && $doc->status == 'current' && $doc->master)
     $emit($doc->name);
 };
 MAP;
@@ -421,6 +421,23 @@ MAP;
     }
 
     $doc->addHandler(tagsByName());
+
+
+    function tagsByNameSpecial() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'tag' && ($doc->status == 'current' or $doc->status == 'deleted'))
+    $emit($doc->name);
+};
+MAP;
+
+      $handler = new ViewHandler("byNameSpecial");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(tagsByNameSpecial());
 
 
     $this->couch->saveDoc($doc);
