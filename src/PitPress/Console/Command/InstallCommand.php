@@ -15,6 +15,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 
+use ElephantOnCouch\Couch;
+use ElephantOnCouch\Adapter\NativeAdapter;
+
 
 /**
  * @brief Executes the following commands: create, prepare, import, init.
@@ -36,37 +39,26 @@ class InstallCommand extends AbstractCommand {
    * @brief Executes the command.
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
+    $config = $this->di['config'];
 
-    // create
-    $command = $this->getApplication()->find('create');
-    $arguments = [
-      'command' => 'create'
-    ];
-    $input = new ArrayInput($arguments);
-    $command->run($input, $output);
+    // create database
+    $couch = new Couch(new NativeAdapter(NativeAdapter::DEFAULT_SERVER, $config->couchdb->user, $config->couchdb->password));
+    $couch->createDb($config->couchdb->database);
 
-    // prepare
-    $command = $this->getApplication()->find('prepare');
-    $arguments = [
-      'command' => 'prepare'
-    ];
-    $input = new ArrayInput($arguments);
-    $command->run($input, $output);
-
-    // import
-    $command = $this->getApplication()->find('import');
-    $arguments = [
-      'command' => 'import',
-      'entities' => ['all']
-    ];
-    $input = new ArrayInput($arguments);
-    $command->run($input, $output);
-
-    // init
+    // init all
     $command = $this->getApplication()->find('init');
     $arguments = [
       'command' => 'init',
       'documents' => ['all']
+    ];
+    $input = new ArrayInput($arguments);
+    $command->run($input, $output);
+
+    // rebuild cache
+    $command = $this->getApplication()->find('cache');
+    $arguments = [
+      'command' => 'cache',
+      'subcommand' => ['rebuild']
     ];
     $input = new ArrayInput($arguments);
     $command->run($input, $output);
