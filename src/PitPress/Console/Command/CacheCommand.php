@@ -110,7 +110,7 @@ DESC
     $this->input = $input;
     $this->output = $output;
 
-    $this->mysql = $this->di['redis'];
+    $this->redis = $this->di['redis'];
     $this->couch = $this->di['couchdb'];
 
     $subcommand = $input->getArgument('subcommand');
