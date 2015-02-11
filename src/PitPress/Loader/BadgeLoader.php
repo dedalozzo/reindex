@@ -26,7 +26,7 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
 class BadgeLoader {
   protected $guardian;
   protected $couch;
-  protected $monolog;
+  protected $log;
   protected $user;
   protected $folder;
   protected $badges = [];
@@ -35,7 +35,7 @@ class BadgeLoader {
   public function __construct($di, $folder) {
     $this->guardian = $di['guardian'];
     $this->couch = $di['couchdb'];
-    $this->monolog = $di['monolog'];
+    $this->log = $di['log'];
     $this->user = $this->guardian->getUser();
     $this->folder = $folder;
     $this->scanForBadges();

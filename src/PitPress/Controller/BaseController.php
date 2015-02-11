@@ -25,7 +25,7 @@ use PitPress\Version;
 abstract class BaseController extends Controller {
   protected $couch;
   protected $redis;
-  protected $monolog;
+  protected $log;
   protected $assets;
   protected $guardian;
 
@@ -113,7 +113,7 @@ abstract class BaseController extends Controller {
   public function initialize() {
     $this->couch = $this->di['couchdb'];
     $this->redis = $this->di['redis'];
-    $this->monolog = $this->di['monolog'];
+    $this->log = $this->di['log'];
     $this->assets = $this->di['assets'];
     $this->guardian = $this->di['guardian'];
 
@@ -137,7 +137,7 @@ abstract class BaseController extends Controller {
 
   /**
    * @brief This method is executed before the initialize. In my opinion it's a bug.
-   * @details Cannot log inside this method using the monolog instance.
+   * @details Cannot log inside this method using the log instance.
    * @warning Do not use it!
    */
   public function beforeExecuteRoute() {}
@@ -154,8 +154,8 @@ abstract class BaseController extends Controller {
     $this->view->setVar('controllerName', $this->controllerName);
     $this->view->setVar('actionName', $this->actionName);
 
-    $this->monolog->addDebug(sprintf("Controller: %s", $this->dispatcher->getControllerName()));
-    $this->monolog->addDebug(sprintf("Action: %s", $this->dispatcher->getActionName()));
+    $this->log->addDebug(sprintf("Controller: %s", $this->dispatcher->getControllerName()));
+    $this->log->addDebug(sprintf("Action: %s", $this->dispatcher->getActionName()));
   }
 
 

@@ -182,7 +182,7 @@ class IndexController extends ListController {
       $this->type = $this->controllerName;
       $this->resultsPerPage = $this->di['config']->application->postsPerPage;
 
-      $this->monolog->addDebug(sprintf('Type: %s', $this->type));
+      $this->log->addDebug(sprintf('Type: %s', $this->type));
 
       $this->assets->addJs("/pit-bootstrap/dist/js/tab.min.js", FALSE);
       $this->assets->addJs("/pit-bootstrap/dist/js/list.min.js", FALSE);
@@ -571,24 +571,24 @@ class IndexController extends ListController {
     }
 
 
-    $this->monolog->addDebug('Posts: ', $rows->asArray());
+    $this->log->addDebug('Posts: ', $rows->asArray());
 
     $phpCount = count($rows->asArray()[0]['value']);
     $mysqlCount = count($rows->asArray()[1]['value']);
-    $this->monolog->addDebug(sprintf('php: %d', $phpCount));
-    $this->monolog->addDebug(sprintf('mysql: %d', $mysqlCount));
+    $this->log->addDebug(sprintf('php: %d', $phpCount));
+    $this->log->addDebug(sprintf('mysql: %d', $mysqlCount));
 
-    $this->monolog->addDebug(sprintf('total: %d', $phpCount + $mysqlCount));
+    $this->log->addDebug(sprintf('total: %d', $phpCount + $mysqlCount));
 
     $merged = array_merge($rows->asArray()[0]['value'], $rows->asArray()[1]['value']);
-    $this->monolog->addDebug(sprintf('total merge: %d', count($merged)));
-    $this->monolog->addDebug(sprintf('total unique: %d', count(array_unique($merged))));
+    $this->log->addDebug(sprintf('total merge: %d', count($merged)));
+    $this->log->addDebug(sprintf('total unique: %d', count(array_unique($merged))));
 
 
 
     $entries = $this->getEntries($rows->asArray()[1]['value']);
 
-    $this->monolog->addDebug('Qui passo');
+    $this->log->addDebug('Qui passo');
 
     if (count($entries) > $this->resultsPerPage) {
       $last = array_pop($entries);

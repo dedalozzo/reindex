@@ -49,7 +49,7 @@ class Cookie {
   public static function delete() {
     $di = DI::getDefault();
 
-    $di['monolog']->addNotice("log delete");
+    $di['log']->addNotice("log delete");
 
     // To avoid Internet Explorer 6.x implementation issues.
     header('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');

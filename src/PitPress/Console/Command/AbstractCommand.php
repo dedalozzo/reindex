@@ -30,7 +30,7 @@ use ElephantOnCouch\Helper\TimeHelper;
 abstract class AbstractCommand extends Command implements InjectionAwareInterface {
 
   protected $di;
-  protected $monolog;
+  protected $log;
 
   protected $start;
 
@@ -70,7 +70,7 @@ abstract class AbstractCommand extends Command implements InjectionAwareInterfac
    */
   public function setDi($di) {
     $this->di = $di;
-    $this->monolog = $this->di['monolog'];
+    $this->log = $this->di['log'];
   }
 
 

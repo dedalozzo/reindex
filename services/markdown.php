@@ -14,7 +14,7 @@ use Pygmentize\Pygmentize;
 // Creates an instance of Redis client and return it.
 $di->setShared('markdown',
 
-  function() use ($config, $monolog) {
+  function() use ($config, $log) {
 
     // For a description of the predefined constants see: https://github.com/kjdev/php-ext-hoedown#predefined-constants.
     $hoedown = new Hoedown(
@@ -59,7 +59,7 @@ $di->setShared('markdown',
         ]
     );
 
-    $hoedown->addRender("blockcode", function($code, $language) use ($monolog) {
+    $hoedown->addRender("blockcode", function($code, $language) use ($log) {
        return Pygmentize::highlight($code, $language);
       }
     );

@@ -29,7 +29,7 @@ class ProfileController extends ListController {
    * @brief Given a username returns the correspondent user.
    */
   protected function getUser($username) {
-    $this->monolog->addDebug(sprintf('Username: %s', $username));
+    $this->log->addDebug(sprintf('Username: %s', $username));
 
     $opts = new ViewQueryOpts();
     $opts->setKey($username)->setLimit(1);
