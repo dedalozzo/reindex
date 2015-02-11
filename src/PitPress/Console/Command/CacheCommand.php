@@ -26,6 +26,7 @@ use ElephantOnCouch\Opt\ViewQueryOpts;
  */
 class CacheCommand extends AbstractCommand {
 
+  private $redis;
   private $couch;
 
 
