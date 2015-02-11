@@ -17,7 +17,8 @@ use Phalcon\DI\FactoryDefault as DependencyInjector;
 
 use Monolog\Logger;
 use Monolog\ErrorHandler;
-use Monolog\Handler\StreamHandler;
+use Monolog\Handler\SyslogHandler;
+use Monolog\Formatter\LineFormatter;
 
 
 error_reporting(E_ALL & ~E_NOTICE);
@@ -31,29 +32,33 @@ try {
   // Reads the application's configuration.
   $config = new IniReader($root.'/config.ini');
 
-  $monolog = new Logger('pit-press');
+  $log = new Logger('pit-press');
 
   // Registers the Monolog error handler to log errors and exceptions.
-  ErrorHandler::register($monolog);
+  ErrorHandler::register($log);
 
-  // Creates a stream handler to log debugging messages.
-  $monolog->pushHandler(new StreamHandler($root.$config->application->logDir."pit.log", Logger::DEBUG));
+  $syslog = new SyslogHandler('pit-press', LOG_USER, Logger::DEBUG);
+  $formatter = new LineFormatter("%channel%.%level_name%: %message% %extra%");
+  $syslog->setFormatter($formatter);
+
+  // Creates a Syslog handler to log debugging messages.
+  $log->pushHandler($syslog);
 
   // The FactoryDefault Dependency Injector automatically registers the right services providing a full stack framework.
   $di = new DependencyInjector();
 
   // Initializes the services. The order doesn't matter.
-  require $root."/services/config.php";
-  require $root."/services/monolog.php";
-  require $root."/services/couchdb.php";
-  require $root."/services/redis.php";
-  require $root."/services/mysql.php";
-  require $root."/services/markdown.php";
-  require $root."/services/guardian.php";
+  require $root . "/services/config.php";
+  require $root . "/services/log.php";
+  require $root . "/services/couchdb.php";
+  require $root . "/services/redis.php";
+  require $root . "/services/mysql.php";
+  require $root . "/services/markdown.php";
+  require $root . "/services/guardian.php";
 
   // Creates the application object.
   $console = new PitPressConsole('PitPress Console', \PitPress\Version::getNumber());
-  $console->setCatchExceptions(FALSE);
+  //$console->setCatchExceptions(FALSE);
 
   // Sets the dependency injector component.
   $console->setDI($di);
