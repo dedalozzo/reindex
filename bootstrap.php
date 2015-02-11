@@ -15,7 +15,7 @@ use Whoops\Handler\PrettyPageHandler;
 
 use Monolog\Logger;
 use Monolog\ErrorHandler;
-use Monolog\Handler\StreamHandler;
+use Monolog\Handler\SyslogHandler;
 use Monolog\Formatter\LineFormatter;
 
 
@@ -36,35 +36,43 @@ $whoops->register();
 $config = new IniReader($root.'/config.ini');
 
 //$logger = new FileAdapter($root."/log/pit-press.log");
-$monolog = new Logger('pit-press');
+$log = new Logger('pit-press');
 
 // Registers the Monolog error handler to log errors and exceptions.
-ErrorHandler::register($monolog);
+ErrorHandler::register($log);
 
 // Creates a stream handler to log debugging messages.
-$streamHandler = new StreamHandler($root.$config->application->logDir."pit-press.log");
-$streamHandler->setFormatter(new LineFormatter());
-$monolog->pushHandler($streamHandler, Logger::DEBUG);
+$log = new Logger('pit-press');
+
+// Registers the Monolog error handler to log errors and exceptions.
+ErrorHandler::register($log);
+
+$syslog = new SyslogHandler('pit-press', LOG_USER, Logger::DEBUG);
+$formatter = new LineFormatter("%channel%.%level_name%: %message% %extra%");
+$syslog->setFormatter($formatter);
+
+// Creates a Syslog handler to log debugging messages.
+$log->pushHandler($syslog);
 
 // The FactoryDefault Dependency Injector automatically registers the right services providing a full stack framework.
 $di = new DependencyInjector();
 
 // Initializes the services. The order doesn't matter.
-require $root."/services/config.php";
-require $root."/services/monolog.php";
-require $root."/services/dispatcher.php";
-require $root."/services/router.php";
-require $root."/services/assets.php";
-require $root."/services/view.php";
-require $root."/services/volt.php";
-require $root."/services/session.php";
-require $root."/services/couchdb.php";
-require $root."/services/redis.php";
-require $root."/services/markdown.php";
-require $root."/services/crypt.php";
-require $root."/services/flash.php";
-require $root."/services/guardian.php";
-require $root."/services/badgeloader.php";
+require $root . "/services/config.php";
+require $root . "/services/log.php";
+require $root . "/services/dispatcher.php";
+require $root . "/services/router.php";
+require $root . "/services/assets.php";
+require $root . "/services/view.php";
+require $root . "/services/volt.php";
+require $root . "/services/session.php";
+require $root . "/services/couchdb.php";
+require $root . "/services/redis.php";
+require $root . "/services/markdown.php";
+require $root . "/services/crypt.php";
+require $root . "/services/flash.php";
+require $root . "/services/guardian.php";
+require $root . "/services/badgeloader.php";
 
 
 /*
