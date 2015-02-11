@@ -30,6 +30,14 @@ class CacheCommand extends AbstractCommand {
 
 
   /**
+   * @brief Clears the database cache.
+   */
+  private function clearCache() {
+    $this->redis->flushDB();
+  }
+
+
+  /**
    * @brief Updates posts popularity.
    */
   private function updatePostsPopularity(InputInterface $input, OutputInterface $output) {
@@ -101,14 +109,26 @@ DESC
     $this->input = $input;
     $this->output = $output;
 
+    $this->mysql = $this->di['redis'];
     $this->couch = $this->di['couchdb'];
 
     $subcommand = $input->getArgument('subcommand');
 
+    $dialog = $this->getHelperSet()->get('dialog');
+
     switch ($subcommand) {
+      case 'clear':
+        $confirm = $dialog->ask($output, 'Are you sure you want clear database cache? [Y/n]'.PHP_EOL, 'n');
+        if ($confirm == 'Y')
+          $this->clearCache();
+        break;
       case 'rebuild':
-        $this->addPopularity($input, $output);
-        $this->addLastUpdate($input, $output);
+        $confirm = $dialog->ask($output, 'Are you sure you want rebuild database cache? [Y/n]'.PHP_EOL, 'n');
+        if ($confirm == 'Y') {
+          $this->clearCache();
+          $this->updatePostsPopularity($input, $output);
+          $this->refreshPostsTimestamp($input, $output);
+        }
         break;
     }
 
