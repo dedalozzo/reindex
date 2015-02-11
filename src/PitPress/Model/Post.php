@@ -55,13 +55,13 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   private $zRemTags;
 
   protected $markdown; // Stores the Markdown parser instance.
-  protected $monolog; // Stores the logger instance.
+  protected $log; // Stores the logger instance.
 
 
   public function __construct() {
     parent::__construct();
     $this->markdown = $this->di['markdown'];
-    $this->monolog = $this->di['monolog'];
+    $this->log = $this->di['log'];
 
     $this->meta['supertype'] = 'post';
     $this->meta['index'] = static::INDEX; // We use static because the INDEX constant is overridden by subclasses.
@@ -403,6 +403,8 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @brief Removes the post popularity from the Redis db.
    */
   public function zRemPopularity() {
+    // todo risolve i sinonimi e rimuove tutti i sinonimi senza risolverli
+
     $date = (new \DateTime())->setTimestamp($this->publishedAt);
     $id = $this->unversionId;
 
@@ -433,6 +435,9 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @brief Adds the post last update timestamp to the Redis db.
    */
   public function zAddLastUpdate($timestamp = NULL) {
+    // todo risolve i sinonimi ed aggiorna unicamente i master tag
+
+
     if (!$this->isVisible()) return;
 
     if (is_null($timestamp))
@@ -566,7 +571,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
     $opts = new ViewQueryOpts();
     $opts->includeMissingKeys();
-    $rows = $this->couch->queryView("tags", "byName", $names, $opts)->asArray();
+    $rows = $this->couch->queryView("tags", "byNameSpecial", $names, $opts)->asArray();
 
     foreach ($rows as $row) {
       // A tag hasn't been found, so creates it.
