@@ -62,10 +62,6 @@ try {
   $console->add(new Command\InitCommand());
   $console->add(new Command\GrantCommand());
   $console->add(new Command\RevokeCommand());
-  $console->add(new Command\PrepareCommand());
-  $console->add(new Command\RestoreCommand());
-  $console->add(new Command\ImportCommand());
-  $console->add(new Command\GenerateCommand());
   $console->add(new Command\CacheCommand());
   $console->add(new Command\InstallCommand());
 
