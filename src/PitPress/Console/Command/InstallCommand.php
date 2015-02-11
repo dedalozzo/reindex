@@ -41,11 +41,11 @@ class InstallCommand extends AbstractCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     $config = $this->di['config'];
 
-    // create database
+    // Creates database.
     $couch = new Couch(new NativeAdapter(NativeAdapter::DEFAULT_SERVER, $config->couchdb->user, $config->couchdb->password));
     $couch->createDb($config->couchdb->database);
 
-    // init all
+    // Init all.
     $command = $this->getApplication()->find('init');
     $arguments = [
       'command' => 'init',
@@ -54,7 +54,7 @@ class InstallCommand extends AbstractCommand {
     $input = new ArrayInput($arguments);
     $command->run($input, $output);
 
-    // rebuild cache
+    // Rebuild cache.
     $command = $this->getApplication()->find('cache');
     $arguments = [
       'command' => 'cache',
