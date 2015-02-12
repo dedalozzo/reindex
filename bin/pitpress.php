@@ -64,6 +64,7 @@ try {
   $console->setDI($di);
 
   $console->add(new Command\AboutCommand());
+  $console->add(new Command\CreateCommand());
   $console->add(new Command\InitCommand());
   $console->add(new Command\GrantCommand());
   $console->add(new Command\RevokeCommand());
