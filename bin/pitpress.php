@@ -52,7 +52,6 @@ try {
   require $root . "/services/log.php";
   require $root . "/services/couchdb.php";
   require $root . "/services/redis.php";
-  require $root . "/services/mysql.php";
   require $root . "/services/markdown.php";
   require $root . "/services/guardian.php";
 
