@@ -24,8 +24,6 @@ use ElephantOnCouch\Handler\ViewHandler;
  * @nosubgrouping
  */
 class InitCommand extends AbstractCommand {
-
-  protected $mysql;
   protected $couch;
 
 
@@ -1063,8 +1061,6 @@ MAP;
    * @brief Executes the command.
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-
-    $this->mysql = $this->di['mysql'];
     $this->couch = $this->di['couchdb'];
 
     $documents = $input->getArgument('documents');
