@@ -15,9 +15,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 
-use ElephantOnCouch\Couch;
-use ElephantOnCouch\Adapter\NativeAdapter;
-
 
 /**
  * @brief Executes the following commands: create, prepare, import, init.
