@@ -31,7 +31,7 @@ class InstallCommand extends AbstractCommand {
    */
   protected function configure() {
     $this->setName("install");
-    $this->setDescription("Executes the following commands: create, prepare, import all, init all.");
+    $this->setDescription("Executes the following commands: `create`, `init all`, `cache rebuild`.");
   }
 
 
@@ -39,11 +39,13 @@ class InstallCommand extends AbstractCommand {
    * @brief Executes the command.
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $config = $this->di['config'];
-
     // Creates database.
-    $couch = new Couch(new NativeAdapter(NativeAdapter::DEFAULT_SERVER, $config->couchdb->user, $config->couchdb->password));
-    $couch->createDb($config->couchdb->database);
+    $command = $this->getApplication()->find('create');
+    $arguments = [
+      'command' => 'create'
+    ];
+    $input = new ArrayInput($arguments);
+    $command->run($input, $output);
 
     // Init all.
     $command = $this->getApplication()->find('init');
