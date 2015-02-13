@@ -67,7 +67,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     $this->meta['index'] = static::INDEX; // We use static because the INDEX constant is overridden by subclasses.
     $this->meta['visible'] = TRUE;
 
-    $this->zRemTags = ($this->isMetadataPresent('tags')) ? $this->getMetadata('tags') : [];
+    $this->zRemTags = ($this->isMetadataPresent('tags')) ? Helper\ArrayHelper::merge($this->meta['tags'], $this->uniqueMasters()->asArray()) : [];
   }
 
 
@@ -385,7 +385,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     $this->zAddScore(self::POP_SET.$this->type, $date, $popularity, $id);
 
     if ($this->isMetadataPresent('tags')) {
-      $tags = $this->meta['tags'];
+      $tags = $this->uniqueMasters();
 
       foreach ($tags as $tagId) {
         // Order set with all the posts related to a specific tag.
@@ -403,8 +403,6 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @brief Removes the post popularity from the Redis db.
    */
   public function zRemPopularity() {
-    // todo risolve i sinonimi e rimuove tutti i sinonimi senza risolverli
-
     $date = (new \DateTime())->setTimestamp($this->publishedAt);
     $id = $this->unversionId;
 
@@ -435,9 +433,6 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @brief Adds the post last update timestamp to the Redis db.
    */
   public function zAddLastUpdate($timestamp = NULL) {
-    // todo risolve i sinonimi ed aggiorna unicamente i master tag
-
-
     if (!$this->isVisible()) return;
 
     if (is_null($timestamp))
@@ -453,7 +448,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     $this->redis->zAdd(self::UPD_SET.$this->type, $timestamp, $id);
 
     if ($this->isMetadataPresent('tags')) {
-      $tags = $this->meta['tags'];
+      $tags = $this->uniqueMasters();
 
       foreach ($tags as $tagId) {
         // Filters posts which should appear on the home page.
@@ -546,6 +541,18 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   // @{
 
   /**
+   * @brief Resolve the synonyms and returns only unique master tags.
+   * @return array
+   */
+  protected function uniqueMasters() {
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce();
+    $masters = $this->couch->queryView("tags", "synonyms", $this->meta['tags'], $opts);
+    return array_unique(array_column($masters->asArray(), 'value'));
+  }
+
+
+  /**
    * @brief Removes all associated tags.
    */
   public function resetTags() {
@@ -595,16 +602,11 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    */
   public function getTags() {
     if ($this->isMetadataPresent('tags')) {
+      $ids = $this->uniqueMasters();
+
       $opts = new ViewQueryOpts();
       $opts->doNotReduce();
-
-      // Resolves the synonyms.
-      $synonyms = $this->couch->queryView("tags", "synonyms", $this->meta['tags'], $opts);
-
-      // Extracts the masters.
-      $masters = array_unique(array_column($synonyms->asArray(), 'value'));
-
-      return $this->couch->queryView("tags", "allNames", $masters, $opts);
+      return $this->couch->queryView("tags", "allNames", $ids, $opts);
     }
     else
       return [];
