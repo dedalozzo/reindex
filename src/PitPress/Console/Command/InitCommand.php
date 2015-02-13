@@ -24,6 +24,7 @@ use ElephantOnCouch\Handler\ViewHandler;
  * @nosubgrouping
  */
 class InitCommand extends AbstractCommand {
+
   protected $couch;
 
 
