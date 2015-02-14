@@ -435,7 +435,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   public function zAddLastUpdate($timestamp = NULL) {
     if (!$this->isVisible()) return;
 
-    if (is_null($timestamp))
+    if (is_null($timestamp) or ($timestamp < $this->modifiedAt))
       $timestamp = $this->modifiedAt;
 
     $id = $this->unversionId;
