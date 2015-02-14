@@ -97,7 +97,7 @@ class CacheCommand extends AbstractCommand {
     $this->addArgument("subcommand",
       InputArgument::REQUIRED, <<<'DESC'
 Use `clear` to clean database cache.
-Use `rebuild` to rebuild database cache.
+Use `build` to rebuild database cache.
 DESC
     );
   }
@@ -123,10 +123,9 @@ DESC
         if ($confirm == 'Y')
           $this->clearCache();
         break;
-      case 'rebuild':
-        $confirm = $dialog->ask($output, 'Are you sure you want rebuild database cache? [Y/n]'.PHP_EOL, 'n');
+      case 'build':
+        $confirm = $dialog->ask($output, 'Are you sure you want build database cache? [Y/n]'.PHP_EOL, 'n');
         if ($confirm == 'Y') {
-          $this->clearCache();
           $this->updatePostsPopularity($input, $output);
           $this->refreshPostsTimestamp($input, $output);
         }
