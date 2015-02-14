@@ -147,4 +147,13 @@ trait TVote {
     return $entries;
   }
 
+
+  public function getLastVoteTimestamp() {
+    $opts = new ViewQueryOpts();
+    $opts->setStartKey([$this->unversionId, Couch::WildCard()])->setEndKey([$this->unversionId])->setLimit(1);
+    $result = $this->couch->queryView("votes", "perItemAndDate", NULL, $opts);
+
+    return (!$result->isEmpty()) ? $result[0]['key'][1] : 0;
+  }
+
 }
