@@ -19,7 +19,7 @@
         "3f/converter": "dev-master",
         "symfony/console": "2.4.6",
         "lusitanian/oauth": "~0.3",
-        "monolog/monolog": "1.9.1",
+        "monolog/monolog": "1.12.*@dev",
         "filp/whoops": "dev-master",
         "simplepie/simplepie": "dev-master"
     },
