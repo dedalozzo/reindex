@@ -37,7 +37,6 @@ class InitCommand extends AbstractCommand {
     $this->initTags();
     $this->initRevisions();
     $this->initVotes();
-    $this->initScores();
     $this->initStars();
     $this->initSubscriptions();
     $this->initReputation();
@@ -501,6 +500,24 @@ MAP;
     $doc->addHandler(votesPerItem());
 
 
+    // @params: [itemId, timestamp]
+    function votesPerItemAndDate() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'vote')
+    $emit([$doc->itemId, $doc->timestamp]);
+};
+MAP;
+
+      $handler = new ViewHandler("perItemAndDate");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(votesPerItemAndDate());
+
+
     // @params: itemId, userId
     function votesPerItemAndUser() {
       $map = <<<'MAP'
@@ -537,50 +554,6 @@ MAP;
     }
 
     $doc->addHandler(votesPerUser());
-
-
-    $this->couch->saveDoc($doc);
-  }
-
-
-  protected function initScores() {
-    $doc = DesignDoc::create('scores');
-
-
-    // @params postId
-    function scoresPerPost() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'score')
-    $emit($doc->postId, $doc);
-};
-MAP;
-
-      $handler = new ViewHandler("perPost");
-      $handler->mapFn = $map;
-
-      return $handler;
-    }
-
-    $doc->addHandler(scoresPerPost());
-
-
-    // @params: type
-    function scoresPerType() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'score')
-    $emit([$doc->postType, $doc->points], $doc->postId);
-};
-MAP;
-
-      $handler = new ViewHandler("perType");
-      $handler->mapFn = $map;
-
-      return $handler;
-    }
-
-    $doc->addHandler(scoresPerType());
 
 
     $this->couch->saveDoc($doc);
@@ -1091,10 +1064,6 @@ MAP;
 
           case 'votes':
             $this->initVotes();
-            break;
-
-          case 'scores':
-            $this->initScores();
             break;
 
           case 'stars':
