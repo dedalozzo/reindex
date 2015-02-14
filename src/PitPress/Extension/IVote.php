@@ -75,6 +75,13 @@ interface IVote {
    */
   public function getUsersHaveVoted();
 
+
+  /**
+   * @brief Returns the timestamp of the last vote casted.
+   * @return int
+   */
+  public function getLastVoteTimestamp();
+
   //!@}
 
 } 
