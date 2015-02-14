@@ -17,8 +17,7 @@ use Phalcon\DI\FactoryDefault as DependencyInjector;
 
 use Monolog\Logger;
 use Monolog\ErrorHandler;
-use Monolog\Handler\SyslogHandler;
-use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\StreamHandler;
 
 
 error_reporting(E_ALL & ~E_NOTICE);
@@ -37,12 +36,8 @@ try {
   // Registers the Monolog error handler to log errors and exceptions.
   ErrorHandler::register($log);
 
-  $syslog = new SyslogHandler('pit-press', LOG_USER, Logger::DEBUG);
-  $formatter = new LineFormatter("%channel%.%level_name%: %message% %extra%");
-  $syslog->setFormatter($formatter);
-
-  // Creates a Syslog handler to log debugging messages.
-  $log->pushHandler($syslog);
+  // Creates a stream handler to log debugging messages.
+  $log->pushHandler(new StreamHandler($root.'/'.$config->application->logDir."pitpress.log", Logger::DEBUG));
 
   // The FactoryDefault Dependency Injector automatically registers the right services providing a full stack framework.
   $di = new DependencyInjector();
