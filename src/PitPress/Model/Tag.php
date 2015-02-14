@@ -15,6 +15,9 @@ use PitPress\Extension;
 use PitPress\Property;
 use PitPress\Helper;
 
+use ElephantOnCouch\Couch;
+use ElephantOnCouch\Opt\ViewQueryOpts;
+
 
 /**
  * @brief A label used to categorize posts.
@@ -37,8 +40,7 @@ class Tag extends Versionable implements Extension\ICount, Extension\IStar {
   //!@{
 
   private function addMultipleSynonymsAtOnce(array $synonyms) {
-    $array = array_merge($this->meta['synonyms'], $synonyms);
-    $this->meta['synonyms'] = array_keys(array_flip($array));
+    $this->meta['synonyms'] = Helper\ArrayHelper::merge($this->meta['synonyms'], $synonyms);
   }
 
 
@@ -80,11 +82,27 @@ class Tag extends Versionable implements Extension\ICount, Extension\IStar {
     if ($this->isSynonym() or !$this->isCurrent() or $tag->isSynonym() or !$tag->isCurrent()) return;
 
     array_push($this->meta['synonyms'], $tag->unversionId);
-
     $this->addMultipleSynonymsAtOnce($tag->getSynonyms());
 
     $tag->transIntoSynonym();
     $tag->save();
+
+    $opts = new ViewQueryOpts();
+    $opts->setKey($tag->unversionId)->doNotReduce();
+    $result = $this->couch->queryView('posts', 'perTag', NULL, $opts);
+
+    if ($result->isEmpty()) return;
+
+    $ids = array_column($result->asArray(), 'id');
+    foreach ($ids as $id) {
+      $post = $this->couch->getDoc(Couch::STD_DOC_PATH, $id);
+
+      $post->zRemPopularity();
+      $post->zAddPopularity();
+
+      $post->zRemLastUpdate();
+      $post->zAddLastUpdate($post->getLastVoteTimestamp());
+    }
   }
 
   //!@}
