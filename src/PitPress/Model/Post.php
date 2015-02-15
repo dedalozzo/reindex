@@ -95,14 +95,14 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
     parent::save();
 
-    $this->zRemLastUpdate();
-    $this->zRemPopularity();
+    if ($this->isCurrent() && !$deferred) {
+      // Updates popularity.
+      $this->zRemPopularity();
+      $this->zAddPopularity();
 
-    if ($this->isCurrent()) {
+      // Refreshes timestamp.
+      $this->zRemLastUpdate();
       $this->zAddLastUpdate();
-
-      if (!$deferred)
-        $this->zAddPopularity();
     }
   }
 
