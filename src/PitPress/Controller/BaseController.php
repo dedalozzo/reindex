@@ -85,7 +85,7 @@ abstract class BaseController extends Controller {
     if ($this->session->has("referrer"))
       return $this->response->redirect($this->session->get("referrer"), TRUE);
     elseif (isset($user))
-      return $this->redirect("http://utenti." . $this->domainName . "/" . $user->username);
+      return $this->redirect("http://" . $this->domainName . "/utenti/" . $user->username);
     else
       return $this->dispatcher->forward(
         [
