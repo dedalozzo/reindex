@@ -14,8 +14,6 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.4.0",
-        "iconv-ext": "*",
-        "mbstring-ext": "*",
         "3f/eoc-client": "dev-master",
         "3f/pygmentize": "dev-master",
         "3f/converter": "dev-master",
@@ -26,6 +24,6 @@
         "simplepie/simplepie": "dev-master"
     },
     "autoload": {
-        "psr-4": {"PitPress\\": "src/"}
+        "psr-0": {"PitPress\\": "src/"}
     }
 }
