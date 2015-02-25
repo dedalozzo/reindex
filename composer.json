@@ -26,6 +26,6 @@
         "simplepie/simplepie": "dev-master"
     },
     "autoload": {
-        "psr-0": {"PitPress": "src/"}
+        "psr-4": {"PitPress\\": "src/"}
     }
 }
