@@ -10,8 +10,8 @@
 namespace PitPress\Security;
 
 
-use ElephantOnCouch\Extension;
-use ElephantOnCouch\Opt\ViewQueryOpts;
+use EoC\Extension;
+use EoC\Opt\ViewQueryOpts;
 
 use PitPress\Factory\UserFactory;
 use PitPress\Exception\NotEnoughPrivilegesException;

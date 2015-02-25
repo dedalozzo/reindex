@@ -11,8 +11,8 @@
 namespace PitPress\Controller;
 
 
-use ElephantOnCouch\Couch;
-use ElephantOnCouch\Opt\ViewQueryOpts;
+use EoC\Couch;
+use EoC\Opt\ViewQueryOpts;
 
 use PitPress\Helper;
 use PitPress\Exception\InvalidFieldException;

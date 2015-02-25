@@ -11,11 +11,11 @@
 namespace PitPress\Helper;
 
 
-use ElephantOnCouch\Helper\TimeHelper;
+use EoC\Helper\TimeHelper;
 
 
 /**
- * @brief This class extends the ElephantOnCouch TimeHelper, adding new methods.
+ * @brief This class extends the Elephant on Couch TimeHelper, adding new methods.
  * @nosubgrouping
  */
 class Time extends TimeHelper {

@@ -12,8 +12,8 @@ namespace PitPress\Controller;
 
 use PitPress\Helper;
 
-use ElephantOnCouch\Couch;
-use ElephantOnCouch\Opt\ViewQueryOpts;
+use EoC\Couch;
+use EoC\Opt\ViewQueryOpts;
 
 use Phalcon\Mvc\View;
 

@@ -15,8 +15,8 @@ use PitPress\Extension;
 use PitPress\Property;
 use PitPress\Helper;
 
-use ElephantOnCouch\Couch;
-use ElephantOnCouch\Opt\ViewQueryOpts;
+use EoC\Couch;
+use EoC\Opt\ViewQueryOpts;
 
 
 /**

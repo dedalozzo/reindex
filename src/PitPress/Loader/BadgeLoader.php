@@ -15,7 +15,7 @@ namespace PitPress\Loader;
 use PitPress\Filter\BadgeRecursiveFilterIterator;
 use PitPress\Helper;
 
-use ElephantOnCouch\Opt\ViewQueryOpts;
+use EoC\Opt\ViewQueryOpts;
 
 
 /**

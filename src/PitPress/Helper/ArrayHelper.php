@@ -9,7 +9,7 @@
 namespace PitPress\Helper;
 
 
-use ElephantOnCouch\Helper\ArrayHelper as ElephantOnCouchArrayHelper;
+use EoC\Helper\ArrayHelper as ElephantOnCouchArrayHelper;
 
 
 /**

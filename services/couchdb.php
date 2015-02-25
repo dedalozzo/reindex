@@ -8,11 +8,11 @@
  */
 
 
-use ElephantOnCouch\Couch;
-use ElephantOnCouch\Adapter;
+use EoC\Couch;
+use EoC\Adapter;
 
 
-// Creates an instance of ElephantOnCouch client and return it.
+// Creates an instance of EoC client and return it.
 $di->setShared('couchdb',
   function() use ($config) {
     //$couch = new Couch(new Adapter\NativeAdapter($config->couchdb->host.":".$config->couchdb->port, $config->couchdb->user, $config->couchdb->password));

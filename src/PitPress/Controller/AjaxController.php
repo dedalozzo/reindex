@@ -9,7 +9,9 @@
 namespace PitPress\Controller;
 
 
-use ElephantOnCouch\Couch;
+use EoC\Couch;
+
+use PitPress\Exception;
 
 
 /**
@@ -46,7 +48,7 @@ class AjaxController extends BaseController {
    * HTTP requests to the domain it was loaded from, and not to other domains.  Developers expressed the desire to
    * safely evolve capabilities such as XMLHttpRequest to make cross-site requests, for better, safer mash-ups within
    * web applications.\n
-   * To make possible cross-site AJAX calls, for example from blog.programmazione.it to ajax.programmazione.it, we
+   * To make possible cross-site AJAX calls, for example from www.programmazione.it to api.programmazione.it, we
    * must set `Access-Control-Allow-Origin` header.
    */
   protected function validateOrigin() {
@@ -80,7 +82,6 @@ class AjaxController extends BaseController {
       if ($this->request->hasPost('id')) {
         $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
         echo json_encode($doc->like());
-
         $this->view->disable();
       }
       else
@@ -101,7 +102,6 @@ class AjaxController extends BaseController {
       if ($this->request->hasPost('id')) {
         $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
         echo json_encode($doc->star());
-
         $this->view->disable();
       }
       else
@@ -121,11 +121,18 @@ class AjaxController extends BaseController {
     try {
       if ($this->request->hasPost('id')) {
         $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
-        echo json_encode($doc->moveToTrash());
-        $doc->save();
 
-        $this->view->disable();
-      } else
+        if ($doc->canBeMovedToTrash()) {
+          $doc->moveToTrash();
+          $doc->save();
+          // todo aggiungere data in cui il documento è stato cestinato
+          echo json_encode([$this->user->username]);
+          $this->view->disable();
+        }
+        else
+          throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
+      }
+      else
         throw new \RuntimeException("La risorsa non è più disponibile.");
     }
     catch (\Exception $e) {
@@ -142,11 +149,18 @@ class AjaxController extends BaseController {
     try {
       if ($this->request->hasPost('id')) {
         $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
-        echo json_encode($doc->restore());
-        $doc->save();
 
-        $this->view->disable();
-      } else
+        if ($doc->canBeRestored()) {
+          $doc->restore();
+          $doc->save();
+          // todo qui bisogna mandare un codice che lo distingua dall'eccezione
+          echo json_encode(1);
+          $this->view->disable();
+        }
+        else
+          throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
+      }
+      else
         throw new \RuntimeException("La risorsa non è più disponibile.");
     }
     catch (\Exception $e) {

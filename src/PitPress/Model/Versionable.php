@@ -11,7 +11,7 @@
 namespace PitPress\Model;
 
 
-use ElephantOnCouch\Opt\ViewQueryOpts;
+use EoC\Opt\ViewQueryOpts;
 
 use PitPress\Helper;
 use PitPress\Exception;

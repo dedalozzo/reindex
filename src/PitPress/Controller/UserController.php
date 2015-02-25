@@ -10,8 +10,8 @@
 
 namespace PitPress\Controller;
 
-use ElephantOnCouch\Opt\ViewQueryOpts;
-use ElephantOnCouch\Couch;
+use EoC\Opt\ViewQueryOpts;
+use EoC\Couch;
 
 use PitPress\Helper\Time;
 use PitPress\Model\User;

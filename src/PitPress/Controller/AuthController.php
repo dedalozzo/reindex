@@ -16,8 +16,8 @@ use Phalcon\Validation\Validator\PresenceOf;
 use Phalcon\Validation\Validator\Email;
 use Phalcon\Validation\Validator\Confirmation;
 
-use ElephantOnCouch\Couch;
-use ElephantOnCouch\Opt\ViewQueryOpts;
+use EoC\Couch;
+use EoC\Opt\ViewQueryOpts;
 
 use PitPress\Exception\InvalidEmailException;
 use PitPress\Exception\InvalidFieldException;

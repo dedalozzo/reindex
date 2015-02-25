@@ -11,7 +11,7 @@
 namespace PitPress\Model\Accessory;
 
 
-use ElephantOnCouch\Doc\Doc;
+use EoC\Doc\Doc;
 
 
 /**

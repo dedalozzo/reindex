@@ -11,7 +11,7 @@
 namespace PitPress\Controller;
 
 
-use ElephantOnCouch\Opt\ViewQueryOpts;
+use EoC\Opt\ViewQueryOpts;
 
 use PitPress\Enum\DocStatus;
 use PitPress\Helper;

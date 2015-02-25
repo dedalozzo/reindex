@@ -11,8 +11,8 @@
 namespace PitPress\Model;
 
 
-use ElephantOnCouch\Doc\Doc;
-use ElephantOnCouch\Generator\UUID;
+use EoC\Doc\Doc;
+use EoC\Generator\UUID;
 
 use Phalcon\DI;
 
@@ -26,7 +26,7 @@ use PitPress\Helper;
 abstract class Storable extends Doc {
 
   protected $di; // Stores the default Dependency Injector.
-  protected $couch; // Stores the ElephantOnCouch client instance.
+  protected $couch; // Stores the Elephant on Couch Client instance.
   protected $redis; // Stores the Redis client instance.
 
   protected $user; // Stores the current user.

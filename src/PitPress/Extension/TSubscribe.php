@@ -11,8 +11,8 @@
 namespace PitPress\Extension;
 
 
-use ElephantOnCouch\Couch;
-use ElephantOnCouch\Opt\ViewQueryOpts;
+use EoC\Couch;
+use EoC\Opt\ViewQueryOpts;
 
 use PitPress\Model\Accessory\Subscription;
 use PitPress\Model\User;

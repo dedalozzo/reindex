@@ -12,7 +12,7 @@
 namespace PitPress\Model\Activity;
 
 
-use ElephantOnCouch\Doc\Doc;
+use EoC\Doc\Doc;
 
 
 /*

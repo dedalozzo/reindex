@@ -13,9 +13,9 @@ namespace PitPress\Factory;
 
 use Phalcon\DI;
 
-use ElephantOnCouch\Couch;
-use ElephantOnCouch\Opt\ViewQueryOpts;
-use ElephantOnCouch\Exception\ServerErrorException;
+use EoC\Couch;
+use EoC\Opt\ViewQueryOpts;
+use EoC\Exception\ServerErrorException;
 
 use PitPress\Security\User;
 use PitPress\Security\Consumer\IConsumer;
