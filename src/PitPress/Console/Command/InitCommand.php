@@ -141,6 +141,24 @@ MAP;
     $doc->addHandler(postsByUrl());
 
 
+    // @params: id
+    function postsByLegacyId() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->status == 'current')
+    $emit($doc->legacyId);
+};
+MAP;
+
+      $handler = new ViewHandler("byLegacyId");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(postsByLegacyId());
+
+
     // @params: year, month, day, slug
     function approvedRevisionsByUrl() {
       $map = <<<'MAP'
