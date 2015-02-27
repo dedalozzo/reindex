@@ -1,4 +1,3 @@
-couch use pitpress
 couch query posts/all &
 couch query tags/all &
 couch query revisions/perItem --limit=1 &
