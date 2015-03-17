@@ -518,12 +518,12 @@ MAP;
     $doc->addHandler(votesPerItem());
 
 
-    // @params: [itemId, timestamp]
+    // @params: [itemId, modifiedAt]
     function votesPerItemAndDate() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'vote')
-    $emit([$doc->itemId, $doc->timestamp]);
+    $emit([$doc->itemId, $doc->modifiedAt]);
 };
 MAP;
 
