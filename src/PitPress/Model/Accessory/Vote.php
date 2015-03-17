@@ -11,14 +11,14 @@
 namespace PitPress\Model\Accessory;
 
 
-use EoC\Doc\Doc;
+use PitPress\Model\Storable;
 
 
 /**
  * @brief This class is used to keep trace of the user votes.
  * @nosubgrouping
  */
-class Vote extends Doc {
+class Vote extends Storable {
 
   /**
    * @brief Creates an instance of Vote class.
@@ -57,12 +57,6 @@ class Vote extends Doc {
 
   public function setValue($value) {
     $this->meta["value"] = $value;
-    $this->meta["timestamp"] = time();
-  }
-
-
-  public function getTimestamp() {
-    return $this->meta["timestamp"];
   }
 
   //! @endcond
