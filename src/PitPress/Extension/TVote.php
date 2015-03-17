@@ -54,12 +54,15 @@ trait TVote {
 
         // The user clicked twice on the same button to undo his vote (or like).
         if ($vote->value === $value) {
-          $this->couch->deleteDoc(Couch::STD_DOC_PATH, $voteId, $vote->rev);
+          // We don't call anymore deleteDoc, because Vote now inherits from Storable.
+          //$this->couch->deleteDoc(Couch::STD_DOC_PATH, $voteId, $vote->rev);
+          $vote->delete();
+          $vote->save();
           return IVote::DELETED;
         }
         else {
           $vote->setValue($value);
-          $this->couch->saveDoc($vote);
+          $vote->save();
           return IVote::REPLACED;
         }
 
@@ -69,7 +72,7 @@ trait TVote {
     }
     else {
       $vote = Vote::create(Text::unversion($this->id), $this->user->id, $value);
-      $this->couch->saveDoc($vote);
+      $vote->save();
       return IVote::REGISTERED;
     }
   }
