@@ -612,6 +612,16 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
       return [];
   }
 
+
+  // In case of a Post we add the tags, so we can obtain the favorites of a specific tag.
+  /*
+  if (method_exists($item, 'getTags')) {
+    $tags = array_column($item->getTags(), 'id');
+    ArrayHelper::unversion($tags);
+    $instance->meta['itemTags'] = $tags;
+  }
+  */
+
   //!@}
 
 
