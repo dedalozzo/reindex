@@ -30,8 +30,13 @@ trait TCount {
 
   public function incHits() {
     // We can increment the views of a document that has been already saved.
-    if (isset($this->rev) && !$this->user->match($this->creatorId))
+    if (isset($this->rev) && !$this->user->match($this->creatorId)) {
       $hits = $this->redis->hIncrBy(Text::unversion($this->id), 'hits', 1);
+      $this->eventsManager->fire('hit:onInc', $this);
+      return $hits;
+    }
+    else
+      return 0;
   }
 
 } 
