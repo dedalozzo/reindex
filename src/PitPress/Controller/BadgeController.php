@@ -24,7 +24,7 @@ class BadgeController extends BaseController {
    * @brief Initializes the controller.
    */
   public function initialize() {
-    $this->badgeLoader = $this->di['badgeloader'];
+    $this->badgeLoader = $this->di['badgeLoader'];
 
     parent::initialize();
 
