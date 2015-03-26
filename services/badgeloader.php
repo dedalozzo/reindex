@@ -12,7 +12,7 @@ use PitPress\Loader\BadgeLoader;
 
 
 // Creates an instance of BadgeLoader and return it.
-$di->setShared('badgeloader',
+$di->setShared('badgeLoader',
   function() use ($di, $root) {
     $loader = new BadgeLoader($di, $root."/src/PitPress/Model/Badge/");
 
