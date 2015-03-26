@@ -30,6 +30,7 @@ interface ICount {
 
   /**
    * @brief Increments the times the item has been viewed.
+   * @return int The number of hits.
    */
   public function incHits();
 
