@@ -28,7 +28,6 @@ abstract class Storable extends Doc {
   protected $di; // Stores the default Dependency Injector.
   protected $couch; // Stores the Elephant on Couch Client instance.
   protected $redis; // Stores the Redis client instance.
-
   protected $user; // Stores the current user.
 
 
@@ -39,6 +38,7 @@ abstract class Storable extends Doc {
     $this->di = DI::getDefault();
     $this->couch = $this->di['couchdb'];
     $this->redis = $this->di['redis'];
+
     $this->user = $this->di['guardian']->getUser();
   }
 
