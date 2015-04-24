@@ -37,11 +37,11 @@ class Time extends TimeHelper {
   /**
    * @brief Returns a measure of the time passed since the provided timestamp. In case is passed more than a day,
    * returns a human readable date.
-   * @param[in] string $timestamp A timestamp in seconds.
+   * @param[in] int $timestamp A timestamp in seconds.
    * @param[in] bool $showTime When `true` returns also the time passed in case of an event occurred in the past.
    * @return string
    */
-  public static function when($timestamp, $showtime = TRUE) {
+  public static function when($timestamp, $showTime = TRUE) {
     $today = date('Ymd');
 
     // Today.
@@ -66,7 +66,7 @@ class Time extends TimeHelper {
       return "ieri";
     // In the past.
     else
-      return $showtime ? date('d/m/Y H:i', $timestamp) : date('d/m/Y', $timestamp);
+      return $showTime ? date('d/m/Y H:i', $timestamp) : date('d/m/Y', $timestamp);
   }
 
 
@@ -74,7 +74,7 @@ class Time extends TimeHelper {
    * @brief Given a constant representing a period, returns a formatted string.
    * @param[in] int $periodInTime A period in time.
    * @param[in] string $prefix A string prefix.
-   * @param[in] string $prefix A string postfix.
+   * @param[in] string $postfix A string postfix.
    * @return string
    */
   public static function aWhileBack($periodInTime, $prefix = "", $postfix = "") {
