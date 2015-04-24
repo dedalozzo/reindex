@@ -1,6 +1,6 @@
 <?php
 
-//! @file ArticleControl.php
+//! @file ArticleController.php
 //! @brief This file contains the ArticleController class.
 //! @details
 //! @author Filippo F. Fadda
