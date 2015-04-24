@@ -123,8 +123,8 @@ abstract class ListController extends BaseController {
    * @param[in] string $startKeyDocId A document ID.
    * @return string The pagination url.
    */
-  protected function buildPaginationUrlForCouch($starKey, $startKeyDocId) {
-    return sprintf('%s%s?startkey=%s&startkey_docid=%s', $this->domainName, parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), $starKey, $startKeyDocId);
+  protected function buildPaginationUrlForCouch($startKey, $startKeyDocId) {
+    return sprintf('%s%s?startkey=%s&startkey_docid=%s', $this->domainName, parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), $startKey, $startKeyDocId);
   }
 
 
