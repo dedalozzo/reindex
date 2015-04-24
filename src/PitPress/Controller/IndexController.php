@@ -34,7 +34,7 @@ class IndexController extends ListController {
 
 
   /**
-   * @brief This implementations returns `contributi`.
+   * @brief Returns a human readable label for the controller.
    * @return string
    */
   protected function getLabel() {
@@ -632,7 +632,7 @@ class IndexController extends ListController {
 
   /**
    * @brief Displays the user favorites.
-   * @param[in] string $filter Human readable representation of a period.
+   * @param[in] string $filter Human readable representation of a choice.
    */
   public function favoriteAction($filter = NULL) {
     // Stores sub-menu definition.
