@@ -19,28 +19,43 @@ use PitPress\Helper;
 class QuestionController extends IndexController {
 
 
+  /**
+   * @copydoc IndexController::getLabel()
+   */
   protected function getLabel() {
     return 'domande';
   }
 
 
+  /**
+   * @copydoc BaseController::getPeriod()
+   */
   protected function getPeriod($filter) {
     return empty($filter) ? Helper\Time::THIS_WEEK : Helper\ArrayHelper::value($filter, $this->periods);
   }
 
 
+  /**
+   * @copydoc IndexController::popular()
+   */
   protected function popular($filter, $unversionTagId = NULL) {
     $this->periods = Helper\ArrayHelper::slice($this->periods, 7);
     parent::popular($filter);
   }
 
 
+  /**
+   * @copydoc IndexController::newestAction()
+   */
   public function newestAction($tag = NULL) {
     parent::newestAction();
     $this->view->setVar('title', sprintf('Nuove %s', $this->getLabel()));
   }
 
 
+  /**
+   * @copydoc IndexController::activeAction()
+   */
   public function activeAction() {
     parent::activeAction();
     $this->view->setVar('title', sprintf('%s attive', ucfirst($this->getLabel())));
@@ -58,6 +73,7 @@ class QuestionController extends IndexController {
 
   /**
    * @brief Displays the questions, still open, based on user's tags.
+   * @param[in] string $filter A filter.
    */
   public function openAction($filter = NULL) {
     // Stores sub-menu definition.
