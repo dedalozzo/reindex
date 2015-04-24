@@ -17,16 +17,21 @@ use PitPress\Helper;
 
 /**
  * @brief A custom filter to retrieves only the badges.
- * @details Badges are all the classes defined under the namespace PitPress\Model\Badge (and sub-namespaces), derived
+ * @details Badges are all the classes defined under the badges' namespace (and sub-namespaces), derived
  * from Gold, Silver or Bronze classes.
  * @nosubgrouping
  */
 class BadgeRecursiveFilterIterator extends \RecursiveFilterIterator {
+
+  #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
   protected static $ancestors = [
       'PitPress\\Model\\Badge\\Gold',
       'PitPress\\Model\\Badge\\Silver',
       'PitPress\\Model\\Badge\\Bronze'
     ];
+
+  #endif
 
 
   /**
