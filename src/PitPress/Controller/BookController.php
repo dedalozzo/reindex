@@ -1,6 +1,6 @@
 <?php
 
-//! @file BookControl.php
+//! @file BookController.php
 //! @brief This file contains the BookController class.
 //! @details
 //! @author Filippo F. Fadda
