@@ -158,7 +158,7 @@ class User extends Storable implements IUser, Extension\ICount {
   /**
    * @brief Returns `true` in case the e-mail can be removed, `false` otherwise.
    * @param[in] string $email An e-mail address.
-   * @param[in] bool
+   * @return bool
    */
   public function canRemoveEmail($email) {
     if (array_key_exists($email, $this->meta['emails']) && count($this->meta['emails']) > 1
