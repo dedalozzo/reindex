@@ -190,6 +190,7 @@ class TagController extends ListController {
 
   /**
    * @brief Edits the tag.
+   * @param[in] string $id The tag ID.
    */
   public function editAction($id) {
   }
