@@ -78,7 +78,7 @@ abstract class Storable extends Doc {
    * @brief Returns `true` if the provided user id matches the current one, `false` otherwise.
    * @details This method is useful to check the ownership of a post, for example.
    * @param[in] string $id The id to match.
-   * @raturn bool
+   * @return bool
    */
   public function match($id) {
     return ($this->id === $id) ? TRUE : FALSE;
