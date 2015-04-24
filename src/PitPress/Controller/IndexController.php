@@ -33,13 +33,18 @@ class IndexController extends ListController {
   protected static $actions = ['show', 'edit', 'new'];
 
 
+  /**
+   * @brief This implementations returns `contributi`.
+   * @return string
+   */
   protected function getLabel() {
     return 'contributi';
   }
 
 
   /**
-   * @brief Returns `true`if the caller object is an instance of the class implementing this method, `false` otherwise.
+   * @brief Returns `true` if the caller object is an instance of the class implementing this method, `false` otherwise.
+   * @return bool
    */
   protected function isSameClass() {
     return get_class($this) == get_class();
@@ -66,6 +71,9 @@ class IndexController extends ListController {
 
   /*
    * @brief Retrieves information for a bunch of posts.
+   * @param[in] string $viewName The name of the view.
+   * @param[in] string $type The type of posts.
+   * @param[in] int $count The number of requested posts.
    */
   protected function getInfo($viewName, $type, $count = 10) {
     $opts = new ViewQueryOpts();
@@ -117,6 +125,7 @@ class IndexController extends ListController {
 
   /**
    * @brief Gets a list of tags recently updated.
+   * @param[in] int $count The number of tags to be returned.
    */
   protected function recentTags($count = 20) {
     $recentTags = [];
@@ -166,6 +175,7 @@ class IndexController extends ListController {
 
   /**
    * @brief Returns `true` when the called action is a listing action.
+   * @return bool
    */
   protected function isListing() {
     if (!in_array($this->actionName, static::$actions))
@@ -250,6 +260,7 @@ class IndexController extends ListController {
 
   /**
    * @brief Displays information about the tag.
+   * @param[in] string $tag The tag name.
    */
   public function infoByTagAction($tag) {
     $this->view->setVar('title', 'Tags popolari');
@@ -349,6 +360,9 @@ class IndexController extends ListController {
 
   /**
    * @brief Displays the posts per date.
+   * @param[in] int $year An year.
+   * @param[in] int $month A month.
+   * @param[in] int $day A specific day.
    */
   public function perDateAction($year, $month = NULL, $day = NULL) {
     $opts = new ViewQueryOpts();
@@ -391,6 +405,9 @@ class IndexController extends ListController {
   /**
    * @brief Displays the posts per date by tag.
    * @param[in] string $tag The tag name.
+   * @param[in] int $year An year.
+   * @param[in] int $month A month.
+   * @param[in] int $day A specific day.
    */
   public function perDateByTagAction($tag, $year, $month = NULL, $day = NULL) {
     $tagId = $this->getTagId($tag);
@@ -436,6 +453,11 @@ class IndexController extends ListController {
   }
 
 
+  /**
+   * @brief Used by popularAction() and popularByTagAction().
+   * @param[in] string $filter Human readable representation of a period.
+   * @param[in] string $unversionTagId An optional unversioned tag ID
+   */
   protected function popular($filter, $unversionTagId = NULL) {
     $period = $this->getPeriod($filter);
     if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
@@ -496,6 +518,10 @@ class IndexController extends ListController {
   }
 
 
+  /**
+   * @brief Used by activeAction() and activeByTagAction().
+   * @param[in] string $unversionTagId An optional unversioned tag ID
+   */
   protected function active($unversionTagId = NULL) {
     if ($this->isSameClass())
       $set = Post::UPD_SET.$unversionTagId."post";
@@ -534,6 +560,7 @@ class IndexController extends ListController {
 
   /**
    * @brief Displays the last updated entries by tag.
+   * @param[in] string $tag The tag name.
    */
   public function activeByTagAction($tag) {
     $tagId = $this->getTagId($tag);
@@ -605,6 +632,7 @@ class IndexController extends ListController {
 
   /**
    * @brief Displays the user favorites.
+   * @param[in] string $filter Human readable representation of a period.
    */
   public function favoriteAction($filter = NULL) {
     // Stores sub-menu definition.
@@ -681,6 +709,10 @@ class IndexController extends ListController {
    * @todo Before to send a 404, we have check if does a post exist for the provided url, because maybe it's an old
    * revision of the same posts. Use the posts/approvedRevisionsByUrl view to check the existence, then make another
    * query on the posts/unversion to get the postId, and finally use it to get the document.
+   * @param[in] int $year The year when a post has been published.
+   * @param[in] int $month The month when a post has been published.
+   * @param[in] int $day The exact day when a post has been published.
+   * @param[in] string $slug The post' slug.
    */
   public function showAction($year, $month, $day, $slug) {
     $opts = new ViewQueryOpts();
@@ -710,6 +742,7 @@ class IndexController extends ListController {
 
   /**
    * @brief Edits the post.
+   * @param[in] string $id The post ID.
    */
   public function editAction($id) {
     if (empty($id))
