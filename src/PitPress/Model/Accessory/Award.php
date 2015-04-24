@@ -23,6 +23,9 @@ class Award extends Doc {
 
   /**
    * @brief Creates an instance of Award class.
+   * @param[in] string $userId The user ID.
+   * @param[in] string $badge The awarded badge's name.
+   * @return Award
    */
   public static function create($userId, $badge) {
     $instance = new self();
