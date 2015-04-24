@@ -72,7 +72,7 @@ class Time extends TimeHelper {
 
   /**
    * @brief Given a constant representing a period, returns a formatted string.
-   * @param[in] int $period A period in time.
+   * @param[in] int $periodInTime A period in time.
    * @param[in] string $prefix A string prefix.
    * @param[in] string $prefix A string postfix.
    * @return string
