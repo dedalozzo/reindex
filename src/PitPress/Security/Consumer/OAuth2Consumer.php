@@ -122,6 +122,7 @@ abstract class OAuth2Consumer {
 
   /**
    * @brief Sends a request to the service provider.
+   * @param[in] string $url The requested url.
    */
   protected function fetch($url) {
     return json_decode($this->service->request($url), TRUE);
@@ -234,7 +235,7 @@ abstract class OAuth2Consumer {
   /**
    * @brief Updates the user object using the provided data.
    * @param[in] User $user The user instance.
-   * @param param[in] array $userData An associative array with the user information.
+   * @param[in] array $userData An associative array with the user information.
    */
   protected function update(User $user, array $userData) {
     $user->addLogin($this->getName(), $userData[static::ID], @$userData[static::PROFILE_URL], $userData[static::EMAIL], $this->isTrustworthy());
