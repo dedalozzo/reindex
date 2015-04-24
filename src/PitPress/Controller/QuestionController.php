@@ -1,6 +1,6 @@
 <?php
 
-//! @file QuestionControl.php
+//! @file QuestionController.php
 //! @brief This file contains the QuestionController class.
 //! @details
 //! @author Filippo F. Fadda
