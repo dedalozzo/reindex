@@ -21,6 +21,9 @@ use Phalcon\Mvc\View;
 class ErrorController extends BaseController {
 
 
+  /**
+   * @brief Shows the 404 error.
+   */
   public function show404Action() {
     $this->response->setHeader('HTTP/1.0 404', 'Not Found');
     $this->view->setVar('title', 'Pagina non trovata');
