@@ -250,7 +250,7 @@ abstract class Versionable extends Storable {
 
   /**
    * @brief Asks the author to revise the document, because it's not ready for publishing.
-   * @param[in] The reason why the document has been returned for revision.
+   * @param[in] $reason The reason why the document has been returned for revision.
    */
   public function returnForRevision($reason) {
     $this->meta['status'] = DocStatus::RETURNED;
@@ -262,7 +262,7 @@ abstract class Versionable extends Storable {
   /**
    * @brief Rejects this document revision.
    * @details The post will be automatically deleted in 10 days.
-   * @param[in] The reason why the revision has been rejected.
+   * @param[in] $reason The reason why the revision has been rejected.
    */
   public function reject($reason) {
     $this->meta['status'] = DocStatus::REJECTED;
@@ -273,7 +273,7 @@ abstract class Versionable extends Storable {
 
   /**
    * @brief Reverts to the specified version.
-   * @param[in] Reverts to the specified version. If a version is not specified it takes the previous one.
+   * @param[in] $versionNumber Reverts to the specified version. If a version is not specified it takes the previous one.
    * @todo Implement the method Versionable.revert().
    */
   public function revert($versionNumber = NULL) {
