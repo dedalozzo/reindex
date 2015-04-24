@@ -25,8 +25,8 @@ class Password extends Validator implements Validation\ValidatorInterface {
 
   /**
    * @brief Executes the validation.
-   * @param[in] Phalcon\Validation $validation
-   * @param[in] string $attribute
+   * @param[in] Phalcon\Validation $validator An instance of a Phalcon validation component.
+   * @param[in] string $attribute The attribute to be validated.
    * @return bool
    */
   public function validate($validator, $attribute) {
