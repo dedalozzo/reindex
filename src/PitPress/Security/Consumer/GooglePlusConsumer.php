@@ -53,6 +53,9 @@ class GooglePlusConsumer extends OAuth2Consumer {
   }
 
 
+  /**
+   * @copydoc OAuth2Consumer::update()
+   */
   protected function update(User $user, array $userData) {
     $user->setMetadata('username', $this->guessUsername($userData), FALSE, FALSE);
     $user->setMetadata('firstName', @$userData['name']['givenName'], FALSE, FALSE);
@@ -75,6 +78,9 @@ class GooglePlusConsumer extends OAuth2Consumer {
   }
 
 
+  /**
+   * @copydoc OAuth2Consumer::join()
+   */
   public function join() {
     $userData = $this->fetch('https://www.googleapis.com/plus/v1/people/me/?fields=name(givenName,familyName),gender,birthday,url,occupation,aboutMe,displayName,emails/value');
     $userData['email'] = $this->extractPrimaryEmail($userData['emails']);
@@ -83,11 +89,17 @@ class GooglePlusConsumer extends OAuth2Consumer {
   }
 
 
+  /**
+   * @copydoc OAuth2Consumer::getName()
+   */
   public function getName() {
     return 'googleplus';
   }
 
 
+  /**
+   * @copydoc OAuth2Consumer::getScope()
+   */
   public function getScope() {
     return ['email', 'profile'];
   }

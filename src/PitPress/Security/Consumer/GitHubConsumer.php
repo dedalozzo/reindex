@@ -52,6 +52,9 @@ class GitHubConsumer extends OAuth2Consumer {
   }
 
 
+  /**
+   * @copydoc OAuth2Consumer::update()
+   */
   protected function update(User $user, array $userData) {
     $user->setMetadata('username', $this->buildUsername($userData[static::LOGIN]), FALSE, FALSE);
 

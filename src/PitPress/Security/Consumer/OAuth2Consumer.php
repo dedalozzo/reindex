@@ -170,9 +170,9 @@ abstract class OAuth2Consumer {
 
   /**
    * @brief Consumes the user data.
-   * @param param[in] string $userId The user identifier used by the provider.
-   * @param param[in] string $userEmail The user email.
-   * @param param[in] array $userData An associative array with the user information.
+   * @param[in] string $userId The user identifier used by the provider.
+   * @param[in] string $userEmail The user email.
+   * @param[in] array $userData An associative array with the user information.
    */
   protected function consume($userId, $userEmail, array $userData) {
     $anonymous = $this->user->isGuest();

@@ -48,6 +48,9 @@ class LinkedInConsumer extends OAuth2Consumer {
   }
 
 
+  /**
+   * @copydoc OAuth2Consumer::onAuthorizationGranted()
+   */
   protected function onAuthorizationGranted() {
     // Retrieves the CSRF state parameter.
     $state = isset($_GET['state']) ? $_GET['state'] : NULL;
@@ -57,6 +60,9 @@ class LinkedInConsumer extends OAuth2Consumer {
   }
 
 
+  /**
+   * @copydoc OAuth2Consumer::update()
+   */
   protected function update(User $user, array $userData) {
     $user->setMetadata('username', $this->guessUsername($userData), FALSE, FALSE);
     $user->setMetadata('firstName', $userData[static::FIRST_NAME], FALSE, FALSE);
@@ -78,6 +84,9 @@ class LinkedInConsumer extends OAuth2Consumer {
   }
 
 
+  /**
+   * @copydoc OAuth2Consumer::join()
+   */
   public function join() {
     $userData = $this->fetch('/people/~:(id,email-address,first-name,last-name,public-profile-url,headline,summary,date-of-birth)?format=json');
     $this->validate($userData);
@@ -85,11 +94,17 @@ class LinkedInConsumer extends OAuth2Consumer {
   }
 
 
+  /**
+   * @copydoc OAuth2Consumer::getName()
+   */
   public function getName() {
     return 'linkedin';
   }
 
 
+  /**
+   * @copydoc OAuth2Consumer::getScope()
+   */
   public function getScope() {
     return ['r_fullprofile', 'r_emailaddress', 'r_contactinfo', 'r_network'];
   }
