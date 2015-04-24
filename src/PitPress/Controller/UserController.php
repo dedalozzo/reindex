@@ -134,6 +134,7 @@ class UserController extends ListController {
 
   /**
    * @brief Displays the users have given most votes.
+   * @param[in] string $filter Human readable representation of a period.
    */
   public function votersAction($filter = NULL) {
     $period = $this->getPeriod($filter);
