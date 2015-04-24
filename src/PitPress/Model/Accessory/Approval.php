@@ -24,6 +24,10 @@ class Approval extends Doc {
 
   /*
    * @brief Creates an instance of Approval class.
+   * @param[in] string questionId The question ID.
+   * @param[in] string answerId The approved answer ID.
+   * @param[in] int $timestamp The approval timestamp.
+   * @return Approval
    */
   public static function create($questionId, $answerId, $timestamp = NULL) {
     $instance = new self();
