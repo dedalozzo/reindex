@@ -72,7 +72,7 @@ class UserFactory {
    * otherwise return an Anonymous instance.
    * @param[in] string $providerName The provider name.
    * @param[in] string $userId The user identifier used by the provider.
-   * @return User\IUser An user instance.
+   * @return IUser An user instance.
    */
   public static function fromLogin($providerName, $userId) {
     $di = DI::getDefault();
@@ -93,7 +93,7 @@ class UserFactory {
   /**
    * @brief Searches for the user identified by e-mail, if any returns it, otherwise return an Anonymous instance.
    * @param[in] string $email The user email.
-   * @return User\IUser An user instance.
+   * @return IUser An user instance.
    */
   public static function fromEmail($email) {
     $di = DI::getDefault();
