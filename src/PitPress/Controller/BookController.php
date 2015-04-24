@@ -19,16 +19,25 @@ use PitPress\Helper;
 class BookController extends IndexController {
 
 
+  /**
+   * @copydoc IndexController::getLabel()
+   */
   protected function getLabel() {
     return 'libri';
   }
 
 
+  /**
+   * @copydoc BaseController::getPeriod()
+   */
   protected function getPeriod($filter) {
     return empty($filter) ? Helper\Time::EVER : Helper\ArrayHelper::value($filter, $this->periods);
   }
 
 
+  /**
+   * @copydoc IndexController::popular()
+   */
   protected function popular($filter, $unversionTagId = NULL) {
     $this->periods = Helper\ArrayHelper::slice($this->periods, 3);
     parent::popular($filter);
