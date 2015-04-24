@@ -24,16 +24,25 @@ use Phalcon\Mvc\View;
 class ArticleController extends IndexController {
 
 
+  /**
+   * @copydoc IndexController::getLabel()
+   */
   protected function getLabel() {
     return 'articoli';
   }
 
 
+  /**
+   * @copydoc BaseController::getPeriod()
+   */
   protected function getPeriod($filter) {
     return empty($filter) ? Helper\Time::EVER : Helper\ArrayHelper::value($filter, $this->periods);
   }
 
 
+  /**
+   * @copydoc IndexController::popular()
+   */
   protected function popular($filter, $unversionTagId = NULL) {
     $this->periods = Helper\ArrayHelper::slice($this->periods, 5);
     parent::popular($filter);
