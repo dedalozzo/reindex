@@ -47,7 +47,7 @@ class ArrayHelper extends ElephantOnCouchArrayHelper {
 
   /**
    * @brief Modifies the specified array, depriving each ID of its related version.
-   * @param[in|out] array $ids An array of IDs.
+   * @param[in,out] array $ids An array of IDs.
    */
   public static function unversion(array &$ids) {
     array_walk($ids, function(&$value, $key) {
