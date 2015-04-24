@@ -14,7 +14,7 @@ namespace PitPress\Model\Badge\Answer;
 use PitPress\Model\Badge\Silver;
 
 
-/*
+/**
  * @brief First to answer and accepted with score of 10 or more.
  * @details Awarded multiple times.
  */
@@ -38,6 +38,22 @@ Sei la prima persona a rispondere ad una domanda e totalizzare un punteggio pari
 essere accettata dall'autore della domanda. Il badge viene assegnato soltanto nel caso in cui l'autore della domanda non
 risponda alla sua stessa domanda. Assegnato più volte.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::exist()
+   */
+  public function exist() {
+
+  }
+
+
+  /**
+   * @copydoc Badge::deserve()
+   */
+  public function deserve() {
+
   }
 
 

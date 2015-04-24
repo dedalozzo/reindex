@@ -36,6 +36,21 @@ class Guru extends Silver {
     return <<<'DESC'
 La tua risposta è stata accettata dall'autore e ha totalizzato 40 punti. Assegnato più volte.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::exist()
+   */
+  public function exist() {
+
+  }
+
+
+  /**
+   * @copydoc Badge::deserve()
+   */
+  public function deserve() {
 
   }
 

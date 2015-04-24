@@ -17,7 +17,9 @@ namespace PitPress\Model\Badge;
 abstract class Gold extends Badge {
 
 
-  //! @copydoc Badge::getMetal()
+  /**
+   * @copydoc Badge::getMetal()
+   */
   public function getMetal() {
     return "gold";
   }

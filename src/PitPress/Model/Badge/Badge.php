@@ -12,11 +12,11 @@
 namespace PitPress\Model\Badge;
 
 
-use PitPress\Model\Activity\Activity;
+//use PitPress\Extension\ISubject;
 use PitPress\Model\Storable;
 
 
-/*
+/**
  * @brief This is the ancestor of all badges, it's abstract and can't be instantiated.
  * @details Badge implements the observer pattern.
  * @nosubgrouping
@@ -26,58 +26,71 @@ abstract class Badge extends Storable {
   protected $subject;
 
 
-  /*
+  /**
    * @brief Creates an instance of the badge.
    * @details This function is used internally.
    */
-  public function __construct(Activity $subject = NULL) {
+  public function __construct($userId, $resourceId = NULL) {
     parent::__construct();
-    $this->subject = $subject;
   }
 
 
-  /*
+  /**
    * @brief Returns the badge's name.
    * @return string
    */
   abstract public function getName();
 
 
-  /*
+  /**
    * @brief Returns a brief description of the badge.
    * @return string
    */
   abstract public function getBrief();
 
 
-  /*
+  /**
    * @brief The badge is made by the returned metal.
    * @return string
    */
   abstract public function getMetal();
 
 
-  /*
-   * @brief Every time an activity is performed by a user, this method is called for all the interested badges. The
-   * badge in fact acts like an observer while the activity is the subject. This is a variant of the observer pattern.
-   * subject can update the badge state in relation to his changes.
+  /**
+   * @brief Every time an activity is performed by a user, this method is called for all the interested badges.
+   * @details Creates an instance of the Gearman client, assign the job to the server. The Gearman server checks for the
+   * badge, checks if the user deserve it, assign the badge or withdrawn it.
    */
-  public function update(Activity $subject) {
+  public function update() {
 
   }
 
 
-  /*
+  /**
+   * @brief Returns `true` if the badge has been already awarded to the user, `false otherwise.
+   * @return bool
+   */
+  abstract public function exist();
+
+
+  /**
+   * @brief Returns `true` if the user deserves this badge, `false otherwise.
+   * @return bool
+   */
+  abstract public function deserve();
+
+
+  /**
    * @brief Awards the current badge.
    */
   public abstract function award();
 
 
-  /*
+  /**
    * @brief Withdrawn the badge previously awarded.
    * @details Only some badges might be retired.
    */
-  public abstract function withdrawn();
+  abstract public function withdrawn();
 
 
 

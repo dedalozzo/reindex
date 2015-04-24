@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file Guardian.php
+ * @file Flag/Guardian.php
  * @brief This file contains the Guardian class.
  * @details
  * @author Filippo F. Fadda
@@ -36,6 +36,22 @@ class Guardian extends Gold {
     return <<<'DESC'
 Hai segnalato almeno 500 problemi alla redazione. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::exist()
+   */
+  public function exist() {
+
+  }
+
+
+  /**
+   * @copydoc Badge::deserve()
+   */
+  public function deserve() {
+
   }
 
 
