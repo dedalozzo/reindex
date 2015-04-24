@@ -1,6 +1,6 @@
 <?php
 
-//! @file Guardian.php
+//! @file Security/Guardian.php
 //! @brief This file contains the Guardian class.
 //! @details
 //! @author Filippo F. Fadda
