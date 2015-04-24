@@ -339,7 +339,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @param[in] string $set The name of the Redis set.
    * @param[in] \DateTime $date The modification date.
    * @param[in] int $score The score.
-   * @param[in] The post id.
+   * @param[in] string $id The post id.
    */
   protected function zAddScore($set, \DateTime $date, $score, $id) {
     $this->redis->zAdd($set, $score, $id);
@@ -354,7 +354,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @brief Removes the post score from the Redis db.
    * @param[in] string $set The name of the Redis set.
    * @param[in] \DateTime $date The modification date.
-   * @param[in] The post id.
+   * @param[in] string $id The post id.
    */
   protected function zRemScore($set, \DateTime $date, $id) {
     $this->redis->zRem($set, $id);
@@ -431,6 +431,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
   /**
    * @brief Adds the post last update timestamp to the Redis db.
+   * @param[in] integer $timestamp The timestamp of the post last update.
    */
   public function zAddLastUpdate($timestamp = NULL) {
     if (!$this->isVisible()) return;
