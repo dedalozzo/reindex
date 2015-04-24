@@ -19,11 +19,17 @@ use PitPress\Helper;
 class LinkController extends IndexController {
 
 
+  /**
+   * @copydoc IndexController::getLabel()
+   */
   protected function getLabel() {
     return 'links';
   }
 
 
+  /**
+   * @copydoc BaseController::getPeriod()
+   */
   protected function getPeriod($filter) {
     return empty($filter) ? Helper\Time::TODAY : Helper\ArrayHelper::value($filter, $this->periods);
   }
