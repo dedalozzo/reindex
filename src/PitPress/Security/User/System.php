@@ -1,9 +1,11 @@
 <?php
 
-//! @file System.php
-//! @brief This file contains the System class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file System.php
+ * @brief This file contains the System class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Security\User;
@@ -18,7 +20,7 @@ class System implements IUser {
 
   /**
    * @brief This implementation returns always `null`.
-   * @return null
+   * @retval null
    */
   public function getId() {
     return NULL;
@@ -27,7 +29,7 @@ class System implements IUser {
 
   /**
    * @brief This implementation returns always `false`.
-   * @return bool
+   * @retval bool
    */
   public function isGuest() {
     return FALSE;
@@ -36,7 +38,7 @@ class System implements IUser {
 
   /**
    * @brief This implementation returns always `false`.
-   * @return bool
+   * @retval bool
    */
   public function isMember() {
     return FALSE;
@@ -45,7 +47,7 @@ class System implements IUser {
 
   /**
    * @brief This implementation returns always `true`.
-   * @return bool
+   * @retval bool
    */
   public function isAdmin() {
     return TRUE;
@@ -54,7 +56,7 @@ class System implements IUser {
 
   /**
    * @brief This implementation returns always `true`.
-   * @return bool
+   * @retval bool
    */
   public function isModerator() {
     return TRUE;
@@ -63,7 +65,7 @@ class System implements IUser {
 
   /**
    * @brief This implementation returns always `true`.
-   * @return bool
+   * @retval bool
    */
   public function isEditor() {
     return TRUE;
@@ -72,7 +74,7 @@ class System implements IUser {
 
   /**
    * @brief This implementation returns always `true`.
-   * @return bool
+   * @retval bool
    */
   public function isReviewer() {
     return TRUE;

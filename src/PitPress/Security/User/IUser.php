@@ -1,9 +1,11 @@
 <?php
 
-//! @file IUser.php
-//! @brief This file contains the IUser class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file IUser.php
+ * @brief This file contains the IUser class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 //! PitPress users namespace.
@@ -19,35 +21,35 @@ interface IUser {
 
   /**
    * @brief Returns the user id if any, otherwise `null`.
-   * @return string|bool
+   * @retval string|bool
    */
   function getId();
 
 
   /**
    * @brief Returns `true` in case the user is a guest.
-   * @return bool
+   * @retval bool
    */
   function isGuest();
 
 
   /**
    * @brief Returns `true` in case the user is a community's member.
-   * @return bool
+   * @retval bool
    */
   function isMember();
 
 
   /**
    * @brief Returns `true` in case the user is an administrator.
-   * @return bool
+   * @retval bool
    */
   function isAdmin();
 
 
   /**
    * @brief Returns `true` in case the user is a moderator.
-   * @return bool
+   * @retval bool
    */
   function isModerator();
 
@@ -55,7 +57,7 @@ interface IUser {
   /**
    * @brief Returns `true` in case the user is a reviewer.
    * @details An user can obtain this privilege earning reputation.
-   * @return bool
+   * @retval bool
    */
   function isReviewer();
 
@@ -63,7 +65,7 @@ interface IUser {
   /**
    * @brief Returns `true` in case the user is an editor.
    * @details An user can obtain this privilege earning reputation.
-   * @return bool
+   * @retval bool
    */
   function isEditor();
 

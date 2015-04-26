@@ -38,7 +38,7 @@ class AboutCommand extends AbstractCommand {
    * @brief Executes the command.
    * @param[in] InputInterface $input The input interface
    * @param[in] OutputInterface $output The output interface
-   * @return string Information about CouchDB's client, server and the PitPress database.
+   * @retval string Information about CouchDB's client, server and the PitPress database.
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
     $couch = $this->di['couchdb'];

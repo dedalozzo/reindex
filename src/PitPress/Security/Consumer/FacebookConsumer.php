@@ -1,10 +1,11 @@
 <?php
 
-//! @file FacebookConsumer.php
-//! @brief This file contains the FacebookConsumer class.
-//! @details
-//! @author Filippo F. Fadda
-
+/**
+ * @file FacebookConsumer.php
+ * @brief This file contains the FacebookConsumer class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 namespace PitPress\Security\Consumer;
 
@@ -21,6 +22,7 @@ class FacebookConsumer extends OAuth2Consumer {
 
   /** @name Field Names */
   //!@{
+
   const ID = 'id';
   const EMAIL = 'email';
   const FIRST_NAME = 'first_name';
@@ -29,6 +31,7 @@ class FacebookConsumer extends OAuth2Consumer {
   const LOCALE = 'locale';
   const TIME_OFFSET = 'timezone';
   const PROFILE_URL = 'link';
+
   //!@}
 
 
@@ -36,7 +39,7 @@ class FacebookConsumer extends OAuth2Consumer {
    * @brief Facebook, like LinkedIn, doesn't provide a username, but PitPress needs one. So we guess the username using
    * first name and last name. In case the username has already been taken, adds a sequence number to the end.
    * @param[in] array $userData User data.
-   * @return string
+   * @retval string
    */
   private function guessUsername(array $userData) {
     $username = strtolower($userData[static::FIRST_NAME].$userData[static::LAST_NAME]);
@@ -63,7 +66,7 @@ class FacebookConsumer extends OAuth2Consumer {
 
   /**
    * @brief Facebook is a trustworthy provider. This implementation returns `true`.
-   * @return bool
+   * @retval bool
    */
   public function isTrustworthy() {
     return TRUE;
@@ -89,7 +92,7 @@ class FacebookConsumer extends OAuth2Consumer {
 
   /**
    * @brief Returns the list of the user friends.
-   * @return array
+   * @retval array
    * @todo Implement Facebook.getFriends() method.
    */
   public function getFriends() {

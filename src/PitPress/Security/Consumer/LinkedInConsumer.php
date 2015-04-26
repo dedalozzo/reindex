@@ -1,9 +1,11 @@
 <?php
 
-//! @file LinkedInConsumer.php
-//! @brief This file contains the LinkedInConsumer class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file LinkedInConsumer.php
+ * @brief This file contains the LinkedInConsumer class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Security\Consumer;
@@ -21,6 +23,7 @@ class LinkedInConsumer extends OAuth2Consumer {
 
   /** @name Field Names */
   //!@{
+
   const ID = 'id';
   const EMAIL = 'emailAddress';
   const FIRST_NAME = 'firstName';
@@ -29,6 +32,7 @@ class LinkedInConsumer extends OAuth2Consumer {
   const HEADLINE = 'headline';
   const ABOUT = 'firstName';
   const PROFILE_URL = 'publicProfileUrl';
+
   //!@}
 
 
@@ -36,7 +40,7 @@ class LinkedInConsumer extends OAuth2Consumer {
    * @brief LinkedIn, like Facebook, doesn't provide a username, but PitPress needs one. So we guess the username using
    * the user public profile url. In case the username has already been taken, adds a sequence number to the end.
    * @param[in] array $userData User data.
-   * @return string
+   * @retval string
    */
   private function guessUsername(array $userData) {
     if (preg_match('%.+/in/(?P<username>.+)%i', $userData[static::PROFILE_URL], $matches))
@@ -77,7 +81,7 @@ class LinkedInConsumer extends OAuth2Consumer {
 
   /**
    * @brief LinkedIn is a trustworthy provider. This implementation returns `true`.
-   * @return bool
+   * @retval bool
    */
   public function isTrustworthy() {
     return TRUE;
@@ -112,7 +116,7 @@ class LinkedInConsumer extends OAuth2Consumer {
 
   /**
    * @brief Returns the list of user connections.
-   * @return array
+   * @retval array
    * @todo Implement LinkedIn.getFriends() method.
    */
   public function getFriends() {

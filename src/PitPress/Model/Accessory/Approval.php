@@ -27,7 +27,7 @@ class Approval extends Doc {
    * @param[in] string questionId The question ID.
    * @param[in] string answerId The approved answer ID.
    * @param[in] int $timestamp The approval timestamp.
-   * @return Approval
+   * @retval Approval
    */
   public static function create($questionId, $answerId, $timestamp = NULL) {
     $instance = new self();

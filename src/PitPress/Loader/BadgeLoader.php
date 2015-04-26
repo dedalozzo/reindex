@@ -126,7 +126,7 @@ class BadgeLoader {
 
   /**
    * @brief Returns the list of all badges.
-   * @return array An associative array.
+   * @retval array An associative array.
    */
   public function getAllBadges() {
     return $this->badges;
@@ -135,7 +135,7 @@ class BadgeLoader {
 
   /**
    * @brief Returns the list of badges rewarded to the user.
-   * @return array An associative array.
+   * @retval array An associative array.
    */
   public function getEarnedBadges() {
     $func = function($value) {
@@ -151,7 +151,7 @@ class BadgeLoader {
 
   /**
    * @brief Returns the list of badges not rewarded to the user.
-   * @return array An associative array.
+   * @retval array An associative array.
    */
   public function getUnearnedBadges() {
     $func = function($value) {
@@ -168,7 +168,7 @@ class BadgeLoader {
   /**
    * @brief Returns the list of badges filtered by metal.
    * @param[in] string $metal Specify the metal used for building badges: `gold`, `silver` or `bronze`.
-   * @return array An associative array.
+   * @retval array An associative array.
    */
   public function filterByMetal($badges, $metal) {
     return $this->filterBadges($badges, 'metal', $metal);
@@ -178,7 +178,7 @@ class BadgeLoader {
   /**
    * @brief Returns the list of badges filtered by category.
    * @param[in] string $category Specify the category to which the badges belong.
-   * @return array An associative array.
+   * @retval array An associative array.
    */
   public function filterByCategory($badges, $category) {
     return $this->filterBadges($badges, 'category', $category);

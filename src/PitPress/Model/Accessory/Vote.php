@@ -12,20 +12,24 @@ namespace PitPress\Model\Accessory;
 
 
 use PitPress\Model\Storable;
+use PitPress\Extension\ISubject;
+use PitPress\Extension\TSubject;
 
 
 /**
  * @brief This class is used to keep trace of the user votes.
  * @nosubgrouping
  */
-class Vote extends Storable {
+class Vote extends Storable implements ISubject {
+  use TSubject
+
 
   /**
    * @brief Creates an instance of Vote class.
    * @param[in] $itemId The item identifier.
    * @param[in] $userId The identifier of the user who has voted.
    * @param[in] $value The value of the vote.
-   * @return Vote
+   * @retval Vote
    */
   public static function create($itemId, $userId, $value) {
     $instance = new self();
@@ -35,6 +39,17 @@ class Vote extends Storable {
     $instance->setValue($value);
 
     return $instance;
+  }
+
+
+  public function load() {
+
+  }
+
+
+  public function save() {
+    parent::save();
+    $this->notify();
   }
 
 

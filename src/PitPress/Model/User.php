@@ -37,7 +37,7 @@ class User extends Storable implements IUser, Extension\ICount {
   /**
    * @brief Given a e-mail, returns the gravatar URL for the corresponding user.
    * @param[in] string $email The user e-mail.
-   * @return string
+   * @retval string
    */
   public static function getGravatar($email) {
     return 'http://gravatar.com/avatar/'.md5(mb_strtolower($email, 'utf-8')).'?d=identicon';
@@ -46,7 +46,7 @@ class User extends Storable implements IUser, Extension\ICount {
 
   /**
    * @brief Returns the user's favorite tags if any.
-   * @return array
+   * @retval array
    */
   public function getFavoriteTags() {
     $opts = new ViewQueryOpts();
@@ -64,7 +64,7 @@ class User extends Storable implements IUser, Extension\ICount {
 
   /**
    * @brief Returns the actual user's age based on his birthday, `null`in case a the user's birthday is not available.
-   * @return int|null
+   * @retval int|null
    */
   public function getAge() {
     if ($this->issetBirthday()) {
@@ -80,7 +80,7 @@ class User extends Storable implements IUser, Extension\ICount {
 
   /**
    * @brief Last time the user has logged in.
-   * @return string The time expressed as `3 Aprile, 2013` or an empty string.
+   * @retval string The time expressed as `3 Aprile, 2013` or an empty string.
    */
   public function getLastVisit() {
     if (isset($this->meta['lastVisit']))
@@ -92,7 +92,7 @@ class User extends Storable implements IUser, Extension\ICount {
 
   /**
    * @brief Returns the elapsed time since the user registration.
-   * @return string
+   * @retval string
    */
   public function getElapsedTimeSinceRegistration() {
     return strftime('%e %B, %Y', $this->createdAt);
@@ -101,7 +101,7 @@ class User extends Storable implements IUser, Extension\ICount {
 
   /**
    * @brief Returns the user's reputation.
-   * @return integer
+   * @retval integer
    */
   public function getReputation() {
     $opts = new ViewQueryOpts();
@@ -134,7 +134,7 @@ class User extends Storable implements IUser, Extension\ICount {
 
   /**
    * @brief Returns all the e-mails associated with the current user.
-   * @return array An associative array using as keys the e-mail addresses, and as values if the address are verified or
+   * @retval array An associative array using as keys the e-mail addresses, and as values if the address are verified or
    * not.
    */
   public function getEmails() {
@@ -158,7 +158,7 @@ class User extends Storable implements IUser, Extension\ICount {
   /**
    * @brief Returns `true` in case the e-mail can be removed, `false` otherwise.
    * @param[in] string $email An e-mail address.
-   * @return bool
+   * @retval bool
    */
   public function canRemoveEmail($email) {
     if (array_key_exists($email, $this->meta['emails']) && count($this->meta['emails']) > 1
@@ -182,7 +182,7 @@ class User extends Storable implements IUser, Extension\ICount {
 
   /**
    * @brief Returns `true` if the user e-mail has been verified, `false` otherwise.
-   * @return bool
+   * @retval bool
    */
   public function isVerifiedEmail($email) {
     return (isset($this->meta['emails'][$email])) ? $this->meta['emails'][$email] : FALSE;
@@ -293,7 +293,7 @@ class User extends Storable implements IUser, Extension\ICount {
 
   /**
    * @brief This implementation returns always `false`.
-   * @return bool
+   * @retval bool
    */
   public function isGuest() {
     return FALSE;
@@ -302,7 +302,7 @@ class User extends Storable implements IUser, Extension\ICount {
 
   /**
    * @brief This implementation returns always `true`.
-   * @return bool
+   * @retval bool
    */
   public function isMember() {
     return TRUE;
@@ -348,7 +348,7 @@ class User extends Storable implements IUser, Extension\ICount {
 
   /**
    * @brief Returns `true` if the ban is expired, otherwise `false`.
-   * @return bool
+   * @retval bool
    */
   protected function isBanExpired() {
     if ($this->isMetadataPresent('bannedFor') == 'ever') {
@@ -363,7 +363,7 @@ class User extends Storable implements IUser, Extension\ICount {
 
   /**
    * @brief Returns `true` if the user logged in is allowed to ban the current user, `false` otherwise.
-   * @return bool
+   * @retval bool
    */
   protected function canBeBanned() {
     if ($this->user->isAdmin() && !$this->isAdmin() && !$this->user->match($this->id))
@@ -422,7 +422,7 @@ class User extends Storable implements IUser, Extension\ICount {
   /**
    * @brief Returns `true` if the user has been banned.
    * @details When expired, removes the ban.
-   * @return bool
+   * @retval bool
    */
   public function isBanned() {
     if ($this->isMetadataPresent('banned')) {
@@ -449,7 +449,7 @@ class User extends Storable implements IUser, Extension\ICount {
    * @brief Returns a login name based on the user id and consumer name.
    * @param[in] string $userId The user id.
    * @param[in] string $consumerName The consumer name.
-   * @return string
+   * @retval string
    */
   private function buildLoginName($userId, $consumerName) {
     return $userId.'@'.$consumerName;

@@ -39,7 +39,7 @@ class Console extends Application {
 
   /**
    * @brief Gets the Phalcon Dependency Injector.
-   * @return DiInterface
+   * @retval DiInterface
    */
   public function getDi() {
     return $this->_di;

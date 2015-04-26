@@ -1,9 +1,11 @@
 <?php
 
-//! @file Security/Guardian.php
-//! @brief This file contains the Guardian class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file Security/Guardian.php
+ * @brief This file contains the Guardian class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 //! PitPress security namespace.
@@ -45,7 +47,7 @@ class Guardian {
 
   /**
    * @brief Returns the logged in user.
-   * @return IUser
+   * @retval IUser
    */
   public function getUser() {
     return self::$user;
@@ -55,7 +57,7 @@ class Guardian {
   /**
    * @brief Returns `true` in case the username is taken, `false` otherwise.
    * @param[in] string $username The username.
-   * @return bool
+   * @retval bool
    */
   public function isTaken($username) {
     $opts = new ViewQueryOpts();
@@ -72,7 +74,7 @@ class Guardian {
    * @details An admin can impersonate any member, but he can't impersonate another admin. A member (even an admin) can
    * impersonate a guest. No one can impersonate itself and a guest, of course, can't impersonate anyone.
    * @param[in] IUser $user
-   * @return bool
+   * @retval bool
    */
   private function canImpersonate(IUser $user) {
     if (self::$user->isAdmin() && $user->isMember() && !$user->isAdmin())

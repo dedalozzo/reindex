@@ -1,9 +1,11 @@
 <?php
 
-//! @file GooglePlusConsumer.php
-//! @brief This file contains the GooglePlusConsumer class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file GooglePlusConsumer.php
+ * @brief This file contains the GooglePlusConsumer class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Security\Consumer;
@@ -21,6 +23,7 @@ class GooglePlusConsumer extends OAuth2Consumer {
 
   /** @name Field Names */
   //!@{
+
   const ID = 'id';
   const EMAIL = 'email';
   const FIRST_NAME = 'first_name';
@@ -29,6 +32,7 @@ class GooglePlusConsumer extends OAuth2Consumer {
   const NICKNAME = 'nickname';
   const DISPLAY_NAME = 'displayName';
   const PROFILE_URL = 'url';
+
   //!@}
 
 
@@ -41,7 +45,7 @@ class GooglePlusConsumer extends OAuth2Consumer {
    * @brief Google+, like Facebook, doesn't provide a username, but PitPress needs one. So we guess the username using
    * the user public profile url. In case the username has already been taken, adds a sequence number to the end.
    * @param[in] array $userData User data.
-   * @return string
+   * @retval string
    */
   private function guessUsername(array $userData) {
     if (isset($userData[static::NICKNAME]))
@@ -71,7 +75,7 @@ class GooglePlusConsumer extends OAuth2Consumer {
 
   /**
    * @brief Google+ is a trustworthy provider. This implementation returns `true`.
-   * @return bool
+   * @retval bool
    */
   public function isTrustworthy() {
     return TRUE;
@@ -107,7 +111,7 @@ class GooglePlusConsumer extends OAuth2Consumer {
 
   /**
    * @brief We don't care about Google+ list of friends, because Google+ is not widely used.
-   * @return array
+   * @retval array
    */
   public function getFriends() {
     return [];

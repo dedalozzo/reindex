@@ -46,7 +46,7 @@ class Tag extends Versionable implements Extension\ICount, Extension\IStar {
 
   /**
    * @brief Returns `true` in case this tag is marked as synonym, `false` otherwise.
-   * @return bool
+   * @retval bool
    */
   public function isSynonym() {
     return !$this->meta['master'];
@@ -66,7 +66,7 @@ class Tag extends Versionable implements Extension\ICount, Extension\IStar {
 
   /**
    * @brief Returns the ids of its synonyms.
-   * @return array An array of strings.
+   * @retval array An array of strings.
    */
   public function getSynonyms() {
     return (!$this->isSynonym()) ? $this->meta['synonyms'] : [];

@@ -36,7 +36,7 @@ class BadgeRecursiveFilterIterator extends \RecursiveFilterIterator {
 
   /**
    * @brief Checks whether the current element of the iterator is acceptable.
-   * @return bool
+   * @retval bool
    */
   public function accept() {
     $item  = $this->current();

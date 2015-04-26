@@ -23,14 +23,14 @@ interface ICount {
 
   /**
    * @brief Returns the times the item has been viewed.
-   * @return string A formatted number.
+   * @retval string A formatted number.
    */
   public function getHitsCount();
 
 
   /**
    * @brief Increments the times the item has been viewed.
-   * @return int The number of hits.
+   * @retval int The number of hits.
    */
   public function incHits();
 

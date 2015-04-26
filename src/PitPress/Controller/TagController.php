@@ -169,7 +169,7 @@ class TagController extends ListController {
 
   /**
    * @brief Given a partial name, loads the list of tags matching it.
-   * @return string A JSON encoded object.
+   * @retval string A JSON encoded object.
    */
   public function filterAction() {
     if ($this->request->hasPost('filter')) {

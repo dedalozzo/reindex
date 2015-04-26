@@ -1,9 +1,11 @@
 <?php
 
-//! @file GitHubConsumer.php
-//! @brief This file contains the GitHubConsumer class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file GitHubConsumer.php
+ * @brief This file contains the GitHubConsumer class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Security\Consumer;
@@ -21,6 +23,7 @@ class GitHubConsumer extends OAuth2Consumer {
 
   /** @name Field Names */
   //!@{
+
   const ID = 'id';
   const EMAIL = 'email';
   const LOGIN = 'login';
@@ -29,6 +32,7 @@ class GitHubConsumer extends OAuth2Consumer {
   const HEADLINE = 'company';
   const ABOUT = 'bio';
   const PROFILE_URL = 'html_url';
+
   //!@}
 
 
@@ -71,7 +75,7 @@ class GitHubConsumer extends OAuth2Consumer {
 
   /**
    * @brief GitHub can't be trust! This implementation returns `false`.
-   * @return bool
+   * @retval bool
    * @warning GitHub let you login using an e-mail that hasn't been verified.
    */
   public function isTrustworthy() {
@@ -100,7 +104,7 @@ class GitHubConsumer extends OAuth2Consumer {
 
   /**
    * @brief GitHub doesn't provide a list of friends.
-   * @return array
+   * @retval array
    */
   public function getFriends() {
     return [];

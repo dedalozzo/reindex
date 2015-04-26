@@ -1,9 +1,11 @@
 <?php
 
-//! @file Username.php
-//! @brief This file contains the Username class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file Username.php
+ * @brief This file contains the Username class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Validator;
@@ -38,7 +40,7 @@ class Username extends Validator implements Validation\ValidatorInterface {
    * @brief Executes the validation.
    * @param[in] Phalcon\Validation $validator An instance of a Phalcon validation component.
    * @param[in] string $attribute The attribute to be validated.
-   * @return bool
+   * @retval bool
    */
   public function validate($validator, $attribute) {
     $value = $validator->getValue($attribute);

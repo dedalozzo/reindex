@@ -121,7 +121,7 @@ abstract class ListController extends BaseController {
    * @brief Builds the pagination url for CouchDB.
    * @param[in] mixed $startKey A key.
    * @param[in] string $startKeyDocId A document ID.
-   * @return string The pagination url.
+   * @retval string The pagination url.
    */
   protected function buildPaginationUrlForCouch($startKey, $startKeyDocId) {
     return sprintf('%s%s?startkey=%s&startkey_docid=%s', $this->domainName, parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), $startKey, $startKeyDocId);
@@ -131,7 +131,7 @@ abstract class ListController extends BaseController {
   /**
    * @brief Builds the pagination url for Redis.
    * @param[in] int $offset The offset.
-   * @return string The pagination url.
+   * @retval string The pagination url.
    */
   protected function buildPaginationUrlForRedis($offset) {
     return sprintf('%s%s?offset=%d', $this->domainName, parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), $offset);

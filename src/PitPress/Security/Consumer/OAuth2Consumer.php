@@ -1,9 +1,11 @@
 <?php
 
-//! @file OAuth2Consumer.php
-//! @brief This file contains the OAuth2Consumer class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file OAuth2Consumer.php
+ * @brief This file contains the OAuth2Consumer class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Security\Consumer;
@@ -31,9 +33,11 @@ abstract class OAuth2Consumer {
 
   /** @name Field Names */
   //!@{
+
   const ID = 'id';
   const EMAIL = 'email';
   const PROFILE_URL = 'profile_url';
+
   //!@}
 
   protected $di; // Stores the default Dependency Injector.
@@ -217,7 +221,7 @@ abstract class OAuth2Consumer {
   /**
    * @brief In case the username has already been taken, adds a sequence number to the end.
    * @param[in] string $value A potential username value.
-   * @return string
+   * @retval string
    */
   protected function buildUsername($value) {
     $temp = $value;
@@ -246,7 +250,7 @@ abstract class OAuth2Consumer {
 
   /**
    * @brief Returns `true` in case the linked provider is trustworthy, `false` otherwise.
-   * @return bool
+   * @retval bool
    */
   abstract public function isTrustworthy();
 
@@ -259,21 +263,21 @@ abstract class OAuth2Consumer {
 
   /**
    * @brief Retrieves the user friends.
-   * @return array
+   * @retval array
    */
   abstract public function getFriends();
 
 
   /**
    * @brief Returns the consumer name.
-   * @return string
+   * @retval string
    */
   abstract public function getName();
 
 
   /**
    * @brief Returns the data scope.
-   * @return array
+   * @retval array
    */
   abstract public function getScope();
 

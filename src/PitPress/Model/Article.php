@@ -31,7 +31,7 @@ class Article extends Post {
 
   /**
    * @brief Returns `true` if the post can be marked as draft, `false` otherwise.
-   * @return bool
+   * @retval bool
    */
   public function canBeMarkedAsDraft() {
     if ($this->isDraft()) return FALSE;

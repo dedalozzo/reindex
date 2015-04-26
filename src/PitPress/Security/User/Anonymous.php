@@ -1,9 +1,11 @@
 <?php
 
-//! @file Anonymous.php
-//! @brief This file contains the Anonymous class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file Anonymous.php
+ * @brief This file contains the Anonymous class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Security\User;
@@ -18,7 +20,7 @@ class Anonymous implements IUser {
 
   /**
    * @brief This implementation returns always `null`.
-   * @return null
+   * @retval null
    */
   public function getId() {
     return NULL;
@@ -27,7 +29,7 @@ class Anonymous implements IUser {
 
   /**
    * @brief This implementation returns always `true`.
-   * @return bool
+   * @retval bool
    */
   public function isGuest() {
     return TRUE;
@@ -36,7 +38,7 @@ class Anonymous implements IUser {
 
   /**
    * @brief This implementation returns always `false`.
-   * @return bool
+   * @retval bool
    */
   public function isMember() {
     return FALSE;
@@ -45,7 +47,7 @@ class Anonymous implements IUser {
 
   /**
    * @brief This implementation returns always `false`.
-   * @return bool
+   * @retval bool
    */
   public function isAdmin() {
     return FALSE;
@@ -54,7 +56,7 @@ class Anonymous implements IUser {
 
   /**
    * @brief This implementation returns always `false`.
-   * @return bool
+   * @retval bool
    */
   public function isModerator() {
     return FALSE;
@@ -63,7 +65,7 @@ class Anonymous implements IUser {
 
   /**
    * @brief This implementation returns always `false`.
-   * @return bool
+   * @retval bool
    */
   public function isEditor() {
     return FALSE;
@@ -72,7 +74,7 @@ class Anonymous implements IUser {
 
   /**
    * @brief This implementation returns always `false`.
-   * @return bool
+   * @retval bool
    */
   public function isReviewer() {
     return FALSE;

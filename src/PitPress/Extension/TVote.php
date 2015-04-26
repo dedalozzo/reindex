@@ -32,7 +32,7 @@ trait TVote {
    * @brief Registers, replaces or deletes the vote.
    * @param[in] User $user The current user logged in.
    * @param[in] string $value The vote.
-   * @return int The voting status.
+   * @retval int The voting status.
    */
   protected function vote($value) {
     if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');

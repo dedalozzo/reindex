@@ -24,7 +24,7 @@ class AjaxController extends BaseController {
   /**
    * @brief Extracts the domain name.
    * @param[in] $url The URL.
-   * @return string
+   * @retval string
    */
   protected function getDomainName($url) {
     $pieces = parse_url($url);
@@ -75,7 +75,7 @@ class AjaxController extends BaseController {
 
   /**
    * @brief Likes a post.
-   * @return int
+   * @retval int
    */
   public function likeAction() {
     try {
@@ -95,7 +95,7 @@ class AjaxController extends BaseController {
 
   /**
    * @brief Stars an item.
-   * @return int
+   * @retval int
    */
   public function starAction() {
     try {
@@ -115,7 +115,7 @@ class AjaxController extends BaseController {
 
   /**
    * @brief Moves the document to trash.
-   * @return int
+   * @retval int
    */
   public function moveToTrashAction() {
     try {
@@ -143,7 +143,7 @@ class AjaxController extends BaseController {
 
   /**
    * @brief Restores the document.
-   * @return int
+   * @retval int
    */
   public function restoreAction() {
     try {
