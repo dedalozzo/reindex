@@ -22,8 +22,8 @@ class ArrayHelper extends ElephantOnCouchArrayHelper {
   /**
    * @brief Returns a portion of the array.
    * @param[in] array $array The original array.
-   * @param[in] int $number The number of elements from left to right.
-   * @return array
+   * @param[in] int $number (optional) The number of elements from left to right.
+   * @retval array
    */
   public static function slice(array $array, $number = NULL) {
     return array_slice($array, 0, $number, TRUE);
@@ -34,7 +34,7 @@ class ArrayHelper extends ElephantOnCouchArrayHelper {
    * @brief Given a key, returns its related value.
    * @param[in] mixed $key A key.
    * @param[in] array $array The array to be searched.
-   * @return int|bool The value or `false` in case the value doesn't exist.
+   * @retval int|bool The value or `false` in case the value doesn't exist.
    */
   public static function value($key, array $array) {
 
@@ -62,7 +62,7 @@ class ArrayHelper extends ElephantOnCouchArrayHelper {
    * @details The returned array doesn't contain duplicate values
    * @param[in] array $array1 The first array.
    * @param[in] array $array2 The first array.
-   * @return array
+   * @retval array
    */
   public static function merge(array $array1, array $array2) {
     $array = array_merge($array1, $array2);

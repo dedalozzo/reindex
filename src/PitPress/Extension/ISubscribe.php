@@ -26,7 +26,8 @@ interface ISubscribe {
   /**
    * @brief Returns `true` if the user has subscribed the current post.
    * @param[in] User $user The current user logged in.
-   * @return boolean
+   * @param[in] string $subscriptionId (optional) The subscription document ID.
+   * @retval boolean
    */
   public function isSubscribed(User $user, &$subscriptionId = NULL);
 
@@ -47,7 +48,7 @@ interface ISubscribe {
 
   /**
    * @brief Returns the number of users have been subscribed the item.
-   * @return integer
+   * @retval integer
    */
   public function getSubscribersCount();
 

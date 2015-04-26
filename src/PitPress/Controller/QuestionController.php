@@ -73,7 +73,7 @@ class QuestionController extends IndexController {
 
   /**
    * @brief Displays the questions, still open, based on user's tags.
-   * @param[in] string $filter A filter.
+   * @param[in] string $filter (optional) A filter.
    */
   public function openAction($filter = NULL) {
     // Stores sub-menu definition.

@@ -106,6 +106,7 @@ class BadgeController extends BaseController {
 
   /**
    * @brief Displays the special tag badges.
+   * @param[in] string $filter (optional) The filter typology.
    */
   public function byTagAction($filter = NULL) {
     return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);

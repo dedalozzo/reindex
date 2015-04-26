@@ -15,6 +15,7 @@ use Phalcon\Mvc\Controller;
 
 use PitPress\Helper;
 use PitPress\Version;
+use PitPress\Model\User;
 
 
 /**
@@ -52,7 +53,7 @@ abstract class BaseController extends Controller {
   /**
    * @brief Given a a human readable period of time, returns the correspondent number.
    * @param[in] string $filter A human readable period of time.
-   * @return int|bool If the filter exists returns its number, else returns `false`.
+   * @retval int|bool If the filter exists returns its number, else returns `false`.
    */
   protected function getPeriod($filter) {
     return is_null($filter) ? Helper\Time::EVER : Helper\ArrayHelper::value($filter, $this->periods);
@@ -80,8 +81,9 @@ abstract class BaseController extends Controller {
 
   /**
    * @brief Redirects to the referrer page if any.
+   * @param[in] User $user (optional) The current user if any.
    */
-  protected function redirectToReferrer($user = NULL) {
+  protected function redirectToReferrer(User $user = NULL) {
     if ($this->session->has("referrer"))
       return $this->response->redirect($this->session->get("referrer"), TRUE);
     elseif (isset($user))

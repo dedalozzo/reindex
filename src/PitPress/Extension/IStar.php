@@ -34,8 +34,8 @@ interface IStar {
 
   /**
    * @brief Returns `true` if the current user starred this post.
-   * @param[out] string $starId The star document identifier related to the current post.
-   * @return bool
+   * @param[out] string $starId (optional) The star document ID related to the current post.
+   * @retval bool
    */
   public function isStarred(&$starId = NULL);
 
@@ -48,7 +48,7 @@ interface IStar {
 
   /**
    * @brief Returns the number of times the item has been starred.
-   * @return integer
+   * @retval integer
    */
   public function getStarsCount();
 

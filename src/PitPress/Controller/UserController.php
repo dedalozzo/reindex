@@ -69,6 +69,7 @@ class UserController extends ListController {
 
   /**
    * @brief Displays the users with the highest reputation.
+   * @param[in] string $filter (optional) Human readable representation of a period.
    */
   public function reputationAction($filter = NULL) {
     $period = $this->getPeriod($filter);
@@ -134,7 +135,7 @@ class UserController extends ListController {
 
   /**
    * @brief Displays the users have given most votes.
-   * @param[in] string $filter Human readable representation of a period.
+   * @param[in] string $filter (optional) Human readable representation of a period.
    */
   public function votersAction($filter = NULL) {
     $period = $this->getPeriod($filter);

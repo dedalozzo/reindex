@@ -34,7 +34,7 @@ class Text {
    * @param[in] bool $stripslashes (optional) If `true` strip all the slashes before converting the text.
    * @param[in] string $fromCharset (optional) The origin charset.
    * @param[in] string $toCharset (optional) The target charset.
-   * @return string
+   * @retval string
    * @attention Doesn't matter if the varchar fields of your MySQL tables are encoded in `LATIN1`, in fact, if someone
    * ever posted a document from Windows Word containing smart characters, like curly quotes or smart apostrophes, the
    * real charset used is `Windows-1252`.
@@ -60,7 +60,7 @@ class Text {
    * @param[in] string $charset (optional) The charset used.
    * @param[in] bool $breakWords (optional) If `true` breaks the words to return the exact number of chars.
    * @param[in] bool $middle (optional) Truncates the text but remove middle instead the end of the string.
-   * @return string
+   * @retval string
    * @warning This function works with UTF-8 strings.
    */
   public static function truncate($text, $length = 200, $etc = ' ...', $charset='UTF-8', $breakWords = FALSE, $middle = FALSE) {
@@ -87,7 +87,7 @@ class Text {
    * @brief Capitalizes the given string.
    * @param[in] string $text The input string.
    * @param[in] string $charset (optional) The charset used.
-   * @return string
+   * @retval string
    * @warning This function works with UTF-8 strings.
    */
   public static function capitalize($text, $charset = 'UTF-8') {
@@ -98,7 +98,7 @@ class Text {
   /**
    * @brief Removes the content of pre tags, than strip all tags.
    * @param[in] string $text The input string.
-   * @return string
+   * @retval string
    * @warning This function works with UTF-8 strings.
    */
   public static function purge($text) {
@@ -115,7 +115,7 @@ class Text {
   /**
    * @brief Generates a single word, stripping every `-` from a compound word.
    * @param[in] string $word A compound word.
-   * @return array
+   * @retval array
    * @warning This function works with UTF-8 strings.
    */
   public static function stick($word) {
@@ -127,7 +127,7 @@ class Text {
    * @brief Given a string, returns all the unique contained substrings.
    * @param[in] string $str The input string.
    * @param[in] string $charset (optional) The charset used.
-   * @return array
+   * @retval array
    * @warning This function works with UTF-8 strings.
    */
   public static function substrings($str, $charset = 'UTF-8') {
@@ -145,7 +145,7 @@ class Text {
   /**
    * @brief Prunes the ID of its version number, if any.
    * @param[in] string $id An UUID followed by a timestamp, like `3e96144b-3ebd-41e4-8a45-78cd9af1671d::1410886811`.
-   * @return string Returns just `3e96144b-3ebd-41e4-8a45-78cd9af1671d`.
+   * @retval string Returns just `3e96144b-3ebd-41e4-8a45-78cd9af1671d`.
    */
   public static function unversion($id) {
     return strtok($id, self::SEPARATOR);
@@ -155,7 +155,7 @@ class Text {
   /**
    * @brief Formats the number replacing the thousand separator.
    * @param[in] string $number The input number.
-   * @return string
+   * @retval string
    */
   public static function formatNumber($number) {
     return number_format($number, 0, ",", ".");
@@ -165,7 +165,7 @@ class Text {
   /**
    * @brief Separates the given full name into first name and last name.
    * @param[in] string $fullName A person full name.
-   * @return array An associative array.
+   * @retval array An associative array.
    */
   public static function splitFullName($fullName) {
     $result = [];
@@ -206,7 +206,7 @@ class Text {
   /**
    * @brief Removes unwanted MS Word smart characters from a string.
    * @param[in] string $text The text to be sanitized.
-   * @return string The sanitized text.
+   * @retval string The sanitized text.
    * @warning This function doesn't work with UTF-8 strings.
    */
   public static function sanitize($text) {
@@ -236,7 +236,7 @@ class Text {
    * @brief Converts the given text from HTML to BBCode.
    * @param[in] string $text The text to be sanitized.
    * @param[in] string $id (optional) In case of error, use the given ID in the exception message.
-   * @return string The sanitized text.
+   * @retval string The sanitized text.
    * @warning This function works with UTF-8 strings.
    */
   public static function htmlToBBCode($text, $id = "") {
@@ -249,7 +249,7 @@ class Text {
    * @brief Converts the given text from BBCode to Markdown.
    * @param[in] string $text The text to be sanitized.
    * @param[in] string $id (optional) In case of error, use the given ID in the exception message.
-   * @return string The sanitized text.
+   * @retval string The sanitized text.
    * @warning This function works with UTF-8 strings.
    */
   public static function bbcodeToMarkdown($text, $id = "") {

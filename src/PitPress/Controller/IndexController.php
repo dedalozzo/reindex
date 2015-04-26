@@ -35,7 +35,7 @@ class IndexController extends ListController {
 
   /**
    * @brief Returns a human readable label for the controller.
-   * @return string
+   * @retval string
    */
   protected function getLabel() {
     return 'contributi';
@@ -44,7 +44,7 @@ class IndexController extends ListController {
 
   /**
    * @brief Returns `true` if the caller object is an instance of the class implementing this method, `false` otherwise.
-   * @return bool
+   * @retval bool
    */
   protected function isSameClass() {
     return get_class($this) == get_class();
@@ -54,7 +54,7 @@ class IndexController extends ListController {
   /**
    * @brief Given a tag's name, returns its id.
    * @param[in] string $name The tag's name.
-   * @return string|bool Returns the tag id, or `false` in case the tag doesn't exist.
+   * @retval string|bool Returns the tag id, or `false` in case the tag doesn't exist.
    */
   protected function getTagId($name) {
     $opts = new ViewQueryOpts();
@@ -175,7 +175,7 @@ class IndexController extends ListController {
 
   /**
    * @brief Returns `true` when the called action is a listing action.
-   * @return bool
+   * @retval bool
    */
   protected function isListing() {
     if (!in_array($this->actionName, static::$actions))
@@ -361,8 +361,8 @@ class IndexController extends ListController {
   /**
    * @brief Displays the posts per date.
    * @param[in] int $year An year.
-   * @param[in] int $month A month.
-   * @param[in] int $day A specific day.
+   * @param[in] int $month (optional) A month.
+   * @param[in] int $day (optional) A specific day.
    */
   public function perDateAction($year, $month = NULL, $day = NULL) {
     $opts = new ViewQueryOpts();
@@ -406,8 +406,8 @@ class IndexController extends ListController {
    * @brief Displays the posts per date by tag.
    * @param[in] string $tag The tag name.
    * @param[in] int $year An year.
-   * @param[in] int $month A month.
-   * @param[in] int $day A specific day.
+   * @param[in] int $month (optional) A month.
+   * @param[in] int $day (optional) A specific day.
    */
   public function perDateByTagAction($tag, $year, $month = NULL, $day = NULL) {
     $tagId = $this->getTagId($tag);
@@ -456,7 +456,7 @@ class IndexController extends ListController {
   /**
    * @brief Used by popularAction() and popularByTagAction().
    * @param[in] string $filter Human readable representation of a period.
-   * @param[in] string $unversionTagId An optional unversioned tag ID
+   * @param[in] string $unversionTagId (optional) An optional unversioned tag ID
    */
   protected function popular($filter, $unversionTagId = NULL) {
     $period = $this->getPeriod($filter);
@@ -495,7 +495,7 @@ class IndexController extends ListController {
 
   /**
    * @brief Displays the most popular updates for the provided period (ordered by score).
-   * @param[in] string $filter Human readable representation of a period.
+   * @param[in] string $filter (optional) Human readable representation of a period.
    */
   public function popularAction($filter = NULL) {
     $this->popular($filter);
@@ -505,7 +505,7 @@ class IndexController extends ListController {
   /**
    * @brief Displays the most popular updates by tag, for the provided period (ordered by score).
    * @param[in] string $tag The tag name.
-   * @param[in] string $filter Human readable representation of a period.
+   * @param[in] string $filter (optional) Human readable representation of a period.
    */
   public function popularByTagAction($tag, $filter = NULL) {
     $tagId = $this->getTagId($tag);
@@ -520,7 +520,7 @@ class IndexController extends ListController {
 
   /**
    * @brief Used by activeAction() and activeByTagAction().
-   * @param[in] string $unversionTagId An optional unversioned tag ID
+   * @param[in] string $unversionTagId (optional) An optional unversioned tag ID
    */
   protected function active($unversionTagId = NULL) {
     if ($this->isSameClass())
@@ -632,7 +632,7 @@ class IndexController extends ListController {
 
   /**
    * @brief Displays the user favorites.
-   * @param[in] string $filter Human readable representation of a choice.
+   * @param[in] string $filter (optional) Human readable representation of a choice.
    */
   public function favoriteAction($filter = NULL) {
     // Stores sub-menu definition.
