@@ -29,6 +29,8 @@ abstract class Badge extends Storable {
   /**
    * @brief Creates an instance of the badge.
    * @details This function is used internally.
+   * @param[in] string $userId The user ID.
+   * @param[in] string $resourceId (optional) A resource ID.
    */
   public function __construct($userId, $resourceId = NULL) {
     parent::__construct();
@@ -37,21 +39,21 @@ abstract class Badge extends Storable {
 
   /**
    * @brief Returns the badge's name.
-   * @return string
+   * @retval string
    */
   abstract public function getName();
 
 
   /**
    * @brief Returns a brief description of the badge.
-   * @return string
+   * @retval string
    */
   abstract public function getBrief();
 
 
   /**
    * @brief The badge is made by the returned metal.
-   * @return string
+   * @retval string
    */
   abstract public function getMetal();
 
@@ -68,14 +70,14 @@ abstract class Badge extends Storable {
 
   /**
    * @brief Returns `true` if the badge has been already awarded to the user, `false otherwise.
-   * @return bool
+   * @retval bool
    */
   abstract public function exist();
 
 
   /**
    * @brief Returns `true` if the user deserves this badge, `false otherwise.
-   * @return bool
+   * @retval bool
    */
   abstract public function deserve();
 
