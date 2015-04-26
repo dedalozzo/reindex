@@ -73,7 +73,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
   /**
    * @brief Generates the post slug.
-   * @return string
+   * @retval string
    */
   protected function buildSlug() {
     $title = preg_replace('~[^\\pL\d]+~u', '-', $this->title);
@@ -112,7 +112,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
   /**
    * @brief Returns `true` if the document can be edited, `false` otherwise.
-   * @return bool
+   * @retval bool
    */
   public function canBeEdited() {
     if (($this->user->isAdmin() or ($this->user->isEditor() && !$this->isLocked())) &&
@@ -125,7 +125,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
   /**
    * @brief Returns `true` if the post can be protected, `false` otherwise.
-   * @return bool
+   * @retval bool
    */
   public function canBeProtected() {
     if ($this->isProtected()) return FALSE;
@@ -139,7 +139,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
   /**
    * @brief Returns `true` if the protection can be removed from the post, `false` otherwise.
-   * @return bool
+   * @retval bool
    */
   public function canBeUnprotected() {
     if (!$this->isProtected()) return FALSE;
@@ -154,7 +154,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
   /**
    * @brief Returns `true` if the user can hide or show the post, `false` otherwise.
-   * @return bool
+   * @retval bool
    */
   public function canVisibilityBeChanged() {
     if ($this->user->isAdmin() && ($this->isCurrent() or $this->isDraft()))
@@ -171,7 +171,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
   /**
    * @brief Returns `true` if the post has some kind of protection, `false` otherwise.
-   * @return bool
+   * @retval bool
    */
   public function isProtected() {
     return $this->isMetadataPresent('protected');
@@ -180,7 +180,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
   /**
    * @brief Returns the protection if any.
-   * @return string
+   * @retval string
    */
   public function getProtection() {
     return ($this->isProtected()) ? $this->meta['protection'] : NULL;
@@ -189,7 +189,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
   /**
    * @brief Returns the id of the user who protected the post.
-   * @return string
+   * @retval string
    */
   public function getProtectorId() {
     return ($this->isProtected()) ? $this->meta['protectorId'] : NULL;
@@ -251,7 +251,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
   /**
    * @brief Makes the post to be listed.
-   * @return bool
+   * @retval bool
    */
   public function isVisible() {
     return $this->meta['visible'];
@@ -297,7 +297,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   /**
    * @brief Returns a measure of the time passed since the publishing date. In case is passed more than a day, returns
    * a human readable date.
-   * @return string
+   * @retval string
    */
   public function whenHasBeenPublished() {
     return Helper\Time::when($this->publishedAt);
@@ -306,7 +306,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
   /**
    * @brief Gets the post slug.
-   * @return string
+   * @retval string
    */
   public function getSlug() {
     return $this->meta['slug'];
@@ -315,7 +315,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
   /**
    * @brief Gets the resource permanent link.
-   * @return string
+   * @retval string
    */
   public function getPermalink() {
     return "/".$this->id;
@@ -324,7 +324,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
   /**
    * @brief Gets the post URL.
-   * @return string
+   * @retval string
    */
   public function getHref() {
     return Helper\Url::build($this->publishedAt, $this->getSlug());
@@ -431,7 +431,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
   /**
    * @brief Adds the post last update timestamp to the Redis db.
-   * @param[in] integer $timestamp The timestamp of the post last update.
+   * @param[in] integer $timestamp (optional) The timestamp of the post last update.
    */
   public function zAddLastUpdate($timestamp = NULL) {
     if (!$this->isVisible()) return;
@@ -543,7 +543,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
   /**
    * @brief Resolve the synonyms and returns only unique master tags.
-   * @return array
+   * @retval array
    */
   protected function uniqueMasters() {
     $opts = new ViewQueryOpts();

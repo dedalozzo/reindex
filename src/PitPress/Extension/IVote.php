@@ -35,50 +35,50 @@ interface IVote {
 
   /**
    * @brief Likes a post. Same as voteUp().
-   * @return int The voting status.
+   * @retval int The voting status.
    */
   public function like();
 
 
   /**
    * @brief Vote up a post.
-   * @return int The voting status.
+   * @retval int The voting status.
    */
   public function voteUp();
 
 
   /**
    * @brief Vote down a post.
-   * @return int The voting status.
+   * @retval int The voting status.
    */
   public function voteDown();
 
 
   /**
    * @brief Returns `true` if the user has voted else otherwise.
-   * @param[out] string $voteId The vote ID.
-   * @return bool
+   * @param[out] string $voteId (optional) The vote ID.
+   * @retval bool
    */
   public function didUserVote(&$voteId = NULL);
 
 
   /**
    * @brief Returns the arithmetic sum of each each vote.
-   * @return int
+   * @retval int
    */
   public function getScore();
 
 
   /**
    * @brief Returns the list of users have voted.
-   * @return array An associative array.
+   * @retval array An associative array.
    */
   public function getUsersHaveVoted();
 
 
   /**
    * @brief Returns the timestamp of the last vote casted.
-   * @return int
+   * @retval int
    */
   public function getLastVoteTimestamp();
 

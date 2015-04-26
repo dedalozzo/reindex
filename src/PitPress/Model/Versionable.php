@@ -41,7 +41,7 @@ abstract class Versionable extends Storable {
   /**
    * @brief Returns `true` in case the provided status matches the current version status.
    * @param[in] string $status The status to check.
-   * @return bool
+   * @retval bool
    */
   protected function checkStatus($status) {
     return ($this->meta["status"] === $status) ? TRUE : FALSE;
@@ -50,7 +50,7 @@ abstract class Versionable extends Storable {
 
   /**
    * @brief Returns the version status.
-   * @return string
+   * @retval string
    */
   public function getStatus() {
     return $this->meta["status"];
@@ -59,7 +59,7 @@ abstract class Versionable extends Storable {
 
   /**
    * @brief Returns `true` if this document has just been created, `false` otherwise.
-   * @return bool
+   * @retval bool
    */
   public function isCreated() {
     return $this->checkStatus(DocStatus::CREATED);
@@ -68,7 +68,7 @@ abstract class Versionable extends Storable {
 
   /**
    * @brief Returns `true` if this document is only a draft, `false` otherwise.
-   * @return bool
+   * @retval bool
    */
   public function isDraft() {
     return $this->checkStatus(DocStatus::DRAFT);
@@ -77,7 +77,7 @@ abstract class Versionable extends Storable {
 
   /**
    * @brief Returns `true` if this document revision is the current one, `false` otherwise.
-   * @return bool
+   * @retval bool
    */
   public function isCurrent() {
     return $this->checkStatus(DocStatus::CURRENT);
@@ -86,7 +86,7 @@ abstract class Versionable extends Storable {
 
   /**
    * @brief Returns `true` if this document has been put into the trash, `false` otherwise.
-   * @return bool
+   * @retval bool
    */
   public function isMovedToTrash() {
     return $this->checkStatus(DocStatus::DELETED);
@@ -95,7 +95,7 @@ abstract class Versionable extends Storable {
 
   /**
    * @brief Returns `true` if this document has been submitted for peer review, `false` otherwise.
-   * @return bool
+   * @retval bool
    */
   public function isSubmittedForPeerReview() {
     return $this->checkStatus(DocStatus::SUBMITTED);
@@ -104,7 +104,7 @@ abstract class Versionable extends Storable {
 
   /**
    * @brief Returns `true` if this document revision has been approved, `false` otherwise.
-   * @return bool
+   * @retval bool
    */
   public function isApproved() {
     return $this->checkStatus(DocStatus::APPROVED);
@@ -113,7 +113,7 @@ abstract class Versionable extends Storable {
 
   /**
    * @brief Returns `true` if this document revision has been rejected, `false` otherwise.
-   * @return bool
+   * @retval bool
    */
   public function isRejected() {
     return $this->checkStatus(DocStatus::REJECTED);
@@ -122,7 +122,7 @@ abstract class Versionable extends Storable {
 
   /**
    * @brief Returns `true` if this document has been returned for revision, `false` otherwise.
-   * @return bool
+   * @retval bool
    */
   public function isReturnedForRevision() {
     return $this->checkStatus(DocStatus::RETURNED);
@@ -136,7 +136,7 @@ abstract class Versionable extends Storable {
 
   /**
    * @brief Returns `true` if the document can be submitted for peer review, `false` otherwise.
-   * @return bool
+   * @retval bool
    */
   public function canBeSubmitted() {
     if ($this->isSubmittedForPeerReview()) return FALSE;
@@ -150,7 +150,7 @@ abstract class Versionable extends Storable {
 
   /**
    * @brief Returns `true` if the document can be approved, `false` otherwise.
-   * @return bool
+   * @retval bool
    */
   public function canBeApproved() {
     if ($this->user->isModerator() && ($this->isCreated() or $this->isDraft() or $this->isSubmittedForPeerReview()))
@@ -162,7 +162,7 @@ abstract class Versionable extends Storable {
 
   /**
    * @brief Returns `true` if the user can ask the original author to revise the document, `false` otherwise.
-   * @return bool
+   * @retval bool
    */
   public function canBeReturnedForRevision() {
     if ($this->isReturnedForRevision()) return FALSE;
@@ -177,7 +177,7 @@ abstract class Versionable extends Storable {
 
   /**
    * @brief Returns `true` if the document revision can be rejected, `false` otherwise.
-   * @return bool
+   * @retval bool
    */
   public function canBeRejected() {
     if ($this->user->isModerator() && $this->isSubmittedForPeerReview())
@@ -189,7 +189,7 @@ abstract class Versionable extends Storable {
 
   /**
    * @brief Returns `true` if the document can be reverted to another version, `false` otherwise.
-   * @return bool
+   * @retval bool
    */
   public function canBeReverted() {
     if ($this->user->isModerator())
@@ -201,7 +201,7 @@ abstract class Versionable extends Storable {
 
   /**
    * @brief Returns `true` if the document can be moved to trash, `false` otherwise.
-   * @return bool
+   * @retval bool
    */
   public function canBeMovedToTrash() {
     if ($this->isMovedToTrash()) return FALSE;
@@ -215,7 +215,7 @@ abstract class Versionable extends Storable {
 
   /**
    * @brief Returns `true` if the post can be moved to trash, `false` otherwise.
-   * @return bool
+   * @retval bool
    */
   public function canBeRestored() {
     if ($this->isMovedToTrash() and
@@ -273,7 +273,8 @@ abstract class Versionable extends Storable {
 
   /**
    * @brief Reverts to the specified version.
-   * @param[in] $versionNumber Reverts to the specified version. If a version is not specified it takes the previous one.
+   * @param[in] $versionNumber (optional ) Reverts to the specified version. If a version is not specified it takes the
+   * previous one.
    * @todo Implement the method Versionable.revert().
    */
   public function revert($versionNumber = NULL) {
@@ -304,7 +305,7 @@ abstract class Versionable extends Storable {
 
   /**
    * @brief Gets information about all the previous versions.
-   * @return array
+   * @retval array
    */
   public function getPastVersionsInfo() {
     // todo
@@ -338,7 +339,7 @@ abstract class Versionable extends Storable {
 
   /**
    * @brief Builds the gravatar uri.
-   * @return string
+   * @retval string
    */
   public function getGravatar() {
     $opts = new ViewQueryOpts();

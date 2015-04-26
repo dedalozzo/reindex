@@ -39,7 +39,7 @@ class Time extends TimeHelper {
    * returns a human readable date.
    * @param[in] int $timestamp A timestamp in seconds.
    * @param[in] bool $showTime When `true` returns also the time passed in case of an event occurred in the past.
-   * @return string
+   * @retval string
    */
   public static function when($timestamp, $showTime = TRUE) {
     $today = date('Ymd');
@@ -75,7 +75,7 @@ class Time extends TimeHelper {
    * @param[in] int $periodInTime A period in time.
    * @param[in] string $prefix A string prefix.
    * @param[in] string $postfix A string postfix.
-   * @return string
+   * @retval string
    */
   public static function aWhileBack($periodInTime, $prefix = "", $postfix = "") {
     $date = new \DateTime();
@@ -122,8 +122,8 @@ class Time extends TimeHelper {
    * @param[out] \DateTime $minDate The minimum date in the period.
    * @param[out] \DateTime $maxDate The maximum date in the period.
    * @param[in] string $year An year.
-   * @param[in] string $month A month.
-   * @param[in] string $day A day.
+   * @param[in] string $month (optional) A month.
+   * @param[in] string $day (optional) A day.
    */
   public static function dateLimits(&$minDate, &$maxDate, $year, $month = NULL, $day = NULL) {
     $aDay = (is_null($day)) ? 1 : (int)$day;

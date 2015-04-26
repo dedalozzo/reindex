@@ -45,8 +45,8 @@ abstract class Storable extends Doc {
 
   /**
    * @brief Creates an instance of the class, using the provided ID if any, or generating a new one.
-   * @param[in] string $id The optional ID.
-   * @return object
+   * @param[in] string $id (optional) An optional ID.
+   * @retval object
    */
   public static function create($id = NULL) {
     $instance = new static();
@@ -78,7 +78,7 @@ abstract class Storable extends Doc {
    * @brief Returns `true` if the provided user id matches the current one, `false` otherwise.
    * @details This method is useful to check the ownership of a post, for example.
    * @param[in] string $id The id to match.
-   * @return bool
+   * @retval bool
    */
   public function match($id) {
     return ($this->id === $id) ? TRUE : FALSE;
@@ -88,7 +88,7 @@ abstract class Storable extends Doc {
   /**
    * @brief Returns a measure of the time passed since the creation time. In case is passed more than a day, returns
    * a human readable date.
-   * @return string
+   * @retval string
    */
   public function whenHasBeenCreated() {
     return Helper\Time::when($this->createdAt);
@@ -98,7 +98,7 @@ abstract class Storable extends Doc {
   /**
    * @brief Returns a measure of the time passed since the last modification. In case is passed more than a day, returns
    * a human readable date.
-   * @return string
+   * @retval string
    */
   public function whenHasBeenModified() {
     return Helper\Time::when($this->modifiedAt);
