@@ -61,9 +61,23 @@ class UserController extends ListController {
 
 
   public function initialize() {
+    // Prevents to call the method twice in case of forwarding.
+    if ($this->dispatcher->isFinished() && $this->dispatcher->wasForwarded())
+      return;
+
     parent::initialize();
+
     $this->resultsPerPage = $this->di['config']->application->usersPerPage;
     $this->view->pick('views/user');
+  }
+
+
+  public function afterExecuteRoute() {
+    // Prevents to call the method twice in case of forwarding.
+    if ($this->dispatcher->isFinished() && $this->dispatcher->wasForwarded())
+      return;
+
+    parent::afterExecuteRoute();
   }
 
 

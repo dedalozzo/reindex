@@ -139,11 +139,19 @@ abstract class ListController extends BaseController {
 
 
   public function initialize() {
+    // Prevents to call the method twice in case of forwarding.
+    if ($this->dispatcher->isFinished() && $this->dispatcher->wasForwarded())
+      return;
+
     parent::initialize();
   }
 
 
   public function afterExecuteRoute() {
+    // Prevents to call the method twice in case of forwarding.
+    if ($this->dispatcher->isFinished() && $this->dispatcher->wasForwarded())
+      return;
+
     parent::afterExecuteRoute();
   }
 

@@ -186,13 +186,15 @@ class IndexController extends ListController {
 
 
   public function initialize() {
+    // Prevents to call the method twice in case of forwarding.
+    if ($this->dispatcher->isFinished() && $this->dispatcher->wasForwarded())
+      return;
+
     parent::initialize();
 
     if ($this->isListing()) {
       $this->type = $this->controllerName;
       $this->resultsPerPage = $this->di['config']->application->postsPerPage;
-
-      $this->log->addDebug(sprintf('Type: %s', $this->type));
 
       $this->assets->addJs("/pit-bootstrap/dist/js/tab.min.js", FALSE);
       $this->assets->addJs("/pit-bootstrap/dist/js/list.min.js", FALSE);
@@ -203,6 +205,10 @@ class IndexController extends ListController {
 
 
   public function afterExecuteRoute() {
+    // Prevents to call the method twice in case of forwarding.
+    if ($this->dispatcher->isFinished() && $this->dispatcher->wasForwarded())
+      return;
+
     parent::afterExecuteRoute();
 
     if ($this->isListing()) {
@@ -215,7 +221,10 @@ class IndexController extends ListController {
       $this->view->setVar('questions', $this->getInfo('perDateByType', 'question'));
       $this->view->setVar('articles', $this->getInfo('perDateByType', 'article'));
       $this->view->setVar('books', $this->getInfo('perDateByType', 'book'));
+
+      $this->log->addDebug(sprintf('Type: %s', $this->type));
     }
+
   }
 
 
@@ -727,7 +736,7 @@ class IndexController extends ListController {
         ]);
 
     $post = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $rows[0]['id']);
-    $post->incHits();
+    $post->incHits($post->creatorId);
     //$post->html = $this->markdown->parse($post->body);
 
     $this->view->setVar('post', $post);

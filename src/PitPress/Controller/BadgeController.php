@@ -24,6 +24,10 @@ class BadgeController extends BaseController {
    * @brief Initializes the controller.
    */
   public function initialize() {
+    // Prevents to call the method twice in case of forwarding.
+    if ($this->dispatcher->isFinished() && $this->dispatcher->wasForwarded())
+      return;
+
     $this->badgeLoader = $this->di['badgeLoader'];
 
     parent::initialize();
@@ -31,6 +35,14 @@ class BadgeController extends BaseController {
     $this->view->pick('views/badge');
   }
 
+
+  public function afterExecuteRoute() {
+    // Prevents to call the method twice in case of forwarding.
+    if ($this->dispatcher->isFinished() && $this->dispatcher->wasForwarded())
+      return;
+
+    parent::afterExecuteRoute();
+  }
 
   /**
    * @brief Displays all badges.

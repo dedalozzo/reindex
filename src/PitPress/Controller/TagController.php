@@ -60,13 +60,22 @@ class TagController extends ListController {
 
 
   public function initialize() {
+    // Prevents to call the method twice in case of forwarding.
+    if ($this->dispatcher->isFinished() && $this->dispatcher->wasForwarded())
+      return;
+
     parent::initialize();
+
     $this->resultsPerPage = $this->di['config']->application->tagsPerPage;
     $this->view->pick('views/tag');
   }
 
 
   public function afterExecuteRoute() {
+    // Prevents to call the method twice in case of forwarding.
+    if ($this->dispatcher->isFinished() && $this->dispatcher->wasForwarded())
+      return;
+
     parent::afterExecuteRoute();
   }
 
