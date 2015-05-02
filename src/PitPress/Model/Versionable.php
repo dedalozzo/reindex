@@ -219,7 +219,7 @@ abstract class Versionable extends Storable {
    */
   public function canBeRestored() {
     if ($this->isMovedToTrash() and
-      ($this->user->isModerator() && ($this->trashmanId == $this->user->id)) or
+      ($this->user->isModerator() && ($this->dustmanId == $this->user->id)) or
       $this->user->isAdmin())
       return TRUE;
     else
@@ -289,6 +289,7 @@ abstract class Versionable extends Storable {
     $this->meta['prevStatus'] = $this->meta['status'];
     $this->meta['status'] = DocStatus::DELETED;
     $this->meta['dustmanId'] = $this->user->id;
+    $this->meta['deletedAt'] = time();
   }
 
 
@@ -300,6 +301,7 @@ abstract class Versionable extends Storable {
     $this->meta['status'] = $this->meta['prevStatus'];
     unset($this->meta['prevStatus']);
     unset($this->meta['dustmanId']);
+    unset($this->meta['deletedAt']);
   }
 
 
@@ -438,6 +440,16 @@ abstract class Versionable extends Storable {
 
   public function issetDustmanId() {
     return isset($this->meta['dustmanId']);
+  }
+
+
+  public function getDeletedAt() {
+    return $this->meta['deletedAt'];
+  }
+
+
+  public function issetDeletedAt() {
+    return isset($this->meta['deletedAt']);
   }
 
 
