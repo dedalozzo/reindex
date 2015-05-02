@@ -127,7 +127,7 @@ MAP;
     function postsByUrl() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->status == 'current')
+  if (isset($doc->supertype) && $doc->supertype == 'post' && ($doc->status == 'current' or $doc->status == 'deleted'))
     $emit([$doc->year, $doc->month, $doc->day, $doc->slug]);
 };
 MAP;
