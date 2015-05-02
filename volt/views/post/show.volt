@@ -9,7 +9,7 @@
   {% set score = post.getScore() %}
   {% set repliesCount = post.getRepliesCount() %}
 
-  <div id="page-title"><button class="btn btn-star {% if post.isStarred(user) %} active{% endif %}" title="aggiungi ai preferiti"><i class="icon-star icon-largest"></i></button> {{ post.title }}</div>
+  <div id="page-title"><button class="btn btn-star {% if post.isStarred() %} active{% endif %}" title="aggiungi ai preferiti"><i class="icon-star icon-largest"></i></button> {{ post.title }}</div>
   <hr class="fade-long">
   <div class="column-left">
 
@@ -17,6 +17,12 @@
       <section class="item-content">
         <ul class="list item-info">
           <li>{{ post.isApproved() ? post.whenHasBeenPublished() : post.whenHasBeenCreated() }}</li>
+          <li>
+            <i class="icon-facebook"></i>&nbsp;0&nbsp;&nbsp;
+            <i class="icon-twitter"></i>&nbsp;0&nbsp;&nbsp;
+            <i class="icon-google-plus"></i>&nbsp;0&nbsp;&nbsp;
+            <i class="icon-mail-forward"></i>&nbsp;0
+          </li>
           <li>
             {{ hitsCount }}&nbsp;&nbsp;
             <i class="icon-thumbs-up"></i>&nbsp;{{ score }}&nbsp;&nbsp;
@@ -68,10 +74,10 @@
           </section>
         </div>
         <ul class="list item-buttons gutter">
-          <li><button class="btn btn-like {% if post.didUserVote(user) %} active{% endif %}" title="mi piace"><i class="icon-thumbs-up icon-largest"></i></button></li>
+          <li><button class="btn btn-like {% if post.didUserVote() %} active{% endif %}" title="mi piace"><i class="icon-thumbs-up icon-largest"></i></button></li>
           <li><button class="btn btn-link score">{{ score }}</button></li>
           <li class="space"></li>
-          <li><button class="btn btn-star {% if post.isStarred(user) %} active{% endif %}" title="aggiungi ai preferiti"><i class="icon-star icon-large"></i></button></li>
+          <li><button class="btn btn-star {% if post.isStarred() %} active{% endif %}" title="aggiungi ai preferiti"><i class="icon-star icon-large"></i></button></li>
           <li>
             <button class="btn btn-icon blue" title="condividi la domanda" data-dropdown="#dropdown-share"><i class="icon-share icon-large"></i></button>
             <div id="dropdown-share" class="dropdown dropdown-relative dropdown-tip">
@@ -91,35 +97,8 @@
           {% endif %}
           {% if user.isModerator() %}
           <li>
-            <button class="btn btn-icon orange" title="strumenti di amministrazione" data-dropdown="#dropdown-moderator"><i class="icon-gear icon-large"></i></button>
+            <button id="b-admin" class="btn btn-icon orange" title="strumenti di amministrazione" data-dropdown="#dropdown-moderator"><i class="icon-gear icon-large"></i></button>
             <div id="dropdown-moderator" class="dropdown dropdown-relative dropdown-anchor-right dropdown-tip">
-              <ul class="dropdown-menu">
-                {% if post.canBeProtected() %}
-                <li><button title="impedisci che vengono aggiunte ulteriori risposte alla domanda"><i class="icon-lock"></i>Chiudi</button></li>
-                <li><button title="proteggi la domanda da eventuali modifiche"><i class="icon-umbrella"></i>Proteggi</button></li>
-                {% elseif post.canBeUnprotected() %}
-                  {% if post.isClosed() %}
-                <li><button title="riapri"><i class="icon-unlock"></i>Apri</button></li>
-                  {% elseif post.isLocked() %}
-                <li><button title="sproteggi"><i class="icon-sun"></i>Sproteggi</button></li>
-                  {% endif %}
-                {% endif %}
-                {% if post.canVisibilityBeChanged() %}
-                  {% if post.isVisible() %}
-                <li><button title="nascondi"><i class="icon-eye-close"></i>Nascondi</button></li>
-                  {% else %}
-                <li><button title="mostra"><i class="icon-eye-open"></i>Mostra</button></li>
-                  {% endif %}
-                {% endif %}
-                {% if post.canBeMovedToTrash() or post.canBeRestored() %}
-                <li class="dropdown-divider"></li>
-                  {% if post.isMovedToTrash() %}
-                <li><button title="elimina la domanda"><i class="icon-undo"></i>Recupera dal cestino</button></li>
-                  {% else %}
-                <li><button title="elimina la domanda"><i class="icon-trash"></i>Butta nel cestino</button></li>
-                  {% endif %}
-                {% endif %}
-              </ul>
             </div>
           </li>
           {% endif %}
@@ -168,7 +147,7 @@
         </section>
       </div>
       <ul class="list item-buttons gutter">
-        <li><button class="btn btn-like {% if reply.didUserVote(user) %} active {% endif %} red" title="la risposta mi piace"><i class="icon-thumbs-up icon-largest"></i></button></li>
+        <li><button class="btn btn-like {% if reply.didUserVote() %} active {% endif %} red" title="la risposta mi piace"><i class="icon-thumbs-up icon-largest"></i></button></li>
         <li><button class="btn btn-link score">{{ reply.getScore() }}</button></li>
         <li><button class="btn btn-accept" title="accetta la risposta"><i class="icon-ok icon-largest"></i></button></li>
         <li class="space"></li>
