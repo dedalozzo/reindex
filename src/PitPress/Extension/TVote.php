@@ -45,7 +45,7 @@ trait TVote {
       $vote = $this->couch->getDoc(Couch::STD_DOC_PATH, $voteId);
 
       // Calculates difference in seconds.
-      $seconds = time() - $vote->getTimestamp();
+      $seconds = time() - $vote->modifiedAt;
 
       $votingGracePeriod = $this->di['config']['application']['votingGracePeriod'];
 
@@ -61,7 +61,7 @@ trait TVote {
           return IVote::DELETED;
         }
         else {
-          $vote->setValue($value);
+          $vote->value = $value;
           $vote->save();
           return IVote::REPLACED;
         }
@@ -71,7 +71,10 @@ trait TVote {
         throw new Exception\GracePeriodExpiredException("Non puoi cambiare il tuo voto perché è trascorso il tempo massimo.");
     }
     else {
-      $vote = Vote::create(Text::unversion($this->id), $this->user->id, $value);
+      $vote = Vote::create();
+      $vote->itemId = Text::unversion($this->id);
+      $vote->userId = $this->user->id;
+      $vote->value = $value;
       $vote->save();
       return IVote::REGISTERED;
     }
