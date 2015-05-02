@@ -38,6 +38,7 @@ $di->setShared('router',
     $router->mount(new Route\UserGroup());
 
     $router->mount(new Route\AuthGroup());
+    $router->mount(new Route\ApiGroup());
     $router->mount(new Route\AjaxGroup());
     $router->mount(new Route\PostGroup());
     $router->mount(new Route\ProfileGroup());
