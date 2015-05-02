@@ -15,8 +15,7 @@ use Whoops\Handler\PrettyPageHandler;
 
 use Monolog\Logger;
 use Monolog\ErrorHandler;
-use Monolog\Handler\SyslogHandler;
-use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\StreamHandler;
 
 
 $start = microtime(true);
@@ -35,24 +34,13 @@ $whoops->register();
 // Reads the application's configuration.
 $config = new IniReader($root.'/config.ini');
 
-//$logger = new FileAdapter($root."/log/pit-press.log");
 $log = new Logger('pit-press');
 
 // Registers the Monolog error handler to log errors and exceptions.
 ErrorHandler::register($log);
 
 // Creates a stream handler to log debugging messages.
-$log = new Logger('pit-press');
-
-// Registers the Monolog error handler to log errors and exceptions.
-ErrorHandler::register($log);
-
-$syslog = new SyslogHandler('pit-press', LOG_USER, Logger::DEBUG);
-$formatter = new LineFormatter("%channel%.%level_name%: %message% %extra%");
-$syslog->setFormatter($formatter);
-
-// Creates a Syslog handler to log debugging messages.
-$log->pushHandler($syslog);
+$log->pushHandler(new StreamHandler($root.'/'.$config->application->logDir."pitpress.log", Logger::DEBUG));
 
 // The FactoryDefault Dependency Injector automatically registers the right services providing a full stack framework.
 $di = new DependencyInjector();
