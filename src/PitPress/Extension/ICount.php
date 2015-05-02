@@ -30,9 +30,12 @@ interface ICount {
 
   /**
    * @brief Increments the times the item has been viewed.
+   * @details You can avoid to increment the counter checking if the current user is also the item creator. This is done
+   * through the parameter `$userId`.
+   * @param[in] string $userId Used to compare with the current user ID.
    * @retval int The number of hits.
    */
-  public function incHits();
+  public function incHits($userId = NULL);
 
   //!@}
 
