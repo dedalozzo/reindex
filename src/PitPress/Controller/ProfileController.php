@@ -38,7 +38,7 @@ class ProfileController extends ListController {
     if ($result->isEmpty()) return NULL;
 
     $user = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $result[0]['value']);
-    $user->incHits();
+    $user->incHits($this->user->id);
 
     $this->view->setVar('profile', $user);
 
@@ -47,12 +47,21 @@ class ProfileController extends ListController {
 
 
   public function initialize() {
+    // Prevents to call the method twice in case of forwarding.
+    if ($this->dispatcher->isFinished() && $this->dispatcher->wasForwarded())
+      return;
+
     parent::initialize();
+
     $this->resultsPerPage = $this->di['config']->application->postsPerPage;
   }
 
 
   public function afterExecuteRoute() {
+    // Prevents to call the method twice in case of forwarding.
+    if ($this->dispatcher->isFinished() && $this->dispatcher->wasForwarded())
+      return;
+
     parent::afterExecuteRoute();
 
     $this->view->pick('views/profile');
