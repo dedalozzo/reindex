@@ -12,36 +12,18 @@ namespace PitPress\Model\Accessory;
 
 
 use PitPress\Model\Storable;
-use PitPress\Extension\ISubject;
-use PitPress\Extension\TSubject;
+//use PitPress\Extension\ISubject;
+//use PitPress\Extension\TSubject;
 
 
 /**
  * @brief This class is used to keep trace of the user votes.
  * @nosubgrouping
  */
-class Vote extends Storable implements ISubject {
-  use TSubject
+class Vote extends Storable { //implements ISubject {
+  //use TSubject
 
-
-  /**
-   * @brief Creates an instance of Vote class.
-   * @param[in] $itemId The item identifier.
-   * @param[in] $userId The identifier of the user who has voted.
-   * @param[in] $value The value of the vote.
-   * @retval Vote
-   */
-  public static function create($itemId, $userId, $value) {
-    $instance = new self();
-
-    $instance->meta["itemId"] = $itemId;
-    $instance->meta["userId"] = $userId;
-    $instance->setValue($value);
-
-    return $instance;
-  }
-
-
+/*
   public function load() {
 
   }
@@ -49,29 +31,73 @@ class Vote extends Storable implements ISubject {
 
   public function save() {
     parent::save();
-    $this->notify();
+    //$this->notify();
   }
+*/
 
 
   //! @cond HIDDEN_SYMBOLS
 
   public function getItemId() {
-    return $this->meta["itemId"];
+    return $this->meta['itemId'];
+  }
+
+
+  public function issetItemId() {
+    return isset($this->meta['itemId']);
+  }
+
+
+  public function setItemId($value) {
+    $this->meta['itemId'] = $value;
+  }
+
+
+  public function unsetItemId() {
+    if ($this->isMetadataPresent('itemId'))
+      unset($this->meta['itemId']);
   }
 
 
   public function getUserId() {
-    return $this->meta["userid"];
+    return $this->meta['userId'];
+  }
+
+
+  public function issetUserId() {
+    return isset($this->meta['userId']);
+  }
+
+
+  public function setUserId($value) {
+    $this->meta['userId'] = $value;
+  }
+
+
+  public function unsetUserId() {
+    if ($this->isMetadataPresent('userId'))
+      unset($this->meta['userId']);
   }
 
 
   public function getValue() {
-    return $this->meta["value"];
+    return $this->meta['value'];
+  }
+
+
+  public function issetValue() {
+    return isset($this->meta['value']);
   }
 
 
   public function setValue($value) {
-    $this->meta["value"] = $value;
+    $this->meta['value'] = $value;
+  }
+
+
+  public function unsetValue() {
+    if ($this->isMetadataPresent('value'))
+      unset($this->meta['value']);
   }
 
   //! @endcond
