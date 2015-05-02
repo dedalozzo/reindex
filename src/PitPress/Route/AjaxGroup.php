@@ -29,12 +29,13 @@ class AjaxGroup extends Group {
         'controller' => 'ajax'
       ]);
 
-    $this->setHostName('api.'.DI::getDefault()['config']['application']['domainName']);
+    $this->setHostName(DI::getDefault()['config']['application']['domainName']);
 
     $this->addPost('/like/', ['action' => 'like']);
-    $this->addPost('/star/', ['action' => 'star']);
-    $this->addPost('/move-to-trash/', ['action' => 'moveToTrash']);
-    $this->addPost('/restore/', ['action' => 'restore']);
+
+    $this->setPrefix('/ajax');
+
+    $this->addPost('/moderator-menu/', ['action' => 'moderatorMenu']);
   }
 
 }
