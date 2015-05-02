@@ -131,6 +131,7 @@ abstract class BaseController extends Controller {
     $this->actionName = $this->dispatcher->getActionName();
 
     // Includes the common assets.
+    // Remember to never include the assets in the `afterExecuteRoute()` method!
     $this->assets->addCss("/pit-bootstrap/dist/css/pit.css", FALSE);
     $this->assets->addJs("//cdnjs.cloudflare.com/ajax/libs/jquery/".$this->di['config']['assets']['jQueryVersion']."/jquery.min.js", FALSE);
     $this->assets->addJs("/pit-bootstrap/dist/js/dropdown.min.js", FALSE);
