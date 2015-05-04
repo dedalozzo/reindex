@@ -174,7 +174,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @retval bool
    */
   public function isProtected() {
-    return $this->isMetadataPresent('protected');
+    return $this->isMetadataPresent('protection');
   }
 
 
