@@ -117,6 +117,51 @@ class ApiController extends BaseController {
 
 
   /**
+   * @brief Submits a versionable document.
+   * @retval int
+   */
+  public function submitAction() {
+
+  }
+
+
+  /**
+   * @brief Approves a versionable document.
+   * @retval int
+   */
+  public function approveAction() {
+
+  }
+
+
+  /**
+   * @brief Returns for revision a versionable document.
+   * @retval int
+   */
+  public function returnForRevisionAction() {
+
+  }
+
+
+  /**
+   * @brief Rejects a versionable document.
+   * @retval int
+   */
+  public function rejectAction() {
+
+  }
+
+
+  /**
+   * @brief Reverts a versionable document.
+   * @retval int
+   */
+  public function revertAction() {
+
+  }
+
+
+  /**
    * @brief Moves the document to trash.
    * @retval int
    */
@@ -156,6 +201,150 @@ class ApiController extends BaseController {
           $doc->restore();
           $doc->save();
           echo json_encode([TRUE]);
+          $this->view->disable();
+        }
+        else
+          throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
+      }
+      else
+        throw new \RuntimeException("La risorsa non è più disponibile.");
+    }
+    catch (\Exception $e) {
+      echo json_encode([FALSE, $e->getMessage()]);
+    }
+  }
+
+
+  /**
+   * @brief Mark as draft a versionable document.
+   * @retval int
+   */
+  public function markAsDraftAction() {
+
+  }
+
+
+  /**
+   * @brief Closes the post.
+   * @retval int
+   */
+  public function closeAction() {
+    try {
+      if ($this->request->hasPost('id')) {
+        $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
+
+        if ($doc->canBeProtected()) {
+          $doc->close();
+          $doc->save();
+          echo json_encode([TRUE, $this->user->username, time()]);
+          $this->view->disable();
+        }
+        else
+          throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
+      }
+      else
+        throw new \RuntimeException("La risorsa non è più disponibile.");
+    }
+    catch (\Exception $e) {
+      echo json_encode([FALSE, $e->getMessage()]);
+    }
+  }
+
+
+  /**
+   * @brief Locks the post.
+   * @retval int
+   */
+  public function lockAction() {
+    try {
+      if ($this->request->hasPost('id')) {
+        $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
+
+        if ($doc->canBeProtected()) {
+          $doc->lock();
+          $doc->save();
+          echo json_encode([TRUE, $this->user->username, time()]);
+          $this->view->disable();
+        }
+        else
+          throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
+      }
+      else
+        throw new \RuntimeException("La risorsa non è più disponibile.");
+    }
+    catch (\Exception $e) {
+      echo json_encode([FALSE, $e->getMessage()]);
+    }
+  }
+
+
+  /**
+   * @brief Unprotects the post.
+   * @retval int
+   */
+  public function unprotectAction() {
+    try {
+      if ($this->request->hasPost('id')) {
+        $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
+
+        if ($doc->canBeUnprotected()) {
+          $doc->unprotect();
+          $doc->save();
+          echo json_encode([TRUE, $this->user->username, time()]);
+          $this->view->disable();
+        }
+        else
+          throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
+      }
+      else
+        throw new \RuntimeException("La risorsa non è più disponibile.");
+    }
+    catch (\Exception $e) {
+      echo json_encode([FALSE, $e->getMessage()]);
+    }
+  }
+
+
+  /**
+   * @brief Hides the post.
+   * @retval int
+   */
+  public function hideAction() {
+    try {
+      if ($this->request->hasPost('id')) {
+        $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
+
+        if ($doc->canVisibilityBeChanged()) {
+          $doc->hide();
+          $doc->save();
+          echo json_encode([TRUE, $this->user->username, time()]);
+          $this->view->disable();
+        }
+        else
+          throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
+      }
+      else
+        throw new \RuntimeException("La risorsa non è più disponibile.");
+    }
+    catch (\Exception $e) {
+      echo json_encode([FALSE, $e->getMessage()]);
+    }
+  }
+
+
+  /**
+   * @brief Shows the post.
+   * @retval int
+   */
+  public function showAction() {
+    try {
+      if ($this->request->hasPost('id')) {
+        $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
+
+        if ($doc->canVisibilityBeChanged()) {
+          $doc->show();
+          $doc->save();
+          echo json_encode([TRUE, $this->user->username, time()]);
           $this->view->disable();
         }
         else
