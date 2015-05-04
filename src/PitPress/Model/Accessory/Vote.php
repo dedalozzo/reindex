@@ -27,13 +27,12 @@ class Vote extends Storable { //implements ISubject {
   public function load() {
 
   }
-
+*/
 
   public function save() {
     parent::save();
     //$this->notify();
   }
-*/
 
 
   //! @cond HIDDEN_SYMBOLS
