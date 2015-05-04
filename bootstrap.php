@@ -1,9 +1,11 @@
 <?php
 
-//! @file bootstrap.php
-//! @brief Initializes the application.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file bootstrap.php
+ * @brief Initializes the application.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 use Phalcon\Config\Adapter\Ini as IniReader;
