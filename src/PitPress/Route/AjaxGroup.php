@@ -31,8 +31,6 @@ class AjaxGroup extends Group {
 
     $this->setHostName(DI::getDefault()['config']['application']['domainName']);
 
-    $this->addPost('/like/', ['action' => 'like']);
-
     $this->setPrefix('/ajax');
 
     $this->addPost('/moderator-menu/', ['action' => 'moderatorMenu']);
