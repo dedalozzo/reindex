@@ -18,7 +18,10 @@
     <hr class="fade-long">
 
     <div class="welcome">
-      <img src="//{{ serverName }}/pit-bootstrap/dist/img/404.jpg" width="530" height="261">
+      <div class="wrap">
+        <img src="//{{ serverName }}/pit-bootstrap/dist/img/languages.jpg" width="530" height="261">
+        <div class="error"><span>404</span></div>
+      </div>
       <p>
         La pagina richiesta non è disponibile. Il link che hai seguito non è funzionante o la pagina è stata rimossa.
       </p>
