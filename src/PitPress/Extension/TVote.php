@@ -62,6 +62,7 @@ trait TVote {
         }
         else {
           $vote->value = $value;
+          //$this->couch->saveDoc(Couch::STD_DOC_PATH, $vote);
           $vote->save();
           return IVote::REPLACED;
         }
@@ -72,10 +73,12 @@ trait TVote {
     }
     else {
       $vote = Vote::create();
+      //$vote = new Vote();
       $vote->itemId = Text::unversion($this->id);
       $vote->userId = $this->user->id;
       $vote->value = $value;
       $vote->save();
+      //$this->couch->saveDoc(Couch::STD_DOC_PATH, $vote);
       return IVote::REGISTERED;
     }
   }
