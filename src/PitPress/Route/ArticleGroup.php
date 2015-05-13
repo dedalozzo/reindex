@@ -1,9 +1,11 @@
 <?php
 
-//! @file ArticleGroup.php
-//! @brief This file contains the ArticleGroup class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file ArticleGroup.php
+ * @brief This file contains the ArticleGroup class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Route;

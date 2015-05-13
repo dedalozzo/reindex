@@ -157,8 +157,8 @@ abstract class BaseController extends Controller {
     $this->view->setVar('controllerName', $this->controllerName);
     $this->view->setVar('actionName', $this->actionName);
 
-    $this->log->addDebug(sprintf("Controller: %s", $this->dispatcher->getControllerName()));
-    $this->log->addDebug(sprintf("Action: %s", $this->dispatcher->getActionName()));
+    //$this->log->addDebug(sprintf("Controller: %s", $this->dispatcher->getControllerName()));
+    //$this->log->addDebug(sprintf("Action: %s", $this->dispatcher->getActionName()));
   }
 
 

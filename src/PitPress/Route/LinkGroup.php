@@ -1,9 +1,11 @@
 <?php
 
-//! @file LinkGroup.php
-//! @brief This file contains the LinkGroup class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file LinkGroup.php
+ * @brief This file contains the LinkGroup class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Route;

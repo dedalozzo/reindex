@@ -1,9 +1,11 @@
 <?php
 
-//! @file LinkController.php
-//! @brief This file contains the LinkController class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file LinkController.php
+ * @brief This file contains the LinkController class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Controller;

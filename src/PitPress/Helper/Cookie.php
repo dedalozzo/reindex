@@ -1,9 +1,11 @@
 <?php
 
-//! @file Cookie.php
-//! @brief This file contains the Cookie class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file Cookie.php
+ * @brief This file contains the Cookie class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Helper;

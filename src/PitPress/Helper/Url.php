@@ -1,9 +1,11 @@
 <?php
 
-//! @file Url.php
-//! @brief This file contains the Url class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file Url.php
+ * @brief This file contains the Url class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Helper;

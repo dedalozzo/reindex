@@ -1,9 +1,11 @@
 <?php
 
-//! @file BookGroup.php
-//! @brief This file contains the BookGroup class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file BookGroup.php
+ * @brief This file contains the BookGroup class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace PitPress\Route;
