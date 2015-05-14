@@ -20,10 +20,10 @@
     <div class="welcome">
       <div class="wrap">
         <img src="//{{ serverName }}/pit-bootstrap/dist/img/languages.jpg" width="530" height="261">
-        <div class="error"><span>404</span></div>
+        <div class="error"><span>{{ code }}</span></div>
       </div>
       <p>
-        La pagina richiesta non è disponibile. Il link che hai seguito non è funzionante o la pagina è stata rimossa.
+        {{ message }}
       </p>
     </div>
 
@@ -36,7 +36,7 @@
     <aside class="prompt gutter">
       <p>
         <span class="at">{{ username }}@pit</span>:<span class="tilde">~</span>$&nbsp;{{ method }}&nbsp;{{ url }}<br>
-        <span class="at">{{ username }}@pit</span>:<span class="tilde">~</span>$&nbsp;Errore&nbsp;404&nbsp;(Pagina&nbsp;non&nbsp;trovata)<br>
+        <span class="at">{{ username }}@pit</span>:<span class="tilde">~</span>$&nbsp;Errore&nbsp;{{ code }}&nbsp;({{ title }})<br>
         <span class="at">{{ username }}@pit</span>:<span class="tilde">~</span>$&nbsp;<blink>&#95</blink>
       </p>
     </aside>
