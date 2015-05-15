@@ -12,12 +12,14 @@ use Phalcon\Config\Adapter\Ini as IniReader;
 use Phalcon\DI\FactoryDefault as DependencyInjector;
 use Phalcon\Mvc\Application as Application;
 
-use Whoops\Run;
-use Whoops\Handler\PrettyPageHandler;
+//use Whoops\Run;
+//use Whoops\Handler\PrettyPageHandler;
 
 use Monolog\Logger;
 use Monolog\ErrorHandler;
 use Monolog\Handler\StreamHandler;
+
+use PitPress\Handler\ErrorHandler as PitPressErrorHandler;
 
 
 $start = microtime(true);
@@ -29,9 +31,9 @@ $root = __DIR__;
 // Initializes the Composer autoloading system. (Note: We don't use the Phalcon loader.)
 require $root."/vendor/autoload.php";
 
-$whoops = new Run();
-$whoops->pushHandler(new PrettyPageHandler());
-$whoops->register();
+//$whoops = new Run();
+//$whoops->pushHandler(new PrettyPageHandler());
+//$whoops->register();
 
 // Reads the application's configuration.
 $config = new IniReader($root.'/config.ini');
@@ -64,6 +66,8 @@ require $root . "/services/flash.php";
 require $root . "/services/guardian.php";
 require $root . "/services/badgeloader.php";
 
+// Must be done after the dispatcher creation.
+$log->pushHandler(new PitPressErrorHandler());
 
 /*
 // USE THE FOLLOWING CODE FOR DEBUG PURPOSE ONLY
