@@ -13,6 +13,7 @@ namespace PitPress\Console\Command;
 
 
 use Phalcon\DI\InjectionAwareInterface;
+use Phalcon\DiInterface;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Application;
@@ -56,8 +57,9 @@ abstract class AbstractCommand extends Command implements InjectionAwareInterfac
 
   /**
    * @brief Overrides this method to set the Dependency Injector.
+   * @param[in] Symfony::Component::Console::Application $application Symfony console application instance.
    */
-  public function setApplication(Application $application = null) {
+  public function setApplication(Application $application = NULL) {
     parent::setApplication($application);
 
     if ($application)
@@ -67,8 +69,9 @@ abstract class AbstractCommand extends Command implements InjectionAwareInterfac
 
   /**
    * @brief Sets the Dependency Injector.
+   * @param[in] Phalcon::DiInterface $di Phalcon Dependency Injection Interface
    */
-  public function setDi($di) {
+  public function setDi(DiInterface $di) {
     $this->di = $di;
     $this->log = $this->di['log'];
   }
@@ -76,6 +79,7 @@ abstract class AbstractCommand extends Command implements InjectionAwareInterfac
 
   /**
    * @brief Gets the Dependency Injector.
+   * @retval Phalcon::DiInterface
    */
   public function getDi() {
     return $this->di;
