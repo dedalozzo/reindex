@@ -221,6 +221,32 @@ class User extends Storable implements IUser, Extension\ICount {
 
 
   /**
+   * @brief Grants the developer privileges.
+   * @attention Only the System user can grant the administrator privileges.
+   */
+  public function grantDeveloper() {
+    if ($this->user instanceof System)
+      $this->meta['developer'] = TRUE;
+    else
+      throw new Exception\NotEnoughPrivilegesException("I privilegi di sviluppatore possono essere assegnati dall'utente di sistema.");
+  }
+
+
+  /**
+   * @brief Revokes the developer privileges.
+   * @attention Only the System user can revoke the administrator privileges.
+   */
+  public function revokeDeveloper() {
+    if ($this->user instanceof System) {
+      if ($this->isMetadataPresent('developer'))
+        unset($this->meta['developer']);
+    }
+    else
+      throw new Exception\NotEnoughPrivilegesException("I privilegi di sviluppatore possono essere revocati dall'utente di sistema.");
+  }
+
+
+  /**
    * @brief Grants the moderator privileges.
    * @attention Only an admin can grant the moderator privileges (or System of course).
    */
@@ -284,6 +310,7 @@ class User extends Storable implements IUser, Extension\ICount {
    * @brief Revokes all privileges.
    */
   public function revokeAll() {
+    $this->revokeDeveloper();
     $this->revokeAdmin();
     $this->revokeModerator();
     $this->revokeReviewer();
@@ -310,10 +337,18 @@ class User extends Storable implements IUser, Extension\ICount {
 
 
   /**
+   * @copydoc IUser::isDeveloper()
+   */
+  public function isDeveloper() {
+    return isset($this->meta['developer']);
+  }
+
+
+  /**
    * @copydoc IUser::isAdmin()
    */
   public function isAdmin() {
-    return isset($this->meta['admin']);
+    return $this->isDeveloper() or isset($this->meta['admin']);
   }
 
 
