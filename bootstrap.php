@@ -69,7 +69,7 @@ require $root . "/services/flash.php";
 require $root . "/services/guardian.php";
 require $root . "/services/badgeloader.php";
 
-// Must be done after the dispatcher creation.
+// Must be done after the services' initialization.
 if ($config->application->debug && $di['guardian']->getUser()->isDeveloper())
   $log->pushHandler(new WhoopsHandler(new PrettyPageHandler(), Logger::ERROR, TRUE));
   //(new Phalcon\Debug)->listen(); // Eventually we can use Phalcon debugger.
