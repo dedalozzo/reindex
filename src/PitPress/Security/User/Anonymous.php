@@ -58,6 +58,15 @@ class Anonymous implements IUser {
    * @brief This implementation returns always `false`.
    * @retval bool
    */
+  public function isDeveloper() {
+    return FALSE;
+  }
+
+
+  /**
+   * @brief This implementation returns always `false`.
+   * @retval bool
+   */
   public function isModerator() {
     return FALSE;
   }

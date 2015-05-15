@@ -48,6 +48,14 @@ interface IUser {
 
 
   /**
+   * @brief Returns `true` in case the user is a developer.
+   * @retval bool
+   */
+  function isDeveloper();
+
+
+
+  /**
    * @brief Returns `true` in case the user is a moderator.
    * @retval bool
    */
