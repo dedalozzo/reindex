@@ -12,12 +12,12 @@ use Phalcon\Config\Adapter\Ini as IniReader;
 use Phalcon\DI\FactoryDefault as DependencyInjector;
 use Phalcon\Mvc\Application as Application;
 
-//use Whoops\Run;
-//use Whoops\Handler\PrettyPageHandler;
-
 use Monolog\Logger;
 use Monolog\ErrorHandler;
 use Monolog\Handler\StreamHandler;
+
+use Whoops\Handler\PrettyPageHandler;
+use Graze\Monolog\Handler\WhoopsHandler;
 
 use PitPress\Handler\ErrorHandler as PitPressErrorHandler;
 
@@ -31,10 +31,6 @@ $root = __DIR__;
 // Initializes the Composer autoloading system. (Note: We don't use the Phalcon loader.)
 require $root."/vendor/autoload.php";
 
-//$whoops = new Run();
-//$whoops->pushHandler(new PrettyPageHandler());
-//$whoops->register();
-
 // Reads the application's configuration.
 $config = new IniReader($root.'/config.ini');
 
@@ -44,7 +40,14 @@ $log = new Logger('pit-press');
 ErrorHandler::register($log);
 
 // Creates a stream handler to log debugging messages.
-$log->pushHandler(new StreamHandler($root.'/'.$config->application->logDir."pitpress.log", Logger::DEBUG));
+$handler = new StreamHandler($root.'/'.$config->application->logDir."pitpress.log", Logger::DEBUG);
+//$handler->pushProcessor(new MemoryUsageProcessor());
+//$handler->pushProcessor(new MemoryPeakUsageProcessor());
+//$handler->pushProcessor(new UidProcessor());
+//$handler->pushProcessor(new ProcessIdProcessor());
+//$handler->pushProcessor(new WebProcessor());
+//$handler->pushProcessor(new IntrospectionProcessor());
+$log->pushHandler($handler);
 
 // The FactoryDefault Dependency Injector automatically registers the right services providing a full stack framework.
 $di = new DependencyInjector();
@@ -67,7 +70,11 @@ require $root . "/services/guardian.php";
 require $root . "/services/badgeloader.php";
 
 // Must be done after the dispatcher creation.
-$log->pushHandler(new PitPressErrorHandler());
+if ($config->application->debug && $di['guardian']->getUser()->isDeveloper())
+  $log->pushHandler(new WhoopsHandler(new PrettyPageHandler(), Logger::ERROR, TRUE));
+  //(new Phalcon\Debug)->listen(); // Eventually we can use Phalcon debugger.
+else
+  $log->pushHandler(new PitPressErrorHandler());
 
 /*
 // USE THE FOLLOWING CODE FOR DEBUG PURPOSE ONLY
