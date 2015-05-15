@@ -121,7 +121,7 @@ class BadgeController extends BaseController {
    * @param[in] string $filter (optional) The filter typology.
    */
   public function byTagAction($filter = NULL) {
-    return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+    return $this->dispatcher->forward(['controller' => 'error', 'action' => 'basic']);
     // Stores the typology sub-menu definition.
     //protected static $typologySubMenu = ['bronzo', 'argento', 'oro', 'tutti'];
 

@@ -87,7 +87,7 @@ class UserController extends ListController {
    */
   public function reputationAction($filter = NULL) {
     $period = $this->getPeriod($filter);
-    if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+    if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'basic']);
 
     $this->view->setVar('submenu', $this->periods);
     $this->view->setVar('submenuIndex', $period);
@@ -153,7 +153,7 @@ class UserController extends ListController {
    */
   public function votersAction($filter = NULL) {
     $period = $this->getPeriod($filter);
-    if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+    if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'basic']);
 
     $this->view->setVar('submenu', $this->periods);
     $this->view->setVar('submenuIndex', $period);

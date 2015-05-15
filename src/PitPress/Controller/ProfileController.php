@@ -75,7 +75,7 @@ class ProfileController extends ListController {
     $user = $this->getUser($username);
 
     // If the user doesn't exist, forward to 404.
-    if (is_null($user)) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+    if (is_null($user)) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'basic']);
 
     $opts = new ViewQueryOpts();
 

@@ -92,7 +92,7 @@ abstract class BaseController extends Controller {
       return $this->dispatcher->forward(
         [
           'controller' => 'error',
-          'action' => 'show404'
+          'action' => 'basic'
         ]);
   }
 

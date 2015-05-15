@@ -24,7 +24,7 @@ class FooterController extends BaseController {
    * @brief Displays the tour page.
    */
   public function tourAction() {
-    return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+    return $this->dispatcher->forward(['controller' => 'error', 'action' => 'basic']);
     $this->view->disableLevel(View::LEVEL_LAYOUT);
   }
 
@@ -33,7 +33,7 @@ class FooterController extends BaseController {
    * @brief Displays the help page.
    */
   public function helpAction() {
-    return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+    return $this->dispatcher->forward(['controller' => 'error', 'action' => 'basic']);
     $this->view->disableLevel(View::LEVEL_LAYOUT);
   }
 
@@ -42,7 +42,7 @@ class FooterController extends BaseController {
    * @brief Displays a page with the legal info.
    */
   public function legalAction() {
-    return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+    return $this->dispatcher->forward(['controller' => 'error', 'action' => 'basic']);
     $this->view->disableLevel(View::LEVEL_LAYOUT);
   }
 
@@ -51,7 +51,7 @@ class FooterController extends BaseController {
    * @brief Displays the privacy page.
    */
   public function privacyAction() {
-    return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+    return $this->dispatcher->forward(['controller' => 'error', 'action' => 'basic']);
     $this->view->disableLevel(View::LEVEL_LAYOUT);
   }
 
@@ -60,7 +60,7 @@ class FooterController extends BaseController {
    * @brief Displays the career page.
    */
   public function careerAction() {
-    return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+    return $this->dispatcher->forward(['controller' => 'error', 'action' => 'basic']);
     $this->view->disableLevel(View::LEVEL_LAYOUT);
   }
 
@@ -69,7 +69,7 @@ class FooterController extends BaseController {
    * @brief Displays the advertising page.
    */
   public function advertisingAction() {
-    return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+    return $this->dispatcher->forward(['controller' => 'error', 'action' => 'basic']);
     $this->view->disableLevel(View::LEVEL_LAYOUT);
   }
 
@@ -78,7 +78,7 @@ class FooterController extends BaseController {
    * @brief Displays the contacts page.
    */
   public function contactAction() {
-    return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+    return $this->dispatcher->forward(['controller' => 'error', 'action' => 'basic']);
     $this->view->disableLevel(View::LEVEL_LAYOUT);
   }
 
@@ -90,7 +90,7 @@ class FooterController extends BaseController {
     if ($this->user->isAdmin())
       phpinfo();
     else
-      return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+      return $this->dispatcher->forward(['controller' => 'error', 'action' => 'basic']);
   }
 
 }
