@@ -22,7 +22,7 @@ $di->setShared('router',
       [
         'namespace' => 'PitPress\Controller',
         "controller" => "error",
-        "action" => "show404"
+        "action" => "basic"
       ]
     );
 
