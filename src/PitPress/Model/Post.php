@@ -111,19 +111,6 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   //!@{
 
   /**
-   * @brief Returns `true` if the document can be edited, `false` otherwise.
-   * @retval bool
-   */
-  public function canBeEdited() {
-    if (($this->user->isAdmin() or (($this->user->isEditor() or $this->user->match($this->creatorId)) && !$this->isLocked())) &&
-        ($this->isCurrent() or $this->isDraft()))
-      return TRUE;
-    else
-      return FALSE;
-  }
-
-
-  /**
    * @brief Returns `true` if the post can be protected, `false` otherwise.
    * @retval bool
    */
