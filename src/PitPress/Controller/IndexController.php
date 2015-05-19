@@ -793,7 +793,8 @@ class IndexController extends ListController {
     else {
       $post = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $id);
 
-      if (!$post->canBeEdited()) {}
+      if (!$post->canBeEdited())
+        return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
       $opts = new ViewQueryOpts();
       $opts->setKey($post->unversionId)->doNotReduce();
