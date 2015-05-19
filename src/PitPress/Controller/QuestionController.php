@@ -83,7 +83,7 @@ class QuestionController extends IndexController {
     if (is_null($filter)) $filter = 'nessuna-risposta';
 
     $index = Helper\ArrayHelper::value($filter, $filters);
-    if ($index === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'basic']);
+    if ($index === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $this->view->setVar('entriesCount', 0);
     $this->view->setVar('submenu', $filters);

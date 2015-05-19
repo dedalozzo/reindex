@@ -89,11 +89,7 @@ abstract class BaseController extends Controller {
     elseif (isset($user))
       return $this->redirect("http://" . $this->domainName . "/utenti/" . $user->username);
     else
-      return $this->dispatcher->forward(
-        [
-          'controller' => 'error',
-          'action' => 'basic'
-        ]);
+      return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
   }
 
 

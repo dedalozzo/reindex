@@ -324,7 +324,7 @@ class IndexController extends ListController {
    */
   public function newestByTagAction($tag) {
     $tagId = $this->getTagId($tag);
-    if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'basic']);
+    if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $unversionTagId = Helper\Text::unversion($tagId);
 
@@ -421,7 +421,7 @@ class IndexController extends ListController {
    */
   public function perDateByTagAction($tag, $year, $month = NULL, $day = NULL) {
     $tagId = $this->getTagId($tag);
-    if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'basic']);
+    if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $unversionTagId = Helper\Text::unversion($tagId);
 
@@ -470,7 +470,7 @@ class IndexController extends ListController {
    */
   protected function popular($filter, $unversionTagId = NULL) {
     $period = $this->getPeriod($filter);
-    if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'basic']);
+    if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $date = Helper\Time::aWhileBack($period, "_");
 
@@ -519,7 +519,7 @@ class IndexController extends ListController {
    */
   public function popularByTagAction($tag, $filter = NULL) {
     $tagId = $this->getTagId($tag);
-    if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'basic']);
+    if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $unversionTagId = Helper\Text::unversion($tagId);
 
@@ -574,7 +574,7 @@ class IndexController extends ListController {
    */
   public function activeByTagAction($tag) {
     $tagId = $this->getTagId($tag);
-    if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'basic']);
+    if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $this->active(Helper\Text::unversion($tagId)."_");
     $this->view->setVar('etag', $this->couch->getDoc(Couch::STD_DOC_PATH, $tagId));
@@ -650,7 +650,7 @@ class IndexController extends ListController {
     if (is_null($filter)) $filter = 'data-inserimento';
 
     $index = Helper\ArrayHelper::value($filter, $filters);
-    if ($index === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'basic']);
+    if ($index === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     if ($index == 0) {
       $perDate = 'perPublishedAt';
@@ -730,11 +730,7 @@ class IndexController extends ListController {
     $rows = $this->couch->queryView("posts", "byUrl", NULL, $opts);
 
     if ($rows->isEmpty())
-      return $this->dispatcher->forward(
-        [
-          'controller' => 'error',
-          'action' => 'basic'
-        ]);
+      return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $post = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $rows[0]['id']);
     $post->incHits($post->creatorId);
@@ -756,7 +752,7 @@ class IndexController extends ListController {
    */
   public function editAction($id) {
     if (empty($id))
-      return $this->dispatcher->forward(['controller' => 'error', 'action' => 'basic']);
+      return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     if (is_null($this->user))
       return $this->dispatcher->forward(['controller' => 'auth', 'action' => 'signin']);
@@ -796,6 +792,8 @@ class IndexController extends ListController {
     }
     else {
       $post = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $id);
+
+      if (!$post->canBeEdited()) {}
 
       $opts = new ViewQueryOpts();
       $opts->setKey($post->unversionId)->doNotReduce();
