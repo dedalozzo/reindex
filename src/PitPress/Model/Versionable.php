@@ -268,6 +268,7 @@ abstract class Versionable extends Storable {
   public function returnForRevision($reason) {
     $this->meta['status'] = DocStatus::RETURNED;
     $this->meta['rejectReason'] = $reason;
+    $this->meta['moderatorId'] = $this->user->id;
     // todo: send a notification to the user
   }
 
@@ -280,6 +281,7 @@ abstract class Versionable extends Storable {
   public function reject($reason) {
     $this->meta['status'] = DocStatus::REJECTED;
     $this->meta['rejectReason'] = $reason;
+    $this->meta['moderatorId'] = $this->user->id;
     // todo: send a notification to the user
   }
 
