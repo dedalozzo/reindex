@@ -733,6 +733,10 @@ class IndexController extends ListController {
       return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $post = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $rows[0]['id']);
+
+    if (!$post->canBeViewed())
+      return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
+
     $post->incHits($post->creatorId);
     //$post->html = $this->markdown->parse($post->body);
 
