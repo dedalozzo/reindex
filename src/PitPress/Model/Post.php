@@ -111,6 +111,28 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   //!@{
 
   /**
+   * @brief Returns `true` if the post can be viewed by the current user, `false` otherwise.
+   * @retval bool
+   */
+  public function canBeViewed() {
+    if ($this->isCurrent()) return TRUE;
+
+    elseif ($this->user->match($this->creatorId)) return TRUE;
+
+    elseif ($this->user->isEditor() && $this->approved()) return TRUE;
+
+    elseif ($this->user->isModerator() &&
+            ($this->isSubmittedForPeerReview() or
+             $this->isReturnedForRevision() or
+             $this->isRejected() or
+             $this->isMovedToTrash()))
+      return TRUE;
+    else
+      return FALSE;
+  }
+
+
+  /**
    * @copydoc Versionable::canBeEdited()
    */
   public function canBeEdited() {
