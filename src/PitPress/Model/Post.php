@@ -115,7 +115,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @retval bool
    */
   public function canBeEdited() {
-    if (($this->user->isAdmin() or ($this->user->isEditor() && !$this->isLocked())) &&
+    if (($this->user->isAdmin() or (($this->user->isEditor() or $this->user->match($this->creatorId)) && !$this->isLocked())) &&
         ($this->isCurrent() or $this->isDraft()))
       return TRUE;
     else
