@@ -469,7 +469,6 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if (isset($doc->versionable)) {
-
     $editorId = isset($doc->editorId) ? $doc->editorId : $doc->creatorId;
     $editSummary = isset($doc->editSummary) ? $doc->editSummary : '';
 
