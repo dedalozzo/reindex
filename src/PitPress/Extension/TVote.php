@@ -28,13 +28,7 @@ use Phalcon\DI;
 trait TVote {
 
 
-  /**
-   * @brief Registers, replaces or deletes the vote.
-   * @param[in] User $user The current user logged in.
-   * @param[in] string $value The vote.
-   * @retval int The voting status.
-   */
-  protected function vote($value) {
+  public function vote($value, $unversion = TRUE) {
     if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
     if ($this->user->match($this->creatorId)) throw new Exception\CannotVoteYourOwnPostException('Non puoi votare il tuo stesso post.');
 
@@ -74,7 +68,7 @@ trait TVote {
     else {
       $vote = Vote::create();
       //$vote = new Vote();
-      $vote->itemId = Text::unversion($this->id);
+      $vote->itemId = $unversion ? Text::unversion($this->id) : $this->id;
       $vote->userId = $this->user->id;
       $vote->value = $value;
       $vote->save();
@@ -99,12 +93,14 @@ trait TVote {
   }
 
 
-  public function didUserVote(&$voteId = NULL) {
+  public function didUserVote(&$voteId = NULL, $unversion = TRUE) {
     // In case there is no user logged in returns false.
     if ($this->user->isGuest()) return FALSE;
 
+    $itemId = $unversion ? Text::unversion($this->id) : $this->id;
+
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([Text::unversion($this->id), $this->user->id]);
+    $opts->doNotReduce()->setLimit(1)->setKey([$itemId, $this->user->id]);
 
     $result = $this->couch->queryView("votes", "perItemAndUser", NULL, $opts);
 
@@ -117,19 +113,22 @@ trait TVote {
   }
 
 
-  public function getScore() {
+  public function getScore($unversion = TRUE) {
+    $itemId = $unversion ? Text::unversion($this->id) : $this->id;
+
     $opts = new ViewQueryOpts();
-    $opts->setKey(Text::unversion($this->id));
+    $opts->setKey($itemId);
 
     return $this->couch->queryView("votes", "perItem", NULL, $opts)->getReducedValue();
   }
 
 
-  public function getUsersHaveVoted() {
+  public function getUsersHaveVoted($unversion = TRUE) {
+    $itemId = $unversion ? Text::unversion($this->id) : $this->id;
 
     // Gets the users have voted the item.
     $opts = new ViewQueryOpts();
-    $opts->setKey(Text::unversion($this->id));
+    $opts->setKey($itemId);
     $result = $this->couch->queryView("users", "haveVoted", NULL, $opts);
 
     if ($result->isEmpty())
