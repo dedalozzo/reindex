@@ -1,8 +1,8 @@
 <?php
 
 /*
- * @file Approval.php
- * @brief This file contains the Approval class.
+ * @file Acceptance.php
+ * @brief This file contains the Acceptance class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -20,14 +20,14 @@ use EoC\Doc\Doc;
  * database.
  * @nosubgrouping
  */
-class Approval extends Doc {
+class Acceptance extends Doc {
 
   /*
-   * @brief Creates an instance of Approval class.
+   * @brief Creates an instance of Acceptance class.
    * @param[in] string questionId The question ID.
    * @param[in] string answerId The approved answer ID.
    * @param[in] int $timestamp The approval timestamp.
-   * @retval Approval
+   * @retval Acceptance
    */
   public static function create($questionId, $answerId, $timestamp = NULL) {
     $instance = new self();
