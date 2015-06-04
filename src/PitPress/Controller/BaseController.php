@@ -24,6 +24,7 @@ use PitPress\Model\User;
  * @nosubgrouping
  */
 abstract class BaseController extends Controller {
+  protected $config;
   protected $couch;
   protected $redis;
   protected $log;
@@ -109,6 +110,7 @@ abstract class BaseController extends Controller {
    * @brief Initializes the controller.
    */
   public function initialize() {
+    $this->config = $this->di['config'];
     $this->couch = $this->di['couchdb'];
     $this->redis = $this->di['redis'];
     $this->log = $this->di['log'];
