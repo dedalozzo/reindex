@@ -1,7 +1,7 @@
 #! /usr/bin/php
 <?php
 
-/*
+/**
  * @file pitpress.php
  * @brief The PitPress Console application.
  * @details
