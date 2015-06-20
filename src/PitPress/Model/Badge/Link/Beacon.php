@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Link;
 
 
-use PitPress\Model\Badge\Gold;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief Reported 500 links.
  * @details Awarded once.
  */
-class Beacon extends Gold {
+class Beacon extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Beacon extends Gold {
     return <<<'DESC'
 Hai segnalato almeno 500 links. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::GOLD;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['link'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

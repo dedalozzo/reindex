@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\User;
 
 
-use PitPress\Model\Badge\Bronze;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief The user has activated his profile.
  * @details Awarded multiple times.
  */
-class Active extends Bronze {
+class Active extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Active extends Bronze {
     return <<<'DESC'
 Il tuo profilo è attivo. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::BRONZE;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['activate profile'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

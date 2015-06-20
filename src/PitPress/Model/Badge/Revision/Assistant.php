@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Revision;
 
 
-use PitPress\Model\Badge\Bronze;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief First edit.
  * @details Awarded once.
  */
-class Assistant extends Bronze {
+class Assistant extends Badge {
 
 
   /**
@@ -37,6 +38,31 @@ class Assistant extends Bronze {
 E' la prima volta che editi un contributo, sia esso un articolo, una domanda, una risposta, ecc. Assegnato una sola
 volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::BRONZE;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['edit'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

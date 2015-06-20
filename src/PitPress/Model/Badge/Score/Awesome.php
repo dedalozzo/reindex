@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Score;
 
 
-use PitPress\Model\Badge\Gold;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief Wrote a post with 50 score.
  * @details Awarded multiple times.
  */
-class Awesome extends Gold {
+class Awesome extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Awesome extends Gold {
     return <<<'DESC'
 Hai fornito un contributo (articolo, domanda, recensione, link) che ha ottenuto 50 punti. Assegnato più volte.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::SILVER;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['vote'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

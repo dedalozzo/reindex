@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Revision;
 
 
-use PitPress\Model\Badge\Gold;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief Edited 100 posts.
  * @details Awarded once.
  */
-class Editor extends Gold {
+class Editor extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Editor extends Gold {
     return <<<'DESC'
 Hai modificato 100 contributi. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::GOLD;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['edit'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

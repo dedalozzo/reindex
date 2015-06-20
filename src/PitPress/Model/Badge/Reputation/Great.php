@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Reputation;
 
 
-use PitPress\Model\Badge\Bronze;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief Earned at least 200 reputation in a single day
  * @details Awarded once.
  */
-class Great extends Bronze {
+class Great extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Great extends Bronze {
     return <<<'DESC'
 Hai ottenuto 200 punti di reputazione in un solo giorno. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::BRONZE;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['reputation'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

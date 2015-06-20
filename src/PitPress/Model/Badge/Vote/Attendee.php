@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Vote;
 
 
-use PitPress\Model\Badge\Bronze;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief Voted 10 times in a day.
  * @details Awarded once.
  */
-class Attendee extends Bronze {
+class Attendee extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Attendee extends Bronze {
     return <<<'DESC'
 Hai votato 10 volte in un giorno. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::BRONZE;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['vote'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

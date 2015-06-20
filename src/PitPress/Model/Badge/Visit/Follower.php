@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Visit;
 
 
-use PitPress\Model\Badge\Bronze;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief Visited the site each day for 7 consecutive days.
  * @details Awarded once.
  */
-class Follower extends Bronze {
+class Follower extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Follower extends Bronze {
     return <<<'DESC'
 Hai visitato il sito per 7 giorni consecutivi. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::BRONZE;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['time'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

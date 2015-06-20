@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Post;
 
 
-use PitPress\Model\Badge\Silver;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief Wrote your first article, even on your own blog.
  * @details Awarded once.
  */
-class Contributor extends Silver {
+class Contributor extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Contributor extends Silver {
     return <<<'DESC'
 Hai scritto il tuo primo articolo sulla tua timeline. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::SILVER;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['article'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

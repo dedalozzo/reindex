@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Star;
 
 
-use PitPress\Model\Badge\Gold;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief Wrote a post starred by 50 users.
  * @details Awarded multiple times.
  */
-class Stellar extends Gold {
+class Stellar extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Stellar extends Gold {
     return <<<'DESC'
 Hai fornito un contributo (articolo, domanda, recensione, link) aggiunto ai preferiti 50 volte. Assegnato più volte.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::GOLD;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['star'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

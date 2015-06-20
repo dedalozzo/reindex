@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Vote;
 
 
-use PitPress\Model\Badge\Bronze;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief First vote.
  * @details Awarded once.
  */
-class Voter extends Bronze {
+class Voter extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Voter extends Bronze {
     return <<<'DESC'
 Prima volta che voti. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::BRONZE;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['vote'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

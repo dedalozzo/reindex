@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Flag;
 
 
-use PitPress\Model\Badge\Bronze;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief First flagged post.
  * @details Awarded once.
  */
-class Watchman extends Bronze {
+class Watchman extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Watchman extends Bronze {
     return <<<'DESC'
 Hai segnalato un problema alla redazione. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::BRONZE;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['flag'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

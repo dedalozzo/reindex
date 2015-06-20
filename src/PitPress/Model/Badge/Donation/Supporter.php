@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Donation;
 
 
-use PitPress\Model\Badge\Silver;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief Made a free donation.
  * @details Awarded multiple times.
  */
-class Supporter extends Silver {
+class Supporter extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Supporter extends Silver {
     return <<<'DESC'
 Hai fatto una donazione a tuo piacimento. Assegnato più volte.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::SILVER;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['donate'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

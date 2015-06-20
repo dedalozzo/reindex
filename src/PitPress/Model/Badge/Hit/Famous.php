@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Hit;
 
 
-use PitPress\Model\Badge\Gold;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief Wrote a post with 30.000 views.
  * @details Awarded multiple times.
  */
-class Famous extends Gold {
+class Famous extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Famous extends Gold {
     return <<<'DESC'
 Hai scritto un articolo o formulato una domanda con almeno 30.000 visualizzazioni. Assegnato più volte.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::GOLD;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['hit'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

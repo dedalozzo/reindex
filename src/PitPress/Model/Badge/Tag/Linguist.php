@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Tag;
 
 
-use PitPress\Model\Badge\Bronze;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief First approved tag synonym.
  * @details Awarded once.
  */
-class Linguist extends Bronze {
+class Linguist extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Linguist extends Bronze {
     return <<<'DESC'
 Per la prima volta un sinonimo da te inserito è stato approvato. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::BRONZE;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['approve synonym'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

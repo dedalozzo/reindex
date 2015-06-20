@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Answer;
 
 
-use PitPress\Model\Badge\Silver;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief Voted 100 answers on questions where an answer of yours has a positive score.
  * @details Awarded once.
  */
-class Sportsmanship extends Silver {
+class Sportsmanship extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Sportsmanship extends Silver {
     return <<<'DESC'
 Hai votato 100 risposte su domande dove una delle tue risposte ha almeno un punto. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::SILVER;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['vote'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

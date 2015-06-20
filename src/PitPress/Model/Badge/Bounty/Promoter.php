@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Bounty;
 
 
-use PitPress\Model\Badge\Bronze;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief First bounty offered on your own question.
  * @details Awarded once.
  */
-class Promoter extends Bronze {
+class Promoter extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Promoter extends Bronze {
     return <<<'DESC'
 Hai offerto il tuo primo bounty su di una tua stessa domanda. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::BRONZE;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['bounty'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

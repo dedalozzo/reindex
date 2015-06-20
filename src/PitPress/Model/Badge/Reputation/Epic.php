@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Reputation;
 
 
-use PitPress\Model\Badge\Silver;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief Earned 200 daily reputation 50 times.
  * @details Awarded once.
  */
-class Epic extends Silver {
+class Epic extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Epic extends Silver {
     return <<<'DESC'
 Hai ottenuto 200 punti di reputazione per 50 volte. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::SILVER;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['reputation'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

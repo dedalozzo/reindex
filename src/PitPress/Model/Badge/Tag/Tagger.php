@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Tag;
 
 
-use PitPress\Model\Badge\Bronze;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief First tag description edit.
  * @details Awarded once.
  */
-class Tagger extends Bronze {
+class Tagger extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Tagger extends Bronze {
     return <<<'DESC'
 Per la prima volta hai modificato la descrizione di un tag. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::BRONZE;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['edit tag'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Link;
 
 
-use PitPress\Model\Badge\Silver;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief Reported 25 links.
  * @details Awarded once.
  */
-class Reporter extends Silver {
+class Reporter extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Reporter extends Silver {
     return <<<'DESC'
 Hai segnalato almeno 25 links. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::BRONZE;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['link'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

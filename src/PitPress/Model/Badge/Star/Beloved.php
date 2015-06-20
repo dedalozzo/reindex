@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Star;
 
 
-use PitPress\Model\Badge\Silver;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief Wrote a post starred by 10 users.
  * @details Awarded multiple times.
  */
-class Beloved extends Silver {
+class Beloved extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Beloved extends Silver {
     return <<<'DESC'
 Hai fornito un contributo (articolo, domanda, recensione, link) aggiunto ai preferiti 10 volte. Assegnato più volte.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::SILVER;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['star'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

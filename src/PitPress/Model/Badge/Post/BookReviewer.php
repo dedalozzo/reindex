@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Post;
 
 
-use PitPress\Model\Badge\Silver;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief Wrote at least 2 reviews.
  * @details Awarded once.
  */
-class BookReviewer extends Silver {
+class BookReviewer extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class BookReviewer extends Silver {
     return <<<'DESC'
 Hai scritto almeno 2 recensioni, che sono poi state pubblicate sul blog principale. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::SILVER;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['book'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

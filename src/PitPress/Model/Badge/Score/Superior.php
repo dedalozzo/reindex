@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Score;
 
 
-use PitPress\Model\Badge\Bronze;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
- * @brief Wrote a post with 30 score.
+ * @brief Wrote a post with 25 score.
  * @details Awarded multiple times.
  */
-class Superior extends Bronze {
+class Superior extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Superior extends Bronze {
     return <<<'DESC'
 Hai fornito un contributo (articolo, domanda, recensione, link) che ha ottenuto 30 punti. Assegnato più volte.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::BRONZE;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['vote'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Answer;
 
 
-use PitPress\Model\Badge\Bronze;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief Answered more than 30 days later as first answer scoring 2 or more.
  * @details Awarded multiple times.
  */
-class Resurrectionist extends Bronze {
+class Resurrectionist extends Badge {
 
 
   /**
@@ -37,6 +38,31 @@ class Resurrectionist extends Bronze {
 Hai risposto, per primo, ad una domanda formulata almeno un mese prima, e la tua risposta ha totalizzato almeno 2 punti.
 Assegnato più volte.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::BRONZE;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['vote'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Tag;
 
 
-use PitPress\Model\Badge\Silver;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
- * @brief Created a tag used by 50 questions.
+ * @brief Created a tag used by 50 posts.
  * @details Awarded once.
  */
-class Taxonomist extends Silver {
+class Taxonomist extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Taxonomist extends Silver {
     return <<<'DESC'
 Hai creato un tag utilizzato da almeno 50 contributi. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::SILVER;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['save post'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

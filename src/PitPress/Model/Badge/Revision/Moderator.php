@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Revision;
 
 
-use PitPress\Model\Badge\Gold;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief Served as a moderator for at least 1 year.
  * @details Awarded once.
  */
-class Moderator extends Gold {
+class Moderator extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Moderator extends Gold {
     return <<<'DESC'
 Sei stato moderatore del sito per almeno un anno. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::GOLD;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['time'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

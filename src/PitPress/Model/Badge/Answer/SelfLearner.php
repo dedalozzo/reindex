@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Answer;
 
 
-use PitPress\Model\Badge\Bronze;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief Answered your own question with score of 3 or more.
  * @details Awarded once.
  */
-class SelfLearner extends Bronze {
+class SelfLearner extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class SelfLearner extends Bronze {
     return <<<'DESC'
 Hai risposto ad una tua stessa domanda e la tua risposta ha totalizzato almeno 3 punti. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::BRONZE;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['score'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

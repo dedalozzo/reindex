@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Answer;
 
 
-use PitPress\Model\Badge\Silver;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief First to answer and accepted with score of 10 or more.
  * @details Awarded multiple times.
  */
-class Enlightened extends Silver {
+class Enlightened extends Badge {
 
 
   /**
@@ -38,6 +39,31 @@ Sei la prima persona a rispondere ad una domanda e totalizzare un punteggio pari
 essere accettata dall'autore della domanda. Il badge viene assegnato soltanto nel caso in cui l'autore della domanda non
 risponda alla sua stessa domanda. Assegnato più volte.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::SILVER;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['vote, accept'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

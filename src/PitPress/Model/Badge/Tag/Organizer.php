@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Tag;
 
 
-use PitPress\Model\Badge\Bronze;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief First retag.
  * @details Awarded once.
  */
-class Organizer extends Bronze {
+class Organizer extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Organizer extends Bronze {
     return <<<'DESC'
 Prima volta che modifichi i tag di contributo. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::BRONZE;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['retag'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

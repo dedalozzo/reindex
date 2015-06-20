@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Tag;
 
 
-use PitPress\Model\Badge\Gold;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief Edited 20 tag descriptions.
  * @details Awarded once.
  */
-class Librarian extends Gold {
+class Librarian extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Librarian extends Gold {
     return <<<'DESC'
 Hai modificato la descrizione di 20 tags. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::GOLD;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['tag'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

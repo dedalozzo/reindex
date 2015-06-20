@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Hit;
 
 
-use PitPress\Model\Badge\Silver;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief Wrote a post with 20.000 views.
  * @details Awarded multiple times.
  */
-class Popular extends Silver {
+class Popular extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Popular extends Silver {
     return <<<'DESC'
 Hai scritto un articolo o formulato una domanda con almeno 20.000 visualizzazioni. Assegnato più volte.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::SILVER;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['hit'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

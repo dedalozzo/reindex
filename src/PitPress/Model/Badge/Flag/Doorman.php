@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Flag;
 
 
-use PitPress\Model\Badge\Silver;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief Raised 50 helpful flags.
  * @details Awarded once.
  */
-class Doorman extends Silver {
+class Doorman extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Doorman extends Silver {
     return <<<'DESC'
 Hai segnalato almeno 50 problemi alla redazione. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::SILVER;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['flag'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

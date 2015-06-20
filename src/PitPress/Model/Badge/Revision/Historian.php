@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\Revision;
 
 
-use PitPress\Model\Badge\Bronze;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief Edited first post that was inactive for 6 months.
  * @details Awarded once.
  */
-class Historian extends Bronze {
+class Historian extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Historian extends Bronze {
     return <<<'DESC'
 Hai modificato un contributo che è stato inattivo per 6 mesi. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::BRONZE;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['edit'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

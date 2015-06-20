@@ -11,14 +11,14 @@
 namespace PitPress\Model\Badge\Vote;
 
 
-use PitPress\Model\Badge\Silver;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief Voted 250 or more times.
  * @details Awarded once.
  */
-class Fan extends Silver {
+class Fan extends Attendee {
 
 
   /**
@@ -36,6 +36,31 @@ class Fan extends Silver {
     return <<<'DESC'
 Hai votato 250 o più volte. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::SILVER;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['vote'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

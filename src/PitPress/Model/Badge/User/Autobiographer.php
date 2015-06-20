@@ -11,14 +11,15 @@
 namespace PitPress\Model\Badge\User;
 
 
-use PitPress\Model\Badge\Bronze;
+use PitPress\Model\Badge\Badge;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief Completed all user profile fields.
  * @details Awarded once.
  */
-class Autobiographer extends Bronze {
+class Autobiographer extends Badge {
 
 
   /**
@@ -36,6 +37,31 @@ class Autobiographer extends Bronze {
     return <<<'DESC'
 Hai completato in ogni sua parte il tuo profilo. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::BRONZE;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['completed profile'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 

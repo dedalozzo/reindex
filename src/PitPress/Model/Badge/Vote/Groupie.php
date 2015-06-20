@@ -11,14 +11,14 @@
 namespace PitPress\Model\Badge\Vote;
 
 
-use PitPress\Model\Badge\Gold;
+use PitPress\Enum\Metal;
 
 
 /**
  * @brief Voted at least 500 times.
  * @details Awarded once.
  */
-class Groupie extends Gold {
+class Groupie extends Fan {
 
 
   /**
@@ -36,6 +36,31 @@ class Groupie extends Gold {
     return <<<'DESC'
 Hai votato almeno 500 volte. Assegnato una sola volta.
 DESC;
+  }
+
+
+  /**
+   * @copydoc Badge::getMetal()
+   */
+  public function getMetal() {
+    return Metal::GOLD;
+  }
+
+
+  /**
+   * @copydoc Badge::getMessages()
+   */
+  public function getMessages() {
+    return ['vote'];
+  }
+
+
+  /**
+   * @copydoc Badge::update()
+   * @todo Implements the `update()` method.
+   */
+  public function update() {
+
   }
 
 
