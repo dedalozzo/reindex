@@ -101,7 +101,7 @@ class ApiController extends BaseController {
 
   /**
    * @brief Likes a post.
-   * @retval string
+   * @retval array
    */
   public function likeAction() {
     try {
@@ -121,7 +121,7 @@ class ApiController extends BaseController {
 
   /**
    * @brief Stars an item.
-   * @retval string
+   * @retval array
    */
   public function starAction() {
     try {
@@ -141,7 +141,7 @@ class ApiController extends BaseController {
 
   /**
    * @brief Submits a versionable document.
-   * @retval string
+   * @retval array
    */
   public function submitAction() {
 
@@ -150,7 +150,7 @@ class ApiController extends BaseController {
 
   /**
    * @brief Approves a versionable document.
-   * @retval string
+   * @retval array
    */
   public function approveAction() {
     try {
@@ -187,7 +187,7 @@ class ApiController extends BaseController {
 
   /**
    * @brief Returns for revision a versionable document.
-   * @retval string
+   * @retval array
    */
   public function returnForRevisionAction() {
 
@@ -196,7 +196,7 @@ class ApiController extends BaseController {
 
   /**
    * @brief Rejects a versionable document.
-   * @retval string
+   * @retval array
    */
   public function rejectAction() {
 
@@ -205,7 +205,7 @@ class ApiController extends BaseController {
 
   /**
    * @brief Reverts a versionable document.
-   * @retval string
+   * @retval array
    */
   public function revertAction() {
 
