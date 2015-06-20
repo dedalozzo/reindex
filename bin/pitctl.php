@@ -2,8 +2,8 @@
 <?php
 
 /**
- * @file pitpress.php
- * @brief The PitPress Console application.
+ * @file pitctl.php
+ * @brief The PitPress Control application.
  * @details
  * @author Filippo F. Fadda
  */
@@ -51,7 +51,7 @@ try {
   require $root . "/services/guardian.php";
 
   // Creates the application object.
-  $console = new PitPressConsole('PitPress Console', PitPress\Version::getNumber());
+  $console = new PitPressConsole('PitPress Control', PitPress\Version::getNumber());
   //$console->setCatchExceptions(FALSE);
 
   // Sets the dependency injector component.
