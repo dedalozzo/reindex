@@ -12,8 +12,8 @@
 namespace PitPress\Model\Badge;
 
 
-//use PitPress\Extension\ISubject;
 use PitPress\Model\Storable;
+use PitPress\Observer\IObserver;
 
 
 /**
@@ -21,7 +21,7 @@ use PitPress\Model\Storable;
  * @details Badge implements the observer pattern.
  * @nosubgrouping
  */
-abstract class Badge extends Storable {
+abstract class Badge extends Storable implements IObserver {
 
   protected $subject;
 
@@ -59,13 +59,15 @@ abstract class Badge extends Storable {
 
 
   /**
-   * @brief Every time an activity is performed by a user, this method is called for all the interested badges.
-   * @details Creates an instance of the Gearman client, assign the job to the server. The Gearman server checks for the
-   * badge, checks if the user deserve it, assign the badge or withdrawn it.
+   * @copydoc IObserver::getMessages()
    */
-  public function update() {
+  abstract public function getMessages();
 
-  }
+
+  /**
+   * @copydoc IObserver::update()
+   */
+  abstract public function update();
 
 
   /**
@@ -76,7 +78,7 @@ abstract class Badge extends Storable {
 
 
   /**
-   * @brief Returns `true` if the user deserves this badge, `false otherwise.
+   * @brief Returns `true` if the user deserves this badge, `false` otherwise.
    * @retval bool
    */
   abstract public function deserve();
