@@ -18,18 +18,14 @@ use PitPress\Helper;
 /**
  * @brief A custom filter to retrieves only the badges.
  * @details Badges are all the classes defined under the badges' namespace (and sub-namespaces), derived
- * from Gold, Silver or Bronze classes.
+ * from Gold, Silver or TBronze classes.
  * @nosubgrouping
  */
 class BadgeRecursiveFilterIterator extends \RecursiveFilterIterator {
 
   #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-  protected static $ancestors = [
-      'PitPress\\Model\\Badge\\Gold',
-      'PitPress\\Model\\Badge\\Silver',
-      'PitPress\\Model\\Badge\\Bronze'
-    ];
+  const ANCESTOR = 'PitPress\\Model\\Badge\\Badge';
 
   #endif
 
@@ -48,17 +44,9 @@ class BadgeRecursiveFilterIterator extends \RecursiveFilterIterator {
     if ($item->isDir())
       return TRUE;
 
-    if ($item->getExtension() === "php") {      ;
+    if ($item->getExtension() === "php") {
       $parents = class_parents(Helper\ClassHelper::getClass($item->getPathname()));
-
-      $found = FALSE;
-      foreach (static::$ancestors as $class)
-        if (array_key_exists($class, $parents)) {
-          $found = TRUE;
-          break;
-        }
-
-      return $found;
+      return array_key_exists(self::ANCESTOR, $parents) ? TRUE : FALSE;
     }
     else
       return FALSE;
