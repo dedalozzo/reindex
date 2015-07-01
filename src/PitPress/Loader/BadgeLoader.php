@@ -89,6 +89,7 @@ class BadgeLoader {
       $this->badges[$i]['class'] = $class;
       $this->badges[$i]['name'] = $badge->name;
       $this->badges[$i]['metal'] = $badge->metal;
+      $this->badges[$i]['messages'] = $badge->messages;
       $this->badges[$i]['category'] = basename($fileInfo->getPath());
       $this->badges[$i]['brief'] = $badge->brief;
       $this->badges[$i]['awarded'] = 0;
