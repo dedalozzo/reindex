@@ -74,7 +74,7 @@ class Tag extends Versionable implements Extension\ICount, Extension\IStar {
 
 
   /**
-   * @brief Marks the provided tag a synonym of the current tag.
+   * @brief Marks the provided tag as synonym of the current tag.
    * @param[in] Tag $tag The tag you want add as synonym to the current tag.
    */
   public function addSynonym(Tag $tag) {
