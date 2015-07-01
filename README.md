@@ -1,7 +1,20 @@
 PitPress
 ========
-PitPress is the open source QA and blogging platform used for the new version of [programmazione.it](http://programmazione.it) site.
-An alpha version can be found on [programmazione.me](http://programmazione.me) site.
+PitPress is the open source QA and blogging platform created to be used for the new version of [Programmazione.it](http://programmazione.it) developers' community.
+An early version can be found at [programmazione.me](http://programmazione.me). The platform is still in active 
+development and the staging site can be unreachable or broken.
+
+Some of the supported features are:
+
+- Questions and answers
+- Posts and comments
+- Versioning
+- Peer reviewing
+- Tags and synonyms (merging is also supported)
+- Badges
+- OAuth2 with Facebook, LinkedIn, Google+ and GitHub authentication
+- Markdown
+- Syntax highlighting
 
 
 Composer Installation
@@ -21,8 +34,8 @@ sudo mv composer.phar /usr/local/bin/composer
 ```
 
 
-EoC Client Installation
------------------------
+PitPress Installation
+---------------------
 Once you have installed Composer, it's easy install EoC Client.
 
 1. Edit your `composer.json` file, adding EoC Client to the require section:
@@ -44,9 +57,18 @@ Documentation
 The documentation can be generated using [Doxygen](http://doxygen.org). A `Doxyfile` is provided for your convenience.
 
 
-Requirements
-------------
-- PHP 5.4.0 or above.
+Built With
+----------
+- [PHP](http://php.net)
+- [Phalcon](https://phalconphp.com)
+- [CouchDB](http://couchdb.apache.org/)
+- [Redis](http://redis.io/)
+- [Elephant On Couch](http://elephantoncouch.com)
+- [PitBootstrap](https://github.com/dedalozzo/pit-bootstrap)
+- [jQuery](https://jquery.com/)
+
+Plus lots of PHP extensions and libraries. See the [composer.json](https://github.com/dedalozzo/pit-press/blob/master/composer.json) 
+file for a complete list of dependencies.
 
 
 Authors
