@@ -67,7 +67,7 @@ require $root . "/services/markdown.php";
 require $root . "/services/crypt.php";
 require $root . "/services/flash.php";
 require $root . "/services/guardian.php";
-require $root . "/services/badgeloader.php";
+require $root . "/services/committee.php";
 
 // Must be done after the services' initialization.
 if ($config->application->debug && $di['guardian']->getUser()->isDeveloper())
