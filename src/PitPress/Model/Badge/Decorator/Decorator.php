@@ -13,7 +13,7 @@ namespace PitPress\Model\Badge\Decorator;
 
 
 use PitPress\Observer\IObserver;
-use PitPress\Mediator\Committee;
+use PitPress\Model\Badge\Committee;
 
 
 /**
