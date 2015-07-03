@@ -64,36 +64,4 @@ DESC;
 
   }
 
-
-  /**
-   * @copydoc Badge::exist()
-   */
-  public function exist() {
-
-  }
-
-
-  /**
-   * @copydoc Badge::deserve()
-   */
-  public function deserve() {
-
-  }
-
-
-  /**
-   * @copydoc Badge::award()
-   */
-  public function award() {
-
-  }
-
-
-  /**
-   * @copydoc Badge::withdrawn()
-   */
-  public function withdrawn() {
-
-  }
-
 } 
