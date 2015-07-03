@@ -9,8 +9,8 @@ class Vote {
   /** @name Properties */
   //!@{
 
-  public string $itemId; //!< [readonly] Item ID.
-  public string $userId; //!< [readonly] User ID.
+  public string $itemId; //!< Item ID.
+  public string $userId; //!< User ID.
   public string $value; //!< Value.
 
   //!@}
