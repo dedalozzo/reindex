@@ -8,7 +8,7 @@
  */
 
 
-use PitPress\Mediator\Committee;
+use PitPress\Model\Badge\Committee;
 
 
 // Creates an instance of Committee and return it.
