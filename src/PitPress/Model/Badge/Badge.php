@@ -13,7 +13,6 @@ namespace PitPress\Model\Badge;
 
 
 use PitPress\Model\Storable;
-use PitPress\Observer\IObserver;
 
 
 /**
@@ -21,88 +20,74 @@ use PitPress\Observer\IObserver;
  * @details Badge implements the observer pattern.
  * @nosubgrouping
  */
-abstract class Badge extends Storable implements IObserver {
-
-  protected $subject;
+class Badge extends Storable {
 
 
-  /**
-   * @brief Creates an instance of the badge.
-   * @details This function is used internally.
-   * @param[in] string $userId The user ID.
-   * @param[in] string $resourceId (optional) A resource ID.
-   */
-  public function __construct($userId, $resourceId = NULL) {
-    parent::__construct();
+  //! @cond HIDDEN_SYMBOLS
+
+
+  public function getUserId() {
+    return $this->meta['userId'];
   }
 
 
-  /**
-   * @brief Returns the badge's name.
-   * @retval string
-   */
-  abstract public function getName();
-
-
-  /**
-   * @brief Returns a brief description of the badge.
-   * @retval string
-   */
-  abstract public function getBrief();
-
-
-  /**
-   * @brief The badge is made by the returned metal.
-   * @retval string
-   */
-  abstract public function getMetal();
-
-
-  /**
-   * @copydoc IObserver::getMessages()
-   */
-  abstract public function getMessages();
-
-
-  /**
-   * @copydoc IObserver::update()
-   */
-  abstract public function update();
-
-
-  /**
-   * @brief Returns `true` if the badge has been already awarded to the user, `false otherwise.
-   * @retval bool
-   */
-  abstract public function exist();
-
-
-  /**
-   * @brief Returns `true` if the user deserves this badge, `false` otherwise.
-   * @retval bool
-   */
-  abstract public function deserve();
-
-
-  /**
-   * @brief Awards the current badge.
-   */
-  public abstract function award();
-
-
-  /**
-   * @brief Withdrawn the badge previously awarded.
-   * @details Only some badges might be retired.
-   */
-  abstract public function withdrawn();
-
-
-
-  public function save() {
-    $this->meta['supertype'] = 'badge';
-    $this->meta['metal'] = $this->getMetal();
-
-    parent::save();
+  public function issetUserId() {
+    return isset($this->meta['userId']);
   }
 
-} 
+
+  public function setUserId($value) {
+    $this->meta['userId'] = $value;
+  }
+
+
+  public function unsetTagId() {
+    if ($this->isMetadataPresent('tagId'))
+      unset($this->meta['tagId']);
+  }
+
+
+  public function getTagId() {
+    return $this->meta['tagId'];
+  }
+
+
+  public function issetTagId() {
+    return isset($this->meta['tagId']);
+  }
+
+
+  public function setTagId($value) {
+    $this->meta['tagId'] = $value;
+  }
+
+
+  public function unsetUserId() {
+    if ($this->isMetadataPresent('userId'))
+      unset($this->meta['userId']);
+  }
+
+
+  public function getDecoratorClass() {
+    return $this->meta['decoratorClass'];
+  }
+
+
+  public function issetDecoratorClass() {
+    return isset($this->meta['decoratorClass']);
+  }
+
+
+  public function setDecoratorClass($value) {
+    $this->meta['decoratorClass'] = $value;
+  }
+
+
+  public function unsetDecoratorClass() {
+    if ($this->isMetadataPresent('decoratorClass'))
+      unset($this->meta['decoratorClass']);
+  }
+
+  //! @endcond
+
+}
