@@ -635,42 +635,42 @@ MAP;
     $doc = DesignDoc::create('badges');
 
 
-    // @params class
-    function badgesPerClass() {
+    // @params decoratorClass
+    function badgesPerDecorator() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'badge')
-    $emit($doc->class);
+  if ($doc->type == 'badge')
+    $emit($doc->decoratorClass);
 };
 MAP;
 
-      $handler = new ViewHandler("perClass");
+      $handler = new ViewHandler("perDecorator");
       $handler->mapFn = $map;
       $handler->useBuiltInReduceFnCount();
 
       return $handler;
     }
 
-    $doc->addHandler(badgesPerClass());
+    $doc->addHandler(badgesPerDecorator());
 
 
-    // @params class, userId
-    function badgesPerClassAndUser() {
+    // @params decoratorClass, userId
+    function badgesPerDecoratorAndUser() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'badge')
-    $emit([$doc->class, $doc->userId]);
+  if ($doc->type == 'badge')
+    $emit([$doc->decoratorClass, $doc->userId]);
 };
 MAP;
 
-      $handler = new ViewHandler("perClassAndUser");
+      $handler = new ViewHandler("perDecoratorAndUser");
       $handler->mapFn = $map;
       $handler->useBuiltInReduceFnCount();
 
       return $handler;
     }
 
-    $doc->addHandler(badgesPerClassAndUser());
+    $doc->addHandler(badgesPerDecoratorAndUser());
 
 
     $this->couch->saveDoc($doc);
