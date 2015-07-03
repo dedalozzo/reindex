@@ -13,6 +13,7 @@ namespace PitPress\Model\Badge;
 
 use PitPress\Filter\BadgeRecursiveFilterIterator;
 use PitPress\Helper;
+use PitPress\Model\Badge\Decorator\Decorator;
 
 use EoC\Opt\ViewQueryOpts;
 
@@ -132,7 +133,7 @@ class Committee {
   /**
    * @brief Awards a badge of the provided class to the user for the specified tag, if any.
    */
-  public function awardBadge($decoratorClass, $userId, $tagId) {
+  public function awardBadge(Decorator $decorator, $userId, $tagId) {
     //$class = get_class($decorator);
   }
 
@@ -140,10 +141,10 @@ class Committee {
   /**
    * @brief Withdrawn a badge of the provided class previously awarded to the user for the specified tag, if any.
    * @details Only some badges might be retired, but this is something the decorator itself can know.
-   * @param[in] string $decoratorClass The decorator's class name.
+   * @param[in] Decorator $decorator The badge's decorator.
    * @param[in] string
    */
-  public function withdrawnBadge($decoratorClass, $userId, $tagId) {
+  public function withdrawnBadge(Decorator $decorator, $userId, $tagId) {
     //$class = get_class($decorator);
   }
 
