@@ -22,6 +22,7 @@ use PitPress\Observer\IObserver;
  * @nosubgrouping
  */
 class ChangeManager {
+  protected $observers;
 
 
   /**
@@ -29,23 +30,23 @@ class ChangeManager {
    * @param[in] IObserver $observer An instance of an class implementing the IObserver interface.
    */
   public function register(IObserver $observer) {
-
-  }
-
-
-  /**
-   * @brief Unregisters the provided observer from the change manager.
-   * @param[in] IObserver $observer An instance of an class implementing the IObserver interface.
-   */
-  public function unregister(IObserver $observer) {
-
+    foreach($observer->getMessages() as $msg)
+      $this->observers[$msg][] = $observer;
   }
 
 
   /**
    * @brief Notifies a change to all the observers.
+   * @param[in] string $msg The message received by the change manager.
+   * @param[in] string $data Some data in the form of a JSON object.
    */
-  public function notify() {
+  public function notify($msg, $data) {
+    if (array_key_exists($msg, $this->observers)) {
+      $subset = $this->observers[$msg];
+
+      foreach ($subset as $observer)
+        $observer->update($msg, $data);
+    }
 
   }
 
