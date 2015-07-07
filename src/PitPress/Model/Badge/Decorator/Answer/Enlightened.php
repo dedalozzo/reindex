@@ -63,7 +63,7 @@ DESC;
    * @copydoc IObserver::update()
    * @todo Implements the `update()` method.
    */
-  public function update() {
+  public function update($msg, $data) {
 
   }
 

@@ -22,6 +22,7 @@ use PitPress\Observer\IObserver;
  * @nosubgrouping
  */
 class ChangeManager {
+
   protected $observers;
 
 

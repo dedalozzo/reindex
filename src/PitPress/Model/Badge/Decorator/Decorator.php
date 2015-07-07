@@ -22,6 +22,7 @@ use PitPress\Model\Badge\Committee;
  * @nosubgrouping
  */
 abstract class Decorator implements IObserver {
+
   protected $committee;
 
 
