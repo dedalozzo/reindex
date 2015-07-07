@@ -25,6 +25,7 @@ use EoC\Opt\ViewQueryOpts;
  */
 class Committee {
   protected $guardian;
+  protected $changeManager;
   protected $couch;
   protected $log;
   protected $user;
@@ -39,6 +40,16 @@ class Committee {
     $this->user = $this->guardian->getUser();
     $this->folder = $folder;
     $this->scan();
+
+    if (isset($di['changeManager'])) {
+      $this->changeManager = $di['changeManager'];
+
+      foreach ($this->decorators as $decoratorInfo) {
+        $decorator = $decoratorInfo['instance'];
+        $this->changeManager->register($decorator);
+      }
+    }
+
   }
 
 
@@ -86,6 +97,7 @@ class Committee {
       $class = Helper\ClassHelper::getClass($fileInfo->getPathname());
       $decorator = $this->newDecorator($class);
 
+      $this->decorators[$i]['instance'] = $decorator;
       $this->decorators[$i]['class'] = $class;
       $this->decorators[$i]['name'] = $decorator->name;
       $this->decorators[$i]['metal'] = $decorator->metal;
