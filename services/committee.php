@@ -14,7 +14,7 @@ use PitPress\Model\Badge\Committee;
 // Creates an instance of Committee and return it.
 $di->setShared('committee',
   function() use ($di, $root) {
-    $committee = new Committee($di, $root."/src/PitPress/Model/Badge/");
+    $committee = new Committee($di, $root."/src/PitPress/Model/Badge/Decorator/");
 
     return $committee;
   }
