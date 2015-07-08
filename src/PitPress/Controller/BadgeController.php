@@ -17,7 +17,7 @@ namespace PitPress\Controller;
  */
 class BadgeController extends BaseController {
 
-  protected $badgeLoader;
+  protected $committee;
 
 
   /**
@@ -28,7 +28,7 @@ class BadgeController extends BaseController {
     if ($this->dispatcher->isFinished() && $this->dispatcher->wasForwarded())
       return;
 
-    $this->badgeLoader = $this->di['badgeLoader'];
+    $this->committee = $this->di['committee'];
 
     parent::initialize();
 
@@ -48,7 +48,7 @@ class BadgeController extends BaseController {
    * @brief Displays all badges.
    */
   public function allAction() {
-    $badges = $this->badgeLoader->getAllBadges();
+    $badges = $this->committee->getDecorators();
     $this->view->setVar('badges', $badges);
     $this->view->setVar('entriesCount', count($badges));
     $this->view->setVar('entriesLabel', 'badges disponibili');
@@ -60,7 +60,7 @@ class BadgeController extends BaseController {
    * @brief Displays the achieved badges.
    */
   public function achieveAction() {
-    $badges = $this->badgeLoader->getEarnedBadges();
+    $badges = $this->committee->getEarnedBadges();
     $this->view->setVar('badges', $badges);
     $this->view->setVar('entriesCount', count($badges));
     $this->view->setVar('entriesLabel', 'badges ottenuti');
@@ -72,7 +72,7 @@ class BadgeController extends BaseController {
    * @brief Displays the not achieved badges.
    */
   public function notAchieveAction() {
-    $badges = $this->badgeLoader->getUnearnedBadges();
+    $badges = $this->committee->getUnearnedBadges();
     $this->view->setVar('badges', $badges);
     $this->view->setVar('entriesCount', count($badges));
     $this->view->setVar('entriesLabel', 'badges non ottenuti');
@@ -84,7 +84,7 @@ class BadgeController extends BaseController {
    * @brief Displays the gold badges.
    */
   public function goldAction() {
-    $badges =  $this->badgeLoader->filterByMetal($this->badgeLoader->getAllBadges(), 'gold');
+    $badges =  $this->committee->filterByMetal('gold');
     $this->view->setVar('badges', $badges);
     $this->view->setVar('entriesCount', count($badges));
     $this->view->setVar('entriesLabel', "badges d'oro");
@@ -96,7 +96,7 @@ class BadgeController extends BaseController {
    * @brief Displays the silver badges.
    */
   public function silverAction() {
-    $badges = $this->badgeLoader->filterByMetal($this->badgeLoader->getAllBadges(), 'silver');
+    $badges = $this->committee->filterByMetal('silver');
     $this->view->setVar('badges', $badges);
     $this->view->setVar('entriesCount', count($badges));
     $this->view->setVar('entriesLabel', "badges d'argento");
@@ -108,7 +108,7 @@ class BadgeController extends BaseController {
    * @brief Displays the bronze badges.
    */
   public function bronzeAction() {
-    $badges = $this->badgeLoader->filterByMetal($this->badgeLoader->getAllBadges(), 'bronze');
+    $badges = $this->committee->filterByMetal('bronze');
     $this->view->setVar('badges', $badges);
     $this->view->setVar('entriesCount', count($badges));
     $this->view->setVar('entriesLabel', 'badges di bronzo');
