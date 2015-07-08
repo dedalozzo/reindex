@@ -8,7 +8,7 @@
  */
 
 
-namespace PitPress\Model\Badge\Tag;
+namespace PitPress\Model\Badge\Decorator\Tag;
 
 
 use PitPress\Model\Badge\Decorator\Decorator;

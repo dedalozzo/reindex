@@ -8,7 +8,7 @@
  */
 
 
-namespace PitPress\Model\Badge\Donation;
+namespace PitPress\Model\Badge\Decorator\Donation;
 
 
 use PitPress\Model\Badge\Decorator\Decorator;

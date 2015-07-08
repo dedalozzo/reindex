@@ -8,7 +8,7 @@
  */
 
 
-namespace PitPress\Model\Badge\Reply;
+namespace PitPress\Model\Badge\Decorator\Reply;
 
 
 use PitPress\Model\Badge\Decorator\Decorator;
