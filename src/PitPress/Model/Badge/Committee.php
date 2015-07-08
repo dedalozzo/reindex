@@ -11,7 +11,7 @@
 namespace PitPress\Model\Badge;
 
 
-use PitPress\Filter\BadgeRecursiveFilterIterator;
+use PitPress\Filter\DecoratorRecursiveFilterIterator;
 use PitPress\Helper;
 use PitPress\Model\Badge\Decorator\Decorator;
 
@@ -89,7 +89,7 @@ class Committee {
 
   protected function scan() {
     $dir = new \RecursiveDirectoryIterator($this->folder);
-    $filter = new BadgeRecursiveFilterIterator($dir);
+    $filter = new DecoratorRecursiveFilterIterator($dir);
     $iterator = new \RecursiveIteratorIterator($filter);
 
     $i = 0;
@@ -130,7 +130,7 @@ class Committee {
     $filtered = [];
     foreach ($this->decorators as $decorator)
 
-      if ($decorator[$filterName] == $filterValue)
+      if ($decorator[$filterName] === $filterValue)
         $filtered[] = $decorator;
 
     return $filtered;
