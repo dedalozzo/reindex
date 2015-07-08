@@ -63,6 +63,7 @@ Built With
 - [Phalcon](https://phalconphp.com)
 - [CouchDB](http://couchdb.apache.org/)
 - [Redis](http://redis.io/)
+- [RabbitMQ](https://www.rabbitmq.com)
 - [Elephant On Couch](http://elephantoncouch.com)
 - [PitBootstrap](https://github.com/dedalozzo/pit-bootstrap)
 - [jQuery](https://jquery.com/)
