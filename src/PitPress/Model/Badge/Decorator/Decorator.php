@@ -15,6 +15,8 @@ namespace PitPress\Model\Badge\Decorator;
 use PitPress\Observer\IObserver;
 use PitPress\Model\Badge\Committee;
 
+use EoC\Extension\TProperty;
+
 
 /**
  * @brief This is the ancestor of all decorators, it's abstract and can't be instantiated.
@@ -22,6 +24,7 @@ use PitPress\Model\Badge\Committee;
  * @nosubgrouping
  */
 abstract class Decorator implements IObserver {
+  use TProperty;
 
   protected $committee;
 
