@@ -8,12 +8,10 @@
  */
 
 
-namespace PitPress\Model\Accessory;
+namespace PitPress\Model;
 
 
 use EoC\Doc\Doc;
-
-use PitPress\Model\Storable;
 
 
 /**

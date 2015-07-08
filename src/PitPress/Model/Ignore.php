@@ -8,7 +8,7 @@
  */
 
 
-namespace PitPress\Model\Accessory;
+namespace PitPress\Model;
 
 
 /**

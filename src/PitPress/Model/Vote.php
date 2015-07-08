@@ -8,12 +8,7 @@
  */
 
 
-namespace PitPress\Model\Accessory;
-
-
-use PitPress\Model\Storable;
-//use PitPress\Extension\ISubject;
-//use PitPress\Extension\TSubject;
+namespace PitPress\Model;
 
 
 /**
@@ -21,19 +16,6 @@ use PitPress\Model\Storable;
  * @nosubgrouping
  */
 class Vote extends Storable { //implements ISubject {
-  //use TSubject
-
-/*
-  public function load() {
-
-  }
-*/
-
-  public function save() {
-    parent::save();
-    //$this->notify();
-  }
-
 
   //! @cond HIDDEN_SYMBOLS
 
