@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file BadgeRecursiveFilterIterator.php
- * @brief This file contains the BadgeRecursiveFilterIterator class.
+ * @file DecoratorRecursiveFilterIterator.php
+ * @brief This file contains the DecoratorRecursiveFilterIterator class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -16,16 +16,16 @@ use PitPress\Helper;
 
 
 /**
- * @brief A custom filter to retrieves only the badges.
+ * @brief A custom filter to retrieves only the decorators.
  * @details Badges are all the classes defined under the badges' namespace (and sub-namespaces), derived
  * from Gold, Silver or TBronze classes.
  * @nosubgrouping
  */
-class BadgeRecursiveFilterIterator extends \RecursiveFilterIterator {
+class DecoratorRecursiveFilterIterator extends \RecursiveFilterIterator {
 
   #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-  const ANCESTOR = 'PitPress\\Model\\Badge\\Badge';
+  const ANCESTOR = 'PitPress\\Model\\Badge\\Decorator\\Decorator';
 
   #endif
 
