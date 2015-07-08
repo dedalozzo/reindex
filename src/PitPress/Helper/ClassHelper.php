@@ -24,7 +24,7 @@ class ClassHelper {
    * @retval string The class name.
    */
   public static function getClass($pathname) {
-    return preg_replace('/\.php\z/i', '', "\\".basename(str_replace("/", "\\", substr($pathname, stripos($pathname, "PitPress")))));
+    return preg_replace('/\.php\z/i', '', "\\".str_replace('/', "\\", substr($pathname, stripos($pathname, "PitPress"))));
   }
 
 
