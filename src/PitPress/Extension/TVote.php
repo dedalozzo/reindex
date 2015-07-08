@@ -15,7 +15,7 @@ use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
 use PitPress\Helper\Text;
-use PitPress\Model\Accessory\Vote;
+use PitPress\Model\Vote;
 use PitPress\Model\User;
 use PitPress\Exception;
 

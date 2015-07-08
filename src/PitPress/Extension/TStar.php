@@ -15,7 +15,7 @@ use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
 use PitPress\Exception;
-use PitPress\Model\Accessory\Star;
+use PitPress\Model\Star;
 use PitPress\Helper\Text;
 
 

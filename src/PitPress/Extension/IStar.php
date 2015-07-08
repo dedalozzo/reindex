@@ -11,9 +11,6 @@
 namespace PitPress\Extension;
 
 
-use PitPress\Model\User;
-
-
 /**
  * @brief Defines starring methods.
  * @nosubgrouping

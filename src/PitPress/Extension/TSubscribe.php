@@ -14,7 +14,7 @@ namespace PitPress\Extension;
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
-use PitPress\Model\Accessory\Subscription;
+use PitPress\Model\Subscription;
 use PitPress\Model\User;
 use PitPress\Helper\Text;
 
