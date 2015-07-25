@@ -34,6 +34,11 @@ class Committee {
   protected $decorators = [];
 
 
+  /**
+   * @brief Constructor.
+   * @param[in] DependencyInjector $di Phalcon dependency injector.
+   * @param[in] string $folder Decorators' directory.
+   */
   public function __construct($di, $folder) {
     $this->guardian = $di['guardian'];
     $this->couch = $di['couchdb'];
@@ -54,6 +59,10 @@ class Committee {
   }
 
 
+  /**
+   * @brief Computes for each badge, the number of times has been awarded.
+   * @param[in] bool $forUser Restricts the count to the current user.
+   */
   private function setAwardedCount($forUser = FALSE) {
     $opts = new ViewQueryOpts();
     $opts->reset();
@@ -82,12 +91,18 @@ class Committee {
   }
 
 
+  /**
+   * @brief Computes for each badge, the number of times has been awarded to the current user.
+   */
   private function setEarnedCount() {
     if (!$this->user->isGuest())
       $this->setAwardedCount(TRUE);
   }
 
 
+  /**
+   * @brief Scans the directory searching for decorators.
+   */
   protected function scan() {
     $dir = new \RecursiveDirectoryIterator($this->folder);
     $filter = new DecoratorRecursiveFilterIterator($dir);
@@ -118,6 +133,12 @@ class Committee {
   }
 
 
+  /**
+   * @brief Sorts the list of decorators.
+   * @param[in] array $decorators The list of decorators.
+   * @param[in] string $field Sorts using this field.
+   * @return array The filtered list.
+   */
   protected function sort(&$decorators, $field) {
     $func = function($a, $b) use ($field) {
       return strcmp($a[$field], $b[$field]);
@@ -127,6 +148,12 @@ class Committee {
   }
 
 
+  /**
+   * @brief Filters the list of decorators using a filter.
+   * @param[in] string $filterName The filter's name.
+   * @param[in] string $filterName The filter's value.
+   * @return array The filtered list.
+   */
   protected function filter($filterName, $filterValue) {
     $filtered = [];
     foreach ($this->decorators as $decorator)
@@ -138,6 +165,11 @@ class Committee {
   }
 
 
+  /**
+   * @brief Returns an instance of the provided decorator class.
+   * @param[in] string $class A decorator's class.
+   * @return object
+   */
   public function newDecorator($class) {
     return new $class($this);
   }
