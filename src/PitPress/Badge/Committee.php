@@ -152,7 +152,7 @@ class Committee {
    * @brief Filters the list of decorators using a filter.
    * @param[in] string $filterName The filter's name.
    * @param[in] string $filterName The filter's value.
-   * @return array The filtered list.
+   * @return array An associative array.
    */
   protected function filter($filterName, $filterValue) {
     $filtered = [];
