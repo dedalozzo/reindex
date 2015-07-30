@@ -20,7 +20,7 @@ use EoC\Opt\ViewQueryOpts;
 
 
 /**
- * @brief The committee awards or withdrawn badges, lists them, and provides information about decorators.
+ * @brief The committee awards or withdrawns badges, lists them, and provides information about decorators.
  * @details
  * @nosubgrouping
  */
