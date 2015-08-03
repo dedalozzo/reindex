@@ -32,7 +32,7 @@ class BookGroup extends IndexGroup {
 
 
   public function getPrefix() {
-    return '/libri';
+    return '/books';
   }
 
 } 
