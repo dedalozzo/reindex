@@ -33,12 +33,12 @@ class FooterGroup extends Group {
     $this->setHostName(DI::getDefault()['config']['application']['domainName']);
 
     $this->addGet('/tour/', ['action' => 'tour']);
-    $this->addGet('/aiuto/', ['action' => 'help']);
-    $this->addGet('/legale/', ['action' => 'legal']);
+    $this->addGet('/help/', ['action' => 'help']);
+    $this->addGet('/legal/', ['action' => 'legal']);
     $this->addGet('/privacy/', ['action' => 'privacy']);
-    $this->addGet('/lavoro/', ['action' => 'career']);
-    $this->addGet('/pubblicita/', ['action' => 'advertising']);
-    $this->addGet('/contatti/', ['action' => 'contact']);
+    $this->addGet('/careers/', ['action' => 'career']);
+    $this->addGet('/advertising/', ['action' => 'advertising']);
+    $this->addGet('/contacts/', ['action' => 'contact']);
     $this->addGet('/info/', ['action' => 'info']);
   }
 
