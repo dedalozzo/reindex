@@ -25,7 +25,7 @@ class BookController extends IndexController {
    * @copydoc IndexController::getLabel()
    */
   protected function getLabel() {
-    return 'libri';
+    return 'books';
   }
 
 
@@ -33,7 +33,7 @@ class BookController extends IndexController {
    * @copydoc BaseController::getPeriod()
    */
   protected function getPeriod($filter) {
-    return empty($filter) ? Helper\Time::EVER : Helper\ArrayHelper::value($filter, $this->periods);
+    return empty($filter) ? Helper\Time::ALL_TIME : Helper\ArrayHelper::value($filter, $this->periods);
   }
 
 
