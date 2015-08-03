@@ -36,7 +36,8 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   //!@{
 
   const POP_SET = 'pop_';
-  const UPD_SET = 'upd_';
+  const ACT_SET = 'act_';
+  const OPN_SET = 'opn_';
 
   //!@}
 
@@ -97,12 +98,12 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
     if ($this->isCurrent() && !$deferred) {
       // Updates popularity.
-      $this->zRemPopularity();
-      $this->zAddPopularity();
+      $this->zRemPopular();
+      $this->zAddPopular();
 
       // Refreshes timestamp.
-      $this->zRemLastUpdate();
-      $this->zAddLastUpdate();
+      $this->zRemActive();
+      $this->zAddActive();
     }
   }
 
@@ -367,7 +368,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   /**
    * @brief Adds the post popularity to the Redis db.
    */
-  public function zAddPopularity() {
+  public function zAddPopular() {
     if (!$this->isVisible()) return;
 
     $config = $this->di['config'];
@@ -401,7 +402,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   /**
    * @brief Removes the post popularity from the Redis db.
    */
-  public function zRemPopularity() {
+  public function zRemPopular() {
     $date = (new \DateTime())->setTimestamp($this->publishedAt);
     $id = $this->unversionId;
 
@@ -432,7 +433,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @brief Adds the post last update timestamp to the Redis db.
    * @param[in] integer $timestamp (optional) The timestamp of the post last update.
    */
-  public function zAddLastUpdate($timestamp = NULL) {
+  public function zAddActive($timestamp = NULL) {
     if (!$this->isVisible()) return;
 
     if (is_null($timestamp) or ($timestamp < $this->modifiedAt))
@@ -442,10 +443,10 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
     // Order set with all the posts.
     if (static::INDEX)
-      $this->redis->zAdd(self::UPD_SET.'post', $timestamp, $id);
+      $this->redis->zAdd(self::ACT_SET.'post', $timestamp, $id);
 
     // Order set with all the posts of a specific type: article, question, ecc.
-    $this->redis->zAdd(self::UPD_SET.$this->type, $timestamp, $id);
+    $this->redis->zAdd(self::ACT_SET.$this->type, $timestamp, $id);
 
     if ($this->isMetadataPresent('tags')) {
       $tags = $this->uniqueMasters();
@@ -454,17 +455,17 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
         // Filters posts which should appear on the home page.
         if (static::INDEX) {
           // Order set with all the posts related to a specific tag.
-          $this->redis->zAdd(self::UPD_SET . $tagId . '_' . 'post', $timestamp, $id);
+          $this->redis->zAdd(self::ACT_SET . $tagId . '_' . 'post', $timestamp, $id);
 
           // Used to get a list of tags recently updated.
-          $this->redis->zAdd(self::UPD_SET . 'tags' . '_' . 'post', $timestamp, $tagId);
+          $this->redis->zAdd(self::ACT_SET . 'tags' . '_' . 'post', $timestamp, $tagId);
         }
 
         // Order set with all the posts of a specific type, related to a specific tag.
-        $this->redis->zAdd(self::UPD_SET.$tagId.'_'.$this->type, $timestamp, $id);
+        $this->redis->zAdd(self::ACT_SET.$tagId.'_'.$this->type, $timestamp, $id);
 
         // Used to get a list of tags, in relation to a specific type, recently updated.
-        $this->redis->zAdd(self::UPD_SET.'tags'.'_'.$this->type, $timestamp, $tagId);
+        $this->redis->zAdd(self::ACT_SET.'tags'.'_'.$this->type, $timestamp, $tagId);
       }
     }
   }
@@ -473,30 +474,30 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   /**
    * @brief Removes the post last update timestamp from the Redis db.
    */
-  public function zRemLastUpdate() {
+  public function zRemActive() {
     $id = $this->unversionId;
 
     // Order set with all the posts.
-    $this->redis->zRem(self::UPD_SET.'post', $id);
+    $this->redis->zRem(self::ACT_SET.'post', $id);
 
     // Order set with all the posts of a specific type: article, question, ecc.
-    $this->redis->zRem(self::UPD_SET.$this->type, $id);
+    $this->redis->zRem(self::ACT_SET.$this->type, $id);
 
     foreach ($this->zRemTags as $tagId) {
       // Filters posts which should appear on the home page.
       if (static::INDEX) {
         // Order set with all the posts related to a specific tag.
-        $this->redis->zRem(self::UPD_SET . $tagId . '_' . 'post', $id);
+        $this->redis->zRem(self::ACT_SET . $tagId . '_' . 'post', $id);
 
         // Used to get a list of tags recently updated.
-        $this->redis->zRem(self::UPD_SET . 'tags' . '_' . 'post', $tagId);
+        $this->redis->zRem(self::ACT_SET . 'tags' . '_' . 'post', $tagId);
       }
 
       // Order set with all the posts of a specific type, related to a specific tag.
-      $this->redis->zRem(self::UPD_SET.$tagId.'_'.$this->type, $id);
+      $this->redis->zRem(self::ACT_SET.$tagId.'_'.$this->type, $id);
 
       // Used to get a list of tags, in relation to a specific type, recently updated.
-      $this->redis->zRem(self::UPD_SET.'tags'.'_'.$this->type, $tagId);
+      $this->redis->zRem(self::ACT_SET.'tags'.'_'.$this->type, $tagId);
     }
   }
 
