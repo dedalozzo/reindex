@@ -30,7 +30,7 @@ class Time extends TimeHelper {
   const LAST_MONTH = 5;
   const THIS_YEAR = 6;
   const LAST_YEAR = 7;
-  const EVER = 8;
+  const ALL_TIME = 8;
   //!@}
 
 
@@ -49,21 +49,21 @@ class Time extends TimeHelper {
       $time = TimeHelper::since($timestamp);
 
       if ($time['hours'] > 1)
-        return sprintf('%d ore fa', $time['hours']);
+        return sprintf('%d hours ago', $time['hours']);
       elseif ($time['hours'] == 1)
-        return "un'ora fa";
+        return "one hour ago";
       elseif ($time['minutes'] > 1)
-        return sprintf('%d minuti fa', $time['minutes']);
+        return sprintf('%d minutes ago', $time['minutes']);
       elseif ($time['minutes'] == 1)
-        return "un minuto fa";
+        return "one minute fa";
       elseif ($time['seconds'] > 1)
-        return sprintf('%d secondi fa', $time['seconds']);
+        return sprintf('%d seconds ago', $time['seconds']);
       else // $time['seconds'] == 1
-        return "un secondo fa";
+        return "one second ago";
     }
     // Yesterday.
     elseif (strtotime('-1 day', $today) == date('Ymd', $timestamp))
-      return "ieri";
+      return "yesterday";
     // In the past.
     else
       return $showTime ? date('d/m/Y H:i', $timestamp) : date('d/m/Y', $timestamp);
