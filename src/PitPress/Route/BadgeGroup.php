@@ -34,13 +34,13 @@ class BadgeGroup extends Group {
     // All the following routes start with /badge.
     $this->setPrefix('/badges');
     $this->addGet('/', ['action' => 'all']);
-    $this->addGet('/tutti/', ['action' => 'all']);
-    $this->addGet('/ottenuti/', ['action' => 'achieve']);
-    $this->addGet('/non-ottenuti/', ['action' => 'notAchieve']);
-    $this->addGet('/oro/', ['action' => 'gold']);
-    $this->addGet('/argento/', ['action' => 'silver']);
-    $this->addGet('/bronzo/', ['action' => 'bronze']);
-    $this->addGet('/per-tag/', ['action' => 'byTag']);
-    $this->addGet('/per-tag/{filter}/', ['action' => 'byTag']);
+    $this->addGet('/all/', ['action' => 'all']);
+    $this->addGet('/earned/', ['action' => 'earned']);
+    $this->addGet('/unearned/', ['action' => 'unearned']);
+    $this->addGet('/gold/', ['action' => 'gold']);
+    $this->addGet('/silver/', ['action' => 'silver']);
+    $this->addGet('/bronze/', ['action' => 'bronze']);
+    $this->addGet('/tag/', ['action' => 'tag']);
+    $this->addGet('/tag/{filter}/', ['action' => 'tag']);
   }
 }
