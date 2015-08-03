@@ -39,15 +39,15 @@ abstract class BaseController extends Controller {
   protected $user;
 
   protected $periods = [
-    "sempre" => Helper\Time::EVER,
-    "anno scorso" => Helper\Time::LAST_YEAR,
-    "quest'anno" => Helper\Time::THIS_YEAR,
-    "mese scorso" => Helper\Time::LAST_MONTH,
-    "questo mese" => Helper\Time::THIS_MONTH,
-    "sett. scorsa" => Helper\Time::LAST_WEEK,
-    "questa sett." => Helper\Time::THIS_WEEK,
-    "ieri" => Helper\Time::YESTERDAY,
-    "oggi" => Helper\Time::TODAY
+    "all-time" => Helper\Time::ALL_TIME,
+    "last-year" => Helper\Time::LAST_YEAR,
+    "this-year" => Helper\Time::THIS_YEAR,
+    "last-month" => Helper\Time::LAST_MONTH,
+    "this-month" => Helper\Time::THIS_MONTH,
+    "last-week" => Helper\Time::LAST_WEEK,
+    "this-week" => Helper\Time::THIS_WEEK,
+    "yesterday" => Helper\Time::YESTERDAY,
+    "today" => Helper\Time::TODAY
   ];
 
 
@@ -57,7 +57,7 @@ abstract class BaseController extends Controller {
    * @retval int|bool If the filter exists returns its number, else returns `false`.
    */
   protected function getPeriod($filter) {
-    return is_null($filter) ? Helper\Time::EVER : Helper\ArrayHelper::value($filter, $this->periods);
+    return is_null($filter) ? Helper\Time::ALL_TIME : Helper\ArrayHelper::value($filter, $this->periods);
   }
 
 
