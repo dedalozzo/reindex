@@ -53,10 +53,10 @@ class IndexGroup extends Group {
    */
   protected function addRoutes($postfix = "") {
     $this->addGet('/', ['action' => $this->getDefaultAction().$postfix]);
-    $this->addGet('/nuovi/', ['action' => 'newest'.$postfix]);
-    $this->addGet('/popolari/', ['action' => 'popular'.$postfix]);
-    $this->addGet('/popolari/{filter}/', ['action' => 'popular'.$postfix]);
-    $this->addGet('/attivi/', ['action' => 'active'.$postfix]);
+    $this->addGet('/new/', ['action' => 'newest'.$postfix]);
+    $this->addGet('/active/', ['action' => 'active'.$postfix]);
+    $this->addGet('/popular/', ['action' => 'popular'.$postfix]);
+    $this->addGet('/popular/{filter}/', ['action' => 'popular'.$postfix]);
 
     $this->addGet('/{year:[0-9]{4}}/', ['action' => 'perDate'.$postfix]);
     $this->addGet('/{year:[0-9]{4}}/{month:[0-9]{2}}/', ['action' => 'perDate'.$postfix]);
@@ -82,9 +82,9 @@ class IndexGroup extends Group {
 
     // The following routes don't support the postfix.
     $this->addGet('/info/', ['action' => 'infoByTag']);
-    $this->addGet('/interessanti/', ['action' => 'interesting']);
-    $this->addGet('/preferiti/', ['action' => 'favorite']);
-    $this->addGet('/preferiti/{filter}/', ['action' => 'favorite']);
+    $this->addGet('/interesting/', ['action' => 'interesting']);
+    $this->addGet('/favorites/', ['action' => 'favorite']);
+    $this->addGet('/favorites/{filter}/', ['action' => 'favorite']);
     $this->add('/aggiungi', ['action' => 'new'])->via(['GET', 'POST']);
   }
 
