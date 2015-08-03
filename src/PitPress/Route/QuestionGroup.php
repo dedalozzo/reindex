@@ -32,21 +32,21 @@ class QuestionGroup extends IndexGroup {
 
 
   public function getPrefix() {
-    return '/domande';
+    return '/questions';
   }
 
 
   protected function addRoutes($postfix = "") {
     $this->addGet('/', ['action' => $this->getDefaultAction().$postfix]);
-    $this->addGet('/nuove/', ['action' => 'newest'.$postfix]);
-    $this->addGet('/popolari/', ['action' => 'popular'.$postfix]);
-    $this->addGet('/popolari/{filter}/', ['action' => 'popular'.$postfix]);
-    $this->addGet('/attive/', ['action' => 'active'.$postfix]);
-    $this->addGet('/importanti/', ['action' => 'important'.$postfix]);
-    $this->addGet('/aperte/', ['action' => 'open'.$postfix]);
-    $this->addGet('/aperte/{filter}/', ['action' => 'open'.$postfix]);
-    $this->addGet('/preferite/', ['action' => 'favorite'.$postfix]);
-    $this->addGet('/preferite/{filter}/', ['action' => 'favorite'.$postfix]);
+    $this->addGet('/new/', ['action' => 'newest'.$postfix]);
+    $this->addGet('/popular/', ['action' => 'popular'.$postfix]);
+    $this->addGet('/popular/{filter}/', ['action' => 'popular'.$postfix]);
+    $this->addGet('/active/', ['action' => 'active'.$postfix]);
+    $this->addGet('/important/', ['action' => 'important'.$postfix]);
+    $this->addGet('/open/', ['action' => 'open'.$postfix]);
+    $this->addGet('/open/{filter}/', ['action' => 'open'.$postfix]);
+    $this->addGet('/favorites/', ['action' => 'favorite'.$postfix]);
+    $this->addGet('/favorites/{filter}/', ['action' => 'favorite'.$postfix]);
 
     $this->addGet('/{year:[0-9]{4}}/', ['action' => 'perDate'.$postfix]);
     $this->addGet('/{year:[0-9]{4}}/{month:[0-9]{2}}/', ['action' => 'perDate'.$postfix]);
