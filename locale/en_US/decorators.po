@@ -1,0 +1,415 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PitPress\n"
+"POT-Creation-Date: 2015-08-05 16:49+0200\n"
+"PO-Revision-Date: 2015-08-05 20:18+0200\n"
+"Language-Team: Filippo Fadda <filippo.fadda@programmazione.it>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.4\n"
+"X-Poedit-Basepath: ../../src\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"Last-Translator: \n"
+"Language: en_US\n"
+"X-Poedit-SearchPath-0: .\n"
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Answer
+# ----------------------------------------------------------------------------------------------------------------------
+
+msgid "Enlightened.name"
+msgstr "Enlightened"
+msgid "Enlightened.desc"
+msgstr ""
+
+msgid "Guru.name"
+msgstr "Guru"
+msgid "Guru.desc"
+msgstr ""
+
+msgid "KnowItAll.name"
+msgstr "Know-it-all"
+msgid "KnowItAll.desc"
+msgstr ""
+
+msgid "Necromancer.name"
+msgstr "Necromancer"
+msgid "Necromancer.desc"
+msgstr ""
+
+msgid "Populist.name"
+msgstr "Populist"
+msgid "Populist.desc"
+msgstr ""
+
+msgid "Resurrectionist.name"
+msgstr "Resurrectionist"
+msgid "Resurrectionist.desc"
+msgstr ""
+
+msgid "Scholar.name"
+msgstr "Scholar"
+msgid "Scholar.desc"
+msgstr ""
+
+msgid "SelfLearner.name"
+msgstr "SelfLearner"
+msgid "SelfLearner.desc"
+msgstr ""
+
+msgid "Sportsmanship.name"
+msgstr "Sportsmanship"
+msgid "Sportsmanship.desc"
+msgstr ""
+
+msgid "Student.name"
+msgstr "Student"
+msgid "Student.desc"
+msgstr ""
+
+msgid "Teacher.name"
+msgstr "Teacher"
+msgid "Teacher.desc"
+msgstr ""
+
+msgid "Tenacious.name"
+msgstr "Tenacious"
+msgid "Tenacious.desc"
+msgstr ""
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Bounty
+# ----------------------------------------------------------------------------------------------------------------------
+
+msgid "Altruist.name"
+msgstr "Altruist"
+msgid "Altruist.desc"
+msgstr ""
+
+msgid "Benefactor.name"
+msgstr "Benefactor"
+msgid "Benefactor.desc"
+msgstr ""
+
+msgid "Investor.name"
+msgstr "Investor"
+msgid "Investor.desc"
+msgstr ""
+
+msgid "Promoter.name"
+msgstr "Promoter"
+msgid "Promoter.desc"
+msgstr ""
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Donation
+# ----------------------------------------------------------------------------------------------------------------------
+
+msgid "Philanthropist.name"
+msgstr "Philanthropist"
+msgid "Philanthropist.desc"
+msgstr ""
+
+msgid "Supporter.name"
+msgstr "Supporter"
+msgid "Supporter.desc"
+msgstr ""
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Flag
+# ----------------------------------------------------------------------------------------------------------------------
+
+msgid "Doorman.name"
+msgstr "Doorman"
+msgid "Doorman.desc"
+msgstr ""
+
+msgid "Guardian.name"
+msgstr "Guardian"
+msgid "Guardian.desc"
+msgstr ""
+
+msgid "Watchman.name"
+msgstr "Watchman"
+msgid "Watchman.desc"
+msgstr ""
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Hit
+# ----------------------------------------------------------------------------------------------------------------------
+
+msgid "Distinguishable.name"
+msgstr "Distinguishable"
+msgid "Distinguishable.desc"
+msgstr ""
+
+msgid "Famous.name"
+msgstr "Famous"
+msgid "Famous.desc"
+msgstr ""
+
+msgid "Popular.name"
+msgstr "Popular"
+msgid "Popular.desc"
+msgstr ""
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Link
+# ----------------------------------------------------------------------------------------------------------------------
+
+msgid "Batsman.name"
+msgstr "Batsman"
+msgid "Batsman.desc"
+msgstr ""
+
+msgid "Beacon.name"
+msgstr "Beacon"
+msgid "Beacon.desc"
+msgstr ""
+
+msgid "Reporter.name"
+msgstr "Reporter"
+msgid "Reporter.desc"
+msgstr ""
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Post
+# ----------------------------------------------------------------------------------------------------------------------
+
+msgid "Blogger.name"
+msgstr "Blgger"
+msgid "Blogger.desc"
+msgstr ""
+
+msgid "BookReviewer.name"
+msgstr "Book Reviewer"
+msgid "BookReviewer.desc"
+msgstr ""
+
+msgid "Columnlist.name"
+msgstr "Columnlist"
+msgid "Columnlist.desc"
+msgstr ""
+
+msgid "Contributor.name"
+msgstr "Contributor"
+msgid "Contributor.desc"
+msgstr ""
+
+msgid "Journalist.name"
+msgstr "Journalist"
+msgid "Journalist.desc"
+msgstr ""
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Reply
+# ----------------------------------------------------------------------------------------------------------------------
+
+msgid "Commentator.name"
+msgstr "Commentator"
+msgid "Commentator.desc"
+msgstr ""
+
+msgid "Critic.name"
+msgstr "Critic"
+msgid "Critic.desc"
+msgstr ""
+
+msgid "Pundit.name"
+msgstr "Pundit"
+msgid "Pundit.desc"
+msgstr ""
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Reputation
+# ----------------------------------------------------------------------------------------------------------------------
+
+msgid "Epic.name"
+msgstr "Epic"
+msgid "Epic.desc"
+msgstr ""
+
+msgid "Great.name"
+msgstr "Great"
+msgid "Great.desc"
+msgstr ""
+
+msgid "Legendary.name"
+msgstr "Legendary"
+msgid "Legendary.desc"
+msgstr ""
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Revision
+# ----------------------------------------------------------------------------------------------------------------------
+
+msgid "Archaeologist.name"
+msgstr "Archaeologist"
+msgid "Archaeologist.desc"
+msgstr ""
+
+msgid "Assistant.name"
+msgstr "Assistant"
+msgid "Assistant.desc"
+msgstr ""
+
+msgid "CopyEditor.name"
+msgstr "Copy-editor"
+msgid "CopyEditor.desc"
+msgstr ""
+
+msgid "Editor.name"
+msgstr "Editor"
+msgid "Editor.desc"
+msgstr ""
+
+msgid "Historian.name"
+msgstr "Historian"
+msgid "Historian.desc"
+msgstr ""
+
+msgid "Moderator.name"
+msgstr "Moderator"
+msgid "Moderator.desc"
+msgstr ""
+
+msgid "Proofreader.name"
+msgstr "Proofreader"
+msgid "Proofreader.desc"
+msgstr ""
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Score
+# ----------------------------------------------------------------------------------------------------------------------
+
+msgid "Amazing.name"
+msgstr "Amazing"
+msgid "Amazing.desc"
+msgstr ""
+
+msgid "Awesome.name"
+msgstr "Awesome"
+msgid "Awesome.desc"
+msgstr ""
+
+msgid "Superior.name"
+msgstr "Superior"
+msgid "Superior.desc"
+msgstr ""
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Star
+# ----------------------------------------------------------------------------------------------------------------------
+
+msgid "Beloved.name"
+msgstr "Beloved"
+msgid "Beloved.desc"
+msgstr ""
+
+msgid "Stellar.name"
+msgstr "Stellar"
+msgid "Stellar.desc"
+msgstr ""
+
+msgid "Trendy.name"
+msgstr "Trendy"
+msgid "Trendy.desc"
+msgstr ""
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Tag
+# ----------------------------------------------------------------------------------------------------------------------
+
+msgid "Librarian.name"
+msgstr "Librarian"
+msgid "Librarian.desc"
+msgstr ""
+
+msgid "Linguist.name"
+msgstr "Linguist"
+msgid "Linguist.desc"
+msgstr ""
+
+msgid "Organizer.name"
+msgstr "Organizer"
+msgid "Organizer.desc"
+msgstr ""
+
+msgid "Tagger.name"
+msgstr "Tagger"
+msgid "Tagger.desc"
+msgstr ""
+
+msgid "Taxonomist.name"
+msgstr "Taxonomist"
+msgid "Taxonomist.desc"
+msgstr ""
+
+# ----------------------------------------------------------------------------------------------------------------------
+# User
+# ----------------------------------------------------------------------------------------------------------------------
+
+msgid "Active.name"
+msgstr "Active"
+msgid "Active.desc"
+msgstr ""
+
+msgid "Autobiographer.name"
+msgstr "Autobiographer"
+msgid "Autobiographer.desc"
+msgstr ""
+
+msgid "GitHubber.name"
+msgstr "GitHubber"
+msgid "GitHubber.desc"
+msgstr ""
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Visit
+# ----------------------------------------------------------------------------------------------------------------------
+
+msgid "Enthusiast.name"
+msgstr "Enthusiast"
+msgid "Enthusiast.desc"
+msgstr ""
+
+msgid "Fanatic.name"
+msgstr "Fanatic"
+msgid "Fanatic.desc"
+msgstr ""
+
+msgid "Follower.name"
+msgstr "Follower"
+msgid "Follower.desc"
+msgstr ""
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Vote
+# ----------------------------------------------------------------------------------------------------------------------
+
+msgid "Attendee.name"
+msgstr "Attendee"
+msgid "Attendee.desc"
+msgstr ""
+
+msgid "Fan.name"
+msgstr "Fan"
+msgid "Fan.desc"
+msgstr ""
+
+msgid "Groupie.name"
+msgstr "Groupie"
+msgid "Groupie.desc"
+msgstr ""
+
+msgid "Ultra.name"
+msgstr "Ultra"
+msgid "Ultra.desc"
+msgstr ""
+
+msgid "Voter.name"
+msgstr "Voter"
+msgid "Voter.desc"
+msgstr ""
