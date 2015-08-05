@@ -24,24 +24,6 @@ class Ultra extends Decorator {
 
 
   /**
-   * @copydoc Decorator::getName()
-   */
-  public function getName() {
-    return "Ultrà";
-  }
-
-
-  /**
-   * @copydoc Decorator::getBrief()
-   */
-  public function getBrief() {
-    return <<<'DESC'
-Hai usato il massimo di 50 voti in un giorno. Assegnato una sola volta.
-DESC;
-  }
-
-
-  /**
    * @copydoc Decorator::getMetal()
    */
   public function getMetal() {

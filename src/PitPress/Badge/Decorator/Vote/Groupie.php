@@ -23,24 +23,6 @@ class Groupie extends Fan {
 
 
   /**
-   * @copydoc Decorator::getName()
-   */
-  public function getName() {
-    return "Groupie";
-  }
-
-
-  /**
-   * @copydoc Decorator::getBrief()
-   */
-  public function getBrief() {
-    return <<<'DESC'
-Hai votato almeno 500 volte. Assegnato una sola volta.
-DESC;
-  }
-
-
-  /**
    * @copydoc Decorator::getMetal()
    */
   public function getMetal() {

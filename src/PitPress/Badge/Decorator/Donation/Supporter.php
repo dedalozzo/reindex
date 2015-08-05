@@ -24,24 +24,6 @@ class Supporter extends Decorator {
 
 
   /**
-   * @copydoc Decorator::getName()
-   */
-  public function getName() {
-    return "Sostenitore";
-  }
-
-
-  /**
-   * @copydoc Decorator::getBrief()
-   */
-  public function getBrief() {
-    return <<<'DESC'
-Hai fatto una donazione a tuo piacimento. Assegnato più volte.
-DESC;
-  }
-
-
-  /**
    * @copydoc Decorator::getMetal()
    */
   public function getMetal() {

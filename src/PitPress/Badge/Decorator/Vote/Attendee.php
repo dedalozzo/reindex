@@ -24,24 +24,6 @@ class Attendee extends Decorator {
 
 
   /**
-   * @copydoc Decorator::getName()
-   */
-  public function getName() {
-    return "Partecipante";
-  }
-
-
-  /**
-   * @copydoc Decorator::getBrief()
-   */
-  public function getBrief() {
-    return <<<'DESC'
-Hai votato 10 volte in un giorno. Assegnato una sola volta.
-DESC;
-  }
-
-
-  /**
    * @copydoc Decorator::getMetal()
    */
   public function getMetal() {

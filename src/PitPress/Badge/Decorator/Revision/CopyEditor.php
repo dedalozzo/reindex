@@ -24,24 +24,6 @@ class CopyEditor extends Decorator {
 
 
   /**
-   * @copydoc Decorator::getName()
-   */
-  public function getName() {
-    return "Copy-editor";
-  }
-
-
-  /**
-   * @copydoc Decorator::getBrief()
-   */
-  public function getBrief() {
-    return <<<'DESC'
-Hai modificato 25 contributi. Assegnato una sola volta.
-DESC;
-  }
-
-
-  /**
    * @copydoc Decorator::getMetal()
    */
   public function getMetal() {

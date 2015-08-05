@@ -24,24 +24,6 @@ class Beloved extends Decorator {
 
 
   /**
-   * @copydoc Decorator::getName()
-   */
-  public function getName() {
-    return "Popolare";
-  }
-
-
-  /**
-   * @copydoc Decorator::getBrief()
-   */
-  public function getBrief() {
-    return <<<'DESC'
-Hai fornito un contributo (articolo, domanda, recensione, link) aggiunto ai preferiti 10 volte. Assegnato più volte.
-DESC;
-  }
-
-
-  /**
    * @copydoc Decorator::getMetal()
    */
   public function getMetal() {

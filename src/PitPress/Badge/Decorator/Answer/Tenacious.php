@@ -24,25 +24,6 @@ class Tenacious extends Decorator {
 
 
   /**
-   * @copydoc Decorator::getName()
-   */
-  public function getName() {
-    return "Tenace";
-  }
-
-
-  /**
-   * @copydoc Decorator::getBrief()
-   */
-  public function getBrief() {
-    return <<<'DESC'
-Hai fornito più di 5 risposte con punteggio pari a 0, che rappresentano almeno il 20% delle tue risposte. Assegnato una
-sola volta.
-DESC;
-  }
-
-
-  /**
    * @copydoc Decorator::getMetal()
    */
   public function getMetal() {

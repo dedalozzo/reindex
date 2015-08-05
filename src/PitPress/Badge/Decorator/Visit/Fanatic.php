@@ -23,23 +23,6 @@ use PitPress\Enum\Metal;
 class Fanatic extends Decorator {
 
 
-  /**
-   * @copydoc Decorator::getName()
-   */
-  public function getName() {
-    return "Fanatico";
-  }
-
-
-  /**
-   * @copydoc Decorator::getBrief()
-   */
-  public function getBrief() {
-    return <<<'DESC'
-Hai visitato il sito per 100 giorni consecutivi. Assegnato una sola volta.
-DESC;
-  }
-
 
   /**
    * @copydoc Decorator::getMetal()

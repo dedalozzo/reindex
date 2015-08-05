@@ -24,7 +24,6 @@ use EoC\Extension\TProperty;
  * @nosubgrouping
  */
 abstract class Decorator implements IObserver {
-  use TProperty;
 
   protected $committee;
 
@@ -45,20 +44,6 @@ abstract class Decorator implements IObserver {
   public function getClass() {
     return get_class($this);
   }
-
-
-  /**
-   * @brief Returns the human readable badge's decorator name.
-   * @retval string
-   */
-  abstract public function getName();
-
-
-  /**
-   * @brief Returns a brief description of the decorator.
-   * @retval string
-   */
-  abstract public function getBrief();
 
 
   /**

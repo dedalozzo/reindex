@@ -24,25 +24,6 @@ class Archaeologist extends Decorator {
 
 
   /**
-   * @copydoc Decorator::getName()
-   */
-  public function getName() {
-    return "Archeologo";
-  }
-
-
-  /**
-   * @copydoc Decorator::getBrief()
-   */
-  public function getBrief() {
-    return <<<'DESC'
-Hai modificato 100 contributi (articoli, domande, ecc.) che sono stati inattivi per almeno 6 mesi. Assegnato una sola
-volta.
-DESC;
-  }
-
-
-  /**
    * @copydoc Decorator::getMetal()
    */
   public function getMetal() {

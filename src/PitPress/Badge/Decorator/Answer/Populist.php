@@ -24,25 +24,6 @@ class Populist extends Decorator {
 
 
   /**
-   * @copydoc Decorator::getName()
-   */
-  public function getName() {
-    return "Populista";
-  }
-
-
-  /**
-   * @copydoc Decorator::getBrief()
-   */
-  public function getBrief() {
-    return <<<'DESC'
-Hai fornito una risposta ad una domanda per la quale già esiste una risposta accettata con un punteggio pari o superiore
-a 10, e la tua risposta ha ottenuto almeno il doppio dei punti. Assegnato più volte.
-DESC;
-  }
-
-
-  /**
    * @copydoc Decorator::getMetal()
    */
   public function getMetal() {

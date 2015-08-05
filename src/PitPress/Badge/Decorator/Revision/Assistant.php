@@ -24,25 +24,6 @@ class Assistant extends Decorator {
 
 
   /**
-   * @copydoc Decorator::getName()
-   */
-  public function getName() {
-    return "Assistente";
-  }
-
-
-  /**
-   * @copydoc Decorator::getBrief()
-   */
-  public function getBrief() {
-    return <<<'DESC'
-E' la prima volta che editi un contributo, sia esso un articolo, una domanda, una risposta, ecc. Assegnato una sola
-volta.
-DESC;
-  }
-
-
-  /**
    * @copydoc Decorator::getMetal()
    */
   public function getMetal() {

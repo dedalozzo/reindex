@@ -24,25 +24,6 @@ class Necromancer extends Decorator {
 
 
   /**
-   * @copydoc Decorator::getName()
-   */
-  public function getName() {
-    return "Negromante";
-  }
-
-
-  /**
-   * @copydoc Decorator::getBrief()
-   */
-  public function getBrief() {
-    return <<<'DESC'
-Hai risposta ad una domanda formulata almeno 2 mesi prima; la tua risposta ha ottenuto almeno 5 punti. Assegnato più
-volte.
-DESC;
-  }
-
-
-  /**
    * @copydoc Decorator::getMetal()
    */
   public function getMetal() {
