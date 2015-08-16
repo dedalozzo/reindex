@@ -8,7 +8,7 @@
  */
 
 
-use PitPress\Mediator\ChangeManager;
+use ReIndex\Mediator\ChangeManager;
 
 
 // Creates an instance of the change manager and return it.

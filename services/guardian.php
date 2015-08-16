@@ -8,7 +8,7 @@
  */
 
 
-use PitPress\Security;
+use ReIndex\Security;
 
 
 // Creates an instance of Guardian and return it.

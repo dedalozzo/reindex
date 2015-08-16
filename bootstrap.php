@@ -19,7 +19,7 @@ use Monolog\Handler\StreamHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Graze\Monolog\Handler\WhoopsHandler;
 
-use PitPress\Handler\ErrorHandler as PitPressErrorHandler;
+use ReIndex\Handler\ErrorHandler as ReIndexErrorHandler;
 
 
 $start = microtime(true);
@@ -40,7 +40,7 @@ $log = new Logger('pit-press');
 ErrorHandler::register($log);
 
 // Creates a stream handler to log debugging messages.
-$handler = new StreamHandler($root.'/'.$config->application->logDir."pitpress.log", Logger::DEBUG);
+$handler = new StreamHandler($root.'/'.$config->application->logDir."reindex.log", Logger::DEBUG);
 //$handler->pushProcessor(new MemoryUsageProcessor());
 //$handler->pushProcessor(new MemoryPeakUsageProcessor());
 //$handler->pushProcessor(new UidProcessor());
@@ -74,7 +74,7 @@ if ($config->application->debug && $di['guardian']->getUser()->isDeveloper())
   $log->pushHandler(new WhoopsHandler(new PrettyPageHandler(), Logger::ERROR, TRUE));
   //(new Phalcon\Debug)->listen(); // Eventually we can use Phalcon debugger.
 else
-  $log->pushHandler(new PitPressErrorHandler());
+  $log->pushHandler(new ReIndexErrorHandler());
 
 /*
 // USE THE FOLLOWING CODE FOR DEBUG PURPOSE ONLY

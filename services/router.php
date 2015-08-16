@@ -10,7 +10,7 @@
 
 use Phalcon\Mvc\Router;
 
-use PitPress\Route;
+use ReIndex\Route;
 
 
 // Creates a router instance and return it.
@@ -20,7 +20,7 @@ $di->setShared('router',
 
     $router->notFound(
       [
-        'namespace' => 'PitPress\Controller',
+        'namespace' => 'ReIndex\Controller',
         "controller" => "error",
         "action" => "show404"
       ]
