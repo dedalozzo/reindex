@@ -2,15 +2,15 @@
 <?php
 
 /**
- * @file pitctl.php
- * @brief The PitPress Control application.
+ * @file rei.php
+ * @brief The ReIndex Control application.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-use PitPress\Console\Console as PitPressConsole;
-use PitPress\Console\Command;
+use ReIndex\Console\Console as ReIndexConsole;
+use ReIndex\Console\Command;
 
 use Phalcon\Config\Adapter\Ini as IniReader;
 use Phalcon\DI\FactoryDefault as DependencyInjector;
@@ -37,7 +37,7 @@ try {
   ErrorHandler::register($log);
 
   // Creates a stream handler to log debugging messages.
-  $log->pushHandler(new StreamHandler($root.'/'.$config->application->logDir."pitpress.log", Logger::DEBUG));
+  $log->pushHandler(new StreamHandler($root.'/'.$config->application->logDir."reindex.log", Logger::DEBUG));
 
   // The FactoryDefault Dependency Injector automatically registers the right services providing a full stack framework.
   $di = new DependencyInjector();
@@ -51,7 +51,7 @@ try {
   require $root . "/services/guardian.php";
 
   // Creates the application object.
-  $console = new PitPressConsole('PitPress Control', PitPress\Version::getNumber());
+  $console = new ReIndexConsole('ReIndex Control', ReIndex\Version::getNumber());
   //$console->setCatchExceptions(FALSE);
 
   // Sets the dependency injector component.
