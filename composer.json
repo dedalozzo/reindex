@@ -1,8 +1,8 @@
 {
-    "name": "3f/pitpress",
-    "description": "The platform of Programmazione.it.",
-    "keywords": ["journal", "newspaper", "press", "social", "social network"],
-    "homepage": "http://pitpress.org",
+    "name": "reindex/reindex",
+    "description": "The open source social network platform.",
+    "keywords": ["journal", "blog", "questions", "answers", "platform", "press", "social", "social network"],
+    "homepage": "http://reindex.org",
     "license": "proprietary",
     "authors": [
         {
@@ -26,6 +26,6 @@
         "graze/monolog-extensions": "*"
     },
     "autoload": {
-        "psr-0": {"PitPress\\": "src/"}
+        "psr-0": {"ReIndex\\": "src/"}
     }
 }
