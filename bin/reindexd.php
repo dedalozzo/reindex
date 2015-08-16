@@ -2,8 +2,8 @@
 <?php
 
 /**
- * @file pitd.php
- * @brief The PitPress Daemon.
+ * @file reindexd.php
+ * @brief The ReIndex Daemon.
  * @details
  * @author Filippo F. Fadda
  */
@@ -34,7 +34,7 @@ try {
   ErrorHandler::register($log);
 
   // Creates a stream handler to log debugging messages.
-  $log->pushHandler(new StreamHandler($root.'/'.$config->application->logDir."pitpress.log", Logger::DEBUG));
+  $log->pushHandler(new StreamHandler($root.'/'.$config->application->logDir."reindex.log", Logger::DEBUG));
 
   // The FactoryDefault Dependency Injector automatically registers the right services providing a full stack framework.
   $di = new DependencyInjector();
