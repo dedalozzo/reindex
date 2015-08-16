@@ -1,6 +1,6 @@
-PitPress
+ReIndex
 ========
-PitPress is the open source Q&A and blogging platform created to be used for the new version of [Programmazione.it](http://programmazione.it) developers' community.
+ReIndex is the open source sicial network platform created to be used for the new version of [Programmazione.it](http://programmazione.it) developers' community.
 An early version can be found at [programmazione.me](http://programmazione.me). The platform is still in active 
 development and the staging site can be unreachable or broken.
 
@@ -20,7 +20,7 @@ Some of the supported features are:
 Composer Installation
 ---------------------
 
-To install PitPress, you first need to install [Composer](http://getcomposer.org/), a Package Manager for
+To install ReIndex, you first need to install [Composer](http://getcomposer.org/), a Package Manager for
 PHP, following those few [steps](http://getcomposer.org/doc/00-intro.md#installation-nix):
 
 ```sh
@@ -34,15 +34,15 @@ sudo mv composer.phar /usr/local/bin/composer
 ```
 
 
-PitPress Installation
----------------------
+ReIndex Installation
+--------------------
 Once you have installed Composer, it's easy install EoC Client.
 
 1. Edit your `composer.json` file, adding EoC Client to the require section:
 ```sh
 {
     "require": {
-        "3f/pitpress": "dev-master"
+        "reindex/reindex": "dev-master"
     },
 }
 ```
@@ -85,4 +85,4 @@ All rights reserved.
 
 License
 -------
-PitPress is licensed under the Apache License, Version 2.0 - see the LICENSE file for details.
+ReIndex is licensed under the Apache License, Version 2.0 - see the LICENSE file for details.
