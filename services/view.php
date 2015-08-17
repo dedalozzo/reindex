@@ -15,7 +15,7 @@ use Phalcon\Mvc\View;
 $di->setShared('view',
   function() use ($root, $config) {
     $view = new View();
-    $view->setViewsDir($root.'/'.$config->application->viewsDir);
+    $view->setViewsDir($root.'/'.$config->application->themesDir.'/'.$config->application->themeName."/volt");
     $view->registerEngines(['.volt' => 'volt']);
     return $view;
   }
