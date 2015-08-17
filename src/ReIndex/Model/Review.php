@@ -18,6 +18,8 @@ namespace ReIndex\Model;
 class Review extends Reply {
 
 
+  //! @cond HIDDEN_SYMBOLS
+
   public function getPositive() {
     return $this->meta['positive'];
   }
@@ -100,5 +102,7 @@ class Review extends Reply {
     if ($this->isMetadataPresent('negativeHtml'))
       unset($this->meta['negativeHtml']);
   }
+
+  //! @endcond
 
 }
