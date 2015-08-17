@@ -1,6 +1,8 @@
 [application]
 ; Your domain name.
 domainName = "example.com"
+; The theme you have chosen.
+themeName = "reboot"
 
 ; The application secret key. You must change it.
 key = "abcdefghikjlmnpqrstuvwz12345"
@@ -11,7 +13,8 @@ supportEmail = "webmaster@example.com"
 ; When `1` the debug is active. Remember to disable in production.
 debug = 1
 
-viewsDir = "volt/"
+themesDir = "themes/"
+pluginsDir = "plugins/"
 cacheDir = "cache/"
 logDir = "log/"
 
