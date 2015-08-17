@@ -65,7 +65,6 @@ Built With
 - [Redis](http://redis.io/)
 - [RabbitMQ](https://www.rabbitmq.com)
 - [Elephant On Couch](http://elephantoncouch.com)
-- [PitBootstrap](https://github.com/dedalozzo/pit-bootstrap)
 - [jQuery](https://jquery.com/)
 
 Plus lots of PHP extensions and libraries. See the [composer.json](https://github.com/dedalozzo/pit-press/blob/master/composer.json) 
