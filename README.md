@@ -64,7 +64,7 @@ Built With
 - [CouchDB](http://couchdb.apache.org/)
 - [Redis](http://redis.io/)
 - [RabbitMQ](https://www.rabbitmq.com)
-- [Elephant On Couch](http://elephantoncouch.com)
+- [Elephant on Couch](http://elephantoncouch.com)
 - [jQuery](https://jquery.com/)
 
 Plus lots of PHP extensions and libraries. See the [composer.json](https://github.com/dedalozzo/pit-press/blob/master/composer.json) 
