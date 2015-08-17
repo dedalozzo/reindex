@@ -1,6 +1,6 @@
 ReIndex
 ========
-ReIndex is the open source sicial network platform created to be used for the new version of [Programmazione.it](http://programmazione.it) developers' community.
+ReIndex is the open source social network platform created to be used for the new version of [Programmazione.it](http://programmazione.it) developers' community.
 An early version can be found at [programmazione.me](http://programmazione.me). The platform is still in active 
 development and the staging site can be unreachable or broken.
 
