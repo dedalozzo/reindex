@@ -1,0 +1,19 @@
+<?php
+
+
+namespace ReIndex\Model;
+
+
+class Review {
+
+  /** @name Properties */
+  //!@{
+
+  string $positive; //!< Markdown positive aspects.
+  string $negative; //!< Markdown negative aspects.
+  string $positiveHtml; //!< HTML positive aspects.
+  string $negativeHtml; //!< HTML negative aspects.
+
+  //!@}
+
+}
