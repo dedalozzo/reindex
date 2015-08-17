@@ -1,0 +1,35 @@
+<?php
+
+
+namespace ReIndex\Model;
+
+
+class Book {
+
+  /** @name Properties */
+  //!@{
+
+  /**
+   * @brief Meta tag description.
+   * @details In case of a book we use the following description:
+     @code
+       Author: Filippo F. Fadda, Publisher: P. Picture, Category: Books, Length: 784 pages
+     @endcode
+   */
+  string description;
+
+  string $isbn; //!< ISBN.
+  string $authors; //!< Authors.
+  string $publisher; //!< Publisher.
+  string $language; //!< Writing language.
+  int $year; //!< Publishing year.
+  int $pages; //!< Number of pages.
+  string $attachments; //!< Attachments: CD, DVD, etc.
+  string $positive; //!< Markdown positive aspects.
+  string $negative; //!< Markdown negative aspects.
+  string $positiveHtml; //!< HTML positive aspects.
+  string $negativeHtml; //!< HTML negative aspects.
+
+  //!@}
+
+}

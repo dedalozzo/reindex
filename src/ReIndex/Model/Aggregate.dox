@@ -1,0 +1,16 @@
+<?php
+
+
+namespace ReIndex\Model;
+
+
+class Aggregate {
+
+  /** @name Properties */
+  //!@{
+
+  public int $excerpt; //!< A short extract from the body.
+
+  //!@}
+
+}
