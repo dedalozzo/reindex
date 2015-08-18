@@ -41,8 +41,8 @@ class CacheCommand extends AbstractCommand {
   /**
    * @brief Updates posts popularity.
    */
-  private function updatePostsPopularity(InputInterface $input, OutputInterface $output) {
-    $output->writeln("Updating posts popularity...");
+  private function buildCache(InputInterface $input, OutputInterface $output) {
+    $output->writeln("Building cache...");
 
     $progress = $this->getApplication()->getHelperSet()->get('progress');
 
@@ -54,32 +54,8 @@ class CacheCommand extends AbstractCommand {
 
     foreach ($ids as $id) {
       $post = $this->couch->getDoc(Couch::STD_DOC_PATH, $id);
-      $post->zAddPopularity();
-
-      $progress->advance();
-    }
-
-    $progress->finish();
-  }
-
-
-  /**
-   * @brief Refreshes posts timestamp.
-   */
-  private function refreshPostsTimestamp(InputInterface $input, OutputInterface $output) {
-    $output->writeln("Refreshing posts timestamp...");
-
-    $progress = $this->getApplication()->getHelperSet()->get('progress');
-
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce();
-    $ids = array_column($this->couch->queryView('posts', 'unversion', NULL, $opts)->asArray(), 'id');
-
-    $progress->start($output, count($ids));
-
-    foreach ($ids as $id) {
-      $post = $this->couch->getDoc(Couch::STD_DOC_PATH, $id);
-      $post->updatePostsPopularity();
+      $post->zAddPopular();
+      $post->zAddActive();
 
       $progress->advance();
     }
@@ -126,8 +102,7 @@ DESC
       case 'build':
         $confirm = $dialog->ask($output, 'Are you sure you want build database cache? [Y/n]'.PHP_EOL, 'n');
         if ($confirm == 'Y') {
-          $this->updatePostsPopularity($input, $output);
-          $this->refreshPostsTimestamp($input, $output);
+          $this->buildCache($input, $output);
         }
         break;
     }
