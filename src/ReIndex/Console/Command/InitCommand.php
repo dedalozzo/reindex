@@ -986,22 +986,50 @@ MAP;
 
 
     // @params: postId
-    function lastUpdatedRepliesPerPost() {
+    function activeRepliesPerPost() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if (isset($doc->supertype) and $doc->supertype == 'reply')
-    $emit([$doc->postId, $doc->lastUpdate]);
+    $emit([$doc->postId, $doc->modifiedAt]);
 };
 MAP;
 
-      $handler = new ViewHandler("lastUpdatedPerPost");
+      $handler = new ViewHandler("activePerPost");
       $handler->mapFn = $map;
       $handler->useBuiltInReduceFnCount();
 
       return $handler;
     }
 
-    $doc->addHandler(lastUpdatedRepliesPerPost());
+    $doc->addHandler(activeRepliesPerPost());
+
+
+    $this->couch->saveDoc($doc);
+  }
+
+
+  protected function initUpdates() {
+    $doc = DesignDoc::create('updates');
+
+
+    // @params: postId
+    function updatesPerDateByPostId() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'comment')
+    $emit([$doc->itemId, $doc->modifiedAt]);
+  elseif (isset($doc->supertype) and $doc->supertype == 'reply')
+    $emit([$doc->postId, $doc->modifiedAt]);
+};
+MAP;
+
+      $handler = new ViewHandler("perDateByPostId");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(updatesPerDateByPostId());
 
 
     $this->couch->saveDoc($doc);
@@ -1044,7 +1072,7 @@ MAP;
       InputArgument::IS_ARRAY | InputArgument::REQUIRED,
       "The documents containing the views you want create. Use 'all' if you want insert all the documents, 'users' if
       you want just init the users or separate multiple documents with a space. The available documents are: docs, posts,
-      tags, revisions, votes, scores, stars, subscriptions, badges, favorites, users, reputation, replies.");
+      tags, revisions, votes, scores, stars, subscriptions, badges, favorites, users, reputation, replies, updates.");
   }
 
 
@@ -1109,6 +1137,10 @@ MAP;
 
           case 'replies':
             $this->initReplies();
+            break;
+
+          case 'updates':
+            $this->initUpdates();
             break;
 
           case 'tests':
