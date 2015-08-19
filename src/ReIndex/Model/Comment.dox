@@ -1,0 +1,16 @@
+<?php
+
+
+namespace ReIndex\Model;
+
+
+class Comment {
+
+  /** @name Properties */
+  //!@{
+
+  public string $itemId; //!< The item id the comment is related. It can be a postId, a replyId, etc.
+
+  //!@}
+
+}
