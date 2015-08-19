@@ -97,11 +97,11 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     parent::save();
 
     if ($this->isCurrent() && !$deferred) {
-      // Updates popularity.
+      // Updates popular index.
       $this->zRemPopular();
       $this->zAddPopular();
 
-      // Refreshes timestamp.
+      // Updates active index.
       $this->zRemActive();
       $this->zAddActive();
     }
@@ -331,7 +331,28 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   }
 
 
-  /** @name Popularity Management Methods */
+  /**
+   * @brief Gets the timestamp of the post's last update.
+   * @details The timestamp is updated when a reply (or an answer or a review) is inserted or modified and yet when a
+   * comment is inserted or modified.
+   * @retval int
+   */
+  public function getLastUpdate() {
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->reverseOrderOfResults()->setLimit(1);
+
+    $rows = $this->couch->queryView("updates", "perDateByPostId", NULL, $opts);
+
+    if ($rows->empty())
+      $lastUpdate = $this->modifiedAt;
+    else
+      $lastUpdate = $rows[0]['key'][0];
+
+    return ($this->modifiedAt >= $lastUpdate) ? $this->modifiedAt : $lastUpdate;
+  }
+
+
+  /** @name Indexing Methods */
   //!@{
 
   /**
@@ -366,7 +387,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
 
   /**
-   * @brief Adds the post popularity to the Redis db.
+   * @brief Adds the post to the popular index.
    */
   public function zAddPopular() {
     if (!$this->isVisible()) return;
@@ -400,7 +421,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
 
   /**
-   * @brief Removes the post popularity from the Redis db.
+   * @brief Removes the post from the popular index.
    */
   public function zRemPopular() {
     $date = (new \DateTime())->setTimestamp($this->publishedAt);
@@ -423,14 +444,9 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     }
   }
 
-  //!@}
-
-
-  /** @name Last Update Management Methods */
-  //!@{
 
   /**
-   * @brief Adds the post last update timestamp to the Redis db.
+   * @brief Adds the post to the active index.
    * @param[in] integer $timestamp (optional) The timestamp of the post last update.
    */
   public function zAddActive($timestamp = NULL) {
@@ -472,7 +488,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
 
   /**
-   * @brief Removes the post last update timestamp from the Redis db.
+   * @brief Removes the post from the active index.
    */
   public function zRemActive() {
     $id = $this->unversionId;
