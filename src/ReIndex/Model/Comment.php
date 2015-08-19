@@ -19,6 +19,32 @@ namespace ReIndex\Model;
  */
 class Comment extends Storable {
 
+
+  //! @cond HIDDEN_SYMBOLS
+
+  public function getItemId() {
+    return $this->meta['itemId'];
+  }
+
+
+  public function issetItemId() {
+    return isset($this->meta['itemId']);
+  }
+
+
+  public function setItemId($value) {
+    $this->meta['itemId'] = $value;
+  }
+
+
+  public function unsetItemId() {
+    if ($this->isMetadataPresent('itemId'))
+      unset($this->meta['itemId']);
+  }
+
+  //! @endcond
+
+
 }
 
 
