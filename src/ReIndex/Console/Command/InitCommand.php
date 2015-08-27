@@ -43,6 +43,7 @@ class InitCommand extends AbstractCommand {
     $this->initBadges();
     $this->initFavorites();
     $this->initUsers();
+    $this->initUpdates();
     $this->initReplies();
   }
 
