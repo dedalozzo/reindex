@@ -8,4 +8,5 @@ couch query reputation/perUser &
 couch query favorites/perAddedAt --limit=1 &
 couch query users/allNames --limit=1 &
 couch query replies/newestPerPost &
-couch query badges/perClass &
+couch query badges/perDecorator &
+couch query updates/perDateByPostId --limit=1 &
