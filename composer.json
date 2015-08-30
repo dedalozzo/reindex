@@ -21,9 +21,9 @@
         "3f/converter": "dev-master",
         "symfony/console": "2.4.6",
         "lusitanian/oauth": "~0.3",
-        "monolog/monolog": "1.13.*@dev",
-        "filp/whoops": "dev-master",
-        "graze/monolog-extensions": "*"
+        "monolog/monolog": "*",
+        "graze/monolog-extensions": "*",
+        "filp/whoops": "dev-master"
     },
     "autoload": {
         "psr-0": {"ReIndex\\": "src/"}
