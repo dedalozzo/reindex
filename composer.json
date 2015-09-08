@@ -2,8 +2,8 @@
     "name": "reindex/reindex",
     "description": "The open source social network platform.",
     "keywords": ["journal", "blog", "questions", "answers", "platform", "press", "social", "social network"],
-    "homepage": "http://reindex.org",
-    "license": "proprietary",
+    "homepage": "http://reindex.xyz",
+    "license": "Apache-2.0",
     "authors": [
         {
             "name": "Filippo Fadda",
@@ -23,8 +23,15 @@
         "lusitanian/oauth": "~0.3",
         "monolog/monolog": "*",
         "graze/monolog-extensions": "*",
-        "filp/whoops": "dev-master"
+        "filp/whoops": "dev-master",
+        "reindex/reboot": "dev-master"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "/Volumes/Data/Dropbox/Git/reboot"
+        }
+    ],
     "autoload": {
         "psr-0": {"ReIndex\\": "src/"}
     }
