@@ -15,6 +15,7 @@ Some of the supported features are:
 - OAuth2 with Facebook, LinkedIn, Google+ and GitHub authentication
 - Markdown
 - Syntax highlighting
+- Themes
 
 
 Composer Installation
