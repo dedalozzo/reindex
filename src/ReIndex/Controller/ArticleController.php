@@ -104,7 +104,7 @@ class ArticleController extends IndexController {
     $this->view->disableLevel(View::LEVEL_LAYOUT);
 
     // Adds Selectize Plugin files.
-    $this->assets->addJs("/pit-bootstrap/dist/js/selectize.min.js", FALSE);
+    $this->assets->addJs($this->dist."/js/selectize.min.js", FALSE);
     $this->addCodeMirror();
 
     $this->view->pick('views/post/new');

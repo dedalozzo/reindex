@@ -196,8 +196,8 @@ class IndexController extends ListController {
       $this->type = $this->controllerName;
       $this->resultsPerPage = $this->di['config']->application->postsPerPage;
 
-      $this->assets->addJs("/pit-bootstrap/dist/js/tab.min.js", FALSE);
-      $this->assets->addJs("/pit-bootstrap/dist/js/list.min.js", FALSE);
+      $this->assets->addJs($this->dist."/js/tab.min.js", FALSE);
+      $this->assets->addJs($this->dist."/js/list.min.js", FALSE);
 
       $this->view->pick('views/index');
     }
@@ -744,7 +744,7 @@ class IndexController extends ListController {
     $this->view->setVar('replies', $post->getReplies());
     $this->view->setVar('title', $post->title);
 
-    $this->assets->addJs("/pit-bootstrap/dist/js/post.min.js", FALSE);
+    $this->assets->addJs($this->dist."/js/post.min.js", FALSE);
 
     $this->view->pick('views/post/show');
   }
@@ -833,7 +833,7 @@ class IndexController extends ListController {
     $this->view->disableLevel(View::LEVEL_LAYOUT);
 
     // Adds Selectize Plugin files.
-    $this->assets->addJs("/pit-bootstrap/dist/js/selectize.min.js", FALSE);
+    $this->assets->addJs($this->dist."/js/selectize.min.js", FALSE);
     $this->addCodeMirror();
 
     $this->view->pick('views/post/edit');

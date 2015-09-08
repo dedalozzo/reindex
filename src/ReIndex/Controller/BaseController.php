@@ -128,11 +128,14 @@ abstract class BaseController extends Controller {
     $this->controllerName = $this->dispatcher->getControllerName();
     $this->actionName = $this->dispatcher->getActionName();
 
+    $this->themeName = $this->di['config']['application']['themeName'];
+    $this->dist = "/reindex/themes/".$this->themeName."/dist";
+
     // Includes the common assets.
     // Remember to never include the assets in the `afterExecuteRoute()` method!
-    $this->assets->addCss("/pit-bootstrap/dist/css/pit.css", FALSE);
+    $this->assets->addCss($this->dist."/css/reboot.css", FALSE);
     $this->assets->addJs("//cdnjs.cloudflare.com/ajax/libs/jquery/".$this->di['config']['assets']['jQueryVersion']."/jquery.min.js", FALSE);
-    $this->assets->addJs("/pit-bootstrap/dist/js/dropdown.min.js", FALSE);
+    $this->assets->addJs($this->dist."/js/dropdown.min.js", FALSE);
   }
 
 
@@ -154,6 +157,8 @@ abstract class BaseController extends Controller {
     $this->view->setVar('serverName', $this->serverName);
     $this->view->setVar('controllerName', $this->controllerName);
     $this->view->setVar('actionName', $this->actionName);
+
+    $this->view->setVar('dist', $this->dist);
 
     //$this->log->addDebug(sprintf("Controller: %s", $this->dispatcher->getControllerName()));
     //$this->log->addDebug(sprintf("Action: %s", $this->dispatcher->getActionName()));
