@@ -6,8 +6,8 @@ development and the staging site can be unreachable or broken.
 
 Some of the supported features are:
 
-- Questions and answers
-- Posts and comments
+- Questions and answers (with comments)
+- Posts and replies
 - Versioning
 - Peer reviewing
 - Tags and synonyms (merging is also supported)
@@ -77,7 +77,7 @@ Filippo F. Fadda - <filippo.fadda@programmazione.it> - <http://www.linkedin.com/
 
 Copyright
 ---------
-Copyright (c) 2013-2015, Filippo Fadda
+Copyright (c) 2013-2015, REINDEX LTD
 All rights reserved.
 
 
