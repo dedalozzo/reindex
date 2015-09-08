@@ -20,7 +20,7 @@ namespace ReIndex;
 class Version extends \EoC\Version {
 
   const MAJOR = '0'; //!< Major release number.
-  const MINOR = '9'; //!< Minor release number.
+  const MINOR = '10'; //!< Minor release number.
   const MAINTENANCE = '1'; //!< Maintenance release number (bug fixes only).
 
 } 
