@@ -22,62 +22,69 @@ msgstr ""
 msgid "Enlightened.name"
 msgstr "Enlightened"
 msgid "Enlightened.desc"
-msgstr ""
+msgstr "Be the first person to answer a question, and receive a score of at least ten for that answer. The answer must "
+       "be accepted by the question owner, and it mustn't be a self-accept. Awarded multiple times."
 
 msgid "Guru.name"
 msgstr "Guru"
 msgid "Guru.desc"
-msgstr ""
+msgstr "Earn a score of 40 on an answer to a question you did not ask, and earn the accepted checkmark for that same "
+       "answer. Awarded multiple times."
 
 msgid "KnowItAll.name"
 msgstr "Know-it-all"
 msgid "KnowItAll.desc"
-msgstr ""
+msgstr "Earn a tag score of 15 on one of the top 40 tags, then repeat the previous step until any 20 of the top 40 "
+       "tags are covered. Awarded once."
 
 msgid "Necromancer.name"
 msgstr "Necromancer"
 msgid "Necromancer.desc"
-msgstr ""
+msgstr "Receive a score of five for an answer on a question posted at least 2 months before. Awarded multiple "
+       "times"
 
 msgid "Populist.name"
 msgstr "Populist"
 msgid "Populist.desc"
-msgstr ""
+msgstr "Provide an answer to a question for which already exists an accepted answer with a score of 10 or more, and "
+       "your answer earned at least twice the score. Awarded multiple times."
 
 msgid "Resurrectionist.name"
 msgstr "Resurrectionist"
 msgid "Resurrectionist.desc"
-msgstr ""
+msgstr "Provide an answer to a question that is at least a month old at the time of answering, and your answer reaches "
+       "a score of 2. Awarded multiple times."
 
 msgid "Scholar.name"
 msgstr "Scholar"
 msgid "Scholar.desc"
-msgstr ""
+msgstr "Ask your first question and accept an answer. Awarded once."
 
 msgid "SelfLearner.name"
 msgstr "SelfLearner"
 msgid "SelfLearner.desc"
-msgstr ""
+msgstr "Provide an answer with a score of 3 or more to your own question. Awarded once."
 
 msgid "Sportsmanship.name"
 msgstr "Sportsmanship"
 msgid "Sportsmanship.desc"
-msgstr ""
+msgstr "Cast 100 upvotes on competing answers where your answer have a score of at least 1. Awarded once."
 
 msgid "Student.name"
 msgstr "Student"
 msgid "Student.desc"
-msgstr ""
+msgstr "Receive a score of one on a question. Awarded once."
 
 msgid "Teacher.name"
 msgstr "Teacher"
 msgid "Teacher.desc"
-msgstr ""
+msgstr "Receive a score of one on an answer. Awarded once."
 
 msgid "Tenacious.name"
 msgstr "Tenacious"
 msgid "Tenacious.desc"
-msgstr ""
+msgstr "Have more than five accepted answers with a score of zero, and have those zero-score accepted answers account "
+       "for at least 20% of all your accepted answers. Awarded once."
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Bounty
@@ -86,22 +93,22 @@ msgstr ""
 msgid "Altruist.name"
 msgstr "Altruist"
 msgid "Altruist.desc"
-msgstr ""
+msgstr "First bounty you manually awarded on another person’s question. Awarded once."
 
 msgid "Benefactor.name"
 msgstr "Benefactor"
 msgid "Benefactor.desc"
-msgstr ""
+msgstr "Award a bounty on your own question. Awarded once."
 
 msgid "Investor.name"
 msgstr "Investor"
 msgid "Investor.desc"
-msgstr ""
+msgstr "Offer a bounty on another user's question. Awarded once."
 
 msgid "Promoter.name"
 msgstr "Promoter"
 msgid "Promoter.desc"
-msgstr ""
+msgstr "Offer a bounty on your own question. Awarded once."
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Donation
@@ -110,12 +117,12 @@ msgstr ""
 msgid "Philanthropist.name"
 msgstr "Philanthropist"
 msgid "Philanthropist.desc"
-msgstr ""
+msgstr "Make a donation of at least 100 €. Awarded multiple times."
 
 msgid "Supporter.name"
 msgstr "Supporter"
 msgid "Supporter.desc"
-msgstr ""
+msgstr "Make a donation as much as you like. Awarded multiple times."
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Flag
@@ -124,17 +131,17 @@ msgstr ""
 msgid "Doorman.name"
 msgstr "Doorman"
 msgid "Doorman.desc"
-msgstr ""
+msgstr "Flag at least 50 posts. Awarded once."
 
 msgid "Guardian.name"
 msgstr "Guardian"
 msgid "Guardian.desc"
-msgstr ""
+msgstr "Flag at least 500 posts. Awarded once."
 
 msgid "Watchman.name"
 msgstr "Watchman"
 msgid "Watchman.desc"
-msgstr ""
+msgstr "Flag your first post. Awarded once."
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Hit
