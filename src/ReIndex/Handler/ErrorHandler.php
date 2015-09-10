@@ -45,6 +45,9 @@ class ErrorHandler extends AbstractProcessingHandler {
    * @param[in] array $record A record to be logged.
    */
   protected function write(array $record) {
+    // Cleans the output buffer or the error is shown at the end of the previously page.
+    ob_clean();
+
     $view = $this->di['view'];
 
     header("HTTP/1.0 500 Internal Server Error");
