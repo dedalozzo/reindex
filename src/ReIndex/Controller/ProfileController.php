@@ -108,11 +108,6 @@ class ProfileController extends ListController {
   }
 
 
-  public function badgesAction($username) {
-
-  }
-
-
   public function tagsAction($username) {
 
   }

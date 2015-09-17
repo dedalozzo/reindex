@@ -7,11 +7,10 @@ development and the staging site can be unreachable or broken.
 Some of the supported features are:
 
 - Questions and answers (with comments)
-- Posts and replies
+- Links, photos and albums, articles, books (with replies)
 - Versioning
 - Peer reviewing
 - Tags and synonyms (merging is also supported)
-- Badges
 - OAuth2 with Facebook, LinkedIn, Google+ and GitHub authentication
 - Markdown
 - Syntax highlighting

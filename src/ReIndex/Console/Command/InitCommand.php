@@ -40,7 +40,6 @@ class InitCommand extends AbstractCommand {
     $this->initStars();
     $this->initSubscriptions();
     $this->initReputation();
-    $this->initBadges();
     $this->initFavorites();
     $this->initUsers();
     $this->initUpdates();
@@ -632,52 +631,6 @@ MAP;
   }
 
 
-  protected function initBadges() {
-    $doc = DesignDoc::create('badges');
-
-
-    // @params decoratorClass
-    function badgesPerDecorator() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'badge')
-    $emit($doc->decoratorClass);
-};
-MAP;
-
-      $handler = new ViewHandler("perDecorator");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount();
-
-      return $handler;
-    }
-
-    $doc->addHandler(badgesPerDecorator());
-
-
-    // @params decoratorClass, userId
-    function badgesPerDecoratorAndUser() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'badge')
-    $emit([$doc->decoratorClass, $doc->userId]);
-};
-MAP;
-
-      $handler = new ViewHandler("perDecoratorAndUser");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount();
-
-      return $handler;
-    }
-
-    $doc->addHandler(badgesPerDecoratorAndUser());
-
-
-    $this->couch->saveDoc($doc);
-  }
-
-
   protected function initReputation() {
     $doc = DesignDoc::create('reputation');
 
@@ -1073,7 +1026,7 @@ MAP;
       InputArgument::IS_ARRAY | InputArgument::REQUIRED,
       "The documents containing the views you want create. Use 'all' if you want insert all the documents, 'users' if
       you want just init the users or separate multiple documents with a space. The available documents are: docs, posts,
-      tags, revisions, votes, scores, stars, subscriptions, badges, favorites, users, reputation, replies, updates.");
+      tags, revisions, votes, scores, stars, subscriptions, favorites, users, reputation, replies, updates.");
   }
 
 
@@ -1118,10 +1071,6 @@ MAP;
 
           case 'subscriptions':
             $this->initSubscriptions();
-            break;
-
-          case 'badges':
-            $this->initBadges();
             break;
 
           case 'favorites':

@@ -34,7 +34,6 @@ $di->setShared('router',
     $router->mount(new Route\BookGroup());
 
     $router->mount(new Route\TagGroup());
-    $router->mount(new Route\BadgeGroup());
     $router->mount(new Route\UserGroup());
 
     $router->mount(new Route\AuthGroup());
