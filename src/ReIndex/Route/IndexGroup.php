@@ -85,7 +85,7 @@ class IndexGroup extends Group {
     $this->addGet('/interesting/', ['action' => 'interesting']);
     $this->addGet('/favorites/', ['action' => 'favorite']);
     $this->addGet('/favorites/{filter}/', ['action' => 'favorite']);
-    $this->add('/aggiungi', ['action' => 'new'])->via(['GET', 'POST']);
+    $this->add('/add', ['action' => 'add'])->via(['GET', 'POST']);
   }
 
 }
