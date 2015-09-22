@@ -26,7 +26,7 @@ class ErrorController extends BaseController {
    */
   public function show404Action() {
     $this->response->setHeader('HTTP/1.0 404', 'Not Found');
-    $this->view->setVar('code', '400');
+    $this->view->setVar('code', '404');
     $this->view->setVar('title', 'Pagina non trovata');
     $this->view->setVar('message', 'La pagina richiesta non è disponibile. Il link che hai seguito non è funzionante o la pagina è stata rimossa.');
     $this->view->setVar('method', strtolower($_SERVER['REQUEST_METHOD']));
