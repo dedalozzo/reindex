@@ -42,8 +42,8 @@ class Username extends Validator implements Validation\ValidatorInterface {
    * @param[in] string $attribute The attribute to be validated.
    * @retval bool
    */
-  public function validate($validator, $attribute) {
-    $value = $validator->getValue($attribute);
+  public function validate(\Phalcon\Validation $validation, $attribute) {
+    $value = $validation->getValue($attribute);
 
     if (empty($value))
       $message = "Il nome utente è obbligatorio.";
@@ -58,7 +58,7 @@ class Username extends Validator implements Validation\ValidatorInterface {
     else
       return TRUE;
 
-    $validator->appendMessage(new Message($message, $attribute, 'Username'));
+    $validation->appendMessage(new Message($message, $attribute, 'Username'));
 
     return FALSE;
   }
