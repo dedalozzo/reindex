@@ -8,7 +8,7 @@
  */
 
 
-//! ReIndex helpers namespace.
+//! Classes to help the development
 namespace ReIndex\Helper;
 
 
