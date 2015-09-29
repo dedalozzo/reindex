@@ -8,7 +8,9 @@
  */
 
 
+//! oAuth2 consumers
 namespace ReIndex\Security\Consumer;
+
 
 use OAuth\Common\Http\Uri\UriFactory;
 use OAuth\Common\Storage\Session;
