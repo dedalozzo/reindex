@@ -8,9 +8,7 @@
  */
 
 
-/**
- * @brief This namespace contains the Console class.
- */
+//! Command-Line Interpreter (CLI)
 namespace ReIndex\Console;
 
 
