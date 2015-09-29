@@ -27,8 +27,8 @@ class Time extends TimeHelper {
   const THIS_WEEK = "this-week";
   const LAST_WEEK = "last-week";
   const THIS_MONTH = "this-month";
-  const LAST_MONTH = "this-month";
-  const THIS_YEAR = "last-month";
+  const LAST_MONTH = "last-month";
+  const THIS_YEAR = "this-year";
   const LAST_YEAR = "last-year";
   const ALL_TIME = "all-time";
   //!@}
@@ -38,14 +38,14 @@ class Time extends TimeHelper {
   //!@{
   public static $periods = [
     self::ALL_TIME => NULL,
-    self::LAST_YEAR => NULL,
     self::THIS_YEAR => NULL,
-    self::LAST_MONTH => NULL,
+    self::LAST_YEAR => NULL,
     self::THIS_MONTH => NULL,
-    self::LAST_WEEK => NULL,
+    self::LAST_MONTH => NULL,
     self::THIS_WEEK => NULL,
-    self::YESTERDAY => NULL,
-    self::TODAY => NULL
+    self::LAST_WEEK => NULL,
+    self::TODAY => NULL,
+    self::YESTERDAY => NULL
   ];
   //!@}
 
