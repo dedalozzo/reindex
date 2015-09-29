@@ -7,7 +7,7 @@
  */
 
 
-//! ReIndex mediators namespace.
+//! Classes which implement the mediator pattern
 namespace ReIndex\Mediator;
 
 
