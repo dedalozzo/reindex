@@ -30,14 +30,6 @@ class LinkController extends IndexController {
 
 
   /**
-   * @copydoc BaseController::getPeriod()
-   */
-  protected function getPeriod($filter) {
-    return empty($filter) ? Helper\Time::TODAY : Helper\ArrayHelper::value($filter, $this->periods);
-  }
-
-
-  /**
    * @brief Creates a new link.
    */
   public function newAction() {
