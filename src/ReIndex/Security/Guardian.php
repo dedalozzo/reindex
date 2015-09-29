@@ -8,7 +8,7 @@
  */
 
 
-//! ReIndex security namespace.
+//! Classes to handle the security
 namespace ReIndex\Security;
 
 
