@@ -8,6 +8,7 @@
  */
 
 
+//! Models
 namespace ReIndex\Model;
 
 
