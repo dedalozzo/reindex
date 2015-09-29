@@ -32,6 +32,9 @@ class IndexController extends ListController {
   // Actions that aren't listing actions.
   protected static $actions = ['show', 'edit', 'new'];
 
+  // Periods of time.
+  protected $periods;
+
 
   /**
    * @brief Returns a human readable label for the controller.
@@ -195,6 +198,7 @@ class IndexController extends ListController {
     if ($this->isListing()) {
       $this->type = $this->controllerName;
       $this->resultsPerPage = $this->di['config']->application->postsPerPage;
+      $this->periods = Helper\Time::$periods;
 
       $this->assets->addJs($this->dist."/js/tab.min.js", FALSE);
       $this->assets->addJs($this->dist."/js/list.min.js", FALSE);
@@ -469,7 +473,7 @@ class IndexController extends ListController {
    * @param[in] string $unversionTagId (optional) An optional unversioned tag ID
    */
   protected function popular($filter, $unversionTagId = NULL) {
-    $period = $this->getPeriod($filter);
+    $period = Helper\Time::period($filter);
     if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $date = Helper\Time::aWhileBack($period, "_");
@@ -646,10 +650,10 @@ class IndexController extends ListController {
    */
   public function favoriteAction($filter = NULL) {
     // Stores sub-menu definition.
-    $filters = ['posting-date' => 0, 'insertion-date' => 1];
+    $filters = ['posting-date' => NULL, 'insertion-date' => NULL];
     if (is_null($filter)) $filter = 'insertion-date';
 
-    $index = Helper\ArrayHelper::value($filter, $filters);
+    $index = Helper\ArrayHelper::key($filter, $filters);
     if ($index === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     if ($index == 0) {
