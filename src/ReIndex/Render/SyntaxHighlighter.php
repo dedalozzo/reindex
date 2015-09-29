@@ -8,9 +8,7 @@
  */
 
 
-/**
- * @brief The Sundown renders namespace.
- */
+//! Sundown renderer (deprecated)
 namespace ReIndex\Render;
 
 
