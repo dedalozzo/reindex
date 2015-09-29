@@ -22,16 +22,43 @@ class Time extends TimeHelper {
 
   /** @name Time Periods */
   //!@{
-  const TODAY = 0;
-  const YESTERDAY = 1;
-  const THIS_WEEK = 2;
-  const LAST_WEEK = 3;
-  const THIS_MONTH = 4;
-  const LAST_MONTH = 5;
-  const THIS_YEAR = 6;
-  const LAST_YEAR = 7;
-  const ALL_TIME = 8;
+  const TODAY = "today";
+  const YESTERDAY = "yesterday";
+  const THIS_WEEK = "this-week";
+  const LAST_WEEK = "last-week";
+  const THIS_MONTH = "this-month";
+  const LAST_MONTH = "this-month";
+  const THIS_YEAR = "last-month";
+  const LAST_YEAR = "last-year";
+  const ALL_TIME = "all-time";
   //!@}
+
+
+  /** @name Time Periods Array */
+  //!@{
+  public static $periods = [
+    self::ALL_TIME => NULL,
+    self::LAST_YEAR => NULL,
+    self::THIS_YEAR => NULL,
+    self::LAST_MONTH => NULL,
+    self::THIS_MONTH => NULL,
+    self::LAST_WEEK => NULL,
+    self::THIS_WEEK => NULL,
+    self::YESTERDAY => NULL,
+    self::TODAY => NULL
+  ];
+  //!@}
+
+
+  /**
+   * @brief Checks if the provided string represents a period of time and returns it if exists otherwise returns `false`.
+   * @param[in] string $str A human readable period of time.
+   * @retval int|bool If the period of time exists returns it, else returns `false`. In case `$str` is `null`, returns
+   * `all_time`.
+   */
+  public static function period($str) {
+    return is_null($str) ? self::ALL_TIME : ArrayHelper::key($str, self::$periods);
+  }
 
 
   /**
