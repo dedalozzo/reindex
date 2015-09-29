@@ -8,6 +8,7 @@
  */
 
 
+//! Classes which implements the observer pattern
 namespace ReIndex\Observer;
 
 
