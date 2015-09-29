@@ -30,14 +30,6 @@ class BookController extends IndexController {
 
 
   /**
-   * @copydoc BaseController::getPeriod()
-   */
-  protected function getPeriod($filter) {
-    return empty($filter) ? Helper\Time::ALL_TIME : Helper\ArrayHelper::value($filter, $this->periods);
-  }
-
-
-  /**
    * @copydoc IndexController::popular()
    */
   protected function popular($filter, $unversionTagId = NULL) {
