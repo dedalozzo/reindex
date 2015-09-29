@@ -8,7 +8,7 @@
  */
 
 
-//! Enumerators namespace.
+//! Enumerators
 namespace ReIndex\Enum;
 
 
