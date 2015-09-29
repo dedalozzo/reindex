@@ -39,7 +39,7 @@ class ArticleController extends IndexController {
    */
   protected function popular($filter, $unversionTagId = NULL) {
     $this->periods = Helper\ArrayHelper::slice($this->periods, 5);
-    parent::popular($filter);
+    parent::popular($filter, $unversionTagId);
   }
 
 

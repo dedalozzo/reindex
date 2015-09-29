@@ -525,9 +525,7 @@ class IndexController extends ListController {
     $tagId = $this->getTagId($tag);
     if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    $unversionTagId = Helper\Text::unversion($tagId);
-
-    $this->popular($filter, $unversionTagId."_");
+    $this->popular($filter, Helper\Text::unversion($tagId)."_");
     $this->view->setVar('etag', $this->couch->getDoc(Couch::STD_DOC_PATH, $tagId));
   }
 
