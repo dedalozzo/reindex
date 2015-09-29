@@ -8,6 +8,7 @@
  */
 
 
+//! Traits used to inject properties inside a class
 namespace ReIndex\Property;
 
 
