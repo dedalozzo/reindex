@@ -8,7 +8,7 @@
  */
 
 
-//! This is the namespace of exceptions.
+//! Exceptions
 namespace ReIndex\Exception;
 
 
