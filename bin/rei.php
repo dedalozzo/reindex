@@ -51,7 +51,7 @@ try {
   require $root . "/services/guardian.php";
 
   // Creates the application object.
-  $console = new ReIndexConsole('ReIndex Control', ReIndex\Version::getNumber());
+  $console = new ReIndexConsole('ReIndex CLI', ReIndex\Version::getNumber());
   //$console->setCatchExceptions(FALSE);
 
   // Sets the dependency injector component.
