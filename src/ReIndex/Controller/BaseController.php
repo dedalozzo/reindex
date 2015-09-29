@@ -38,28 +38,6 @@ abstract class BaseController extends Controller {
 
   protected $user;
 
-  protected $periods = [
-    "all-time" => Helper\Time::ALL_TIME,
-    "last-year" => Helper\Time::LAST_YEAR,
-    "this-year" => Helper\Time::THIS_YEAR,
-    "last-month" => Helper\Time::LAST_MONTH,
-    "this-month" => Helper\Time::THIS_MONTH,
-    "last-week" => Helper\Time::LAST_WEEK,
-    "this-week" => Helper\Time::THIS_WEEK,
-    "yesterday" => Helper\Time::YESTERDAY,
-    "today" => Helper\Time::TODAY
-  ];
-
-
-  /**
-   * @brief Given a a human readable period of time, returns the correspondent number.
-   * @param[in] string $filter A human readable period of time.
-   * @retval int|bool If the filter exists returns its number, else returns `false`.
-   */
-  protected function getPeriod($filter) {
-    return is_null($filter) ? Helper\Time::ALL_TIME : Helper\ArrayHelper::value($filter, $this->periods);
-  }
-
 
   /**
    * @brief Sets the referrer is any.
