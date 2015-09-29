@@ -8,7 +8,7 @@
  */
 
 
-//! This is the namespace of all classes that implement the factory pattern.
+//! Classes which implement the factory pattern
 namespace ReIndex\Factory;
 
 use Phalcon\DI;
