@@ -7,7 +7,7 @@
  */
 
 
-//! ReIndex controllers namespace.
+//! Controllers
 namespace ReIndex\Controller;
 
 
