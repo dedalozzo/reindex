@@ -8,7 +8,7 @@
  */
 
 
-//! ReIndex routes namespace.
+//! Groups of routes
 namespace ReIndex\Route;
 
 
