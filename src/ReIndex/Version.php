@@ -8,7 +8,7 @@
  */
 
 
-//! ReIndex root namespace.
+//! Root namespace.
 namespace ReIndex;
 
 
