@@ -8,7 +8,7 @@
  */
 
 
-//! This is the Commands namespace.
+//! Commands
 namespace ReIndex\Console\Command;
 
 
