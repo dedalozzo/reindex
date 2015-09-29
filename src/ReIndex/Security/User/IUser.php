@@ -8,7 +8,7 @@
  */
 
 
-//! ReIndex users namespace.
+//! Classes and interfaces to represent users
 namespace ReIndex\Security\User;
 
 
