@@ -8,7 +8,7 @@
  */
 
 
-//! Namespace of model's extensions.
+//! Interfaces and traits to extend the models
 namespace ReIndex\Extension;
 
 
