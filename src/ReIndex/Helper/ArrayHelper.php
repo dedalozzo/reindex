@@ -48,6 +48,21 @@ class ArrayHelper extends ElephantOnCouchArrayHelper {
 
 
   /**
+   * @brief Given a key, returns it only if exists otherwise return `false`.
+   * @param[in] mixed $key A key.
+   * @param[in] array $array The array to be searched.
+   * @retval mixed,bool The key or `false` in case the key doesn't exist.
+   */
+  public static function key($key, array $array) {
+
+    if (array_key_exists($key, $array))
+      return $key;
+    else
+      return FALSE;
+  }
+
+
+  /**
    * @brief Modifies the specified array, depriving each ID of its related version.
    * @param[in,out] array $ids An array of IDs.
    */
