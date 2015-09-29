@@ -35,9 +35,9 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   /** @name Redis Set Names */
   //!@{
 
-  const POP_SET = 'pop_';
-  const ACT_SET = 'act_';
-  const OPN_SET = 'opn_';
+  const POP_SET = 'pop_'; //!< Popular posts Redis set.
+  const ACT_SET = 'act_'; //!< Active posts Redis set.
+  const OPN_SET = 'opn_'; //!< Open questions Redis set.
 
   //!@}
 
