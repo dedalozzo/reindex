@@ -35,6 +35,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   /** @name Redis Set Names */
   //!@{
 
+  const NEW_SET = 'new_'; //!< Newest posts Redis set.
   const POP_SET = 'pop_'; //!< Popular posts Redis set.
   const ACT_SET = 'act_'; //!< Active posts Redis set.
   const OPN_SET = 'opn_'; //!< Open questions Redis set.
@@ -356,13 +357,13 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   //!@{
 
   /**
-   * @brief Adds the post score to the Redis db.
-   * @param[in] string $set The name of the Redis set.
-   * @param[in] \DateTime $date The modification date.
+   * @brief Adds an ID, using the provided score, to multiple sets of the Redis db.
+   * @param[in] string $set The name of the base Redis set.
+   * @param[in] \DateTime $date A date.
+   * @param[in] string $id The post ID.
    * @param[in] int $score The score.
-   * @param[in] string $id The post id.
    */
-  protected function zAddScore($set, \DateTime $date, $score, $id) {
+  private function zMultipleAdd($set, \DateTime $date, $id, $score) {
     $this->redis->zAdd($set, $score, $id);
     $this->redis->zAdd($set.$date->format('_Ymd'), $score, $id);
     $this->redis->zAdd($set.$date->format('_Ym'), $score, $id);
@@ -372,12 +373,12 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
 
   /**
-   * @brief Removes the post score from the Redis db.
-   * @param[in] string $set The name of the Redis set.
-   * @param[in] \DateTime $date The modification date.
-   * @param[in] string $id The post id.
+   * @brief Removes an ID from multiple sets of the Redis db.
+   * @param[in] string $set The name of the base Redis set.
+   * @param[in] \DateTime $date A date.
+   * @param[in] string $id The post ID.
    */
-  protected function zRemScore($set, \DateTime $date, $id) {
+  private function zMultipleRem($set, \DateTime $date, $id) {
     $this->redis->zRem($set, $id);
     $this->redis->zRem($set.$date->format('_Ymd'), $id);
     $this->redis->zRem($set.$date->format('_Ym'), $id);
@@ -387,23 +388,21 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
 
   /**
-   * @brief Adds the post to the popular index.
+   * @brief Adds the post ID, using the provided score, to the specified Redis set.
+   * @param[in] string $set The name of the Redis set.
+   * @param[in] int $score The score.
    */
-  public function zAddPopular() {
+  protected function zAdd($set, $score) {
     if (!$this->isVisible()) return;
 
-    $config = $this->di['config'];
-
-    $date = (new \DateTime())->setTimestamp($this->publishedAt);
-    $popularity = ($this->getScore() * $config->scoring->voteCoefficient) + ($this->getRepliesCount() * $config->scoring->replyCoefficient) + ($this->getHitsCount() * $config->scoring->hitCoefficient);
     $id = $this->unversionId;
 
     // Order set with all the posts.
     if (static::INDEX)
-      $this->zAddScore(self::POP_SET.'post', $date, $popularity, $id);
+      $this->redis->zAdd($set . 'post', $score, $id);
 
-    // Order set with all the posts of a specific type: article, question, ecc.
-    $this->zAddScore(self::POP_SET.$this->type, $date, $popularity, $id);
+    // Order set with all the posts of a specific type.
+    $this->redis->zAdd($set . $this->type, $score, $id);
 
     if ($this->isMetadataPresent('tags')) {
       $tags = $this->uniqueMasters();
@@ -411,12 +410,125 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
       foreach ($tags as $tagId) {
         // Order set with all the posts related to a specific tag.
         if (static::INDEX)
-          $this->zAddScore(self::POP_SET.$tagId.'_'.'post', $date, $popularity, $id);
+          $this->redis->zAdd($set . $tagId . '_' . 'post', $score, $id);
 
-        // Order set with all the post of a specific type, related to a specific tag.
-        $this->zAddScore(self::POP_SET.$tagId.'_'.$this->type, $date, $popularity, $id);
+        // Order set with all the posts of a specific type, related to a specific tag.
+        $this->redis->zAdd($set . $tagId . '_' . $this->type, $score, $id);
       }
     }
+  }
+
+
+  /**
+   * @brief Removes the post ID from the specified Redis set.
+   * @param[in] string $set The name of the Redis set.
+   */
+  protected function zRem($set) {
+    $id = $this->unversionId;
+
+    // Order set with all the posts.
+    $this->redis->zRem($set.'post', $id);
+
+    // Order set with all the posts of a specific type.
+    $this->redis->zRem($set.$this->type, $id);
+
+    foreach ($this->zRemTags as $tagId) {
+      // Order set with all the posts related to a specific tag.
+      if (static::INDEX)
+        $this->redis->zRem($set . $tagId . '_' . 'post', $id);
+
+      // Order set with all the posts of a specific type, related to a specific tag.
+      $this->redis->zRem($set . $tagId . '_' . $this->type, $id);
+    }
+  }
+
+
+  /**
+   * @brief Adds the post ID, using the provided score, to the specified Redis set and its related subsets.
+   * @param[in] string $set The name of the Redis set.
+   * @param[in] \DateTime $date Use this date to create multiple subsets.
+   * @param[in] int $score The score.
+   */
+  protected function zAddSpecial($set, \DateTime $date, $score) {
+    if (!$this->isVisible()) return;
+
+    $id = $this->unversionId;
+
+    // Order set with all the posts.
+    if (static::INDEX)
+      $this->zMultipleAdd($set . 'post', $date, $id, $score);
+
+    // Order set with all the posts of a specific type: article, question, ecc.
+    $this->zMultipleAdd($set . $this->type, $date, $id, $score);
+
+    if ($this->isMetadataPresent('tags')) {
+      $tags = $this->uniqueMasters();
+
+      foreach ($tags as $tagId) {
+        // Order set with all the posts related to a specific tag.
+        if (static::INDEX)
+          $this->zMultipleAdd($set . $tagId . '_' . 'post', $date, $id, $score);
+
+        // Order set with all the post of a specific type, related to a specific tag.
+        $this->zMultipleAdd($set . $tagId . '_' . $this->type, $date, $id, $score);
+      }
+    }
+  }
+
+
+  /**
+   * @brief Removes the post ID from the specified Redis set and its related subsets.
+   * @param[in] string $set The name of the Redis set.
+   */
+  protected function zRemSpecial($set, $date) {
+    $id = $this->unversionId;
+
+    // Order set with all the posts.
+    if (static::INDEX)
+      $this->zMultipleRem($set . 'post', $date, $id);
+
+    // Order set with all the posts of a specific type.
+    $this->zMultipleRem($set . $this->type, $date, $id);
+
+    foreach ($this->zRemTags as $tagId) {
+      // Order set with all the posts related to a specific tag.
+      if (static::INDEX)
+        $this->zMultipleRem($set . $tagId . '_' . 'post', $date, $id);
+
+      // Order set with all the post of a specific type, related to a specific tag.
+      $this->zMultipleRem($set . $tagId . '_' . $this->type, $date, $id);
+    }
+  }
+  
+  
+  /**
+   * @brief Adds the post to the newest index.
+   */
+  public function zAddNewest() {
+    $this->zAdd(self::NEW_SET, $this->publishedAt);
+  }
+
+
+  /**
+   * @brief Removes the post from the newest index.
+   */
+  public function zRemNewest() {
+    $this->zRem(self::NEW_SET);
+  }
+
+
+  /**
+   * @brief Adds the post to the popular index.
+   */
+  public function zAddPopular() {
+    $config = $this->di['config'];
+
+    $popularity = ($this->getScore() * $config->scoring->voteCoefficient) +
+                  ($this->getRepliesCount() * $config->scoring->replyCoefficient) +
+                  ($this->getHitsCount() * $config->scoring->hitCoefficient);
+
+    $date = (new \DateTime())->setTimestamp($this->publishedAt);
+    $this->zAddSpecial(self::POP_SET, $popularity, $date);
   }
 
 
@@ -425,23 +537,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    */
   public function zRemPopular() {
     $date = (new \DateTime())->setTimestamp($this->publishedAt);
-    $id = $this->unversionId;
-
-    // Order set with all the posts.
-    if (static::INDEX)
-      $this->zRemScore(self::POP_SET.'post', $date, $id);
-
-    // Order set with all the posts of a specific type: article, question, ecc.
-    $this->zRemScore(self::POP_SET.$this->type, $date, $id);
-
-    foreach ($this->zRemTags as $tagId) {
-      // Order set with all the posts related to a specific tag.
-      if (static::INDEX)
-        $this->zRemScore(self::POP_SET . $tagId . '_' . 'post', $date, $id);
-
-      // Order set with all the post of a specific type, related to a specific tag.
-      $this->zRemScore(self::POP_SET . $tagId . '_' . $this->type, $date, $id);
-    }
+    $this->zRemSpecial(self::POP_SET, $date);
   }
 
 
@@ -459,10 +555,10 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
     // Order set with all the posts.
     if (static::INDEX)
-      $this->redis->zAdd(self::ACT_SET.'post', $timestamp, $id);
+      $this->redis->zAdd(self::ACT_SET . 'post', $timestamp, $id);
 
     // Order set with all the posts of a specific type: article, question, ecc.
-    $this->redis->zAdd(self::ACT_SET.$this->type, $timestamp, $id);
+    $this->redis->zAdd(self::ACT_SET . $this->type, $timestamp, $id);
 
     if ($this->isMetadataPresent('tags')) {
       $tags = $this->uniqueMasters();
@@ -478,10 +574,10 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
         }
 
         // Order set with all the posts of a specific type, related to a specific tag.
-        $this->redis->zAdd(self::ACT_SET.$tagId.'_'.$this->type, $timestamp, $id);
+        $this->redis->zAdd(self::ACT_SET . $tagId . '_' . $this->type, $timestamp, $id);
 
         // Used to get a list of tags, in relation to a specific type, recently updated.
-        $this->redis->zAdd(self::ACT_SET.'tags'.'_'.$this->type, $timestamp, $tagId);
+        $this->redis->zAdd(self::ACT_SET . 'tags' . '_' . $this->type, $timestamp, $tagId);
       }
     }
   }
@@ -494,10 +590,10 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     $id = $this->unversionId;
 
     // Order set with all the posts.
-    $this->redis->zRem(self::ACT_SET.'post', $id);
+    $this->redis->zRem(self::ACT_SET . 'post', $id);
 
     // Order set with all the posts of a specific type: article, question, ecc.
-    $this->redis->zRem(self::ACT_SET.$this->type, $id);
+    $this->redis->zRem(self::ACT_SET . $this->type, $id);
 
     foreach ($this->zRemTags as $tagId) {
       // Filters posts which should appear on the home page.
@@ -510,10 +606,10 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
       }
 
       // Order set with all the posts of a specific type, related to a specific tag.
-      $this->redis->zRem(self::ACT_SET.$tagId.'_'.$this->type, $id);
+      $this->redis->zRem(self::ACT_SET . $tagId . '_' . $this->type, $id);
 
       // Used to get a list of tags, in relation to a specific type, recently updated.
-      $this->redis->zRem(self::ACT_SET.'tags'.'_'.$this->type, $tagId);
+      $this->redis->zRem(self::ACT_SET . 'tags' . '_' . $this->type, $tagId);
     }
   }
 
