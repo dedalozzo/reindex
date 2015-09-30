@@ -69,7 +69,8 @@ class AboutCommand extends AbstractCommand {
     echo "Uptime (days): ".$redisInfo['uptime_in_days'].PHP_EOL;
     echo "Connected Client: ".$redisInfo['connected_clients'].PHP_EOL;
     echo "Connected Slaves: ".$redisInfo['connected_slaves'].PHP_EOL;
-    echo "Used Memory: ".$redisInfo['used_memory'].PHP_EOL;
+    echo "Used Memory: ".$redisInfo['used_memory_human'].PHP_EOL;
+    echo "Used Memory Peek: ".$redisInfo['used_memory_peak_human'].PHP_EOL;
     echo "Total Connections Received: ".$redisInfo['total_connections_received'].PHP_EOL;
     echo "Total Commands Processed: ".$redisInfo['total_commands_processed'].PHP_EOL;
     echo "Role: ".$redisInfo['role'].PHP_EOL;
