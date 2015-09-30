@@ -54,8 +54,7 @@ class CacheCommand extends AbstractCommand {
 
     foreach ($ids as $id) {
       $post = $this->couch->getDoc(Couch::STD_DOC_PATH, $id);
-      $post->zAddPopular();
-      $post->zAddActive();
+      $post->index();
 
       $progress->advance();
     }
