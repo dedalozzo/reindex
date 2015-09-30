@@ -88,7 +88,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
   /**
    * @brief Saves the post.
-   * @param[in] bool $deferred When `true` doesn't update the post popularity.
+   * @param[in] bool $deferred When `true` doesn't update the indexes.
    */
   public function save($deferred = FALSE) {
     $this->html = $this->markdown->parse($this->body);
@@ -97,8 +97,12 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
     parent::save();
 
-    if ($this->isCurrent() && !$deferred)
-      $this->reindex();
+    if (!$deferred) {
+      $this->deindex();
+
+      if ($this->isCurrent())
+        $this->index();
+    }
   }
 
 
@@ -358,10 +362,10 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    */
   private function zMultipleAdd($set, \DateTime $date, $id, $score) {
     $this->redis->zAdd($set, $score, $id);
-    $this->redis->zAdd($set.$date->format('_Ymd'), $score, $id);
-    $this->redis->zAdd($set.$date->format('_Ym'), $score, $id);
-    $this->redis->zAdd($set.$date->format('_Y'), $score, $id);
-    $this->redis->zAdd($set.$date->format('_Y_w'), $score, $id);
+    $this->redis->zAdd($set . $date->format('_Ymd'), $score, $id);
+    $this->redis->zAdd($set . $date->format('_Ym'), $score, $id);
+    $this->redis->zAdd($set . $date->format('_Y'), $score, $id);
+    $this->redis->zAdd($set . $date->format('_Y_w'), $score, $id);
   }
 
 
@@ -373,10 +377,10 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    */
   private function zMultipleRem($set, \DateTime $date, $id) {
     $this->redis->zRem($set, $id);
-    $this->redis->zRem($set.$date->format('_Ymd'), $id);
-    $this->redis->zRem($set.$date->format('_Ym'), $id);
-    $this->redis->zRem($set.$date->format('_Y'), $id);
-    $this->redis->zRem($set.$date->format('_Y_w'), $id);
+    $this->redis->zRem($set . $date->format('_Ymd'), $id);
+    $this->redis->zRem($set . $date->format('_Ym'), $id);
+    $this->redis->zRem($set . $date->format('_Y'), $id);
+    $this->redis->zRem($set . $date->format('_Y_w'), $id);
   }
 
 
@@ -521,7 +525,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
                   ($this->getHitsCount() * $config->scoring->hitCoefficient);
 
     $date = (new \DateTime())->setTimestamp($this->publishedAt);
-    $this->zAddSpecial(self::POP_SET, $popularity, $date);
+    $this->zAddSpecial(self::POP_SET, $date, $popularity);
   }
 
 
@@ -608,17 +612,31 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
 
   /**
+   * @brief Removes the post ID from the indexes.
+   */
+  public function deindex() {
+    $this->zRemNewest();
+    $this->zRemPopular();
+    $this->zRemActive();
+  }
+
+
+  /**
+   * @brief Adds the post ID to the indexes.
+   */
+  public function index() {
+    $this->zAddNewest();
+    $this->zAddPopular();
+    $this->zAddActive();
+  }
+
+
+  /**
    * @brief Reindex the post.
    */
   public function reindex() {
-    $this->zRemNewest();
-    $this->zAddNewest();
-
-    $this->zRemPopular();
-    $this->zAddPopular();
-
-    $this->zRemActive();
-    $this->zAddActive();
+    $this->deindex();
+    $this->index();
   }
 
   //!@}
