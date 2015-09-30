@@ -97,15 +97,8 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
     parent::save();
 
-    if ($this->isCurrent() && !$deferred) {
-      // Updates popular index.
-      $this->zRemPopular();
-      $this->zAddPopular();
-
-      // Updates active index.
-      $this->zRemActive();
-      $this->zAddActive();
-    }
+    if ($this->isCurrent() && !$deferred)
+      $this->reindex();
   }
 
 
@@ -611,6 +604,21 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
       // Used to get a list of tags, in relation to a specific type, recently updated.
       $this->redis->zRem(self::ACT_SET . 'tags' . '_' . $this->type, $tagId);
     }
+  }
+
+
+  /**
+   * @brief Reindex the post.
+   */
+  public function reindex() {
+    $this->zRemNewest();
+    $this->zAddNewest();
+
+    $this->zRemPopular();
+    $this->zAddPopular();
+
+    $this->zRemActive();
+    $this->zAddActive();
   }
 
   //!@}
