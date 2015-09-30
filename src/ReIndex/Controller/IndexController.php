@@ -188,6 +188,78 @@ class IndexController extends ListController {
   }
 
 
+  /**
+   * @brief Used by popularAction() and popularByTagAction().
+   * @param[in] string $filter Human readable representation of a period.
+   * @param[in] string $unversionTagId (optional) An optional unversioned tag ID
+   */
+  protected function popular($filter, $unversionTagId = NULL) {
+    $period = Helper\Time::period($filter);
+    if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+
+    $date = Helper\Time::aWhileBack($period, "_");
+
+    if ($this->isSameClass())
+      $set = Post::POP_SET.$unversionTagId."post".$date;
+    else
+      $set = Post::POP_SET.$unversionTagId.$this->type.$date;
+
+    $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
+    $keys = $this->redis->zRevRangeByScore($set, '+inf', 0, ['limit' => [$offset, $this->resultsPerPage-1]]);
+    $count = $this->redis->zCount($set, 0, '+inf');
+
+    if ($count > $this->resultsPerPage)
+      $this->view->setVar('nextPage', $this->buildPaginationUrlForRedis($offset + $this->resultsPerPage));
+
+    if (!empty($keys)) {
+      $opts = new ViewQueryOpts();
+      $opts->doNotReduce();
+      $rows = $this->couch->queryView("posts", "unversion", $keys, $opts);
+      $ids = $this->getEntries(array_column($rows->asArray(), 'id'));
+    }
+    else
+      $ids = [];
+
+    $this->view->setVar('entries', $ids);
+    $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
+    $this->view->setVar('submenu', $this->periods);
+    $this->view->setVar('submenuIndex', $period);
+    $this->view->setVar('title', sprintf('Popular %s', ucfirst($this->getLabel())));
+  }
+
+
+  /**
+   * @brief Used by activeAction() and activeByTagAction().
+   * @param[in] string $unversionTagId (optional) An optional unversioned tag ID
+   */
+  protected function active($unversionTagId = NULL) {
+    if ($this->isSameClass())
+      $set = Post::ACT_SET.$unversionTagId."post";
+    else
+      $set = Post::ACT_SET.$unversionTagId.$this->type;
+
+    $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
+    $keys = $this->redis->zRevRangeByScore($set, '+inf', 0, ['limit' => [$offset, $this->resultsPerPage-1]]);
+    $count = $this->redis->zCount($set, 0, '+inf');
+
+    if ($count > $this->resultsPerPage)
+      $this->view->setVar('nextPage', $this->buildPaginationUrlForRedis($offset + $this->resultsPerPage));
+
+    if (!empty($keys)) {
+      $opts = new ViewQueryOpts();
+      $opts->doNotReduce();
+      $rows = $this->couch->queryView("posts", "unversion", $keys, $opts);
+      $ids = $this->getEntries(array_column($rows->asArray(), 'id'));
+    }
+    else
+      $ids = [];
+
+    $this->view->setVar('entries', $ids);
+    $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
+    $this->view->setVar('title', sprintf('Active %s', ucfirst($this->getLabel())));
+  }
+
+
   public function initialize() {
     // Prevents to call the method twice in case of forwarding.
     if ($this->dispatcher->isFinished() && $this->dispatcher->wasForwarded())
@@ -468,46 +540,6 @@ class IndexController extends ListController {
 
 
   /**
-   * @brief Used by popularAction() and popularByTagAction().
-   * @param[in] string $filter Human readable representation of a period.
-   * @param[in] string $unversionTagId (optional) An optional unversioned tag ID
-   */
-  protected function popular($filter, $unversionTagId = NULL) {
-    $period = Helper\Time::period($filter);
-    if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
-
-    $date = Helper\Time::aWhileBack($period, "_");
-
-    if ($this->isSameClass())
-      $set = Post::POP_SET.$unversionTagId."post".$date;
-    else
-      $set = Post::POP_SET.$unversionTagId.$this->type.$date;
-
-    $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
-    $keys = $this->redis->zRevRangeByScore($set, '+inf', 0, ['limit' => [$offset, $this->resultsPerPage-1]]);
-    $count = $this->redis->zCount($set, 0, '+inf');
-
-    if ($count > $this->resultsPerPage)
-      $this->view->setVar('nextPage', $this->buildPaginationUrlForRedis($offset + $this->resultsPerPage));
-
-    if (!empty($keys)) {
-      $opts = new ViewQueryOpts();
-      $opts->doNotReduce();
-      $rows = $this->couch->queryView("posts", "unversion", $keys, $opts);
-      $ids = $this->getEntries(array_column($rows->asArray(), 'id'));
-    }
-    else
-      $ids = [];
-
-    $this->view->setVar('entries', $ids);
-    $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
-    $this->view->setVar('submenu', $this->periods);
-    $this->view->setVar('submenuIndex', $period);
-    $this->view->setVar('title', sprintf('Popular %s', ucfirst($this->getLabel())));
-  }
-
-
-  /**
    * @brief Displays the most popular updates for the provided period (ordered by score).
    * @param[in] string $filter (optional) Human readable representation of a period.
    */
@@ -527,38 +559,6 @@ class IndexController extends ListController {
 
     $this->popular($filter, Helper\Text::unversion($tagId)."_");
     $this->view->setVar('etag', $this->couch->getDoc(Couch::STD_DOC_PATH, $tagId));
-  }
-
-
-  /**
-   * @brief Used by activeAction() and activeByTagAction().
-   * @param[in] string $unversionTagId (optional) An optional unversioned tag ID
-   */
-  protected function active($unversionTagId = NULL) {
-    if ($this->isSameClass())
-      $set = Post::ACT_SET.$unversionTagId."post";
-    else
-      $set = Post::ACT_SET.$unversionTagId.$this->type;
-
-    $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
-    $keys = $this->redis->zRevRangeByScore($set, '+inf', 0, ['limit' => [$offset, $this->resultsPerPage-1]]);
-    $count = $this->redis->zCount($set, 0, '+inf');
-
-    if ($count > $this->resultsPerPage)
-      $this->view->setVar('nextPage', $this->buildPaginationUrlForRedis($offset + $this->resultsPerPage));
-
-    if (!empty($keys)) {
-      $opts = new ViewQueryOpts();
-      $opts->doNotReduce();
-      $rows = $this->couch->queryView("posts", "unversion", $keys, $opts);
-      $ids = $this->getEntries(array_column($rows->asArray(), 'id'));
-    }
-    else
-      $ids = [];
-
-    $this->view->setVar('entries', $ids);
-    $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
-    $this->view->setVar('title', sprintf('Active %s', ucfirst($this->getLabel())));
   }
 
 
