@@ -46,7 +46,7 @@ class ArticleController extends IndexController {
   /**
    * @brief Creates a new article.
    */
-  public function addAction() {
+  public function newAction() {
     if (is_null($this->user))
       return $this->dispatcher->forward(['controller' => 'auth', 'action' => 'signin']);
 
