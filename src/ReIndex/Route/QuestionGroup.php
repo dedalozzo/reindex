@@ -42,7 +42,6 @@ class QuestionGroup extends IndexGroup {
     $this->addGet('/popular/', ['action' => 'popular'.$postfix]);
     $this->addGet('/popular/{filter}/', ['action' => 'popular'.$postfix]);
     $this->addGet('/active/', ['action' => 'active'.$postfix]);
-    $this->addGet('/important/', ['action' => 'important'.$postfix]);
     $this->addGet('/open/', ['action' => 'open'.$postfix]);
     $this->addGet('/open/{filter}/', ['action' => 'open'.$postfix]);
     $this->addGet('/favorites/', ['action' => 'favorite'.$postfix]);
