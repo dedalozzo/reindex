@@ -189,25 +189,29 @@ class IndexController extends ListController {
 
 
   /**
-   * @brief Used by activeAction() and activeByTagAction().
+   * @brief Retrieves all post IDs in a set between min and max.
    * @param[in] string $prefix Prefix of the Redis set.
-   * @param[in] string $unversionTagId (optional) An optional unversioned tag ID
-   * @param[in] string $date Use this date to query a specific subset.
+   * @param[in] string $postfix Postfix of the Redis set.
+   * @param[in] string $unversionTagId (optional) An optional unversioned tag ID.
+   * @param[in] mixed $min Minimum score.
+   * @param[in] mixed $max Maximum score.
    */
-  protected function doList($prefix, $unversionTagId = NULL, $date = "") {
+  protected function zRevRangeByScore($prefix, $postfix = '', $unversionTagId = NULL, $min = 0, $max = '+inf') {
     $subset = is_null($unversionTagId) ? '' : $unversionTagId . '_';
 
     if ($this->isSameClass())
-      $set = $prefix . $subset . "post" . $date;
+      $set = $prefix . $subset . "post" . $postfix;
     else
-      $set = $prefix . $subset . $this->type . $date;
+      $set = $prefix . $subset . $this->type . $postfix;
 
     $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
-    $keys = $this->redis->zRevRangeByScore($set, '+inf', 0, ['limit' => [$offset, $this->resultsPerPage-1]]);
-    $count = $this->redis->zCount($set, 0, '+inf');
+    $keys = $this->redis->zRevRangeByScore($set, $max, $min, ['limit' => [$offset, $this->resultsPerPage-1]]);
+    $count = $this->redis->zCount($set, $min, $max);
 
-    if ($count > $this->resultsPerPage)
-      $this->view->setVar('nextPage', $this->buildPaginationUrlForRedis($offset + $this->resultsPerPage));
+    $nextOffset = $offset + $this->resultsPerPage;
+
+    if ($count > $nextOffset)
+      $this->view->setVar('nextPage', $this->buildPaginationUrlForRedis($nextOffset));
 
     if (!empty($keys)) {
       $opts = new ViewQueryOpts();
@@ -224,11 +228,24 @@ class IndexController extends ListController {
 
 
   /**
+   * @brief Used by perDateAction() and perDateByTagAction().
+   * @param[in] \DateTime $minDate Minimum date.
+   * @param[in] \DateTime $maxDate Maximum date.
+   * @param[in] string $unversionTagId (optional) An optional unversioned tag ID.
+   */
+  protected function perDate($minDate, $maxDate, $unversionTagId = NULL) {
+    $this->zRevRangeByScore(Post::NEW_SET, '', $unversionTagId, $minDate->getTimestamp(), $maxDate->getTimestamp());
+
+    $this->view->setVar('title', sprintf('%s by date', ucfirst($this->getLabel())));
+  }
+
+
+  /**
    * @brief Used by newestAction() and newestByTagAction().
-   * @param[in] string $unversionTagId (optional) An optional unversioned tag ID
+   * @param[in] string $unversionTagId (optional) An optional unversioned tag ID.
    */
   protected function newest($unversionTagId = NULL) {
-    $this->doList(Post::NEW_SET, $unversionTagId);
+    $this->zRevRangeByScore(Post::NEW_SET, '', $unversionTagId);
 
     if (is_null($this->view->title))
       $this->view->setVar('title', sprintf('New %s', $this->getLabel()));
@@ -237,16 +254,13 @@ class IndexController extends ListController {
 
   /**
    * @brief Used by popularAction() and popularByTagAction().
-   * @param[in] string $filter Human readable representation of a period.
-   * @param[in] string $unversionTagId (optional) An optional unversioned tag ID
+   * @param[in] string $period A period of time obtained with the static method Time::period().
+   * @param[in] string $unversionTagId (optional) An optional unversioned tag ID.
    */
-  protected function popular($filter, $unversionTagId = NULL) {
-    $period = Helper\Time::period($filter);
-    if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+  protected function popular($period, $unversionTagId = NULL) {
+    $postfix = Helper\Time::aWhileBack($period, "_");
 
-    $date = Helper\Time::aWhileBack($period, "_");
-
-    $this->doList(Post::POP_SET, $unversionTagId, $date);
+    $this->zRevRangeByScore(Post::POP_SET, $postfix, $unversionTagId);
 
     $this->view->setVar('submenu', $this->periods);
     $this->view->setVar('submenuIndex', $period);
@@ -256,10 +270,10 @@ class IndexController extends ListController {
 
   /**
    * @brief Used by activeAction() and activeByTagAction().
-   * @param[in] string $unversionTagId (optional) An optional unversioned tag ID
+   * @param[in] string $unversionTagId (optional) An optional unversioned tag ID.
    */
   protected function active($unversionTagId = NULL) {
-    $this->doList(Post::ACT_SET, $unversionTagId);
+    $this->zRevRangeByScore(Post::ACT_SET, $unversionTagId);
 
     $this->view->setVar('title', sprintf('Active %s', ucfirst($this->getLabel())));
   }
@@ -364,40 +378,9 @@ class IndexController extends ListController {
    * @param[in] int $day (optional) A specific day.
    */
   public function perDateAction($year, $month = NULL, $day = NULL) {
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->reverseOrderOfResults()->setLimit($this->resultsPerPage+1);
-
     Helper\Time::dateLimits($minDate, $maxDate, $year, $month, $day);
 
-    // Paginates results.
-    $postDate = isset($_GET['startkey']) ? (new \DateTime())->setTimestamp((int)$_GET['startkey']) : clone($maxDate);
-    if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
-
-    if ($this->isSameClass()) {
-      $opts->setStartKey($postDate->getTimestamp())->setEndKey($minDate->getTimestamp());
-      $rows = $this->couch->queryView("posts", "perDate", NULL, $opts);
-
-      $opts->reduce()->setStartKey($maxDate->getTimestamp())->unsetOpt('startkey_docid');
-      $count = $this->couch->queryView("posts", "perDate", NULL, $opts)->getReducedValue();
-    }
-    else {
-      $opts->setStartKey([$this->type, $postDate->getTimestamp()])->setEndKey([$this->type, $minDate->getTimestamp()]);
-      $rows = $this->couch->queryView("posts", "perDateByType", NULL, $opts);
-
-      $opts->reduce()->setStartKey([$this->type, $maxDate->getTimestamp()])->unsetOpt('startkey_docid');
-      $count = $this->couch->queryView("posts", "perDateByType", NULL, $opts)->getReducedValue();
-    }
-
-    $entries = $this->getEntries(array_column($rows->asArray(), 'id'));
-
-    if (count($entries) > $this->resultsPerPage) {
-      $last = array_pop($entries);
-      $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->publishedAt, $last->id));
-    }
-
-    $this->view->setVar('entries', $entries);
-    $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
-    $this->view->setVar('title', sprintf('%s by date', ucfirst($this->getLabel())));
+    $this->perDate($minDate, $maxDate);
   }
 
 
@@ -412,43 +395,11 @@ class IndexController extends ListController {
     $tagId = $this->getTagId($tag);
     if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    $unversionTagId = Helper\Text::unversion($tagId);
-
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->reverseOrderOfResults()->setLimit($this->resultsPerPage+1);
-
     Helper\Time::dateLimits($minDate, $maxDate, $year, $month, $day);
 
-    // Paginates results.
-    $postDate = isset($_GET['startkey']) ? (new \DateTime())->setTimestamp((int)$_GET['startkey']) : clone($maxDate);
-    if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
+    $this->perDate($minDate, $maxDate, Helper\Text::unversion($tagId));
 
-    if ($this->isSameClass()) {
-      $opts->setStartKey([$unversionTagId, $postDate->getTimestamp()])->setEndKey([$unversionTagId, $minDate->getTimestamp()]);
-      $rows = $this->couch->queryView("posts", "perDateByTag", NULL, $opts);
-
-      $opts->reduce()->setStartKey([$unversionTagId, $maxDate->getTimestamp()])->unsetOpt('startkey_docid');
-      $count = $this->couch->queryView("posts", "perDateByTag", NULL, $opts)->getReducedValue();
-    }
-    else {
-      $opts->setStartKey([$unversionTagId, $this->type, $postDate->getTimestamp()])->setEndKey([$unversionTagId, $this->type, $minDate->getTimestamp()]);
-      $rows = $this->couch->queryView("posts", "perDateByTagAndType", NULL, $opts);
-
-      $opts->reduce()->setStartKey([$unversionTagId, $this->type, $maxDate->getTimestamp()])->unsetOpt('startkey_docid');
-      $count = $this->couch->queryView("posts", "perDateByTagAndType", NULL, $opts)->getReducedValue();
-    }
-
-    $entries = $this->getEntries(array_column($rows->asArray(), 'id'));
-
-    if (count($entries) > $this->resultsPerPage) {
-      $last = array_pop($entries);
-      $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->publishedAt, $last->id));
-    }
-
-    $this->view->setVar('entries', $entries);
-    $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
     $this->view->setVar('etag', $this->couch->getDoc(Couch::STD_DOC_PATH, $tagId));
-    $this->view->setVar('title', sprintf('%s by date', ucfirst($this->getLabel())));
   }
 
 
@@ -479,7 +430,10 @@ class IndexController extends ListController {
    * @param[in] string $filter (optional) Human readable representation of a period.
    */
   public function popularAction($filter = NULL) {
-    $this->popular($filter);
+    $period = Helper\Time::period($filter);
+    if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+
+    $this->popular($period);
   }
 
 
@@ -492,7 +446,10 @@ class IndexController extends ListController {
     $tagId = $this->getTagId($tag);
     if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    $this->popular($filter, Helper\Text::unversion($tagId));
+    $period = Helper\Time::period($filter);
+    if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+
+    $this->popular($period, Helper\Text::unversion($tagId));
 
     $this->view->setVar('etag', $this->couch->getDoc(Couch::STD_DOC_PATH, $tagId));
   }
@@ -524,57 +481,6 @@ class IndexController extends ListController {
    * @brief Displays the newest updates based on my tags.
    */
   public function interestingAction() {
-    /*
-    $opts = new ViewQueryOpts();
-    $opts->reduce()->groupResults();
-    //$opts->setLimit($this->resultsPerPage+1);
-
-    // Paginates results.
-    //$startKey = isset($_GET['startkey']) ? (int)$_GET['startkey'] : Couch::WildCard();
-    //if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
-
-    if ($this->isSameClass()) {
-      //$opts->setStartKey($startKey);
-
-      $keys = ['3e96144b-3ebd-41e4-8a45-78cd9af1671d', '493e48ea-78f0-4a64-be17-6cacf21f848b'];
-
-      //$keys[] = $tagId;
-      $rows = $this->couch->queryView("posts", "byTag", $keys, $opts);
-    }
-    else {
-      //$opts->setStartKey([$this->type, $startKey])->setEndKey([$this->type]);
-      //$rows = $this->couch->queryView("posts", "perDateByType", NULL, $opts);
-    }
-
-
-    $this->log->addDebug('Posts: ', $rows->asArray());
-
-    $phpCount = count($rows->asArray()[0]['value']);
-    $mysqlCount = count($rows->asArray()[1]['value']);
-    $this->log->addDebug(sprintf('php: %d', $phpCount));
-    $this->log->addDebug(sprintf('mysql: %d', $mysqlCount));
-
-    $this->log->addDebug(sprintf('total: %d', $phpCount + $mysqlCount));
-
-    $merged = array_merge($rows->asArray()[0]['value'], $rows->asArray()[1]['value']);
-    $this->log->addDebug(sprintf('total merge: %d', count($merged)));
-    $this->log->addDebug(sprintf('total unique: %d', count(array_unique($merged))));
-
-
-
-    $entries = $this->getEntries($rows->asArray()[1]['value']);
-
-    $this->log->addDebug('Qui passo');
-
-    if (count($entries) > $this->resultsPerPage) {
-      $last = array_pop($entries);
-      $this->view->setVar('nextPage', $this->buildPaginationUrl($last->publishedAt, $last->id));
-    }
-
-    $this->view->setVar('entries', $entries);
-    //$this->view->setVar('entriesCount', $this->countPosts());
-    */
-    $this->view->setVar('entriesCount', 0);
     $this->view->setVar('title', sprintf('%s associated with your favorite tags', ucfirst($this->getLabel())));
   }
 
