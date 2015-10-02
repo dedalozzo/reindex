@@ -96,12 +96,7 @@ class Tag extends Versionable implements Extension\ICount, Extension\IStar {
     $ids = array_column($result->asArray(), 'id');
     foreach ($ids as $id) {
       $post = $this->couch->getDoc(Couch::STD_DOC_PATH, $id);
-
-      $post->zRemPopularity();
-      $post->zAddPopularity();
-
-      $post->zRemLastUpdate();
-      $post->zAddLastUpdate($post->getLastVoteTimestamp());
+      $post->reindex();
     }
   }
 
