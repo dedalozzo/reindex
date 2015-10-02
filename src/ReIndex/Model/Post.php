@@ -246,7 +246,6 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   /** @name Visibility Methods */
   //!@{
 
-
   /**
    * @brief Makes the post to be listed.
    * @retval bool
