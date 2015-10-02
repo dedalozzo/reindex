@@ -542,13 +542,11 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @brief Adds the post to the active index.
    * @param[in] integer $timestamp (optional) The timestamp of the post last update.
    */
-  public function zAddActive($timestamp = NULL) {
+  public function zAddActive() {
     if (!$this->isVisible()) return;
 
-    if (is_null($timestamp) or ($timestamp < $this->modifiedAt))
-      $timestamp = $this->modifiedAt;
-
     $id = $this->unversionId;
+    $timestamp = $this->getLastUpdate();
 
     // Order set with all the posts.
     if (static::INDEX)
