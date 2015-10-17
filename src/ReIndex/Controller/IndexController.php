@@ -254,14 +254,20 @@ class IndexController extends ListController {
 
   /**
    * @brief Used by popularAction() and popularByTagAction().
-   * @param[in] string $period A period of time obtained with the static method Time::period().
+   * @param[in] string $filter A human readable period of time.
    * @param[in] string $unversionTagId (optional) An optional unversioned tag ID.
    */
-  protected function popular($period, $unversionTagId = NULL) {
-    $postfix = Helper\Time::aWhileBack($period, "_");
+  protected function popular($filter, $unversionTagId = NULL) {
+    $filter = Helper\Time::period($filter);
+    if ($filter === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+
+    $this->dispatcher->setParam('filter', $filter);
+
+    $postfix = Helper\Time::aWhileBack($filter, "_");
 
     $this->zRevRangeByScore(Post::POP_SET, $postfix, $unversionTagId);
 
+    $this->view->setVar('periods', Helper\Time::$periods);
     $this->view->setVar('title', sprintf('Popular %s', ucfirst($this->getLabel())));
   }
 
@@ -428,10 +434,7 @@ class IndexController extends ListController {
    * @param[in] string $filter (optional) Human readable representation of a period.
    */
   public function popularAction($filter = NULL) {
-    $period = Helper\Time::period($filter);
-    if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
-
-    $this->popular($period);
+    $this->popular($filter);
   }
 
 
@@ -444,10 +447,7 @@ class IndexController extends ListController {
     $tagId = $this->getTagId($tag);
     if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    $period = Helper\Time::period($filter);
-    if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
-
-    $this->popular($period, Helper\Text::unversion($tagId));
+    $this->popular($filter, Helper\Text::unversion($tagId));
 
     $this->view->setVar('etag', $this->couch->getDoc(Couch::STD_DOC_PATH, $tagId));
   }
@@ -492,10 +492,12 @@ class IndexController extends ListController {
     $filters = ['posting-date' => NULL, 'insertion-date' => NULL];
     if (is_null($filter)) $filter = 'insertion-date';
 
-    $index = Helper\ArrayHelper::key($filter, $filters);
-    if ($index === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+    $filter = Helper\ArrayHelper::key($filter, $filters);
+    if ($filter === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    if ($index == 'posting-date') {
+    $this->dispatcher->setParam('filter', $filter);
+
+    if ($filter == 'posting-date') {
       $perDate = 'perPublishedAt';
       $perDateByType = 'perPublishedAtByType';
     }
