@@ -47,12 +47,10 @@ class QuestionController extends IndexController {
     $filters = ['newest' => NULL, 'recently-active' => NULL, 'popular' => NULL];
     if (is_null($filter)) $filter = 'insertion-date';
 
-    $index = Helper\ArrayHelper::value($filter, $filters);
+    $index = Helper\ArrayHelper::key($filter, $filters);
     if ($index === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $this->view->setVar('entriesCount', 0);
-    $this->view->setVar('submenu', $filters);
-    $this->view->setVar('submenuIndex', $index);
     $this->view->setVar('title', sprintf('Open %s', ucfirst($this->getLabel())));
   }
 
