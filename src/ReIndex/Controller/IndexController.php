@@ -262,8 +262,6 @@ class IndexController extends ListController {
 
     $this->zRevRangeByScore(Post::POP_SET, $postfix, $unversionTagId);
 
-    $this->view->setVar('submenu', $this->periods);
-    $this->view->setVar('submenuIndex', $period);
     $this->view->setVar('title', sprintf('Popular %s', ucfirst($this->getLabel())));
   }
 
@@ -367,7 +365,7 @@ class IndexController extends ListController {
    * @param[in] string $tag The tag name.
    */
   public function infoByTagAction($tag) {
-    $this->view->setVar('title', 'Tags popolari');
+    $this->view->setVar('title', 'Popular tags');
   }
 
 
@@ -497,7 +495,7 @@ class IndexController extends ListController {
     $index = Helper\ArrayHelper::key($filter, $filters);
     if ($index === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    if ($index == 0) {
+    if ($index == 'posting-date') {
       $perDate = 'perPublishedAt';
       $perDateByType = 'perPublishedAtByType';
     }
@@ -552,9 +550,6 @@ class IndexController extends ListController {
 
     $this->view->setVar('entries', $this->getEntries(array_column($posts, 'id')));
     $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
-    $this->view->setVar('entriesLabel', 'favorites');
-    $this->view->setVar('submenu', $filters);
-    $this->view->setVar('submenuIndex', $index);
     $this->view->setVar('title', sprintf('Favorite %s', ucfirst($this->getLabel())));
   }
 
