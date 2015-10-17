@@ -33,6 +33,10 @@ $di->setShared('volt',
       }
     );
 
+    $compiler->addFunction('periods', function($resolvedArgs, $exprArgs) {
+      return 'ReIndex\Helper\Time::periods';
+    });
+
     //$compiler->addFunction('arraycolumn', 'array_column');
 
     return $volt;
