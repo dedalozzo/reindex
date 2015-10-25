@@ -15,7 +15,7 @@ namespace ReIndex\Model;
  * @brief
  * @nosubgrouping
  */
-class Link extends Post {
+class Update extends Post {
 
   protected function needForApproval() {
     return TRUE;
@@ -23,27 +23,6 @@ class Link extends Post {
 
 
   //! @cond HIDDEN_SYMBOLS
-
-  public function getLanguage() {
-    return $this->meta['language'];
-  }
-
-
-  public function issetLanguage() {
-    return isset($this->meta['language']);
-  }
-
-
-  public function setLanguage($value) {
-    $this->meta['language'] = $value;
-  }
-
-
-  public function unsetLanguage() {
-    if ($this->isMetadataPresent('language'))
-      unset($this->meta['language']);
-  }
-
 
   public function getUrl() {
     return $this->meta['url'];

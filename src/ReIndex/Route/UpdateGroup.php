@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file BookGroup.php
- * @brief This file contains the BookGroup class.
+ * @file UpdateGroup.php
+ * @brief This file contains the UpdateGroup class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -15,14 +15,14 @@ use Phalcon\DI;
 
 
 /**
- * @brief Group of Book routes.
+ * @brief Group of Update routes.
  * @nosubgrouping
  */
-class BookGroup extends IndexGroup {
+class UpdateGroup extends IndexGroup {
 
 
   protected function getController() {
-    return 'book';
+    return 'update';
   }
 
 
@@ -32,7 +32,7 @@ class BookGroup extends IndexGroup {
 
 
   public function getPrefix() {
-    return '/books';
+    return '/updates';
   }
 
-} 
+}

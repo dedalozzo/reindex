@@ -28,10 +28,9 @@ $di->setShared('router',
 
     // Order is important, don't change it!
     $router->mount(new Route\IndexGroup());
-    $router->mount(new Route\LinkGroup());
+    $router->mount(new Route\UpdateGroup());
     $router->mount(new Route\QuestionGroup());
     $router->mount(new Route\ArticleGroup());
-    $router->mount(new Route\BookGroup());
 
     $router->mount(new Route\TagGroup());
     $router->mount(new Route\UserGroup());

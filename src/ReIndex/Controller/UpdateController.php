@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file LinkController.php
- * @brief This file contains the LinkController class.
+ * @file UpdateController.php
+ * @brief This file contains the UpdateController class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -15,10 +15,10 @@ use ReIndex\Helper;
 
 
 /**
- * @brief Controller of Link actions.
+ * @brief Controller of Update actions.
  * @nosubgrouping
  */
-class LinkController extends IndexController {
+class UpdateController extends IndexController {
 
 
   /**

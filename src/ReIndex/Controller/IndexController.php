@@ -60,6 +60,8 @@ class IndexController extends ListController {
    * @retval string|bool Returns the tag id, or `false` in case the tag doesn't exist.
    */
   protected function getTagId($name) {
+    $name = urldecode($name);
+
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(1)->setKey($name);
 
@@ -267,7 +269,7 @@ class IndexController extends ListController {
 
     $this->zRevRangeByScore(Post::POP_SET, $postfix, $unversionTagId);
 
-    $this->view->setVar('periods', Helper\Time::$periods);
+    $this->view->setVar('filters', $this->periods);
     $this->view->setVar('title', sprintf('Popular %s', ucfirst($this->getLabel())));
   }
 
@@ -489,7 +491,7 @@ class IndexController extends ListController {
    */
   public function favoriteAction($filter = NULL) {
     // Stores sub-menu definition.
-    $filters = ['posting-date' => NULL, 'insertion-date' => NULL];
+    $filters = ['insertion-date' => NULL, 'posting-date' => NULL];
     if (is_null($filter)) $filter = 'insertion-date';
 
     $filter = Helper\ArrayHelper::key($filter, $filters);
@@ -552,6 +554,7 @@ class IndexController extends ListController {
 
     $this->view->setVar('entries', $this->getEntries(array_column($posts, 'id')));
     $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
+    $this->view->setVar('filters', $filters);
     $this->view->setVar('title', sprintf('Favorite %s', ucfirst($this->getLabel())));
   }
 
