@@ -53,11 +53,16 @@ $di->setShared('markdown',
           Hoedown::TOC_END => 6, // End level for headers included in the TOC.
           Hoedown::TOC_ESCAPE => TRUE, // Escape int the TOC.
           Hoedown::TOC_HEADER => "", // Render header in the TOC.
-          Hoedown::TOC_FOOTER => "" // Render footer in the TOC.
+          Hoedown::TOC_FOOTER => "", // Render footer in the TOC.
 
           //HOEDOWN_OPT_IS_USER_BLOCK, todo
+          Hoedown::META_BLOCK => TRUE
         ]
     );
+
+    $hoedown->setOption(Hoedown::META_PARSE, function($text) {
+      return json_encode($text); // todo: replace with a function that format metadata.
+    });
 
     $hoedown->addRender("blockcode", function($code, $language) {
        return Pygmentize::highlight($code, $language);
