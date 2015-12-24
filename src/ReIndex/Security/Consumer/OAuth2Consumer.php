@@ -154,6 +154,7 @@ abstract class OAuth2Consumer {
     $user = User::create();
     $this->update($user, $userData);
     Cookie::set($user);
+    return $user;
   }
 
 
@@ -179,6 +180,7 @@ abstract class OAuth2Consumer {
    * @param[in] string $userId The user identifier used by the provider.
    * @param[in] string $userEmail The user email.
    * @param[in] array $userData An associative array with the user information.
+   * @retval Model::User An user instance.
    */
   protected function consume($userId, $userEmail, array $userData) {
     $anonymous = $this->user->isGuest();
@@ -212,11 +214,13 @@ abstract class OAuth2Consumer {
       }
       else {
         if ($anonymous)
-          $this->signUp($userData);
+          $user = $this->signUp($userData);
         else
           $this->signIn($user, $userData);
       }
     }
+
+    return $user;
   }
 
 
@@ -246,7 +250,7 @@ abstract class OAuth2Consumer {
   protected function update(User $user, array $userData) {
     $user->addLogin($this->getName(), $userData[static::ID], @$userData[static::PROFILE_URL], $userData[static::EMAIL], $this->isTrustworthy());
     $user->internetProtocolAddress = $_SERVER['REMOTE_ADDR'];
-    //$user->save();
+    $user->save();
   }
 
 
@@ -259,6 +263,7 @@ abstract class OAuth2Consumer {
 
   /**
    * @brief The authenticated user joins the ReIndex social network.
+   * @retval Model::User An user instance.
    */
   abstract public function join();
 
