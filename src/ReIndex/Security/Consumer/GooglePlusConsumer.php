@@ -89,7 +89,7 @@ class GooglePlusConsumer extends OAuth2Consumer {
     $userData = $this->fetch('https://www.googleapis.com/plus/v1/people/me/?fields=name(givenName,familyName),gender,birthday,url,occupation,aboutMe,displayName,emails/value');
     $userData['email'] = $this->extractPrimaryEmail($userData['emails']);
     $this->validate($userData);
-    $this->consume($userData[static::ID], $userData[static::EMAIL], $userData);
+    return $this->consume($userData[static::ID], $userData[static::EMAIL], $userData);
   }
 
 

@@ -76,7 +76,7 @@ class FacebookConsumer extends OAuth2Consumer {
   public function join() {
     $userData = $this->fetch('/me');
     $this->validate($userData);
-    $this->consume($userData[static::ID], $userData[static::EMAIL], $userData);
+    return $this->consume($userData[static::ID], $userData[static::EMAIL], $userData);
   }
 
 
