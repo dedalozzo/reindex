@@ -29,7 +29,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "/Volumes/Data/Dropbox/Git/reboot"
+            "url": "/Users/fff/Documents/Git/reboot"
         }
     ],
     "autoload": {
