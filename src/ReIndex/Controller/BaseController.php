@@ -97,10 +97,10 @@ abstract class BaseController extends Controller {
 
     $this->user = $this->guardian->getUser();
 
-    // It is just the primary domain, for example: `programmazione.it`.
+    // It is just the primary domain, for example: `reindex.xyz`.
     $this->domainName = $this->di['config']['application']['domainName'];
 
-    // Includes the subdomain if any, for example: `it-it.programmazione.it`.
+    // Includes the subdomain if any, for example: `it-it.reindex.xyz`.
     $this->serverName = $_SERVER['SERVER_NAME'];
 
     $this->controllerName = $this->dispatcher->getControllerName();
