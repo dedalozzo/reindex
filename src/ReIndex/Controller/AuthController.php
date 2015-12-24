@@ -280,7 +280,8 @@ class AuthController extends BaseController {
    */
   public function facebookAction() {
     $consumer = new Consumer\FacebookConsumer();
-    $consumer->join();
+    $user = $consumer->join();
+    return $this->redirectToReferrer($user);
   }
 
 
@@ -289,7 +290,8 @@ class AuthController extends BaseController {
    */
   public function linkedinAction() {
     $consumer = new Consumer\LinkedInConsumer();
-    $consumer->join();
+    $user =  $consumer->join();
+    return $this->redirectToReferrer($user);
   }
 
 
@@ -298,7 +300,8 @@ class AuthController extends BaseController {
    */
   public function githubAction() {
     $consumer = new Consumer\GitHubConsumer();
-    $consumer->join();
+    $user = $consumer->join();
+    return $this->redirectToReferrer($user);
   }
 
 
@@ -307,7 +310,8 @@ class AuthController extends BaseController {
    */
   public function googleAction() {
     $consumer = new Consumer\GooglePlusConsumer();
-    $consumer->join();
+    $user = $consumer->join();
+    return $this->redirectToReferrer($user);
   }
 
 }
