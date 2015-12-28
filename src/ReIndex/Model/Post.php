@@ -340,7 +340,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
     $rows = $this->couch->queryView("updates", "perDateByPostId", NULL, $opts);
 
-    if ($rows->empty())
+    if ($rows->isEmpty())
       $lastUpdate = $this->modifiedAt;
     else
       $lastUpdate = $rows[0]['key'][0];
