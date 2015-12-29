@@ -11,7 +11,7 @@
 namespace ReIndex\Security\Consumer;
 
 
-use ReIndex\Model\User;
+use ReIndex\Model\Member;
 use ReIndex\Exception;
 
 
@@ -44,7 +44,7 @@ class GooglePlusConsumer extends OAuth2Consumer {
   /**
    * @brief Google+, like Facebook, doesn't provide a username, but ReIndex needs one. So we guess the username using
    * the user public profile url. In case the username has already been taken, adds a sequence number to the end.
-   * @param[in] array $userData User data.
+   * @param[in] array $userData Member data.
    * @retval string
    */
   private function guessUsername(array $userData) {
@@ -60,7 +60,7 @@ class GooglePlusConsumer extends OAuth2Consumer {
   /**
    * @copydoc OAuth2Consumer::update()
    */
-  protected function update(User $user, array $userData) {
+  protected function update(Member $user, array $userData) {
     $user->setMetadata('username', $this->guessUsername($userData), FALSE, FALSE);
     $user->setMetadata('firstName', @$userData['name']['givenName'], FALSE, FALSE);
     $user->setMetadata('lastName', @$userData['name']['familyName'], FALSE, FALSE);
