@@ -20,7 +20,7 @@ use OAuth\ServiceFactory;
 use Phalcon\DI;
 use Phalcon\Validation\Validator\PresenceOf;
 
-use ReIndex\Model\User;
+use ReIndex\Model\Member;
 use ReIndex\Factory\UserFactory;
 use ReIndex\Helper\Cookie;
 use ReIndex\Helper\ValidationHelper;
@@ -82,6 +82,105 @@ abstract class OAuth2Consumer {
 
 
   /**
+   * @brief Tries to perform the user logon, with the user id given.
+   * @param[in] string $userId The user identifier used by the provider.
+   * @param[in] array $userData An associative array with the user information.
+   * @retval Model::Member An user instance or `false`.
+   */
+  private function execLogonFromUserId($userId, array $userData) {
+    // We search for a user associated to the $userId related to the current consumer instance. Every consumer has a
+    // name to serve this purpose.
+    $user = UserFactory::fromLogin($this->getName(), $userId);
+
+    if ($user->isMember()) {
+      // An user associated with the $userId has been found.
+
+      if ($this->user->isGuest()) {
+        // Since the current user is a guest, the `signIn()` is called.
+        $this->signIn($user, $userData);
+      }
+      elseif ($this->user->match($user->id)) {
+        // Since the current user is a member and the id matches with the $userId, the `update()` is called.
+        $this->update($this->user, $userData);
+      }
+      else {
+        // Unfortunately the current user is trying to add a login already associated with another user. We can't let
+        // this happen.
+        throw new Exception\UserMismatchException(sprintf("Il tuo account %s è già associato ad un'altra utenza. Contatta il supporto tecnico all'indirizzo %s", $this->di['config'][$this->getName()]['name'], $this->di['config']['application']['supportEmail']));
+      }
+
+      return $user;
+    }
+    else
+      return FALSE;
+  }
+
+
+  /**
+   * @brief Tries to perform the user logon, with the e-mail given.
+   * @param[in] string $userEmail The user email.
+   * @param[in] array $userData An associative array with the user information.
+   * @retval Model::Member An user instance or `false`.
+   */
+  private function execLogonFromEmail($userEmail, array $userData) {
+    // Since we didn't find any user associated with the $userId, we search for the $userEmail.
+    $user = UserFactory::fromEmail($userEmail);
+
+    if ($user->isMember()) {
+      // An user associated with the $userEmail has been found.
+
+      if ($this->user->isMember()) {
+        // The current user is not a guest, but a member.
+
+        if ($this->user->isVerifiedEmail($userEmail)) {
+          // The current user email match with the $userMail and it is verified.
+          $this->update($this->user, $userData);
+        }
+        else
+          throw new Exception\UserMismatchException(sprintf("L'e-mail del tuo account %s è già associata ad un'altra utenza attiva. <a href=\"#\">Recupera la tua password</a>.", $this->di['config'][$this->getName()]['name']));
+      }
+      elseif ($this->isTrustworthy()) {
+        // The user is a guest and the provider fortunately is trustworthy. This means that $userEmail has been verified
+        // by someone we trust.
+
+        if (!$user->isVerifiedEmail($userEmail)) {
+          // For security reason we let the user sign in only if the e-mail in our system is not verified. We must
+          // prevent an attacker to execute the sign in procedure.
+          $this->signIn($user, $userData);
+        }
+        else
+          throw new Exception\UserMismatchException(sprintf('L\'e-mail primaria del tuo account %1$s è già in uso ed è stata verificata, dunque hai già un\'utenza attiva. Per sicurezza il sistema non ti consente di autenticarti: qualcuno potrebbe infatti essersi impossessato del tuo account %1$s, al momento non associato al tuo profilo su questo sito. Se non ricordi la password, segui <a href="#">la procedura di recupero</a> e accedi utilizzando l\'e-mail e la nuova password che ti verrà spedita all\'indirizzo di posta associato al tuo account %1$s. Una volta fatto il sign in puoi collegare il tuo account %1$s.', $this->di['config'][$this->getName()]['name']));
+      }
+      else
+        throw new Exception\UserMismatchException(sprintf('L\'e-mail del tuo account %1$s è già associata ad un\'altra utenza. %1$s non è sufficientemente affidabile affinché il sistema possa autenticarti automaticamente perché consente il login anche con e-mail non verificate. <a href=\"#\">Recupera la tua password</a>.', $this->di['config'][$this->getName()]['name']));
+
+      return $user;
+    }
+    else
+      return FALSE;
+  }
+
+
+  /**
+   * @brief Tries to perform the standard user logon.
+   * @param[in] string $userEmail The user email.
+   * @param[in] array $userData An associative array with the user information.
+   * @retval Model::Member An user instance or `false`.
+   */
+  private function execStdLogon(array $userData) {
+    if ($this->user->isGuest()) {
+      // Since the current user is a guest, the sign up is called.
+      return $this->signUp($userData);
+    }
+    else {
+      // Since the current user is a member, the sign in is called, because the user is trying to add a new login.
+      $this->signIn($this->user, $userData);
+      return $this->user;
+    }
+  }
+
+
+  /**
    * @brief Redirects to service provider authorization form.
    */
   protected function askForAuthorization() {
@@ -137,10 +236,10 @@ abstract class OAuth2Consumer {
 
   /**
    * @brief Performs the sign in.
-   * @param[in] User $user The user instance.
+   * @param[in] Member $user The user instance.
    * @param[in] array $userData An associative array with the user information.
    */
-  private function signIn(User $user, array $userData) {
+  private function signIn(Member $user, array $userData) {
     $this->update($user, $userData);
     Cookie::set($user);
   }
@@ -151,7 +250,7 @@ abstract class OAuth2Consumer {
    * @param[in] array $userData An associative array with the user information.
    */
   private function signUp(array $userData) {
-    $user = User::create();
+    $user = Member::create();
     $this->update($user, $userData);
     Cookie::set($user);
     return $user;
@@ -180,45 +279,16 @@ abstract class OAuth2Consumer {
    * @param[in] string $userId The user identifier used by the provider.
    * @param[in] string $userEmail The user email.
    * @param[in] array $userData An associative array with the user information.
-   * @retval Model::User An user instance.
+   * @retval Model::Member An user instance.
    */
   protected function consume($userId, $userEmail, array $userData) {
-    $anonymous = $this->user->isGuest();
+    $user = $this->execLogonFromUserId($userId, $userData);
 
-    $user = UserFactory::fromLogin($this->getName(), $userId);
+    if (!$user)
+      $user = $this->execLogonFromEmail($userEmail, $userData);
 
-    if ($user->isMember()) {
-      if ($anonymous)
-        $this->signIn($user, $userData);
-      elseif ($this->user->match($user->id))
-        $this->update($this->user, $userData);
-      else
-        throw new Exception\UserMismatchException(sprintf("Il tuo account %s è già associato ad un'altra utenza. Contatta il supporto tecnico all'indirizzo %s", $this->di['config'][$this->getName()]['name'], $this->di['config']['application']['supportEmail']));
-    }
-    else {
-      $user = UserFactory::fromEmail($userEmail);
-
-      if ($user->isMember()) {
-        if (!$anonymous) {
-          $emails = $this->user->getEmails();
-
-          if (array_key_exists($emails, $userEmail) && $emails[$userEmail])
-            $this->update($this->user, $userData);
-          else
-            throw new Exception\UserMismatchException(sprintf("L'e-mail del tuo account %s è già associata ad un'altra utenza attiva. <a href=\"#\">Recupera la tua password</a>.", ucfirst($this->getName())));
-        }
-        elseif (!$user->isVerifiedEmail($userEmail))
-          $this->signIn($user, $userData);
-        else
-          throw new Exception\UserMismatchException(sprintf('L\'e-mail primaria del tuo account %1$s è già in uso ed è stata verificata, dunque hai già un\'utenza attiva. Per sicurezza il sistema non ti consente di autenticarti: qualcuno potrebbe infatti essersi impossessato del tuo account %1$s, al momento non associato al tuo profilo su questo sito. Se non ricordi la password, segui <a href="#">la procedura di recupero</a> e accedi utilizzando l\'e-mail e la nuova password che ti verrà spedita all\'indirizzo di posta associato al tuo account %1$s. Una volta fatto il sign in puoi collegare il tuo account %1$s.', $this->di['config'][$this->getName()]['name']));
-      }
-      else {
-        if ($anonymous)
-          $user = $this->signUp($userData);
-        else
-          $this->signIn($user, $userData);
-      }
-    }
+    if (!$user)
+      $user = $this->execStdLogon($userData);
 
     return $user;
   }
@@ -244,10 +314,10 @@ abstract class OAuth2Consumer {
 
   /**
    * @brief Updates the user object using the provided data.
-   * @param[in] User $user The user instance.
+   * @param[in] Member $user The user instance.
    * @param[in] array $userData An associative array with the user information.
    */
-  protected function update(User $user, array $userData) {
+  protected function update(Member $user, array $userData) {
     $user->addLogin($this->getName(), $userData[static::ID], @$userData[static::PROFILE_URL], $userData[static::EMAIL], $this->isTrustworthy());
     $user->internetProtocolAddress = $_SERVER['REMOTE_ADDR'];
     $user->save();
@@ -263,7 +333,7 @@ abstract class OAuth2Consumer {
 
   /**
    * @brief The authenticated user joins the ReIndex social network.
-   * @retval Model::User An user instance.
+   * @retval Model::Member An user instance.
    */
   abstract public function join();
 
