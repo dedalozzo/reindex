@@ -16,7 +16,7 @@ use EoC\Opt\ViewQueryOpts;
 
 use ReIndex\Helper\Text;
 use ReIndex\Model\Vote;
-use ReIndex\Model\User;
+use ReIndex\Model\Member;
 use ReIndex\Exception;
 
 use Phalcon\DI;
@@ -32,7 +32,7 @@ trait TVote {
     if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
     if ($this->user->match($this->creatorId)) throw new Exception\CannotVoteYourOwnPostException('Non puoi votare il tuo stesso post.');
 
-    $voted = $this->didUserVote($voteId);
+    $voted = $this->didMemberVote($voteId);
 
     if ($voted) {
       // Gets the vote.
@@ -93,7 +93,7 @@ trait TVote {
   }
 
 
-  public function didUserVote(&$voteId = NULL, $unversion = TRUE) {
+  public function didMemberVote(&$voteId = NULL, $unversion = TRUE) {
     // In case there is no user logged in returns false.
     if ($this->user->isGuest()) return FALSE;
 
@@ -102,7 +102,7 @@ trait TVote {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(1)->setKey([$itemId, $this->user->id]);
 
-    $result = $this->couch->queryView("votes", "perItemAndUser", NULL, $opts);
+    $result = $this->couch->queryView("votes", "perItemAndMember", NULL, $opts);
 
     if ($result->isEmpty())
       return FALSE;
@@ -123,31 +123,31 @@ trait TVote {
   }
 
 
-  public function getUsersHaveVoted($unversion = TRUE) {
+  public function getMembersHaveVoted($unversion = TRUE) {
     $itemId = $unversion ? Text::unversion($this->id) : $this->id;
 
-    // Gets the users have voted the item.
+    // Gets the members have voted the item.
     $opts = new ViewQueryOpts();
     $opts->setKey($itemId);
-    $result = $this->couch->queryView("users", "haveVoted", NULL, $opts);
+    $result = $this->couch->queryView("members", "haveVoted", NULL, $opts);
 
     if ($result->isEmpty())
       return [];
 
-    // Gets the users information: display name and email.
+    // Gets the members information: display name and email.
     $keys = array_column($result->asArray(), 'value');
     $opts->reset();
     $opts->doNotReduce();
-    $users = $this->couch->queryView("users", "allNames", $keys, $opts);
+    $members = $this->couch->queryView("members", "allNames", $keys, $opts);
 
     $entries = [];
-    foreach ($users as $user) {
+    foreach ($members as $member) {
       $entry = new \stdClass();
-      $entry->id = $user['id'];
+      $entry->id = $member['id'];
 
       // We just need the e-mail to get the Gravatar link.
-      $entry->username = $user['value'][0];
-      $entry->gravatar = User::getGravatar($user['value'][1]);
+      $entry->username = $member['value'][0];
+      $entry->gravatar = Member::getGravatar($member['value'][1]);
 
       $entries[] = $entry;
     }
