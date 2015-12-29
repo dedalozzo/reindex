@@ -20,7 +20,7 @@ logDir = "log/"
 
 postsPerPage = 15;
 tagsPerPage = 40;
-usersPerPage = 40;
+membersPerPage = 40;
 
 editingGracePeriod = 0
 votingGracePeriod = 300
@@ -29,7 +29,7 @@ votingGracePeriod = 300
 ; Number of votes needed to pass a peer revision.
 votesNeededToPassRevision = 2
 
-; A vote can assume a different value in relation to the user.
+; A vote can assume a different value in relation to the member.
 creatorVoteValue = 2
 moderatorVoteValue = 2
 reviewerVoteValue = 1
