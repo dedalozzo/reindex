@@ -41,7 +41,7 @@ class InitCommand extends AbstractCommand {
     $this->initSubscriptions();
     $this->initReputation();
     $this->initFavorites();
-    $this->initUsers();
+    $this->initMembers();
     $this->initUpdates();
     $this->initReplies();
   }
@@ -536,7 +536,7 @@ MAP;
 
 
     // @params: itemId, userId
-    function votesPerItemAndUser() {
+    function votesPerItemAndMember() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'vote')
@@ -544,18 +544,18 @@ function($doc) use ($emit) {
 };
 MAP;
 
-      $handler = new ViewHandler("perItemAndUser");
+      $handler = new ViewHandler("perItemAndMember");
       $handler->mapFn = $map;
       $handler->useBuiltInReduceFnSum(); // Used to count the votes.
 
       return $handler;
     }
 
-    $doc->addHandler(votesPerItemAndUser());
+    $doc->addHandler(votesPerItemAndMember());
 
 
     // @params: [userId]
-    function votesPerUser() {
+    function votesPerMember() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'vote')
@@ -563,14 +563,14 @@ function($doc) use ($emit) {
 };
 MAP;
 
-      $handler = new ViewHandler("perUser");
+      $handler = new ViewHandler("perMember");
       $handler->mapFn = $map;
       $handler->useBuiltInReduceFnCount();
 
       return $handler;
     }
 
-    $doc->addHandler(votesPerUser());
+    $doc->addHandler(votesPerMember());
 
 
     $this->couch->saveDoc($doc);
@@ -636,8 +636,8 @@ MAP;
 
 
     // @params userId, [timestamp]
-    // @methods: User.getReputation()
-    function reputationPerUser() {
+    // @methods: Member.getReputation()
+    function reputationPerMember() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'reputation')
@@ -645,14 +645,14 @@ function($doc) use ($emit) {
 };
 MAP;
 
-      $handler = new ViewHandler("perUser");
+      $handler = new ViewHandler("perMember");
       $handler->mapFn = $map;
       $handler->useBuiltInReduceFnSum();
 
       return $handler;
     }
 
-    $doc->addHandler(reputationPerUser());
+    $doc->addHandler(reputationPerMember());
 
 
     $this->couch->saveDoc($doc);
@@ -664,7 +664,7 @@ MAP;
 
 
     // @params: userId
-    function favoritesByUserTags() {
+    function favoritesByMemberTags() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'star' && $doc->itemType == 'tag')
@@ -672,14 +672,14 @@ function($doc) use ($emit) {
 };
 MAP;
 
-      $handler = new ViewHandler("byUserTags");
+      $handler = new ViewHandler("byMemberTags");
       $handler->mapFn = $map;
       $handler->useBuiltInReduceFnCount();
 
       return $handler;
     }
 
-    $doc->addHandler(favoritesByUserTags());
+    $doc->addHandler(favoritesByMemberTags());
 
 
     // @params: userId
@@ -762,15 +762,15 @@ MAP;
   }
 
 
-  protected function initUsers() {
-    $doc = DesignDoc::create('users');
+  protected function initMembers() {
+    $doc = DesignDoc::create('members');
 
 
     // @params: [userId]
-    function allUsers() {
+    function allMembers() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'user')
+  if ($doc->type == 'member')
     $emit($doc->_id, [$doc->username, $doc->primaryEmail, $doc->creationDate]);
 };
 MAP;
@@ -782,14 +782,14 @@ MAP;
       return $handler;
     }
 
-    $doc->addHandler(allUsers());
+    $doc->addHandler(allMembers());
 
 
     // @params: [userId]
-    function allUserNames() {
+    function allMemberNames() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'user')
+  if ($doc->type == 'member')
     $emit($doc->_id, [$doc->username, $doc->primaryEmail]);
 };
 MAP;
@@ -800,13 +800,13 @@ MAP;
       return $handler;
     }
 
-    $doc->addHandler(allUserNames());
+    $doc->addHandler(allMemberNames());
 
 
-    function newestUsers() {
+    function newestMembers() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'user')
+  if ($doc->type == 'member')
     $emit($doc->creationDate);
 };
 MAP;
@@ -817,13 +817,13 @@ MAP;
       return $handler;
     }
 
-    $doc->addHandler(newestUsers());
+    $doc->addHandler(newestMembers());
 
 
-    function usersByUsername() {
+    function membersByUsername() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'user')
+  if ($doc->type == 'member')
     $emit($doc->username, $doc->_id);
 };
 MAP;
@@ -834,13 +834,13 @@ MAP;
       return $handler;
     }
 
-    $doc->addHandler(usersByUsername());
+    $doc->addHandler(membersByUsername());
 
 
-    function usersByEmail() {
+    function membersByEmail() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'user') {
+  if ($doc->type == 'member') {
     foreach ($doc->emails as $email => $verified)
       $emit($email, $verified);
   }
@@ -853,30 +853,30 @@ MAP;
       return $handler;
     }
 
-    $doc->addHandler(usersByEmail());
+    $doc->addHandler(membersByEmail());
 
 
-    function usersByProvider() {
+    function membersByConsumer() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'user') {
+  if ($doc->type == 'member') {
     foreach ($doc->logins as $loginName => $value)
       $emit($loginName);
   }
 };
 MAP;
 
-      $handler = new ViewHandler("byProvider");
+      $handler = new ViewHandler("byConsumer");
       $handler->mapFn = $map;
 
       return $handler;
     }
 
-    $doc->addHandler(usersByProvider());
+    $doc->addHandler(membersByConsumer());
 
 
     // @params: [postId]
-    function usersHaveVoted() {
+    function membersHaveVoted() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'vote')
@@ -890,7 +890,7 @@ MAP;
       return $handler;
     }
 
-    $doc->addHandler(usersHaveVoted());
+    $doc->addHandler(membersHaveVoted());
 
 
     $this->couch->saveDoc($doc);
@@ -1024,9 +1024,9 @@ MAP;
     $this->setDescription("Initializes the ReIndex database, adding the required design documents.");
     $this->addArgument("documents",
       InputArgument::IS_ARRAY | InputArgument::REQUIRED,
-      "The documents containing the views you want create. Use 'all' if you want insert all the documents, 'users' if
-      you want just init the users or separate multiple documents with a space. The available documents are: docs, posts,
-      tags, revisions, votes, scores, stars, subscriptions, favorites, users, reputation, replies, updates.");
+      "The documents containing the views you want create. Use 'all' if you want insert all the documents, 'members' if
+      you want just init the members or separate multiple documents with a space. The available documents are: docs, posts,
+      tags, revisions, votes, scores, stars, subscriptions, favorites, members, reputation, replies, updates.");
   }
 
 
@@ -1077,8 +1077,8 @@ MAP;
             $this->initFavorites();
             break;
 
-          case 'users':
-            $this->initUsers();
+          case 'members':
+            $this->initMembers();
             break;
 
           case 'reputation':
