@@ -51,7 +51,7 @@ class Member extends Storable implements IUser, Extension\ICount {
   public function getFavoriteTags() {
     $opts = new ViewQueryOpts();
     $opts->setKey($this->getId())->doNotReduce();
-    $favorites = $this->couch->queryView("favorites", "byUserTags", NULL, $opts);
+    $favorites = $this->couch->queryView("favorites", "byMemberTags", NULL, $opts);
 
     if ($favorites->isEmpty())
       return [];
