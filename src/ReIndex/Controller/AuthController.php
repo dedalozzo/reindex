@@ -27,7 +27,7 @@ use ReIndex\Exception\UserNotFoundException;
 use ReIndex\Exception\WrongPasswordException;
 use ReIndex\Helper\ValidationHelper;
 use ReIndex\Helper\Cookie;
-use ReIndex\Model\User;
+use ReIndex\Model\Member;
 use ReIndex\Security\Consumer;
 use ReIndex\Validator\Password;
 use ReIndex\Validator\Username;
@@ -83,7 +83,7 @@ class AuthController extends BaseController {
         $opts = new ViewQueryOpts();
         $opts->setKey($email)->setLimit(1);
 
-        $rows = $this->couch->queryView("users", "byEmail", NULL, $opts);
+        $rows = $this->couch->queryView("members", "byEmail", NULL, $opts);
 
         if (empty($rows))
           throw new UserNotFoundException("Non vi è nessun utente registrato con l'e-mail inserita o la password è errata.");
@@ -166,12 +166,12 @@ class AuthController extends BaseController {
         $opts = new ViewQueryOpts();
         $opts->setKey($email)->setLimit(1);
 
-        $rows = $this->couch->queryView("users", "byEmail", NULL, $opts);
+        $rows = $this->couch->queryView("members", "byEmail", NULL, $opts);
 
         if (!$rows->isEmpty())
           throw new InvalidEmailException("Sei già registrato. <a href=\"#signin\">Fai il login!</a>");
 
-        $user = new User(); // We don't use User::create() since the user must confirm his e-mail address to sign in.
+        $user = new Member(); // We don't use Member::create() since the user must confirm his e-mail address to sign in.
         $user->username = $username;
         $user->addEmail($email);
         $user->password = $password;
