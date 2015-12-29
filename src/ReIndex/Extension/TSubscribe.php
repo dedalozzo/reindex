@@ -15,7 +15,7 @@ use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
 use ReIndex\Model\Subscription;
-use ReIndex\Model\User;
+use ReIndex\Model\Member;
 use ReIndex\Helper\Text;
 
 
@@ -25,7 +25,7 @@ use ReIndex\Helper\Text;
 trait TSubscribe {
 
 
-  public function isSubscribed(User $user, &$subscriptionId = NULL) {
+  public function isSubscribed(Member $user, &$subscriptionId = NULL) {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(1)->setKey([Text::unversion($this->id), $user->id]);
 
@@ -40,7 +40,7 @@ trait TSubscribe {
   }
 
 
-  public function subscribe(User $user) {
+  public function subscribe(Member $user) {
 
     if (!$this->isSubscribed($user)) {
       $doc = Subscription::create(Text::unversion($this->id), $user->id);
@@ -49,7 +49,7 @@ trait TSubscribe {
   }
 
 
-  public function unsubscribe(User $user) {
+  public function unsubscribe(Member $user) {
     if ($this->isSubscribed($user, $subscriptionId)) {
       $doc = $this->couch->getDoc(Couch::STD_DOC_PATH, $subscriptionId);
       $doc->delete();

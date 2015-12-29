@@ -15,7 +15,7 @@ use Phalcon\Mvc\Controller;
 
 use ReIndex\Helper;
 use ReIndex\Version;
-use ReIndex\Model\User;
+use ReIndex\Model\Member;
 
 
 /**
@@ -60,9 +60,9 @@ abstract class BaseController extends Controller {
 
   /**
    * @brief Redirects to the referrer page if any.
-   * @param[in] User $user (optional) The current user if any.
+   * @param[in] Member $user (optional) The current user if any.
    */
-  protected function redirectToReferrer(User $user = NULL) {
+  protected function redirectToReferrer(Member $user = NULL) {
     if ($this->session->has("referrer"))
       return $this->response->redirect($this->session->get("referrer"), TRUE);
     elseif (isset($user))

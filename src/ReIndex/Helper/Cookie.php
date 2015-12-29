@@ -13,7 +13,7 @@ namespace ReIndex\Helper;
 
 use Phalcon\DI;
 
-use ReIndex\Model\User;
+use ReIndex\Model\Member;
 
 
 /**
@@ -25,9 +25,9 @@ class Cookie {
 
   /**
    * @brief Creates a new cookie using the provided id and token.
-   * @param[in] User $user An User.
+   * @param[in] Member $user A member.
    */
-  public static function set(User $user) {
+  public static function set(Member $user) {
     $di = DI::getDefault();
     $security = $di['security'];
 

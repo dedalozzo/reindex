@@ -56,7 +56,7 @@ abstract class AbstractPrivilegeCommand extends AbstractCommand {
     $opts = new ViewQueryOpts();
     $opts->setKey($username)->setLimit(1);
 
-    $result = $couch->queryView('users', 'byUsername', NULL, $opts);
+    $result = $couch->queryView('members', 'byUsername', NULL, $opts);
 
     if (!$result->isEmpty()) {
       $user = $couch->getDoc(Couch::STD_DOC_PATH, $result[0]['id']);

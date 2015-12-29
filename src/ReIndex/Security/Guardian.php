@@ -63,7 +63,7 @@ class Guardian {
     $opts = new ViewQueryOpts();
     $opts->setLimit(1)->setKey($username);
 
-    $result = $this->couch->queryView("users", "byUsername", NULL, $opts);
+    $result = $this->couch->queryView("members", "byUsername", NULL, $opts);
 
     return ($result->isEmpty()) ? FALSE : TRUE;
   }
