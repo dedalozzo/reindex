@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file UserController.php
- * @brief This file contains the UserController class.
+ * @file MemberController.php
+ * @brief This file contains the MemberController class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -14,16 +14,16 @@ use EoC\Opt\ViewQueryOpts;
 use EoC\Couch;
 
 use ReIndex\Helper\Time;
-use ReIndex\Model\User;
+use ReIndex\Model\Member;
 
 use Phalcon\Mvc\View;
 
 
 /**
- * @brief Controller of User actions.
+ * @brief Controller of Member actions.
  * @nosubgrouping
  */
-class UserController extends ListController {
+class MemberController extends ListController {
 
 
   protected function getEntries($keys) {
@@ -49,7 +49,7 @@ class UserController extends ListController {
       $user = new \stdClass();
       $user->id = $result[$i]['id'];
       $user->username = $result[$i]['value'][0];
-      $user->gravatar = User::getGravatar($result[$i]['value'][1]);
+      $user->gravatar = Member::getGravatar($result[$i]['value'][1]);
       $user->createdAt = $result[$i]['value'][2];
       $user->when = Time::when($result[$i]['value'][2], false);
 
@@ -133,7 +133,7 @@ class UserController extends ListController {
     $opts->setStartKey($startKey);
     if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
 
-    $users = $this->couch->queryView("users", "byUsername", NULL, $opts)->asArray();
+    $users = $this->couch->queryView("members", "byUsername", NULL, $opts)->asArray();
 
     $entries = $this->getEntries(array_column($users, 'id'));
 

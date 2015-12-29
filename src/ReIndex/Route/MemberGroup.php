@@ -16,7 +16,7 @@ use Phalcon\DI;
 
 
 /**
- * @brief Group of User routes.
+ * @brief Group of Member routes.
  * @nosubgrouping
  */
 class UserGroup extends Group {
@@ -26,13 +26,13 @@ class UserGroup extends Group {
     $this->setPaths(
       [
         'namespace' => 'ReIndex\Controller',
-        'controller' => 'user'
+        'controller' => 'member'
       ]);
 
     $this->setHostName(DI::getDefault()['config']['application']['domainName']);
 
     // All the following routes start with /utenti.
-    $this->setPrefix('/users');
+    $this->setPrefix('/members');
     $this->addGet('/', ['action' => 'newest']);
     $this->addGet('/reputation/', ['action' => 'reputation']);
     $this->addGet('/reputation/{filter}/', ['action' => 'reputation']);

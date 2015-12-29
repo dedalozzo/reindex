@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file User.php
- * @brief This file contains the User class.
+ * @file Member.php
+ * @brief This file contains the Member class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -23,7 +23,7 @@ use ReIndex\Security\User\System;
  * @brief This class is used to represent a registered user.
  * @nosubgrouping
  */
-class User extends Storable implements IUser, Extension\ICount {
+class Member extends Storable implements IUser, Extension\ICount {
   use Extension\TCount;
 
 
@@ -486,7 +486,7 @@ class User extends Storable implements IUser, Extension\ICount {
    * @param[in] string $consumerName The consumer name.
    * @retval string
    */
-  private function buildLoginName($userId, $consumerName) {
+  public static function buildLoginName($userId, $consumerName) {
     return $userId.'@'.$consumerName;
   }
 
@@ -500,7 +500,7 @@ class User extends Storable implements IUser, Extension\ICount {
    * @param[in] string $profileUrl The user's profile URL.
    */
   public function addLogin($consumerName, $userId, $profileUrl, $email, $verified) {
-    $login = $this->buildLoginName($userId, $consumerName);
+    $login = self::buildLoginName($userId, $consumerName);
     $this->meta['logins'][$login] = [$consumerName, $userId, $email, $profileUrl];
     $this->addEmail($email, $verified);
   }
@@ -512,7 +512,7 @@ class User extends Storable implements IUser, Extension\ICount {
    * @param[in] string $userId The user id.
    */
   public function removeLogin($consumerName, $userId) {
-    $login = $this->buildLoginName($userId, $consumerName);
+    $login = self::buildLoginName($userId, $consumerName);
 
     if (isset($this->meta['logins'][$login]))
       unset($this->meta['logins'][$login]);
