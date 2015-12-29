@@ -19,7 +19,7 @@ use Phalcon\Mvc\View;
 
 
 /**
- * @brief User's profile controller.
+ * @brief Member's profile controller.
  * @nosubgrouping
  */
 class ProfileController extends ListController {
@@ -33,7 +33,7 @@ class ProfileController extends ListController {
 
     $opts = new ViewQueryOpts();
     $opts->setKey($username)->setLimit(1);
-    $result = $this->couch->queryView("users", "byUsername", NULL, $opts);
+    $result = $this->couch->queryView("members", "byUsername", NULL, $opts);
 
     if ($result->isEmpty()) return NULL;
 

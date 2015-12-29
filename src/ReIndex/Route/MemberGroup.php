@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file UserGroup.php
- * @brief This file contains the UserGroup class.
+ * @file MemberGroup.php
+ * @brief This file contains the MemberGroup class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -19,7 +19,7 @@ use Phalcon\DI;
  * @brief Group of Member routes.
  * @nosubgrouping
  */
-class UserGroup extends Group {
+class MemberGroup extends Group {
 
   public function initialize() {
     // Sets the default controller for the following routes.

@@ -34,29 +34,29 @@ class MemberController extends ListController {
 
     // Gets the tags properties.
     $opts->doNotReduce();
-    $result = $this->couch->queryView("users", "all", $keys, $opts);
+    $result = $this->couch->queryView("members", "all", $keys, $opts);
 
-    $this->view->setVar('usersCount', $result->getTotalRows());
+    $this->view->setVar('membersCount', $result->getTotalRows());
 
-    // Retrieves the users reputation.
+    // Retrieves the members reputation.
     //$opts->reset();
     //$opts->groupResults()->includeMissingKeys();
-    //$reputations = $this->couch->queryView("reputation", "perUser", $keys, $opts);
+    //$reputations = $this->couch->queryView("reputation", "perMember", $keys, $opts);
 
-    $users = [];
-    $usersCount = count($result);
-    for ($i = 0; $i < $usersCount; $i++) {
-      $user = new \stdClass();
-      $user->id = $result[$i]['id'];
-      $user->username = $result[$i]['value'][0];
-      $user->gravatar = Member::getGravatar($result[$i]['value'][1]);
-      $user->createdAt = $result[$i]['value'][2];
-      $user->when = Time::when($result[$i]['value'][2], false);
+    $members = [];
+    $membersCount = count($result);
+    for ($i = 0; $i < $membersCount; $i++) {
+      $member = new \stdClass();
+      $member->id = $result[$i]['id'];
+      $member->username = $result[$i]['value'][0];
+      $member->gravatar = Member::getGravatar($result[$i]['value'][1]);
+      $member->createdAt = $result[$i]['value'][2];
+      $member->when = Time::when($result[$i]['value'][2], false);
 
-      $users[] = $user;
+      $members[] = $member;
     }
 
-    return $users;
+    return $members;
   }
 
 
@@ -67,8 +67,8 @@ class MemberController extends ListController {
 
     parent::initialize();
 
-    $this->resultsPerPage = $this->di['config']->application->usersPerPage;
-    $this->view->pick('views/user');
+    $this->resultsPerPage = $this->di['config']->application->membersPerPage;
+    $this->view->pick('views/member');
   }
 
 
@@ -82,7 +82,7 @@ class MemberController extends ListController {
 
 
   /**
-   * @brief Displays the users with the highest reputation.
+   * @brief Displays the members with the highest reputation.
    * @param[in] string $filter (optional) Human readable representation of a period.
    */
   public function reputationAction($filter = NULL) {
@@ -96,7 +96,7 @@ class MemberController extends ListController {
 
 
   /**
-   * @brief Displays the newest users.
+   * @brief Displays the newest members.
    */
   public function newestAction() {
     $opts = new ViewQueryOpts();
@@ -107,22 +107,22 @@ class MemberController extends ListController {
     $opts->setStartKey($startKey);
     if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
 
-    $users = $this->couch->queryView("users", "newest", NULL, $opts)->asArray();
+    $members = $this->couch->queryView("members", "newest", NULL, $opts)->asArray();
 
-    $entries = $this->getEntries(array_column($users, 'id'));
+    $entries = $this->getEntries(array_column($members, 'id'));
 
     if (count($entries) > $this->resultsPerPage) {
       $last = array_pop($entries);
       $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->createdAt, $last->id));
     }
 
-    $this->view->setVar('users', $entries);
+    $this->view->setVar('members', $entries);
     $this->view->setVar('title', 'Nuovi utenti');
   }
 
 
   /**
-   * @brief Displays the users in alphabetic order.
+   * @brief Displays the members in alphabetic order.
    */
   public function byNameAction() {
     $opts = new ViewQueryOpts();
@@ -133,22 +133,22 @@ class MemberController extends ListController {
     $opts->setStartKey($startKey);
     if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
 
-    $users = $this->couch->queryView("members", "byUsername", NULL, $opts)->asArray();
+    $members = $this->couch->queryView("members", "byUsername", NULL, $opts)->asArray();
 
-    $entries = $this->getEntries(array_column($users, 'id'));
+    $entries = $this->getEntries(array_column($members, 'id'));
 
     if (count($entries) > $this->resultsPerPage) {
       $last = array_pop($entries);
       $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->username, $last->id));
     }
 
-    $this->view->setVar('users', $entries);
+    $this->view->setVar('members', $entries);
     $this->view->setVar('title', 'Utenti per nome');
   }
 
 
   /**
-   * @brief Displays the users have given most votes.
+   * @brief Displays the members have given most votes.
    * @param[in] string $filter (optional) Human readable representation of a period.
    */
   public function votersAction($filter = NULL) {

@@ -15,7 +15,7 @@ use EoC\Opt\ViewQueryOpts;
 
 use ReIndex\Enum\DocStatus;
 use ReIndex\Helper;
-use ReIndex\Model\User;
+use ReIndex\Model\Member;
 
 use Phalcon\Mvc\View;
 
@@ -66,11 +66,11 @@ abstract class ListController extends BaseController {
     $opts->includeMissingKeys()->groupResults();
     $replies = $this->couch->queryView("replies", "perPost", $ids, $opts);
 
-    // Users.
+    // Members.
     $creatorIds = array_column(array_column($posts->asArray(), 'value'), 'creatorId');
     $opts->reset();
     $opts->doNotReduce()->includeMissingKeys();
-    $users = $this->couch->queryView("users", "allNames", $creatorIds, $opts);
+    $members = $this->couch->queryView("members", "allNames", $creatorIds, $opts);
 
     $entries = [];
     $postCount = count($posts);
@@ -87,8 +87,8 @@ abstract class ListController extends BaseController {
         $entry->timestamp = Helper\Time::when($entry->createdAt);
       }
 
-      $entry->username = $users[$i]['value'][0];
-      $entry->gravatar = User::getGravatar($users[$i]['value'][1]);
+      $entry->username = $members[$i]['value'][0];
+      $entry->gravatar = Member::getGravatar($members[$i]['value'][1]);
       $entry->hitsCount = Helper\Text::formatNumber($this->redis->hGet(Helper\Text::unversion($entry->id), 'hits'));
       $entry->score = is_null($scores[$i]['value']) ? 0 : $scores[$i]['value'];
       $entry->repliesCount = is_null($replies[$i]['value']) ? 0 : $replies[$i]['value'];

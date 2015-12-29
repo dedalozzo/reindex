@@ -65,13 +65,13 @@ interface IVote {
 
 
   /**
-   * @brief Returns `true` if the user has voted else otherwise.
+   * @brief Returns `true` if the member has voted else otherwise.
    * @param[out] string $voteId (optional) The vote ID.
-   * @param[in] bool $unversion When `true` removes the version from the ID. Use `false` to know if the user casted a
+   * @param[in] bool $unversion When `true` removes the version from the ID. Use `false` to know if the member casted a
    * vote for revision approval.
    * @retval bool
    */
-  public function didUserVote(&$voteId = NULL, $unversion = TRUE);
+  public function didMemberVote(&$voteId = NULL, $unversion = TRUE);
 
 
   /**
@@ -84,12 +84,12 @@ interface IVote {
 
 
   /**
-   * @brief Returns the list of users have voted.
-   * @param[in] bool $unversion When `true` removes the version from the ID. Use `false` to get the users voted for
+   * @brief Returns the list of members have voted.
+   * @param[in] bool $unversion When `true` removes the version from the ID. Use `false` to get the members voted for
    * revision approval.
    * @retval array An associative array.
    */
-  public function getUsersHaveVoted($unversion = TRUE);
+  public function getMembersHaveVoted($unversion = TRUE);
 
 
   /**

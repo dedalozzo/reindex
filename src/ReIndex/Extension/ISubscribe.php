@@ -11,7 +11,7 @@
 namespace ReIndex\Extension;
 
 
-use ReIndex\Model\User;
+use ReIndex\Model\Member;
 
 
 /**
@@ -25,29 +25,29 @@ interface ISubscribe {
 
   /**
    * @brief Returns `true` if the user has subscribed the current post.
-   * @param[in] User $user The current user logged in.
+   * @param[in] Member $user The current user logged in.
    * @param[in] string $subscriptionId (optional) The subscription document ID.
    * @retval boolean
    */
-  public function isSubscribed(User $user, &$subscriptionId = NULL);
+  public function isSubscribed(Member $user, &$subscriptionId = NULL);
 
 
   /**
    * @brief The current user will get notifications about changes related to the current item.
-   * @param[in] User $user The current user logged in.
+   * @param[in] Member $user The current user logged in.
    */
-  public function subscribe(User $user);
+  public function subscribe(Member $user);
 
 
   /**
    * @brief The current user won't get notifications anymore.
-   * @param[in] User $user The current user logged in.
+   * @param[in] Member $user The current user logged in.
    */
-  public function unsubscribe(User $user);
+  public function unsubscribe(Member $user);
 
 
   /**
-   * @brief Returns the number of users have been subscribed the item.
+   * @brief Returns the number of members have been subscribed the item.
    * @retval integer
    */
   public function getSubscribersCount();

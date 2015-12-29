@@ -16,7 +16,7 @@ use Phalcon\DI;
 
 
 /**
- * @brief Group of User's Profile routes.
+ * @brief Group of Member's Profile routes.
  * @nosubgrouping
  */
 class ProfileGroup extends Group {

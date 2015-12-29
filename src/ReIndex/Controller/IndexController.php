@@ -652,7 +652,7 @@ class IndexController extends ListController {
       $keys = array_column(array_column($revisions->asArray(), 'value'), 'editorId');
       $opts->reset();
       $opts->includeMissingKeys();
-      $users = $this->couch->queryView("users", "allNames", $keys, $opts);
+      $members = $this->couch->queryView("members", "allNames", $keys, $opts);
 
       $versions = [];
       $revisionCount = count($revisions);
@@ -660,7 +660,7 @@ class IndexController extends ListController {
         $version = (object)($revisions[$i]['value']);
         $version->id = $revisions[$i]['id'];
         $version->whenHasBeenModified = Helper\Time::when($version->modifiedAt);
-        $version->editor = $users[$i]['value'][0];
+        $version->editor = $members[$i]['value'][0];
 
         $versions[$version->modifiedAt] = $version;
       }

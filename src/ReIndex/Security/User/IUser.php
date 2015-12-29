@@ -8,7 +8,7 @@
  */
 
 
-//! Classes and interfaces to represent users
+//! Classes and interfaces to represent users and members.
 namespace ReIndex\Security\User;
 
 
