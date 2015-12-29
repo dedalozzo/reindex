@@ -196,7 +196,7 @@ abstract class Versionable extends Storable {
 
 
   /**
-   * @brief Returns `true` if the user can ask the original author to revise the document, `false` otherwise.
+   * @brief Returns `true` if the member can ask the original author to revise the document, `false` otherwise.
    * @retval bool
    */
   public function canBeReturnedForRevision() {
@@ -372,7 +372,7 @@ abstract class Versionable extends Storable {
   public function getUsername() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setKey($this->creatorId);
-    return $this->couch->queryView("users", "allNames", NULL, $opts)[0]['value'][0];
+    return $this->couch->queryView("members", "allNames", NULL, $opts)[0]['value'][0];
   }
 
 
@@ -383,7 +383,7 @@ abstract class Versionable extends Storable {
   public function getGravatar() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setKey($this->creatorId);
-    $email = $this->couch->queryView("users", "allNames", NULL, $opts)[0]['value'][1];
+    $email = $this->couch->queryView("members", "allNames", NULL, $opts)[0]['value'][1];
     return 'http://gravatar.com/avatar/'.md5(strtolower($email)).'?d=identicon';
   }
 
