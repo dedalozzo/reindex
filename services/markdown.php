@@ -51,7 +51,7 @@ $di->setShared('markdown',
           Hoedown::TOC => FALSE, // Produce links to the Table of Contents.
           Hoedown::TOC_BEGIN => 0, // Begin level for headers included in the TOC.
           Hoedown::TOC_END => 6, // End level for headers included in the TOC.
-          //Hoedown::TOC_ESCAPE => TRUE, // Escape int the TOC.
+          //Hoedown::TOC_ESCAPE => TRUE, // NO LONGER SUPPORTED.
           Hoedown::TOC_HEADER => "", // Render header in the TOC.
           Hoedown::TOC_FOOTER => "", // Render footer in the TOC.
 
