@@ -486,7 +486,7 @@ class Member extends Storable implements IUser, Extension\ICount {
    * @param[in] string $consumerName The consumer name.
    * @retval string
    */
-  public static function buildLoginName($userId, $consumerName) {
+  private function buildLoginName($userId, $consumerName) {
     return $userId.'@'.$consumerName;
   }
 
@@ -500,7 +500,7 @@ class Member extends Storable implements IUser, Extension\ICount {
    * @param[in] string $profileUrl The user's profile URL.
    */
   public function addLogin($consumerName, $userId, $profileUrl, $email, $verified) {
-    $login = self::buildLoginName($userId, $consumerName);
+    $login = $this->buildLoginName($userId, $consumerName);
     $this->meta['logins'][$login] = [$consumerName, $userId, $email, $profileUrl];
     $this->addEmail($email, $verified);
   }
@@ -512,7 +512,7 @@ class Member extends Storable implements IUser, Extension\ICount {
    * @param[in] string $userId The user id.
    */
   public function removeLogin($consumerName, $userId) {
-    $login = self::buildLoginName($userId, $consumerName);
+    $login = $this->buildLoginName($userId, $consumerName);
 
     if (isset($this->meta['logins'][$login]))
       unset($this->meta['logins'][$login]);

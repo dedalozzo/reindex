@@ -18,7 +18,6 @@ use EoC\Opt\ViewQueryOpts;
 use EoC\Exception\ServerErrorException;
 
 use ReIndex\Security\User;
-use Reindex\Model\Member;
 use ReIndex\Helper\Cookie;
 
 
@@ -80,7 +79,8 @@ class UserFactory {
     $couch = $di['couchdb'];
 
     $opts = new ViewQueryOpts();
-    $opts->setKey(Member::buildLoginName($userId, $consumerName))->setLimit(1);
+    $loginName = $userId.'@'.$consumerName;
+    $opts->setKey($loginName)->setLimit(1);
     $result = $couch->queryView("members", "byConsumer", NULL, $opts);
 
     if (!$result->isEmpty())
