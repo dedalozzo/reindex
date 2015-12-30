@@ -110,7 +110,13 @@ class LinkedInConsumer extends OAuth2Consumer {
    * @copydoc OAuth2Consumer::getScope()
    */
   public function getScope() {
-    return ['r_fullprofile', 'r_emailaddress', 'r_contactinfo', 'r_network'];
+    // As of May 15, LinkedIn locked down the API and restricted the usage to an extremely limited set of access points.
+    // @see http://stackoverflow.com/a/30364596/1889828
+    // @see https://developer.linkedin.com/support/developer-program-transition#troubleshooting
+    // So we cannot longer ask for the full profile or the network.
+    //return ['r_fullprofile', 'r_emailaddress', 'r_contactinfo', 'r_network'];
+
+    return ['r_basicprofile', 'r_emailaddress'];
   }
 
 
