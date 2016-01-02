@@ -111,7 +111,7 @@ abstract class BaseController extends Controller {
 
     // Includes the common assets.
     // Remember to never include the assets in the `afterExecuteRoute()` method!
-    $this->assets->addCss($this->dist."/css/reboot.css", FALSE);
+    $this->assets->addCss($this->dist."/css/".$this->themeName.".css", FALSE);
     $this->assets->addJs("//cdnjs.cloudflare.com/ajax/libs/jquery/".$this->di['config']['assets']['jQueryVersion']."/jquery.min.js", FALSE);
     $this->assets->addJs($this->dist."/js/dropdown.min.js", FALSE);
   }
