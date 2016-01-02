@@ -14,8 +14,11 @@ namespace ReIndex\Handler;
 
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Logger;
+
 use Phalcon\DI;
 use Phalcon\Mvc\View;
+
+use ReIndex\Version;
 
 
 /**
@@ -36,6 +39,16 @@ class ErrorHandler extends AbstractProcessingHandler {
     $this->di = DI::getDefault();
     $this->dispatcher = $this->di['dispatcher'];
     $this->user = $this->di['guardian']->getUser();
+    $this->assets = $this->di['assets'];
+
+    // It is just the primary domain, for example: `reindex.xyz`.
+    $this->domainName = $this->di['config']['application']['domainName'];
+
+    // Includes the subdomain if any, for example: `it-it.reindex.xyz`.
+    $this->serverName = $_SERVER['SERVER_NAME'];
+
+    $this->themeName = $this->di['config']['application']['themeName'];
+    $this->dist = "/reindex/themes/".$this->themeName."/dist";
 
     parent::__construct($level, $bubble);
   }
@@ -52,6 +65,20 @@ class ErrorHandler extends AbstractProcessingHandler {
     $view = $this->di['view'];
 
     header("HTTP/1.0 500 Internal Server Error");
+
+    // Includes the common assets.
+    // Remember to never include the assets in the `afterExecuteRoute()` method!
+    $this->assets->addCss($this->dist."/css/".$this->themeName.".css", FALSE);
+
+    $view->setVar('year', date('Y'));
+
+    $view->setVar('version', Version::getNumber());
+
+    $view->setVar('user', $this->user);
+    $view->setVar('domainName', $this->domainName);
+    $view->setVar('serverName', $this->serverName);
+
+    $view->setVar('dist', $this->dist);
 
     $view->setVar('code', '500');
     $view->setVar('title', 'Errore interno del server');
