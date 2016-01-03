@@ -20,8 +20,8 @@
         "3f/pygmentize": "dev-master",
         "3f/converter": "dev-master",
         "symfony/console": "2.4.6",
-        "lusitanian/oauth": "~0.3",
-        "monolog/monolog": "*",
+        "lusitanian/oauth": "~0.8",
+        "monolog/monolog": "~1",
         "graze/monolog-extensions": "*",
         "filp/whoops": "dev-master",
         "reindex/reboot": "dev-master"
