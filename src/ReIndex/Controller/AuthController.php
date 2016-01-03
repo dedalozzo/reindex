@@ -85,7 +85,7 @@ class AuthController extends BaseController {
 
         $rows = $this->couch->queryView("members", "byEmail", NULL, $opts);
 
-        if (empty($rows))
+        if ($rows->isEmpty())
           throw new UserNotFoundException("Non vi è nessun utente registrato con l'e-mail inserita o la password è errata.");
 
         // Gets the user.
