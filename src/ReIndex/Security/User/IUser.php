@@ -27,6 +27,15 @@ interface IUser {
 
 
   /**
+   * @brief Returns `true` if the provided user id matches the current one, `false` otherwise.
+   * @details This method is useful to check the ownership of a post, for example.
+   * @param[in] string $id The id to match.
+   * @retval bool
+   */
+  public function match($id);
+
+
+  /**
    * @brief Returns `true` in case the user is a guest.
    * @retval bool
    */

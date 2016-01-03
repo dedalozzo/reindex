@@ -28,6 +28,16 @@ class Anonymous implements IUser {
 
 
   /**
+   * @brief This implementation returns always `false`.
+   * @param[in] string $id The id to match.
+   * @retval bool
+   */
+  public function match($id) {
+    return FALSE;
+  }
+
+
+  /**
    * @brief This implementation returns always `true`.
    * @retval bool
    */
