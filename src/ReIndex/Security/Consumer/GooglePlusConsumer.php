@@ -14,6 +14,8 @@ namespace ReIndex\Security\Consumer;
 use ReIndex\Model\Member;
 use ReIndex\Exception;
 
+use OAuth\OAuth2\Service\Google;
+
 
 /**
  * @brief Google+ consumer implementation.
@@ -86,7 +88,8 @@ class GooglePlusConsumer extends OAuth2Consumer {
    * @copydoc OAuth2Consumer::join()
    */
   public function join() {
-    $userData = $this->fetch('https://www.googleapis.com/plus/v1/people/me/?fields=name(givenName,familyName),gender,birthday,url,occupation,aboutMe,displayName,emails/value');
+    $userData = $this->fetch('people/me/?fields=name');
+    //$userData = $this->fetch('people/me/?fields=name(givenName,familyName),nickname,displayName,gender,birthday,url,occupation,aboutMe,emails/value');
     $userData['email'] = $this->extractPrimaryEmail($userData['emails']);
     $this->validate($userData);
     return $this->consume($userData[static::ID], $userData[static::EMAIL], $userData);
@@ -105,7 +108,7 @@ class GooglePlusConsumer extends OAuth2Consumer {
    * @copydoc OAuth2Consumer::getScope()
    */
   public function getScope() {
-    return ['email', 'profile'];
+    return [Google::SCOPE_EMAIL, Google::SCOPE_PROFILE];
   }
 
 
