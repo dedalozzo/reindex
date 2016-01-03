@@ -25,6 +25,7 @@ use ReIndex\Factory\UserFactory;
 use ReIndex\Helper\Cookie;
 use ReIndex\Helper\ValidationHelper;
 use ReIndex\Exception;
+use ReIndex\Exception\UnableToCreateService;
 
 
 /**
@@ -78,6 +79,9 @@ abstract class OAuth2Consumer {
     );
 
     $this->service = (new ServiceFactory())->createService($this->getName(), $credentials, $storage, $this->getScope());
+
+    if (is_null($this->service))
+      throw new UnableToCreateService('Cannot create the OAuth2 service.');
   }
 
 
@@ -202,8 +206,7 @@ abstract class OAuth2Consumer {
    * @brief The user has denied the authorization to proceed.
    */
   protected function onAuthorizationDenied() {
-    $uri = $this->uri->getRelativeUri() . '?go=go';
-    header('Location: '.$uri);
+    header('Location: http://'.$_SERVER['SERVER_NAME']);
     exit; // Don't proceed!
   }
 
@@ -212,12 +215,8 @@ abstract class OAuth2Consumer {
    * @brief Executes the consumer authorization control flow.
    */
   protected function execute() {
-    if (isset($_GET['error'])) {
-      // LinkedIn returned an error
-      // print $_GET['error'] . ': ' . $_GET['error_description'];
+    if (isset($_GET['error']))
       $this->onAuthorizationDenied();
-      exit;
-    }
     elseif (empty($_GET['code']))
       $this->askForAuthorization();
     else
