@@ -19,12 +19,7 @@ use Phalcon\Validation\Validator\Confirmation;
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
-use ReIndex\Exception\InvalidEmailException;
-use ReIndex\Exception\InvalidFieldException;
-use ReIndex\Exception\InvalidTokenException;
-use ReIndex\Exception\EmailNotVerifiedException;
-use ReIndex\Exception\UserNotFoundException;
-use ReIndex\Exception\WrongPasswordException;
+use ReIndex\Exception;
 use ReIndex\Helper\ValidationHelper;
 use ReIndex\Helper\Cookie;
 use ReIndex\Model\Member;
@@ -38,6 +33,49 @@ use ReIndex\Validator\Username;
  * @nosubgrouping
  */
 class AuthController extends BaseController {
+
+
+  /**
+   * @brief Performs the logon using the specified consumer.
+   * @param[in] string $consumerName The consumer name used to perform the logon action.
+   */
+  protected function consumerLogon($consumerName) {
+    if ($this->user->isMember()) return header('Location: /');
+
+    $this->flash->clear();
+
+    switch ($consumerName) {
+      case 'facebook':
+        $consumer = new Consumer\FacebookConsumer();
+        break;
+      case 'linkedin':
+        $consumer = new Consumer\LinkedInConsumer();
+        break;
+      case 'google':
+        $consumer = new Consumer\GoogleConsumer();
+        break;
+      case 'github':
+        $consumer = new Consumer\GitHubConsumer();
+        break;
+      default: throw new Exception\ConsumerNotSupportedException('The specified consumer is not supported.');
+    }
+
+    try {
+      $consumer->join();
+      return $this->redirectToReferrer();
+    }
+    catch (\Exception $e) {
+      // Displays the error message.
+      $this->flash->error($e->getMessage());
+    }
+
+    $this->view->setVar("logon", TRUE);
+    $this->view->setVar('title', 'Unisciti al più grande social network italiano di sviluppatori');
+
+    $this->assets->addJs($this->dist."/js/tab.min.js", FALSE);
+
+    $this->view->pick('views/auth/logon');
+  }
 
 
   /**
@@ -55,7 +93,7 @@ class AuthController extends BaseController {
       try {
 
         if (!$this->security->checkToken())
-          throw new InvalidTokenException("Il token è invalido, la richiesta non può essere evasa.");
+          throw new Exception\InvalidTokenException("Il token è invalido, la richiesta non può essere evasa. Riprova.");
 
         $validation->setFilters("email", "trim");
         $validation->setFilters("email", "lower");
@@ -67,7 +105,7 @@ class AuthController extends BaseController {
 
         $group = $validation->validate($_POST);
         if (count($group) > 0) {
-          throw new InvalidFieldException("I campi sono incompleti o i valori indicati non sono validi. Gli errori sono segnalati in rosso sotto ai rispettivi campi d'inserimento.");
+          throw new Exception\InvalidFieldException("I campi sono incompleti o i valori indicati non sono validi. Gli errori sono segnalati in rosso sotto ai rispettivi campi d'inserimento.");
         }
 
         // Filters only the messages generated for the field 'name'.
@@ -86,17 +124,17 @@ class AuthController extends BaseController {
         $rows = $this->couch->queryView("members", "byEmail", NULL, $opts);
 
         if ($rows->isEmpty())
-          throw new UserNotFoundException("Non vi è nessun utente registrato con l'e-mail inserita o la password è errata.");
+          throw new Exception\UserNotFoundException("Non vi è nessun utente registrato con l'e-mail inserita o la password è errata.");
 
         // Gets the user.
         $user = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $rows[0]['id']);
 
         // Checks if the user has verified his e-mail.
         if (!$user->isVerifiedEmail($email))
-          throw new EmailNotVerifiedException("L'utente risulta iscritto, ma l'iscrizione non è ancora stata confermata. Segui le istruzioni ricevute nella e-mail di attivazione che ti è stata inviata. Se ancora non l'hai ricevuta, <a href=\"//".$this->domainName."/invia-email-attivazione/\">richiedi una nuova e-mail di attivazione</a>.");
+          throw new Exception\EmailNotVerifiedException("L'utente risulta iscritto, ma l'iscrizione non è ancora stata confermata. Segui le istruzioni ricevute nella e-mail di attivazione che ti è stata inviata. Se ancora non l'hai ricevuta, <a href=\"//".$this->domainName."/invia-email-attivazione/\">richiedi una nuova e-mail di attivazione</a>.");
 
         if ($user->password != $password)
-          throw new WrongPasswordException("Non vi è nessun utente registrato con la login inserita o la password è errata. <a href=\"//".$this->domainName."/resetta-password/\">Hai dimenticato la password?</a>");
+          throw new Exception\WrongPasswordException("Non vi è nessun utente registrato con la login inserita o la password è errata. <a href=\"//".$this->domainName."/resetta-password/\">Hai dimenticato la password?</a>");
 
         // Updates the ip address with the current one.
         $user->internetProtocolAddress = $_SERVER['REMOTE_ADDR'];
@@ -149,7 +187,7 @@ class AuthController extends BaseController {
 
         $group = $validation->validate($_POST);
         if (count($group) > 0) {
-          throw new InvalidFieldException("I campi sono incompleti o i valori indicati non sono validi. Gli errori sono segnalati in rosso sotto ai rispettivi campi d'inserimento.");
+          throw new Exception\InvalidFieldException("I campi sono incompleti o i valori indicati non sono validi. Gli errori sono segnalati in rosso sotto ai rispettivi campi d'inserimento.");
         }
 
         // Filters only the messages generated for the field 'name'.
@@ -169,7 +207,7 @@ class AuthController extends BaseController {
         $rows = $this->couch->queryView("members", "byEmail", NULL, $opts);
 
         if (!$rows->isEmpty())
-          throw new InvalidEmailException("Sei già registrato. <a href=\"#signin\">Fai il login!</a>");
+          throw new Exception\InvalidEmailException("Sei già registrato. <a href=\"#signin\">Fai il login!</a>");
 
         $user = new Member(); // We don't use Member::create() since the user must confirm his e-mail address to sign in.
         $user->username = $username;
@@ -197,7 +235,9 @@ class AuthController extends BaseController {
    * @brief Displays the logon form.
    */
   public function logonAction() {
-    if ($this->user->isMember()) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+    if ($this->user->isMember()) return header('Location: /');
+
+    $this->flash->clear();
 
     if ($this->request->getPost('signup'))
       $this->signUp();
@@ -279,9 +319,7 @@ class AuthController extends BaseController {
    * @brief Sign in with Facebook.
    */
   public function facebookAction() {
-    $consumer = new Consumer\FacebookConsumer();
-    $user = $consumer->join();
-    return $this->redirectToReferrer($user);
+    $this->consumerLogon('facebook');
   }
 
 
@@ -289,9 +327,7 @@ class AuthController extends BaseController {
    * @brief Sign in with LinkedIn.
    */
   public function linkedinAction() {
-    $consumer = new Consumer\LinkedInConsumer();
-    $user =  $consumer->join();
-    return $this->redirectToReferrer($user);
+    $this->consumerLogon('linkedin');
   }
 
 
@@ -299,9 +335,7 @@ class AuthController extends BaseController {
    * @brief Sign in with GitHub.
    */
   public function githubAction() {
-    $consumer = new Consumer\GitHubConsumer();
-    $user = $consumer->join();
-    return $this->redirectToReferrer($user);
+    $this->consumerLogon('github');
   }
 
 
@@ -309,9 +343,7 @@ class AuthController extends BaseController {
    * @brief Sign in with Google+.
    */
   public function googleAction() {
-    $consumer = new Consumer\GooglePlusConsumer();
-    $user = $consumer->join();
-    return $this->redirectToReferrer($user);
+    $this->consumerLogon('google');
   }
 
 }
