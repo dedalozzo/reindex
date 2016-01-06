@@ -37,28 +37,10 @@ class AuthController extends BaseController {
 
   /**
    * @brief Performs the logon using the specified consumer.
-   * @param[in] string $consumerName The consumer name used to perform the logon action.
+   * @param[in] Security::OAuth2Consumer $consumer A consumer instance.
    */
-  protected function consumerLogon($consumerName) {
-    if ($this->user->isMember()) return header('Location: /');
-
+  protected function consumerLogon($consumer) {
     $this->flash->clear();
-
-    switch ($consumerName) {
-      case 'facebook':
-        $consumer = new Consumer\FacebookConsumer();
-        break;
-      case 'linkedin':
-        $consumer = new Consumer\LinkedInConsumer();
-        break;
-      case 'google':
-        $consumer = new Consumer\GoogleConsumer();
-        break;
-      case 'github':
-        $consumer = new Consumer\GitHubConsumer();
-        break;
-      default: throw new Exception\ConsumerNotSupportedException('The specified consumer is not supported.');
-    }
 
     try {
       $consumer->join();
@@ -319,7 +301,8 @@ class AuthController extends BaseController {
    * @brief Sign in with Facebook.
    */
   public function facebookAction() {
-    $this->consumerLogon('facebook');
+    if ($this->user->isMember()) return header('Location: /');
+    $this->consumerLogon(new Consumer\FacebookConsumer);
   }
 
 
@@ -327,7 +310,8 @@ class AuthController extends BaseController {
    * @brief Sign in with LinkedIn.
    */
   public function linkedinAction() {
-    $this->consumerLogon('linkedin');
+    if ($this->user->isMember()) return header('Location: /');
+    $this->consumerLogon(new Consumer\LinkedInConsumer());
   }
 
 
@@ -335,7 +319,8 @@ class AuthController extends BaseController {
    * @brief Sign in with GitHub.
    */
   public function githubAction() {
-    $this->consumerLogon('github');
+    if ($this->user->isMember()) return header('Location: /');
+    $this->consumerLogon(new Consumer\GitHubConsumer());
   }
 
 
@@ -343,7 +328,8 @@ class AuthController extends BaseController {
    * @brief Sign in with Google+.
    */
   public function googleAction() {
-    $this->consumerLogon('google');
+    if ($this->user->isMember()) return header('Location: /');
+    $this->consumerLogon(new Consumer\GoogleConsumer());
   }
 
 }
