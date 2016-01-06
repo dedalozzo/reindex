@@ -25,7 +25,6 @@ use ReIndex\Factory\UserFactory;
 use ReIndex\Helper\Cookie;
 use ReIndex\Helper\ValidationHelper;
 use ReIndex\Exception;
-use ReIndex\Exception\UnableToCreateService;
 
 
 /**
@@ -81,7 +80,7 @@ abstract class OAuth2Consumer {
     $this->service = (new ServiceFactory())->createService($this->getName(), $credentials, $storage, $this->getScope());
 
     if (is_null($this->service))
-      throw new UnableToCreateService('Cannot create the OAuth2 service.');
+      throw new Exception\UnableToCreateServiceException('Cannot create the OAuth2 service.');
   }
 
 
