@@ -100,7 +100,7 @@ class GoogleConsumer extends OAuth2Consumer {
    * @copydoc OAuth2Consumer::getName()
    */
   public function getName() {
-    return 'googleplus';
+    return 'google';
   }
 
 
