@@ -89,7 +89,7 @@ abstract class OAuth2Consumer {
    * @brief Tries to perform the user logon, with the user id given.
    * @param[in] string $userId The user identifier used by the provider.
    * @param[in] array $userData An associative array with the user information.
-   * @retval Model::Member An user instance or `false`.
+   * @retval bool
    */
   private function execLogonFromUserId($userId, array $userData) {
     // We search for a user associated to the $userId related to the current consumer instance. Every consumer has a
@@ -113,7 +113,7 @@ abstract class OAuth2Consumer {
         throw new Exception\UserMismatchException(sprintf("Il tuo account %s è già associato ad un'altra utenza. Contatta il supporto tecnico all'indirizzo %s", $this->di['config'][$this->getName()]['name'], $this->di['config']['application']['supportEmail']));
       }
 
-      return $user;
+      return TRUE;
     }
     else
       return FALSE;
@@ -124,7 +124,7 @@ abstract class OAuth2Consumer {
    * @brief Tries to perform the user logon, with the e-mail given.
    * @param[in] string $userEmail The user email.
    * @param[in] array $userData An associative array with the user information.
-   * @retval Model::Member An user instance or `false`.
+   * @retval bool
    */
   private function execLogonFromEmail($userEmail, array $userData) {
     // Since we didn't find any user associated with the $userId, we search for the $userEmail.
@@ -158,7 +158,7 @@ abstract class OAuth2Consumer {
       else
         throw new Exception\UserMismatchException(sprintf('L\'e-mail del tuo account %1$s è già associata ad un\'altra utenza. %1$s non è sufficientemente affidabile affinché il sistema possa autenticarti automaticamente perché consente il login anche con e-mail non verificate. <a href=\"#\">Recupera la tua password</a>.', $this->di['config'][$this->getName()]['name']));
 
-      return $user;
+      return TRUE;
     }
     else
       return FALSE;
@@ -179,7 +179,6 @@ abstract class OAuth2Consumer {
     else {
       // Since the current user is a member, the sign in is called, because the user is trying to add a new login.
       $this->signIn($this->user, $userData);
-      return $this->user;
     }
   }
 
@@ -278,18 +277,11 @@ abstract class OAuth2Consumer {
    * @param[in] string $userId The user identifier used by the provider.
    * @param[in] string $userEmail The user email.
    * @param[in] array $userData An associative array with the user information.
-   * @retval Model::Member An user instance.
    */
   protected function consume($userId, $userEmail, array $userData) {
-    $user = $this->execLogonFromUserId($userId, $userData);
-
-    if (!$user)
-      $user = $this->execLogonFromEmail($userEmail, $userData);
-
-    if (!$user)
-      $user = $this->execStdLogon($userData);
-
-    return $user;
+    if ($this->execLogonFromUserId($userId, $userData)) return;
+    elseif ($this->execLogonFromEmail($userEmail, $userData)) return;
+    else $this->execStdLogon($userData);
   }
 
 
