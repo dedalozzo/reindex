@@ -219,7 +219,8 @@ class AuthController extends BaseController {
   public function logonAction() {
     if ($this->user->isMember()) return header('Location: /');
 
-    $this->flash->clear();
+    if ($this->flash->has('error'))
+      $this->flash->clear();
 
     if ($this->request->getPost('signup'))
       $this->signUp();
