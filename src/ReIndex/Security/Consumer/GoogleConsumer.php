@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file GooglePlusConsumer.php
- * @brief This file contains the GooglePlusConsumer class.
+ * @file GoogleConsumer.php
+ * @brief This file contains the GoogleConsumer class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -21,7 +21,7 @@ use OAuth\OAuth2\Service\Google;
  * @brief Google+ consumer implementation.
  * @nosubgrouping
  */
-class GooglePlusConsumer extends OAuth2Consumer {
+class GoogleConsumer extends OAuth2Consumer {
 
   /** @name Field Names */
   //!@{
@@ -92,7 +92,7 @@ class GooglePlusConsumer extends OAuth2Consumer {
     //$userData = $this->fetch('people/me/?fields=name(givenName,familyName),nickname,displayName,gender,birthday,url,occupation,aboutMe,emails/value');
     $userData['email'] = $this->extractPrimaryEmail($userData['emails']);
     $this->validate($userData);
-    return $this->consume($userData[static::ID], $userData[static::EMAIL], $userData);
+    $this->consume($userData[static::ID], $userData[static::EMAIL], $userData);
   }
 
 
