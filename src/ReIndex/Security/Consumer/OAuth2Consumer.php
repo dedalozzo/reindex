@@ -43,6 +43,7 @@ abstract class OAuth2Consumer {
   //!@}
 
   protected $di; // Stores the default Dependency Injector.
+  protected $log; // Sotres the logger instance.
   protected $user; // Stores the current user.
   protected $uri;
   protected $service; // Stores the service used to connect to the provider.
@@ -54,6 +55,7 @@ abstract class OAuth2Consumer {
    */
   public function __construct() {
     $this->di = DI::getDefault();
+    $this->log = $this->di['log'];
     $this->guardian = $this->di['guardian'];
     $this->user = $this->guardian->user;
 
@@ -264,9 +266,12 @@ abstract class OAuth2Consumer {
     $validation->add(static::ID, new PresenceOf(["message" => "L'id è obbligatorio."]));
     $validation->add(static::EMAIL, new PresenceOf(["message" => "L'e-mail è obbligatoria."]));
 
+    $this->log->addDebug(sprintf('ID: %s', $userData[static::ID]));
+    $this->log->addDebug(sprintf('E-mail: %s', $userData[static::EMAIL]));
+
     $group = $validation->validate($userData);
     if (count($group) > 0) {
-      throw new Exception\InvalidFieldException("Le informazioni fornite da LinkedIn sono incomplete.");
+      throw new Exception\InvalidFieldException(sprintf('Non hai autorizzato l\'utilizzo dell\'e-mail che è indispensabile ai fini della registrazione. Revoca l\'applicazione dal tuo profilo %s e riprova.', $this->getName()));
     }
   }
 
