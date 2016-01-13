@@ -32,7 +32,7 @@ class MemberGroup extends Group {
     $this->setHostName(DI::getDefault()['config']['application']['domainName']);
 
     // All the following routes start with /utenti.
-    $this->setPrefix('/members');
+    $this->setPrefix('/users');
     $this->addGet('/', ['action' => 'newest']);
     $this->addGet('/reputation/', ['action' => 'reputation']);
     $this->addGet('/reputation/{filter}/', ['action' => 'reputation']);
