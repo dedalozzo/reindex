@@ -31,7 +31,7 @@ class ProfileGroup extends Group {
 
     $this->setHostName(DI::getDefault()['config']['application']['domainName']);
 
-    $this->setPrefix('/([\da-z_]{5,20})');
+    $this->setPrefix('/([\da-zA-Z.\-_]{5,24})');
 
     $this->addGet('', ['action' => 'index', 'username' => 1]);
     $this->addGet('/timeline/', ['action' => 'index', 'username' => 1]);
