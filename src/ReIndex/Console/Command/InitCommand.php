@@ -771,7 +771,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'member')
-    $emit($doc->_id, [$doc->username, $doc->primaryEmail, $doc->creationDate]);
+    $emit($doc->_id, [$doc->username, $doc->primaryEmail, $doc->createdAt]);
 };
 MAP;
 
@@ -807,7 +807,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'member')
-    $emit($doc->creationDate);
+    $emit($doc->createdAt);
 };
 MAP;
 
