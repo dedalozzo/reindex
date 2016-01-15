@@ -74,19 +74,6 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
 
   /**
-   * @brief Generates the post slug.
-   * @retval string
-   */
-  protected function buildSlug() {
-    $title = preg_replace('~[^\\pL\d]+~u', '-', $this->title);
-    $title = trim($title, '-');
-    $title = Helper\Text::convertCharset($title, FALSE, 'utf-8', 'ASCII//TRANSLIT');
-    $title = strtolower($title);
-    return preg_replace('~[^-\w]+~', '', $title);
-  }
-
-
-  /**
    * @brief Saves the post.
    * @param[in] bool $deferred When `true` doesn't update the indexes.
    */
@@ -287,7 +274,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     $this->meta['month'] = date("m", $this->publishedAt);
     $this->meta['day'] = date("d", $this->publishedAt);
 
-    $this->meta['slug'] = $this->buildSlug();
+    $this->meta['slug'] = Helper\Text::slug($this->title);
   }
 
 
