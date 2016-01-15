@@ -143,6 +143,31 @@ class Text {
 
 
   /**
+   * @brief Generates a slug from the provided string.
+   * @param[in] string $str The input string.
+   * @retval string
+   * @warning This function receives as input an UTF-8 string and returns an ASCII string.
+   * @see https://en.wikipedia.org/wiki/Slug_(publishing)
+   */
+  public static function slug($str) {
+    // Replaces any character that is not a letter or a number with minus.
+    $slug = preg_replace('~[^\pL\d]+~u', '-', $str);
+
+    // Removes the minus character from the begin and the end.
+    $slug = trim($slug, '-');
+
+    // Converts the charset from uft-8 to ASCII.
+    $slug = self::convertCharset($slug, FALSE, 'utf-8', 'ASCII//TRANSLIT');
+
+    // Converts the string to Lowercase.
+    $slug = strtolower($slug);
+
+    // Finally removes any character that is not a letter, a number or a minus.
+    return preg_replace('~[^-\w]+~', '', $slug);
+  }
+
+
+  /**
    * @brief Prunes the ID of its version number, if any.
    * @param[in] string $id An UUID followed by a timestamp, like `3e96144b-3ebd-41e4-8a45-78cd9af1671d::1410886811`.
    * @retval string Returns just `3e96144b-3ebd-41e4-8a45-78cd9af1671d`.
