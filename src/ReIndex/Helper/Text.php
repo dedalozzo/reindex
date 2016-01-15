@@ -168,6 +168,26 @@ class Text {
 
 
   /**
+   * @brief Replaces all the occurrences but first.
+   * @param[in] string $pattern The pattern to search for.
+   * @param[in] string $replacement The string used as replacement for the match found.
+   * @param[in] string $subject The string to search and replace.
+   * @retval string
+   */
+  public static function replaceAllButFirst($pattern, $replacement, $subject) {
+    return preg_replace_callback(
+      $pattern,
+      function($matches) use ($replacement, $subject) {
+        static $s;
+        $s++;
+        return ($s <= 1) ? $matches[0] : $replacement;
+      },
+      $subject
+    );
+  }
+
+
+  /**
    * @brief Prunes the ID of its version number, if any.
    * @param[in] string $id An UUID followed by a timestamp, like `3e96144b-3ebd-41e4-8a45-78cd9af1671d::1410886811`.
    * @retval string Returns just `3e96144b-3ebd-41e4-8a45-78cd9af1671d`.
