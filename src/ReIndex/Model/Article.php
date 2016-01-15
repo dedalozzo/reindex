@@ -13,6 +13,7 @@ namespace ReIndex\Model;
 
 use ReIndex\Enum;
 use ReIndex\Exception;
+use ReIndex\Helper\Text;
 
 
 /**
@@ -55,7 +56,7 @@ class Article extends Post {
     $this->meta['month'] = date("m", $this->createdAt);
     $this->meta['day'] = date("d", $this->createdAt);
 
-    $this->meta['slug'] = $this->buildSlug();
+    $this->meta['slug'] = Text::slug($this->title);
   }
 
 }
