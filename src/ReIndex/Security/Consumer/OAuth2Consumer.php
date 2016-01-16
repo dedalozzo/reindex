@@ -21,7 +21,6 @@ use Phalcon\DI;
 use Phalcon\Validation\Validator\PresenceOf;
 
 use ReIndex\Model\Member;
-use Reindex\Validator\Username;
 use ReIndex\Factory\UserFactory;
 use ReIndex\Helper;
 use ReIndex\Exception;
@@ -43,6 +42,7 @@ abstract class OAuth2Consumer {
   //!@}
 
   protected $di; // Stores the default Dependency Injector.
+  protected $config;
   protected $log; // Sotres the logger instance.
   protected $user; // Stores the current user.
   protected $uri;
@@ -56,6 +56,7 @@ abstract class OAuth2Consumer {
   public function __construct() {
     $this->di = DI::getDefault();
     $this->log = $this->di['log'];
+    $this->config = $this->di['config'];
     $this->guardian = $this->di['guardian'];
     $this->user = $this->guardian->user;
 
@@ -299,13 +300,13 @@ abstract class OAuth2Consumer {
     $temp = Helper\Text::convertCharset($value, FALSE, 'utf-8', 'ASCII//TRANSLIT');
 
     // Removes any character that is not a letter, a number, minus, hyphen or underscore.
-    $temp = preg_replace('~[^\.-\w]+~', '', $temp);
+    $temp = preg_replace('/[^.\-\w]+/', '', $temp);
 
     // Removes all the occurrences of minus, hyphen or underscore but first.
-    $temp = Helper\Text::replaceAllButFirst(Member::REGEX_PATTERN, '', $temp);
+    $temp = Helper\Text::replaceAllButFirst('/[.\-_]/', '', $temp);
 
     // Finally returns the string or a substring if the username is > 24 chars.
-    return (strlen($temp) > Username::MAX_LENGTH) ? substr($temp, 0, Username::MAX_LENGTH-1) : $temp;
+    return (strlen($temp) > $this->config->application->usernameMaxLength) ? substr($temp, 0, $this->config->application->usernameMaxLength-1) : $temp;
   }
 
 
