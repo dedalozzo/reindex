@@ -33,7 +33,7 @@ class ProfileGroup extends Group {
 
     $this->setHostName($di['config']['application']['domainName']);
 
-    $this->setPrefix('/([\da-zA-Z.\-_]{'.$di['config']['application']['usernameMinLength'].','.$di['config']['application']['usernameMaxLength'].'})');
+    $this->setPrefix('/([\da-zA-Z.\-_]{'.$di['config']['application']['usernameMinLength'].','.($di['config']['application']['usernameMaxLength']+10).'})');
 
     $this->addGet('', ['action' => 'index', 'username' => 1]);
     $this->addGet('/timeline/', ['action' => 'index', 'username' => 1]);
