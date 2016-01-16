@@ -39,7 +39,6 @@ class GitHubConsumer extends OAuth2Consumer {
   private function extractPrimaryEmail($emails) {
     // GitHub should return a list of e-mails and for each one specify if the e-mail is primary and verified. But
     // unfortunately the API doesn't work like expected.
-
     /*
     $address = NULL;
 
