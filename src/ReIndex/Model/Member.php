@@ -26,6 +26,8 @@ use ReIndex\Security\User\System;
 class Member extends Storable implements IUser, Extension\ICount {
   use Extension\TCount;
 
+  const REGEX_PATTERN = '~[]\.|\-|\_]~';
+
 
   public function __construct() {
     parent::__construct();
