@@ -21,9 +21,9 @@ use Phalcon\DI;
 use Phalcon\Validation\Validator\PresenceOf;
 
 use ReIndex\Model\Member;
+use Reindex\Validator\Username;
 use ReIndex\Factory\UserFactory;
-use ReIndex\Helper\Cookie;
-use ReIndex\Helper\ValidationHelper;
+use ReIndex\Helper;
 use ReIndex\Exception;
 
 
@@ -240,7 +240,7 @@ abstract class OAuth2Consumer {
    */
   private function signIn(Member $user, array $userData) {
     $this->update($user, $userData);
-    Cookie::set($user);
+    Helper\Cookie::set($user);
   }
 
 
@@ -251,7 +251,7 @@ abstract class OAuth2Consumer {
   private function signUp(array $userData) {
     $user = Member::create();
     $this->update($user, $userData);
-    Cookie::set($user);
+    Helper\Cookie::set($user);
     return $user;
   }
 
@@ -262,7 +262,7 @@ abstract class OAuth2Consumer {
    * @param[in] array $userData An associative array with the user information.
    */
   protected function validate(array $userData) {
-    $validation = new ValidationHelper();
+    $validation = new Helper\ValidationHelper();
     $validation->add(static::ID, new PresenceOf(["message" => "L'id è obbligatorio."]));
     $validation->add(static::EMAIL, new PresenceOf(["message" => "L'e-mail è obbligatoria."]));
 
@@ -290,20 +290,42 @@ abstract class OAuth2Consumer {
 
 
   /**
+   * @brief Tries to normalize the username.
+   * @param[in] string $value A potential username value.
+   * @retval string
+   */
+  protected function normalizeUsername($value) {
+    // Converts the charset from uft-8 to ASCII.
+    $temp = Helper\Text::convertCharset($value, FALSE, 'utf-8', 'ASCII//TRANSLIT');
+
+    // Removes any character that is not a letter, a number, minus, hyphen or underscore.
+    $temp = preg_replace('~[^\.-\w]+~', '', $temp);
+
+    // Removes all the occurrences of minus, hyphen or underscore but first.
+    $temp = Helper\Text::replaceAllButFirst(Member::REGEX_PATTERN, '', $temp);
+
+    // Finally returns the string or a substring if the username is > 24 chars.
+    return (strlen($temp) > Username::MAX_LENGTH) ? substr($temp, 0, Username::MAX_LENGTH-1) : $temp;
+  }
+
+
+  /**
    * @brief In case the username has already been taken, adds a sequence number to the end.
    * @param[in] string $value A potential username value.
    * @retval string
    */
   protected function buildUsername($value) {
-    $temp = $value;
+    $guess = $this->normalizeUsername($value);
+
+    $temp = $guess;
     $counter = 1;
 
-    while ($this->guardian->isTaken($value)) {
-      $value = $temp . (string)$counter;
+    while ($this->guardian->isTaken($guess)) {
+      $guess = $temp . (string)$counter;
       $counter++;
     }
 
-    return $value;
+    return $guess;
   }
 
 
