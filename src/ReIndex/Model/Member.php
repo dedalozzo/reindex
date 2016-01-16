@@ -578,7 +578,7 @@ class Member extends Storable implements IUser, Extension\ICount {
 
 
   public function setUsername($value) {
-    $this->meta['username'] = strtolower($value);
+    $this->meta['username'] = $value;
   }
 
 
