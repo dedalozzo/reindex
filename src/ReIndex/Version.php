@@ -21,6 +21,6 @@ class Version extends \EoC\Version {
 
   const MAJOR = '0'; //!< Major release number.
   const MINOR = '12'; //!< Minor release number.
-  const MAINTENANCE = '5'; //!< Maintenance release number (bug fixes only).
+  const MAINTENANCE = '6'; //!< Maintenance release number (bug fixes only).
 
 } 
