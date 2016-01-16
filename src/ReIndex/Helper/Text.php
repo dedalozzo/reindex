@@ -151,7 +151,7 @@ class Text {
    */
   public static function slug($str) {
     // Replaces any character that is not a letter or a number with minus.
-    $slug = preg_replace('~[^\pL\d]+~u', '-', $str);
+    $slug = preg_replace('/[^\pL\d]+/u', '-', $str);
 
     // Removes the minus character from the begin and the end.
     $slug = trim($slug, '-');
@@ -163,7 +163,7 @@ class Text {
     $slug = strtolower($slug);
 
     // Finally removes any character that is not a letter, a number or a minus.
-    return preg_replace('~[^-\w]+~', '', $slug);
+    return preg_replace('/[^\-\w]+/', '', $slug);
   }
 
 
