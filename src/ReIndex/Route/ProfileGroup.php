@@ -22,6 +22,8 @@ use Phalcon\DI;
 class ProfileGroup extends Group {
 
   public function initialize() {
+    $di = DI::getDefault();
+
     // Sets the default controller for the following routes.
     $this->setPaths(
       [
@@ -29,9 +31,9 @@ class ProfileGroup extends Group {
         'controller' => 'profile'
       ]);
 
-    $this->setHostName(DI::getDefault()['config']['application']['domainName']);
+    $this->setHostName($di['config']['application']['domainName']);
 
-    $this->setPrefix('/([\da-zA-Z.\-_]{5,24})');
+    $this->setPrefix('/([\da-zA-Z.\-_]{'.$di['config']['application']['usernameMinLength'].','.$di['config']['application']['usernameMaxLength'].'})');
 
     $this->addGet('', ['action' => 'index', 'username' => 1]);
     $this->addGet('/timeline/', ['action' => 'index', 'username' => 1]);
