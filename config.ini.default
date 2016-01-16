@@ -25,6 +25,9 @@ membersPerPage = 40;
 editingGracePeriod = 0
 votingGracePeriod = 300
 
+usernameMinLength = 5
+usernameMaxLength = 24
+
 [review]
 ; Number of votes needed to pass a peer revision.
 votesNeededToPassRevision = 2
