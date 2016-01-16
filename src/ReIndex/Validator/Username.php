@@ -26,13 +26,21 @@ class Username extends Validator implements Validation\ValidatorInterface {
   const MAX_LENGTH = 24;
 
   private $di;
+  private $config;
   private $guardian;
+
+  private $minLength;
+  private $maxLength;
 
 
   public function __construct($options = NULL) {
     parent::__construct($options);
     $this->di = DI::getDefault();
+    $this->config = $this->di['config'];
     $this->guardian = $this->di['guardian'];
+
+    $this->minLength = $this->config->application->usernameMinLength;
+    $this->maxLength = $this->config->application->usernameMaxLength;
   }
 
 
@@ -42,7 +50,7 @@ class Username extends Validator implements Validation\ValidatorInterface {
    *   1. only one special char `.`, `_`, `-` are allowed and it must not be at the extremes of the string;
    *   2. the first character cannot be a number;
    *   3. all the other characters allowed are letters and numbers;
-   *   4. the total length should be between 5 and 24 chars.
+   *   4. the total length should be between `usernameMinLength` and `usernameMaxLength` chars.
    * @param[in] Phalcon\Validation $validator An instance of a Phalcon validation component.
    * @param[in] string $attribute The attribute to be validated.
    * @retval bool
@@ -52,10 +60,10 @@ class Username extends Validator implements Validation\ValidatorInterface {
 
     if (empty($value))
       $message = "Il nome utente è obbligatorio.";
-    elseif (mb_strlen($value, "UTF-8") < self::MIN_LENGTH)
-      $message = sprintf("Il nome utente deve contenere almeno %d caratteri.", self::MIN_LENGTH);
-    elseif (mb_strlen($value, "UTF-8") > self::MAX_LENGTH)
-      $message = sprintf("Il nome utente può contenere al massimo %d caratteri.", self::MAX_LENGTH);
+    elseif (mb_strlen($value, "UTF-8") < $this->minLength)
+      $message = sprintf("Il nome utente deve contenere almeno %d caratteri.", $this->minLength);
+    elseif (mb_strlen($value, "UTF-8") > $this->maxLength)
+      $message = sprintf("Il nome utente può contenere al massimo %d caratteri.", $this->maxLength);
     elseif (!preg_match('/(?=^.{3,20}$)^[a-zA-Z][a-zA-Z0-9]*[._-]?[a-zA-Z0-9]+$/', $value))
       $message = "Il nome utente deve cominciare con una lettera (maiuscola o minuscola), può contenere un solo
         carattere speciale (.-_) e questo carattere non deve essere all'inizio o alla fine della stringa, tutti gli altri
