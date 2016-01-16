@@ -218,7 +218,7 @@ class Text {
     $r = explode(' ', $fullName);
     $size = count($r);
 
-    //check first for period, assume salutation if so
+    // Checks first for period, assume salutation if so
     if (mb_strpos($r[0], '.') === FALSE) {
       $result['salutation'] = '';
       $result['first'] = $r[0];
@@ -228,7 +228,7 @@ class Text {
       $result['first'] = $r[1];
     }
 
-    //check last for period, assume suffix if so
+    // Checks last for period, assume suffix if so
     if (mb_strpos($r[$size - 1], '.') === FALSE)
       $result['suffix'] = '';
     else
