@@ -42,7 +42,7 @@ class FacebookConsumer extends OAuth2Consumer {
    * @retval string
    */
   private function guessUsername(array $userData) {
-    $username = strtolower($userData[static::FIRST_NAME] . '.' . $userData[static::LAST_NAME]);
+    $username = strtolower($userData[static::FIRST_NAME].$userData[static::LAST_NAME]);
     return $this->buildUsername($username);
   }
 
