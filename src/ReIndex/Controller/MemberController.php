@@ -148,32 +148,10 @@ class MemberController extends ListController {
 
 
   /**
-   * @brief Displays the members have given most votes.
-   * @param[in] string $filter (optional) Human readable representation of a period.
-   */
-  public function votersAction($filter = NULL) {
-    $period = $this->getPeriod($filter);
-    if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
-
-    $this->view->setVar('submenu', $this->periods);
-    $this->view->setVar('submenuIndex', $period);
-    $this->view->setVar('title', 'Utenti votanti');
-  }
-
-
-  /**
    * @brief Displays the list of moderators.
    */
   public function moderatorsAction() {
     $this->view->setVar('title', 'Moderatori');
-  }
-
-
-  /**
-   * @brief Displays the most popular tags.
-   */
-  public function privilegesAction() {
-    $this->view->setVar('title', 'Privilegi');
   }
 
 }
