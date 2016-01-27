@@ -75,7 +75,7 @@ class ProfileController extends ListController {
     $user = $this->getUser($username);
 
     // If the user doesn't exist, forward to 404.
-    if (is_null($user)) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+    if (!$user->isMember()) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $opts = new ViewQueryOpts();
 
@@ -103,17 +103,17 @@ class ProfileController extends ListController {
   }
 
 
+  public function aboutAction($username) {
+
+  }
+
+
   public function connectionsAction($username) {
 
   }
 
 
-  public function tagsAction($username) {
-
-  }
-
-
-  public function reputationAction($username) {
+  public function projectsAction($username) {
 
   }
 
@@ -123,12 +123,7 @@ class ProfileController extends ListController {
   }
 
 
-  public function bountiesAction($username) {
-
-  }
-
-
-  public function projectsAction($username) {
+  public function settingsAction($username) {
 
   }
 
