@@ -38,20 +38,19 @@ class ProfileGroup extends Group {
     $this->addGet('', ['action' => 'index', 'username' => 1]);
     $this->addGet('/timeline/', ['action' => 'index', 'username' => 1]);
 
+    $this->addGet('/about/', ['action' => 'about', 'username' => 1]);
+
     $this->addGet('/connections/', ['action' => 'connections', 'username' => 1]);
     $this->addGet('/connections/{filter}/', ['action' => 'connections', 'username' => 1]);
 
-    $this->addGet('/reputation/', ['action' => 'reputation', 'username' => 1]);
-    $this->addGet('/reputation/{filter}/', ['action' => 'reputation', 'username' => 1]);
-
-    $this->addGet('/activity/', ['action' => 'activities', 'username' => 1]);
-    $this->addGet('/activity/{filter}/', ['action' => 'activities', 'username' => 1]);
-
-    $this->addGet('/bounties/', ['action' => 'bounties', 'username' => 1]);
-    $this->addGet('/bounties/{filter}/', ['action' => 'bounties', 'username' => 1]);
-
     $this->addGet('/projects/', ['action' => 'projects', 'username' => 1]);
     $this->addGet('/projects/{filter}/', ['action' => 'projects', 'username' => 1]);
+
+    $this->setPrefix('/settings');
+    $this->add('/general/', ['action' => 'general'], ['GET', 'POST']);
+    $this->add('/emails/', ['action' => 'emails'], ['GET', 'POST']);
+    $this->add('/logins/', ['action' => 'logins'], ['GET', 'POST']);
+    $this->add('/privacy/', ['action' => 'privacy'], ['GET', 'POST']);
   }
 
 }
