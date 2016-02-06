@@ -64,7 +64,7 @@ class ProfileController extends ListController {
 
     parent::afterExecuteRoute();
 
-    $this->view->pick('views/profile');
+    $this->view->pick('views/profile/timeline');
   }
 
 
