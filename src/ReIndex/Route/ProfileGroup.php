@@ -46,11 +46,11 @@ class ProfileGroup extends Group {
     $this->addGet('/projects/', ['action' => 'projects', 'username' => 1]);
     $this->addGet('/projects/{filter}/', ['action' => 'projects', 'username' => 1]);
 
-    $this->setPrefix('/settings');
-    $this->add('/general/', ['action' => 'general'], ['GET', 'POST']);
-    $this->add('/emails/', ['action' => 'emails'], ['GET', 'POST']);
-    $this->add('/logins/', ['action' => 'logins'], ['GET', 'POST']);
-    $this->add('/privacy/', ['action' => 'privacy'], ['GET', 'POST']);
+    $this->add('/settings/', ['action' => 'settings', 'username' => 1], ['GET', 'POST']);
+    $this->add('/settings/general/', ['action' => 'settings', 'username' => 1], ['GET', 'POST']);
+    $this->add('/settings/emails/', ['action' => 'emails', 'username' => 1], ['GET', 'POST']);
+    $this->add('/settings/logins/', ['action' => 'logins', 'username' => 1], ['GET', 'POST']);
+    $this->add('/settings/privacy/', ['action' => 'privacy', 'username' => 1], ['GET', 'POST']);
   }
 
 }
