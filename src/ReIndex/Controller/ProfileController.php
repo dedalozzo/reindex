@@ -124,6 +124,10 @@ class ProfileController extends ListController {
 
 
   public function settingsAction($username) {
+    $user = $this->getUser($username);
+
+    // If the user doesn't exist, forward to 404.
+    if (!$user->isMember()) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
   }
 
