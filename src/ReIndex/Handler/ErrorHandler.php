@@ -57,6 +57,7 @@ class ErrorHandler extends AbstractProcessingHandler {
   /**
    * @brief Displays an error page.
    * @param[in] array $record A record to be logged.
+   * @todo Use 500.title and 500.message to localize the error title and message.
    */
   protected function write(array $record) {
     // Cleans the output buffer or the error is shown at the end of the previously page.
