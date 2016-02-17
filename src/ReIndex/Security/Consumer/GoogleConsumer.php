@@ -20,6 +20,7 @@ use OAuth\OAuth2\Service\Google;
 /**
  * @brief Google+ consumer implementation.
  * @nosubgrouping
+ * @bug For some reason this consumer still doesn't work: might be a configuration problem.
  */
 class GoogleConsumer extends OAuth2Consumer {
 
