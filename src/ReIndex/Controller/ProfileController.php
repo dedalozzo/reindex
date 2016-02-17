@@ -10,6 +10,7 @@
 
 namespace ReIndex\Controller;
 
+use ReIndex\Factory\UserFactory;
 use ReIndex\Helper;
 
 use EoC\Couch;
@@ -31,13 +32,11 @@ class ProfileController extends ListController {
   protected function getUser($username) {
     $this->log->addDebug(sprintf('Username: %s', $username));
 
-    $opts = new ViewQueryOpts();
-    $opts->setKey($username)->setLimit(1);
-    $result = $this->couch->queryView("members", "byUsername", NULL, $opts);
+    $user = UserFactory::fromUsername($username);
 
-    if ($result->isEmpty()) return NULL;
+    // If the user doesn't exist, forward to 404.
+    if (!$user->isMember()) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    $user = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $result[0]['value']);
     $user->incHits($this->user->id);
 
     $this->view->setVar('profile', $user);
@@ -72,9 +71,6 @@ class ProfileController extends ListController {
   public function indexAction($username) {
     $user = $this->getUser($username);
 
-    // If the user doesn't exist, forward to 404.
-    if (!$user->isMember()) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
-
     $opts = new ViewQueryOpts();
 
     // Paginates results.
@@ -104,30 +100,35 @@ class ProfileController extends ListController {
 
 
   public function aboutAction($username) {
+    $user = $this->getUser($username);
 
+    $this->view->pick('views/profile/about');
   }
 
 
   public function connectionsAction($username) {
+    $user = $this->getUser($username);
 
+    $this->view->pick('views/profile/connections');
   }
 
 
   public function projectsAction($username) {
+    $user = $this->getUser($username);
 
+    $this->view->pick('views/profile/projects');
   }
 
 
   public function activitiesAction($username) {
+    $user = $this->getUser($username);
 
+    $this->view->pick('views/profile/activities');
   }
 
 
   public function settingsAction($username) {
     $user = $this->getUser($username);
-
-    // If the user doesn't exist, forward to 404.
-    if (!$user->isMember()) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $this->view->pick('views/profile/settings');
   }
