@@ -63,8 +63,6 @@ class ProfileController extends ListController {
       return;
 
     parent::afterExecuteRoute();
-
-    $this->view->pick('views/profile/timeline');
   }
 
 
@@ -100,6 +98,8 @@ class ProfileController extends ListController {
     $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
     $this->view->setVar('entriesLabel', 'contributi');
     $this->view->setVar('title', sprintf('%s timeline', $username));
+
+    $this->view->pick('views/profile/timeline');
   }
 
 
@@ -129,6 +129,7 @@ class ProfileController extends ListController {
     // If the user doesn't exist, forward to 404.
     if (!$user->isMember()) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
+    $this->view->pick('views/profile/settings');
   }
 
 } 
