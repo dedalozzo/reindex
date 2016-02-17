@@ -109,4 +109,25 @@ class UserFactory {
       return new User\Anonymous();
   }
 
+
+  /**
+   * @brief Searches for the user identified with the provided username, if any returns it, otherwise return an Anonymous
+   * instance.
+   * @param[in] string $username The username.
+   * @retval Member::IUser An user instance.
+   */
+  public static function fromUsername($username) {
+    $di = DI::getDefault();
+    $couch = $di['couchdb'];
+
+    $opts = new ViewQueryOpts();
+    $opts->setKey($username)->setLimit(1);
+    $result = $couch->queryView("members", "byUsername", NULL, $opts);
+
+    if (!$result->isEmpty())
+      return $couch->getDoc(Couch::STD_DOC_PATH, $result[0]['value']);
+    else
+      return new User\Anonymous();
+  }
+
 }
