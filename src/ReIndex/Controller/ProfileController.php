@@ -102,6 +102,7 @@ class ProfileController extends ListController {
   public function aboutAction($username) {
     $user = $this->getUser($username);
 
+    $this->view->setVar('title', sprintf('About %s', $username));
     $this->view->pick('views/profile/about');
   }
 
@@ -109,6 +110,7 @@ class ProfileController extends ListController {
   public function connectionsAction($username) {
     $user = $this->getUser($username);
 
+    $this->view->setVar('title', sprintf('%s\'s connections', $username));
     $this->view->pick('views/profile/connections');
   }
 
@@ -116,6 +118,7 @@ class ProfileController extends ListController {
   public function projectsAction($username) {
     $user = $this->getUser($username);
 
+    $this->view->setVar('title', sprintf('%s\'s projects', $username));
     $this->view->pick('views/profile/projects');
   }
 
@@ -123,6 +126,7 @@ class ProfileController extends ListController {
   public function activitiesAction($username) {
     $user = $this->getUser($username);
 
+    $this->view->setVar('title', sprintf('%s\'s activities', $username));
     $this->view->pick('views/profile/activities');
   }
 
@@ -130,6 +134,7 @@ class ProfileController extends ListController {
   public function settingsAction($username) {
     $user = $this->getUser($username);
 
+    $this->view->setVar('title', sprintf('%s\'s settings', $username));
     $this->view->pick('views/profile/settings');
   }
 
