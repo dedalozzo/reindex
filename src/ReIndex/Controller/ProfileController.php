@@ -134,8 +134,69 @@ class ProfileController extends ListController {
   public function settingsAction($username) {
     $user = $this->getUser($username);
 
+    // The validation object must be created in any case.
+    $validation = new Helper\ValidationHelper();
+    $this->view->setVar('validation', $validation);
+
+    if ($this->request->isPost()) {
+
+      try {
+        $validation->setFilters("firstName", "trim");
+        $validation->add("firstName", new PresenceOf(["message" => "First name is mandatory."]));
+
+        $validation->setFilters("lastName", "trim");
+        $validation->add("lastName", new PresenceOf(["message" => "Last name is mandatory."]));
+
+        $group = $validation->validate($_POST);
+        if (count($group) > 0) {
+          throw new InvalidFieldException("Fields are incomplete or the entered values are invalid. The errors are reported in red under the respective entry fields.");
+        }
+
+        // Filters only the messages generated for the field 'name'.
+        /*foreach ($validation->getMessages()->filter('email') as $message) {
+          $this->flash->notice($message->getMessage());
+          break;
+        }*/
+
+        $firstName = $this->request->getPost('firstName');
+        $lastName = $this->request->getPost('lastName');
+      }
+      catch (\Exception $e) {
+        // Displays the error message.
+        $this->flash->error($e->getMessage());
+      }
+
+    }
+    else {
+      $this->tag->setDefault("firstName", $user->firstName);
+      $this->tag->setDefault("lastName", $user->lastName);
+      $this->tag->setDefault("gender", $user->gender);
+      $this->tag->setDefault("birthday", $user->birthday);
+      $this->tag->setDefault("about", $user->about);
+    }
+
     $this->view->setVar('title', sprintf('%s\'s settings', $username));
     $this->view->pick('views/profile/settings');
+  }
+
+
+  public function accountAction($username) {
+
+  }
+
+
+  public function loginsAction($username) {
+
+  }
+
+
+  public function emailsAction($username) {
+
+  }
+
+
+  public function privacyActtion($username) {
+
   }
 
 } 
