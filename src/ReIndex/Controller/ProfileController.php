@@ -12,11 +12,15 @@ namespace ReIndex\Controller;
 
 use ReIndex\Factory\UserFactory;
 use ReIndex\Helper;
+use ReIndex\Exception\InvalidFieldException;
+use Phalcon\Validation\Validator\Confirmation;
+
+use Phalcon\Mvc\View;
+use Phalcon\Validation\Validator\PresenceOf;
+use ReIndex\Validator\Password;
 
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
-
-use Phalcon\Mvc\View;
 
 
 /**
@@ -180,7 +184,55 @@ class ProfileController extends ListController {
   }
 
 
-  public function accountAction($username) {
+  public function passwordAction($username) {
+    $user = $this->getUser($username);
+
+    // The validation object must be created in any case.
+    $validation = new Helper\ValidationHelper();
+    $this->view->setVar('validation', $validation);
+
+    if ($this->request->isPost()) {
+
+      try {
+        $validation->add("password", new Password());
+        $validation->add('password', new Confirmation(
+          [
+            'message' => "La password è diversa da quella di conferma.",
+            'with' => 'confirmPassword'
+          ]));
+
+        $group = $validation->validate($_POST);
+        if (count($group) > 0) {
+          throw new InvalidFieldException("Fields are incomplete or the entered values are invalid. The errors are reported in red under the respective entry fields.");
+        }
+
+        // Filters only the messages generated for the field 'name'.
+        /*foreach ($validation->getMessages()->filter('email') as $message) {
+          $this->flash->notice($message->getMessage());
+          break;
+        }*/
+
+        $oldPassword = $this->request->getPost('oldPassword');
+        $newPassword = $this->request->getPost('newPassword');
+      }
+      catch (\Exception $e) {
+        // Displays the error message.
+        $this->flash->error($e->getMessage());
+      }
+
+    }
+    else {
+      $this->tag->setDefault("oldPassword", $user->firstName);
+      $this->tag->setDefault("newPassword", $user->lastName);
+      $this->tag->setDefault("confirmPassword", $user->gender);
+    }
+
+    $this->view->setVar('title', sprintf('%s\'s settings', $username));
+    $this->view->pick('views/profile/settings');
+  }
+
+
+  public function usernameAction($username) {
 
   }
 
