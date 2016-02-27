@@ -13,11 +13,12 @@ namespace ReIndex\Controller;
 use ReIndex\Factory\UserFactory;
 use ReIndex\Helper;
 use ReIndex\Exception\InvalidFieldException;
-use Phalcon\Validation\Validator\Confirmation;
+use ReIndex\Validator\Password;
+use ReIndex\Validator\Username;
 
 use Phalcon\Mvc\View;
+use Phalcon\Validation\Validator\Confirmation;
 use Phalcon\Validation\Validator\PresenceOf;
-use ReIndex\Validator\Password;
 
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
@@ -233,7 +234,43 @@ class ProfileController extends ListController {
 
 
   public function usernameAction($username) {
+    $user = $this->getUser($username);
 
+    // The validation object must be created in any case.
+    $validation = new Helper\ValidationHelper();
+    $this->view->setVar('validation', $validation);
+
+    if ($this->request->isPost()) {
+
+      try {
+        $validation->setFilters("username", "trim");
+        $validation->add("username", new Username());
+
+        $group = $validation->validate($_POST);
+        if (count($group) > 0) {
+          throw new InvalidFieldException("Fields are incomplete or the entered values are invalid. The errors are reported in red under the respective entry fields.");
+        }
+
+        // Filters only the messages generated for the field 'name'.
+        /*foreach ($validation->getMessages()->filter('email') as $message) {
+          $this->flash->notice($message->getMessage());
+          break;
+        }*/
+
+        $username = $this->request->getPost('username');
+      }
+      catch (\Exception $e) {
+        // Displays the error message.
+        $this->flash->error($e->getMessage());
+      }
+
+    }
+    else {
+      $this->tag->setDefault("username", $user->username);
+    }
+
+    $this->view->setVar('title', sprintf('%s\'s settings', $username));
+    $this->view->pick('views/profile/username');
   }
 
 
