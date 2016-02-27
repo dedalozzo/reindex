@@ -228,7 +228,7 @@ class ProfileController extends ListController {
     }
 
     $this->view->setVar('title', sprintf('%s\'s settings', $username));
-    $this->view->pick('views/profile/settings');
+    $this->view->pick('views/profile/password');
   }
 
 
