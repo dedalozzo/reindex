@@ -157,6 +157,8 @@ class Member extends Storable implements IUser, Extension\ICount {
 
   /**
    * @brief Returns `true` in case the e-mail can be removed, `false` otherwise.
+   * @details An e-mail can be removed only if it's not the only one associated to the member, and if there is at least
+   * another verified e-mail.
    * @param[in] string $email An e-mail address.
    * @retval bool
    */
@@ -510,6 +512,7 @@ class Member extends Storable implements IUser, Extension\ICount {
    * @brief Removes the specified provider and all its information.
    * @param[in] string $consumerName The consumer name.
    * @param[in] string $userId The user id.
+   * @attention The e-mail associated to the login is never removed from the list of e-mails.
    */
   public function removeLogin($consumerName, $userId) {
     $login = $this->buildLoginName($userId, $consumerName);
