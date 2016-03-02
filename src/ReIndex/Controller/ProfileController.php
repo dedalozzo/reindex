@@ -290,7 +290,17 @@ class ProfileController extends ListController {
 
 
   public function emailsAction($username) {
+    $user = $this->getUser($username);
 
+    if ($this->request->isPost()) {
+
+    }
+    else {
+      $this->tag->setDefault("username", $user->username);
+    }
+
+    $this->view->setVar('title', sprintf('%s\'s e-mails', $username));
+    $this->view->pick('views/profile/emails');
   }
 
 
