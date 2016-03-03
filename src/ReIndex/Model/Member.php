@@ -158,13 +158,14 @@ class Member extends Storable implements IUser, Extension\ICount {
   /**
    * @brief Returns `true` in case the e-mail can be removed, `false` otherwise.
    * @details An e-mail can be removed only if it's not the only one associated to the member, and if there is at least
-   * another verified e-mail.
+   * another verified e-mail and if it's not the primary e-mail.
    * @param[in] string $email An e-mail address.
    * @retval bool
    */
   public function canRemoveEmail($email) {
     if (array_key_exists($email, $this->meta['emails']) && count($this->meta['emails']) > 1
-        && (!$this->meta['emails'][$email] or array_count_values($this->meta['emails'][TRUE]) >= 2))
+        && $email != $this->primaryEmail
+        && (!$this->meta['emails'][$email] or count(array_filter($this->meta['emails'])) > 1))
       return TRUE;
     else
       return FALSE;
