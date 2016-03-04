@@ -495,6 +495,16 @@ class Member extends Storable implements IUser, Extension\ICount {
 
 
   /**
+   * @brief Returns all the logins associated with the current user.
+   * @retval array An associative array using as keys the combination of the id with the consumer name.
+   * not.
+   */
+  public function getLogins() {
+    return $this->meta['logins'];
+  }
+
+
+  /**
    * @brief Searches for the user identified by the specified email, if any returns it, otherwise return `false`.
    * @param[in] string $consumerName The consumer name.
    * @param[in] string $userId The user id.
