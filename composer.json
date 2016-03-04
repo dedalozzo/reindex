@@ -19,11 +19,12 @@
         "3f/eoc-client": "dev-master",
         "3f/pygmentize": "dev-master",
         "3f/converter": "dev-master",
-        "symfony/console": "2.4.6",
+        "symfony/console": "~3",
         "lusitanian/oauth": "~0.8",
         "monolog/monolog": "~1",
         "graze/monolog-extensions": "*",
         "filp/whoops": "dev-master",
+        "knplabs/github-api": "~1",
         "reindex/reboot": "dev-master"
     },
     "repositories": [
