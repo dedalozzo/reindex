@@ -43,14 +43,14 @@ class QuestionController extends IndexController {
    * @param[in] string $filter (optional) A filter.
    */
   public function openAction($filter = NULL) {
-    // Stores sub-menu definition.
     $filters = ['newest' => NULL, 'recently-active' => NULL, 'popular' => NULL];
     if (is_null($filter)) $filter = 'insertion-date';
 
     $index = Helper\ArrayHelper::key($filter, $filters);
     if ($index === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    $this->view->setVar('entriesCount', 0);
+    $this->view->setVar('entriesCount', 0); // @todo This must be removed.
+    $this->view->setVar('filters', $this->filters);
     $this->view->setVar('title', sprintf('Open %s', ucfirst($this->getLabel())));
   }
 
