@@ -71,7 +71,7 @@ class ProfileController extends ListController {
 
 
   /**
-   * @brief Displays the newest user's contributes.
+   * @brief Displays the user's timeline.
    */
   public function indexAction($username) {
     $user = $this->getUser($username);
@@ -122,6 +122,11 @@ class ProfileController extends ListController {
 
   public function projectsAction($username) {
     $user = $this->getUser($username);
+
+    $logins = $user->getLogins();
+
+    $github = $this->di['github'];
+    $repos = $github->api('user')->repositories('dedalozzo');
 
     $this->view->setVar('title', sprintf('%s\'s projects', $username));
     $this->view->pick('views/profile/projects');
@@ -278,10 +283,8 @@ class ProfileController extends ListController {
     $user = $this->getUser($username);
 
     if ($this->request->isPost()) {
-
     }
     else {
-      $this->tag->setDefault("username", $user->username);
     }
 
     $this->view->setVar('title', sprintf('%s\'s logins', $username));
@@ -293,10 +296,8 @@ class ProfileController extends ListController {
     $user = $this->getUser($username);
 
     if ($this->request->isPost()) {
-
     }
     else {
-      $this->tag->setDefault("username", $user->username);
     }
 
     $this->view->setVar('title', sprintf('%s\'s e-mails', $username));
@@ -304,7 +305,7 @@ class ProfileController extends ListController {
   }
 
 
-  public function privacyActtion($username) {
+  public function privacyAction($username) {
     $user = $this->getUser($username);
 
     if ($this->request->isPost()) {
