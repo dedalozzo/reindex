@@ -15,7 +15,7 @@ namespace ReIndex\Handler;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Logger;
 
-use Phalcon\DI;
+use Phalcon\Di;
 use Phalcon\Mvc\View;
 
 use ReIndex\Version;
@@ -36,7 +36,7 @@ class ErrorHandler extends AbstractProcessingHandler {
    * @param[in] bool $bubble When `false` the handler stop the propagation to next handler.
    */
   public function __construct($level = Logger::ERROR, $bubble = TRUE) {
-    $this->di = DI::getDefault();
+    $this->di = Di::getDefault();
     $this->dispatcher = $this->di['dispatcher'];
     $this->user = $this->di['guardian']->getUser();
     $this->assets = $this->di['assets'];

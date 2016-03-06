@@ -15,7 +15,7 @@ namespace ReIndex\Model;
 use EoC\Doc\Doc;
 use EoC\Generator\UUID;
 
-use Phalcon\DI;
+use Phalcon\Di;
 
 use ReIndex\Helper;
 
@@ -37,7 +37,7 @@ abstract class Storable extends Doc {
    * @brief Constructor.
    */
   public function __construct() {
-    $this->di = DI::getDefault();
+    $this->di = Di::getDefault();
     $this->couch = $this->di['couchdb'];
     $this->redis = $this->di['redis'];
     $this->log = $this->di['log'];

@@ -12,7 +12,7 @@
 namespace ReIndex\Console\Command;
 
 
-use Phalcon\DI\InjectionAwareInterface;
+use Phalcon\Di\InjectionAwareInterface;
 use Phalcon\DiInterface;
 
 use Symfony\Component\Console\Command\Command;

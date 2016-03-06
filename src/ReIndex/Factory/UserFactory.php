@@ -11,7 +11,7 @@
 //! Classes which implements the factory pattern
 namespace ReIndex\Factory;
 
-use Phalcon\DI;
+use Phalcon\Di;
 
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
@@ -38,7 +38,7 @@ class UserFactory {
     // A console script runs as System user.
     if (php_sapi_name() == 'cli') return new User\System();
 
-    $di = DI::getDefault();
+    $di = Di::getDefault();
     $couch = $di['couchdb'];
     $security = $di['security'];
 
@@ -75,7 +75,7 @@ class UserFactory {
    * @retval Security::Member::IUser An user instance.
    */
   public static function fromLogin($consumerName, $userId) {
-    $di = DI::getDefault();
+    $di = Di::getDefault();
     $couch = $di['couchdb'];
 
     $opts = new ViewQueryOpts();
@@ -96,7 +96,7 @@ class UserFactory {
    * @retval Member::IUser An user instance.
    */
   public static function fromEmail($email) {
-    $di = DI::getDefault();
+    $di = Di::getDefault();
     $couch = $di['couchdb'];
 
     $opts = new ViewQueryOpts();
@@ -117,7 +117,7 @@ class UserFactory {
    * @retval Member::IUser An user instance.
    */
   public static function fromUsername($username) {
-    $di = DI::getDefault();
+    $di = Di::getDefault();
     $couch = $di['couchdb'];
 
     $opts = new ViewQueryOpts();

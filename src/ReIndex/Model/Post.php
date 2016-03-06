@@ -20,7 +20,7 @@ use ReIndex\Helper;
 use ReIndex\Enum;
 use ReIndex\Exception;
 
-use Phalcon\DI;
+use Phalcon\Di;
 
 
 /**

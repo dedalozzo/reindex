@@ -13,7 +13,7 @@ use ReIndex\Console\Console as ReIndexConsole;
 use ReIndex\Console\Command;
 
 use Phalcon\Config\Adapter\Ini as IniReader;
-use Phalcon\DI\FactoryDefault as DependencyInjector;
+use Phalcon\Di\FactoryDefault as DependencyInjector;
 
 use Monolog\Logger;
 use Monolog\ErrorHandler;

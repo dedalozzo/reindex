@@ -19,7 +19,7 @@ use ReIndex\Model\Vote;
 use ReIndex\Model\Member;
 use ReIndex\Exception;
 
-use Phalcon\DI;
+use Phalcon\Di;
 
 
 /**

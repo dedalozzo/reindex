@@ -11,7 +11,7 @@
 namespace ReIndex\Helper;
 
 
-use Phalcon\DI;
+use Phalcon\Di;
 
 use ReIndex\Model\Member;
 
@@ -28,7 +28,7 @@ class Cookie {
    * @param[in] Member $user A member.
    */
   public static function set(Member $user) {
-    $di = DI::getDefault();
+    $di = Di::getDefault();
     $security = $di['security'];
 
     // Creates a token based on the user id and his IP address, obviously encrypted.
@@ -49,7 +49,7 @@ class Cookie {
    * @brief Deletes the user cookies.
    */
   public static function delete() {
-    $di = DI::getDefault();
+    $di = Di::getDefault();
 
     $di['log']->addNotice("log delete");
 

@@ -17,7 +17,7 @@ use OAuth\Common\Storage\Session;
 use OAuth\Common\Consumer\Credentials;
 use OAuth\ServiceFactory;
 
-use Phalcon\DI;
+use Phalcon\Di;
 use Phalcon\Validation\Validator\PresenceOf;
 
 use ReIndex\Model\Member;
@@ -54,7 +54,7 @@ abstract class OAuth2Consumer {
    * @brief Connects to the service provider and request an access token.
    */
   public function __construct() {
-    $this->di = DI::getDefault();
+    $this->di = Di::getDefault();
     $this->log = $this->di['log'];
     $this->config = $this->di['config'];
     $this->guardian = $this->di['guardian'];

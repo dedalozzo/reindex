@@ -14,7 +14,7 @@ namespace ReIndex\Validator;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator;
 use Phalcon\Validation\Message;
-use Phalcon\DI;
+use Phalcon\Di;
 
 
 /**
@@ -35,7 +35,7 @@ class Username extends Validator implements Validation\ValidatorInterface {
 
   public function __construct($options = NULL) {
     parent::__construct($options);
-    $this->di = DI::getDefault();
+    $this->di = Di::getDefault();
     $this->config = $this->di['config'];
     $this->guardian = $this->di['guardian'];
 

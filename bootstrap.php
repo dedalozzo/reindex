@@ -9,7 +9,7 @@
 
 
 use Phalcon\Config\Adapter\Ini as IniReader;
-use Phalcon\DI\FactoryDefault as DependencyInjector;
+use Phalcon\Di\FactoryDefault as DependencyInjector;
 use Phalcon\Mvc\Application as Application;
 
 use Monolog\Logger;
