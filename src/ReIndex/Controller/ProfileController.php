@@ -124,7 +124,7 @@ class ProfileController extends ListController {
     $user = $this->getUser($username);
 
     $filters = ['personal' => NULL, 'forks' => NULL];
-    if (is_null($filter)) $filter = 'insertion-date';
+    if (is_null($filter)) $filter = 'personal';
 
     $filter = Helper\ArrayHelper::key($filter, $filters);
     if ($filter === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
@@ -133,8 +133,11 @@ class ProfileController extends ListController {
 
     $github = $this->di['github'];
     $repos = $github->api('user')->repositories('dedalozzo');
+
+    $this->view->setVar('repos', $repos);
+    $this->view->setVar('filters', $filters);
     $this->view->setVar('title', sprintf('%s\'s projects', $username));
-    $this->view->pick('views/profile/projects');
+    $this->view->pick('views/profile/repositories');
   }
 
 
