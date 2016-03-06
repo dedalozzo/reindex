@@ -12,7 +12,7 @@ namespace ReIndex\Route;
 
 
 use Phalcon\Mvc\Router\Group;
-use Phalcon\DI;
+use Phalcon\Di;
 
 
 /**
@@ -29,7 +29,7 @@ class AjaxGroup extends Group {
         'controller' => 'ajax'
       ]);
 
-    $this->setHostName(DI::getDefault()['config']['application']['domainName']);
+    $this->setHostname(Di::getDefault()['config']['application']['domainName']);
 
     $this->setPrefix('/ajax');
 

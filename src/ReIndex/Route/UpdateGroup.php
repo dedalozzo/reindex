@@ -11,7 +11,7 @@
 namespace ReIndex\Route;
 
 
-use Phalcon\DI;
+use Phalcon\Di;
 
 
 /**

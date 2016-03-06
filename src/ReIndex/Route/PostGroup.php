@@ -12,7 +12,7 @@ namespace ReIndex\Route;
 
 
 use Phalcon\Mvc\Router\Group;
-use Phalcon\DI;
+use Phalcon\Di;
 
 
 /**
@@ -29,7 +29,7 @@ class PostGroup extends Group {
         'controller' => 'index' // We don't use post controller, but the index controller.
       ]);
 
-    $this->setHostName(DI::getDefault()['config']['application']['domainName']);
+    $this->setHostname(Di::getDefault()['config']['application']['domainName']);
 
     // Shows post.
     $this->addGet('/{year:[0-9]{4}}/{month:[0-9]{2}}/{day:[0-9]{2}}/{slug:[\da-z-]+}', ['action' => 'show']);

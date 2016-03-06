@@ -490,7 +490,6 @@ class IndexController extends ListController {
    * @param[in] string $filter (optional) Human readable representation of a choice.
    */
   public function favoriteAction($filter = NULL) {
-    // Stores sub-menu definition.
     $filters = ['insertion-date' => NULL, 'posting-date' => NULL];
     if (is_null($filter)) $filter = 'insertion-date';
 

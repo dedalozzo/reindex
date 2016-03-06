@@ -123,11 +123,16 @@ class ProfileController extends ListController {
   public function projectsAction($username) {
     $user = $this->getUser($username);
 
+    $filters = ['insertion-date' => NULL, 'posting-date' => NULL];
+    if (is_null($filter)) $filter = 'insertion-date';
+
+    $filter = Helper\ArrayHelper::key($filter, $filters);
+    if ($filter === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']
+
     $logins = $user->getLogins();
 
     $github = $this->di['github'];
     $repos = $github->api('user')->repositories('dedalozzo');
-
     $this->view->setVar('title', sprintf('%s\'s projects', $username));
     $this->view->pick('views/profile/projects');
   }

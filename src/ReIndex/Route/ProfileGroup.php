@@ -12,7 +12,7 @@ namespace ReIndex\Route;
 
 
 use Phalcon\Mvc\Router\Group;
-use Phalcon\DI;
+use Phalcon\Di;
 
 
 /**
@@ -22,7 +22,7 @@ use Phalcon\DI;
 class ProfileGroup extends Group {
 
   public function initialize() {
-    $di = DI::getDefault();
+    $di = Di::getDefault();
 
     // Sets the default controller for the following routes.
     $this->setPaths(
@@ -31,7 +31,7 @@ class ProfileGroup extends Group {
         'controller' => 'profile'
       ]);
 
-    $this->setHostName($di['config']['application']['domainName']);
+    $this->setHostname($di['config']['application']['domainName']);
 
     $this->setPrefix('/([\da-zA-Z.\-_]{'.$di['config']['application']['usernameMinLength'].','.($di['config']['application']['usernameMaxLength']+10).'})');
 

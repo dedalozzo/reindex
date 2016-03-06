@@ -29,7 +29,7 @@ class MemberGroup extends Group {
         'controller' => 'member'
       ]);
 
-    $this->setHostName(DI::getDefault()['config']['application']['domainName']);
+    $this->setHostname(Di::getDefault()['config']['application']['domainName']);
 
     // All the following routes start with /utenti.
     $this->setPrefix('/users');

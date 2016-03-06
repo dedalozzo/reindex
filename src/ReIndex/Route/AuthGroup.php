@@ -12,7 +12,7 @@ namespace ReIndex\Route;
 
 
 use Phalcon\Mvc\Router\Group;
-use Phalcon\DI;
+use Phalcon\Di;
 
 
 /**
@@ -29,7 +29,7 @@ class AuthGroup extends Group {
         'controller' => 'auth'
       ]);
 
-    $this->setHostName(DI::getDefault()['config']['application']['domainName']);
+    $this->setHostname(Di::getDefault()['config']['application']['domainName']);
 
     $this->addGet('/resetpasswd/', ['action' => 'resetPassword']);
     $this->addGet('/sendactemail/', ['action' => 'sendActivationEmail']);

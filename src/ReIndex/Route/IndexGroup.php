@@ -13,7 +13,7 @@ namespace ReIndex\Route;
 
 
 use Phalcon\Mvc\Router\Group;
-use Phalcon\DI;
+use Phalcon\Di;
 
 
 /**
@@ -70,7 +70,7 @@ class IndexGroup extends Group {
 
   public function initialize() {
     $this->setPaths(['namespace' => 'ReIndex\Controller', 'controller' => $this->getController()]);
-    $this->setHostName(DI::getDefault()['config']['application']['domainName']);
+    $this->setHostname(Di::getDefault()['config']['application']['domainName']);
 
     // Sets the standard routes for a tag. Don't change the order!
     $this->setPrefix('/{tag:[a-zA-Z0-9%.-]+}'.$this->getPrefix());

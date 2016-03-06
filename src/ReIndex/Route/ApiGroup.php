@@ -12,7 +12,7 @@ namespace ReIndex\Route;
 
 
 use Phalcon\Mvc\Router\Group;
-use Phalcon\DI;
+use Phalcon\Di;
 
 
 /**
@@ -29,7 +29,7 @@ class ApiGroup extends Group {
         'controller' => 'api'
       ]);
 
-    $this->setHostName('api.'.DI::getDefault()['config']['application']['domainName']);
+    $this->setHostname('api.'.Di::getDefault()['config']['application']['domainName']);
 
     $this->addPost('/like/', ['action' => 'like']);
     $this->addPost('/star/', ['action' => 'star']);
