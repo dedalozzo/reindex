@@ -55,7 +55,7 @@ try {
   //$console->setCatchExceptions(FALSE);
 
   // Sets the dependency injector component.
-  $console->setDI($di);
+  $console->setDi($di);
 
   $console->add(new Command\AboutCommand());
   $console->add(new Command\CreateCommand());
