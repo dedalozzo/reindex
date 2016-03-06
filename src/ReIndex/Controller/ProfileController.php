@@ -136,7 +136,7 @@ class ProfileController extends ListController {
 
     $this->view->setVar('repos', $repos);
     $this->view->setVar('filters', $filters);
-    $this->view->setVar('title', sprintf('%s\'s projects', $username));
+    $this->view->setVar('title', sprintf('%s\'s repositories', $username));
     $this->view->pick('views/profile/repositories');
   }
 
