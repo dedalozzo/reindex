@@ -43,8 +43,8 @@ class ProfileGroup extends Group {
     $this->addGet('/connections/', ['action' => 'connections', 'username' => 1]);
     $this->addGet('/connections/{filter}/', ['action' => 'connections', 'username' => 1]);
 
-    $this->addGet('/projects/', ['action' => 'projects', 'username' => 1]);
-    $this->addGet('/projects/{filter}/', ['action' => 'projects', 'username' => 1]);
+    $this->addGet('/repositories/', ['action' => 'repositories', 'username' => 1]);
+    $this->addGet('/repositories/{filter}/', ['action' => 'repositories', 'username' => 1]);
 
     $this->add('/settings/', ['action' => 'settings', 'username' => 1], ['GET', 'POST']);
     $this->add('/settings/password/', ['action' => 'password', 'username' => 1], ['GET', 'POST']);
