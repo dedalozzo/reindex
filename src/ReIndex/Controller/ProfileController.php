@@ -112,7 +112,7 @@ class ProfileController extends ListController {
   }
 
 
-  public function connectionsAction($username) {
+  public function connectionsAction($username, $filter = NULL) {
     $user = $this->getUser($username);
 
     $this->view->setVar('title', sprintf('%s\'s connections', $username));
@@ -120,14 +120,14 @@ class ProfileController extends ListController {
   }
 
 
-  public function projectsAction($username) {
+  public function repositoriesAction($username, $filter = NULL) {
     $user = $this->getUser($username);
 
-    $filters = ['insertion-date' => NULL, 'posting-date' => NULL];
+    $filters = ['personal' => NULL, 'forks' => NULL];
     if (is_null($filter)) $filter = 'insertion-date';
 
     $filter = Helper\ArrayHelper::key($filter, $filters);
-    if ($filter === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']
+    if ($filter === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $logins = $user->getLogins();
 
