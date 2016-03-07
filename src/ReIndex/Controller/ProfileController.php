@@ -129,6 +129,8 @@ class ProfileController extends ListController {
     $filter = Helper\ArrayHelper::key($filter, $filters);
     if ($filter === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
+    $this->dispatcher->setParam('filter', $filter);
+
     $logins = $user->getLogins();
 
     $github = $this->di['github'];
