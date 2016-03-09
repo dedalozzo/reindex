@@ -123,8 +123,8 @@ class ProfileController extends ListController {
   public function repositoriesAction($username, $filter = NULL) {
     $user = $this->getUser($username);
 
-    $filters = ['personal' => NULL, 'forks' => NULL];
-    if (is_null($filter)) $filter = 'personal';
+    $filters = ['personal-projects' => NULL, 'forks' => NULL];
+    if (is_null($filter)) $filter = 'personal-projects';
 
     $filter = Helper\ArrayHelper::key($filter, $filters);
     if ($filter === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
@@ -135,6 +135,29 @@ class ProfileController extends ListController {
 
     $github = $this->di['github'];
     $repos = $github->api('user')->repositories('dedalozzo');
+
+    if ($filter === 'personal-projects') {
+
+      $personal = function ($var) {
+        return $var['fork'] ? FALSE : TRUE;
+      };
+
+      $repos = array_filter($repos, $personal);
+    }
+    else {
+
+      $forks = function ($var) {
+        return $var['fork'] ? TRUE : FALSE;
+      };
+
+      $repos = array_filter($repos, $forks);
+    }
+
+    // Converts ISO 8601 timestamp.
+    $formatDate = function (&$value, $key) {
+      $value['created_at'] = Helper\Time::when(date("U",strtotime($value['created_at'])));
+    };
+    array_walk($repos, $formatDate);
 
     $this->view->setVar('repos', $repos);
     $this->view->setVar('filters', $filters);
