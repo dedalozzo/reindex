@@ -361,6 +361,9 @@ class ProfileController extends ListController {
       $this->tag->setDefault("username", $this->user->username);
     }
 
+    $this->view->setVar('usernameMinLength', $this->config->application->usernameMinLength);
+    $this->view->setVar('usernameMaxLength', $this->config->application->usernameMaxLength);
+
     $this->view->setVar('title', sprintf('%s\'s settings', $this->user->username));
     $this->view->pick('views/profile/username');
   }
