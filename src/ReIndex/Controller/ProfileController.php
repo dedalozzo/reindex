@@ -297,22 +297,18 @@ class ProfileController extends ListController {
           throw new InvalidFieldException("Fields are incomplete or the entered values are invalid. The errors are reported in red under the respective entry fields.");
         }
 
-        // Filters only the messages generated for the field 'name'.
-        /*foreach ($validation->getMessages()->filter('email') as $message) {
-          $this->flash->notice($message->getMessage());
-          break;
-        }*/
+        $password = md5($this->request->getPost('newPassword'));
+        $this->user->password = $password;
 
-        $oldPassword = $this->request->getPost('oldPassword');
-        $newPassword = $this->request->getPost('newPassword');
+        $this->user->save();
+
+        $this->flash->success('Congratulations, your username has been changed.');
       }
       catch (\Exception $e) {
         // Displays the error message.
         $this->flash->error($e->getMessage());
       }
 
-    }
-    else {
     }
 
     $this->view->setVar('title', sprintf('%s\'s settings', $this->user->username));
