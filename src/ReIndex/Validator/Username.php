@@ -47,7 +47,7 @@ class Username extends Validator implements Validation\ValidatorInterface {
   /**
    * @brief Executes the validation.
    * @details A username should match the following conditions:\n
-   *   1. only one special char `.`, `_`, `-` are allowed and it must not be at the extremes of the string;
+   *   1. only one special char between `.`, `_`, `-` is allowed and it must not be at the extremes of the string;
    *   2. the first character cannot be a number;
    *   3. all the other characters allowed are letters and numbers;
    *   4. the total length should be between `usernameMinLength` and `usernameMaxLength` chars.
