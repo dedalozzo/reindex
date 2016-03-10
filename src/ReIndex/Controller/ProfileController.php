@@ -289,9 +289,6 @@ class ProfileController extends ListController {
 
     }
     else {
-      $this->tag->setDefault("oldPassword", $this->user->oldPassword);
-      $this->tag->setDefault("newPassword", $this->user->newPassword);
-      $this->tag->setDefault("confirmPassword", $this->user->confirmPassword);
     }
 
     $this->view->setVar('title', sprintf('%s\'s settings', $this->user->username));
