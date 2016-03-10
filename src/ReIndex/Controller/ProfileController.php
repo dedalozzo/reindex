@@ -72,6 +72,7 @@ class ProfileController extends ListController {
 
   /**
    * @brief Displays the user's timeline.
+   * @param[in] string $username A username.
    */
   public function indexAction($username) {
     $user = $this->getUser($username);
@@ -104,6 +105,10 @@ class ProfileController extends ListController {
   }
 
 
+  /**
+   * @brief Displays the user's personal info.
+   * @param[in] string $username A username.
+   */
   public function aboutAction($username) {
     $user = $this->getUser($username);
 
@@ -112,6 +117,10 @@ class ProfileController extends ListController {
   }
 
 
+  /**
+   * @brief Displays the user's connections.
+   * @param[in] string $filter (optional) Used to filter the connections.
+   */
   public function connectionsAction($username, $filter = NULL) {
     $user = $this->getUser($username);
 
@@ -120,6 +129,11 @@ class ProfileController extends ListController {
   }
 
 
+  /**
+   * @brief Displays the user's repositories.
+   * @param[in] string $username A username.
+   * @param[in] string $filter (optional) Filter between personal projects and forks.
+   */
   public function repositoriesAction($username, $filter = NULL) {
     $user = $this->getUser($username);
 
@@ -166,6 +180,10 @@ class ProfileController extends ListController {
   }
 
 
+  /**
+   * @brief Displays the user's activities.
+   * @param[in] string $username A username.
+   */
   public function activitiesAction($username) {
     $user = $this->getUser($username);
 
@@ -174,8 +192,13 @@ class ProfileController extends ListController {
   }
 
 
+  /**
+   * @brief Let the current user to update his own personal info.
+   * @param[in] string $username A username.
+   */
   public function settingsAction($username) {
     $user = $this->getUser($username);
+    if (!$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     // The validation object must be created in any case.
     $validation = new Helper\ValidationHelper();
@@ -211,20 +234,25 @@ class ProfileController extends ListController {
 
     }
     else {
-      $this->tag->setDefault("firstName", $user->firstName);
-      $this->tag->setDefault("lastName", $user->lastName);
-      $this->tag->setDefault("gender", $user->gender);
-      $this->tag->setDefault("birthday", $user->birthday);
-      $this->tag->setDefault("about", $user->about);
+      $this->tag->setDefault("firstName", $this->user->firstName);
+      $this->tag->setDefault("lastName", $this->user->lastName);
+      $this->tag->setDefault("gender", $this->user->gender);
+      $this->tag->setDefault("birthday", $this->user->birthday);
+      $this->tag->setDefault("about", $this->user->about);
     }
 
-    $this->view->setVar('title', sprintf('%s\'s settings', $username));
+    $this->view->setVar('title', sprintf('%s\'s settings', $this->user->username));
     $this->view->pick('views/profile/settings');
   }
 
 
+  /**
+   * @brief Let the user to update his own password.
+   * @param[in] string $username A username.
+   */
   public function passwordAction($username) {
     $user = $this->getUser($username);
+    if (!$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     // The validation object must be created in any case.
     $validation = new Helper\ValidationHelper();
@@ -261,18 +289,23 @@ class ProfileController extends ListController {
 
     }
     else {
-      $this->tag->setDefault("oldPassword", $user->firstName);
-      $this->tag->setDefault("newPassword", $user->lastName);
-      $this->tag->setDefault("confirmPassword", $user->gender);
+      $this->tag->setDefault("oldPassword", $this->user->oldPassword);
+      $this->tag->setDefault("newPassword", $this->user->newPassword);
+      $this->tag->setDefault("confirmPassword", $this->user->confirmPassword);
     }
 
-    $this->view->setVar('title', sprintf('%s\'s settings', $username));
+    $this->view->setVar('title', sprintf('%s\'s settings', $this->user->username));
     $this->view->pick('views/profile/password');
   }
 
 
+  /**
+   * @brief Let the user to update his own username.
+   * @param[in] string $username A username.
+   */
   public function usernameAction($username) {
     $user = $this->getUser($username);
+    if (!$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     // The validation object must be created in any case.
     $validation = new Helper\ValidationHelper();
@@ -304,29 +337,39 @@ class ProfileController extends ListController {
 
     }
     else {
-      $this->tag->setDefault("username", $user->username);
+      $this->tag->setDefault("username", $this->user->username);
     }
 
-    $this->view->setVar('title', sprintf('%s\'s settings', $username));
+    $this->view->setVar('title', sprintf('%s\'s settings', $this->user->username));
     $this->view->pick('views/profile/username');
   }
 
 
+  /**
+   * @brief Let the user to manage his logins.
+   * @param[in] string $username A username.
+   */
   public function loginsAction($username) {
     $user = $this->getUser($username);
+    if (!$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     if ($this->request->isPost()) {
     }
     else {
     }
 
-    $this->view->setVar('title', sprintf('%s\'s logins', $username));
+    $this->view->setVar('title', sprintf('%s\'s logins', $this->user->username));
     $this->view->pick('views/profile/logins');
   }
 
 
+  /**
+   * @brief Let the user to add or remove an e-mail address.
+   * @param[in] string $username A username.
+   */
   public function emailsAction($username) {
     $user = $this->getUser($username);
+    if (!$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     if ($this->request->isPost()) {
     }
@@ -338,17 +381,22 @@ class ProfileController extends ListController {
   }
 
 
+  /**
+   * @brief Let the user to update his privacy settings.
+   * @param[in] string $username A username.
+   */
   public function privacyAction($username) {
     $user = $this->getUser($username);
+    if (!$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     if ($this->request->isPost()) {
 
     }
     else {
-      $this->tag->setDefault("username", $user->username);
+      $this->tag->setDefault("username", $this->user->username);
     }
 
-    $this->view->setVar('title', sprintf('%s\'s privacy settings', $username));
+    $this->view->setVar('title', sprintf('%s\'s privacy settings', $this->user->username));
     $this->view->pick('views/profile/privacy');
   }
 
