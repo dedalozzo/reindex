@@ -145,26 +145,43 @@ class ProfileController extends ListController {
 
     $this->dispatcher->setParam('filter', $filter);
 
-    $logins = $user->getLogins();
-
+    // Gets the service.
     $github = $this->di['github'];
-    $repos = $github->api('user')->repositories('dedalozzo');
+
+    // Closure to compare consumer's name.
+    $isGitHub = function ($var) {
+      return $var[0] === 'github';
+    };
+
+    $repos = [];
+    $logins = array_filter($user->getLogins(), $isGitHub);
+
+    // Merges together the repositories of different users.
+    foreach ($logins as $login) {
+      $repos = array_merge($repos, $github->api('user')->repositories($login[1]));
+    }
+
+    $sorter = function ($one, $two) {
+      return ($one['stargazers_count'] < $two['stargazers_count']);
+    };
+
+    usort($repos, $sorter);
 
     if ($filter === 'personal-projects') {
 
-      $personal = function ($var) {
+      $isPersonal = function ($var) {
         return $var['fork'] ? FALSE : TRUE;
       };
 
-      $repos = array_filter($repos, $personal);
+      $repos = array_filter($repos, $isPersonal);
     }
     else {
 
-      $forks = function ($var) {
+      $isFork = function ($var) {
         return $var['fork'] ? TRUE : FALSE;
       };
 
-      $repos = array_filter($repos, $forks);
+      $repos = array_filter($repos, $isFork);
     }
 
     // Converts ISO 8601 timestamp.
