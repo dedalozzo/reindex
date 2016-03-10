@@ -241,8 +241,15 @@ class ProfileController extends ListController {
           break;
         }*/
 
-        $firstName = $this->request->getPost('firstName');
-        $lastName = $this->request->getPost('lastName');
+        $this->user->firstName = $this->request->getPost('firstName');
+        $this->user->lastName = $this->request->getPost('lastName');
+        $this->user->gender = $this->request->getPost('gender');
+        $this->user->birthday = $this->request->getPost('birthDay');
+        //$this->user->about = $this->request->getPost('about');
+
+        $this->user->save();
+
+        $this->flash->success('Your personal info has been updated.');
       }
       catch (\Exception $e) {
         // Displays the error message.
