@@ -244,7 +244,7 @@ class ProfileController extends ListController {
         $this->user->firstName = $this->request->getPost('firstName');
         $this->user->lastName = $this->request->getPost('lastName');
         $this->user->gender = $this->request->getPost('gender');
-        $this->user->birthday = $this->request->getPost('birthDay');
+        $this->user->birthday = strtotime($this->request->getPost('birthday'));
         //$this->user->about = $this->request->getPost('about');
 
         $this->user->save();
@@ -261,7 +261,7 @@ class ProfileController extends ListController {
       $this->tag->setDefault("firstName", $this->user->firstName);
       $this->tag->setDefault("lastName", $this->user->lastName);
       $this->tag->setDefault("gender", $this->user->gender);
-      $this->tag->setDefault("birthday", $this->user->birthday);
+      $this->tag->setDefault("birthday", date('Y-m-d', $this->user->birthday));
       $this->tag->setDefault("about", $this->user->about);
     }
 
