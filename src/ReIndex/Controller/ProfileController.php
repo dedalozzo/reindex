@@ -249,7 +249,7 @@ class ProfileController extends ListController {
 
         $this->user->save();
 
-        $this->flash->success('Your personal info has been updated.');
+        $this->flash->success('Your personal information has been updated.');
       }
       catch (\Exception $e) {
         // Displays the error message.
