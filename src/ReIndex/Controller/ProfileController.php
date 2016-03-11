@@ -12,7 +12,7 @@ namespace ReIndex\Controller;
 
 use ReIndex\Factory\UserFactory;
 use ReIndex\Helper;
-use ReIndex\Exception\InvalidFieldException;
+use ReIndex\Exception;
 use ReIndex\Validator\Password;
 use ReIndex\Validator\Username;
 
@@ -232,14 +232,8 @@ class ProfileController extends ListController {
 
         $group = $validation->validate($_POST);
         if (count($group) > 0) {
-          throw new InvalidFieldException("Fields are incomplete or the entered values are invalid. The errors are reported in red under the respective entry fields.");
+          throw new Exception\InvalidFieldException("Fields are incomplete or the entered values are invalid. The errors are reported in red under the respective entry fields.");
         }
-
-        // Filters only the messages generated for the field 'name'.
-        /*foreach ($validation->getMessages()->filter('email') as $message) {
-          $this->flash->notice($message->getMessage());
-          break;
-        }*/
 
         $this->user->firstName = $this->request->getPost('firstName');
         $this->user->lastName = $this->request->getPost('lastName');
@@ -285,8 +279,9 @@ class ProfileController extends ListController {
     if ($this->request->isPost()) {
 
       try {
-        $validation->add("password", new Password());
-        $validation->add('password', new Confirmation(
+        $validation->add("oldPassword", new PresenceOf(["message" => "La password è obbligatoria."]));
+        $validation->add("newPassword", new Password());
+        $validation->add('newPassword', new Confirmation(
           [
             'message' => "La password è diversa da quella di conferma.",
             'with' => 'confirmPassword'
@@ -294,11 +289,15 @@ class ProfileController extends ListController {
 
         $group = $validation->validate($_POST);
         if (count($group) > 0) {
-          throw new InvalidFieldException("Fields are incomplete or the entered values are invalid. The errors are reported in red under the respective entry fields.");
+          throw new Exception\InvalidFieldException("Fields are incomplete or the entered values are invalid. The errors are reported in red under the respective entry fields.");
         }
 
-        $password = md5($this->request->getPost('newPassword'));
-        $this->user->password = $password;
+        $oldPassword = md5($this->request->getPost('oldPassword'));
+
+        if ($this->user->password != $oldPassword)
+          throw new Exception\WrongPasswordException("Non vi è nessun utente registrato con la login inserita o la password è errata. <a href=\"//".$this->domainName."/resetta-password/\">Hai dimenticato la password?</a>");
+
+        $this->user->password = md5($this->request->getPost('newPassowrd'));
 
         $this->user->save();
 
@@ -339,7 +338,7 @@ class ProfileController extends ListController {
 
         $group = $validation->validate($_POST);
         if (count($group) > 0) {
-          throw new InvalidFieldException("Fields are incomplete or the entered values are invalid. The errors are reported in red under the respective entry fields.");
+          throw new Exception\InvalidFieldException("Fields are incomplete or the entered values are invalid. The errors are reported in red under the respective entry fields.");
         }
 
         $this->user->username = $this->request->getPost('username');
