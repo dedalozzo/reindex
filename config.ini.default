@@ -28,6 +28,8 @@ votingGracePeriod = 300
 usernameMinLength = 5
 usernameMaxLength = 24
 
+maxEmailsPerUser = 10
+
 [review]
 ; Number of votes needed to pass a peer revision.
 votesNeededToPassRevision = 2
