@@ -295,7 +295,7 @@ class ProfileController extends ListController {
         $oldPassword = md5($this->request->getPost('oldPassword'));
 
         if ($this->user->password != $oldPassword)
-          throw new Exception\WrongPasswordException("Non vi è nessun utente registrato con la login inserita o la password è errata. <a href=\"//".$this->domainName."/resetta-password/\">Hai dimenticato la password?</a>");
+          throw new Exception\WrongPasswordException("La password corrente è diversa da quella inserita. <a href=\"//".$this->domainName."/resetta-password/\">Hai dimenticato la password?</a>");
 
         $this->user->password = md5($this->request->getPost('newPassowrd'));
 
