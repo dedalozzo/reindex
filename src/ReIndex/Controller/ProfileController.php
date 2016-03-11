@@ -407,8 +407,6 @@ class ProfileController extends ListController {
           $validation->add("email", new PresenceOf(["message" => "L'e-mail è obbligatoria."]));
           $validation->add("email", new Email(["message" => "L'e-mail non è valida."]));
 
-          $validation->add("password", new PresenceOf(["message" => "La password è obbligatoria."]));
-
           $group = $validation->validate($_POST);
           if (count($group) > 0) {
             throw new Exception\InvalidFieldException("I campi sono incompleti o i valori indicati non sono validi. Gli errori sono segnalati in rosso sotto ai rispettivi campi d'inserimento.");
