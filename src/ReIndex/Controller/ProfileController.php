@@ -19,6 +19,7 @@ use ReIndex\Validator\Username;
 use Phalcon\Mvc\View;
 use Phalcon\Validation\Validator\Confirmation;
 use Phalcon\Validation\Validator\PresenceOf;
+use Phalcon\Validation\Validator\Email;
 
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
@@ -391,7 +392,51 @@ class ProfileController extends ListController {
     $user = $this->getUser($username);
     if (!$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
+    // The validation object must be created in any case.
+    $validation = new Helper\ValidationHelper();
+    $this->view->setVar('validation', $validation);
+
     if ($this->request->isPost()) {
+
+      try {
+
+        // The user is trying to add an e-mail.
+        if ($this->request->getPost('addEmail')) {
+          $validation->setFilters("email", "trim");
+          $validation->setFilters("email", "lower");
+          $validation->add("email", new PresenceOf(["message" => "L'e-mail è obbligatoria."]));
+          $validation->add("email", new Email(["message" => "L'e-mail non è valida."]));
+
+          $validation->add("password", new PresenceOf(["message" => "La password è obbligatoria."]));
+
+          $group = $validation->validate($_POST);
+          if (count($group) > 0) {
+            throw new Exception\InvalidFieldException("I campi sono incompleti o i valori indicati non sono validi. Gli errori sono segnalati in rosso sotto ai rispettivi campi d'inserimento.");
+          }
+
+          $email = $this->request->getPost('email');
+
+          $opts = new ViewQueryOpts();
+          $opts->setKey($email)->setLimit(1);
+
+          $rows = $this->couch->queryView("members", "byEmail", NULL, $opts);
+
+          if (!$rows->isEmpty())
+            throw new Exception\InvalidEmailException("L'e-mail che stai tentando di aggiungere è già utilizzata da un altro utente.");
+
+          $this->user->addEmail($email);
+
+          $this->user->save();
+
+          $this->flash->success('Congratulations, the e-mail has been added to your account.');
+        }
+
+      }
+      catch (\Exception $e) {
+        // Displays the error message.
+        $this->flash->error($e->getMessage());
+      }
+
     }
     else {
     }
