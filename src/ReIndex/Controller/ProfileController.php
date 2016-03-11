@@ -311,6 +311,9 @@ class ProfileController extends ListController {
 
     }
 
+    $this->view->setVar('passwordMinLength', Password::MIN_LENGTH);
+    $this->view->setVar('passwordMaxLength', Password::MAX_LENGTH);
+
     $this->view->setVar('title', sprintf('%s\'s settings', $this->user->username));
     $this->view->pick('views/profile/password');
   }
