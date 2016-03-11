@@ -402,6 +402,9 @@ class ProfileController extends ListController {
 
         // The user is trying to add an e-mail.
         if ($this->request->getPost('addEmail')) {
+          if (count($this->user->getEmails() >= $this->di['config']->application->maxEmailsPerUser))
+            throw new Exception\TooManyEmailsException("You have reached the maximum number of e-mails allowed.");
+
           $validation->setFilters("email", "trim");
           $validation->setFilters("email", "lower");
           $validation->add("email", new PresenceOf(["message" => "L'e-mail è obbligatoria."]));
