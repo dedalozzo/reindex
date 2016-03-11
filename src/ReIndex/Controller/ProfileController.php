@@ -426,7 +426,7 @@ class ProfileController extends ListController {
 
           $this->user->save();
 
-          $this->flash->success('Congratulations, the e-mail has been added to your account.');
+          $this->flash->success('Congratulations, the e-mail has been added to your account. You should receive shortly an e-mail to verify your address.');
         }
 
       }
