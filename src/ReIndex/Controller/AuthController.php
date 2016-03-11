@@ -82,7 +82,6 @@ class AuthController extends BaseController {
         $validation->add("email", new PresenceOf(["message" => "L'e-mail è obbligatoria."]));
         $validation->add("email", new Email(["message" => "L'e-mail non è valida."]));
 
-        $validation->setFilters("password", "trim");
         $validation->add("password", new PresenceOf(["message" => "La password è obbligatoria."]));
 
         $group = $validation->validate($_POST);
