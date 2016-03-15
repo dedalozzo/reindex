@@ -375,8 +375,27 @@ class ProfileController extends ListController {
     if (!$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     if ($this->request->isPost()) {
-    }
-    else {
+      
+      try {
+
+        if ($this->request->getPost('removeLogin')) {
+          $login = $this->request->getPost('removeLogin', 'string');
+
+          if ($this->user->isLoginAlreadyPresent($login)) {
+            $this->user->removeLogin($login);
+            $this->user->save();
+
+            $this->flash->success("Congratulations, the login has been removed from your account. The associated e-mail addresses haven't been removed");
+          }
+          else
+            throw new Exception\InvalidLoginException("La login non è associata all'utente corrente.");
+        }
+      }
+      catch (\Exception $e) {
+        // Displays the error message.
+        $this->flash->error($e->getMessage());
+      }
+      
     }
 
     $this->view->setVar('title', sprintf('%s\'s logins', $this->user->username));
