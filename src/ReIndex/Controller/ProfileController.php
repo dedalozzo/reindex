@@ -257,7 +257,7 @@ class ProfileController extends ListController {
       $this->tag->setDefault("lastName", $this->user->lastName);
       $this->tag->setDefault("gender", $this->user->gender);
       $this->tag->setDefault("birthday", date('Y-m-d', $this->user->birthday));
-      $this->tag->setDefault("about", $this->user->about);
+      //$this->tag->setDefault("about", $this->user->about);
     }
 
     $this->view->setVar('title', sprintf('%s\'s settings', $this->user->username));
