@@ -385,10 +385,10 @@ class ProfileController extends ListController {
             $this->user->removeLogin($login);
             $this->user->save();
 
-            $this->flash->success("Congratulations, the login has been removed from your account. The associated e-mail addresses haven't been removed");
+            $this->flash->success("Congratulations, the social login has been removed from your account. The associated e-mail addresses haven't been removed.");
           }
           else
-            throw new Exception\InvalidLoginException("La login non è associata all'utente corrente.");
+            throw new Exception\InvalidLoginException("La social login non è associata all'utente corrente.");
         }
       }
       catch (\Exception $e) {
