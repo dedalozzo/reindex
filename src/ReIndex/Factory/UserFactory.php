@@ -31,7 +31,7 @@ class UserFactory {
   /**
    * @brief This function tries to recognize a user from his id and the secret token. In case the user has been
    * recognized, an Member object is returned, else this function returns an Anonymous instance.
-   * @retval Member::IUser An instance of the user has been recognized by his cookie.
+   * @retval User::IUser An instance of the user has been recognized by his cookie.
    * @todo Raise an exception when the user is banned, because obviously he can't login.
    */
   public static function fromCookie() {
@@ -93,7 +93,7 @@ class UserFactory {
   /**
    * @brief Searches for the user identified by e-mail, if any returns it, otherwise return an Anonymous instance.
    * @param[in] string $email The user email.
-   * @retval Member::IUser An user instance.
+   * @retval User::IUser An user instance.
    */
   public static function fromEmail($email) {
     $di = Di::getDefault();
@@ -114,7 +114,7 @@ class UserFactory {
    * @brief Searches for the user identified with the provided username, if any returns it, otherwise return an Anonymous
    * instance.
    * @param[in] string $username The username.
-   * @retval Member::IUser An user instance.
+   * @retval User::IUser An user instance.
    */
   public static function fromUsername($username) {
     $di = Di::getDefault();
