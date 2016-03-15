@@ -191,6 +191,15 @@ class Member extends Storable implements IUser, Extension\ICount {
     return (isset($this->meta['emails'][$email])) ? $this->meta['emails'][$email] : FALSE;
   }
 
+
+  /**
+   * @brief Returns `true` if the user e-mail is already present, `false` otherwise.
+   * @retval bool
+   */
+  public function isEmailAlreadyPresent($email) {
+    return isset($this->meta['emails'][$email]);
+  }
+
   //!@}
 
 
