@@ -185,6 +185,7 @@ class Member extends Storable implements IUser, Extension\ICount {
 
   /**
    * @brief Returns `true` if the user e-mail has been verified, `false` otherwise.
+   * @param[in] string $email An e-mail address.
    * @retval bool
    */
   public function isVerifiedEmail($email) {
@@ -194,6 +195,7 @@ class Member extends Storable implements IUser, Extension\ICount {
 
   /**
    * @brief Returns `true` if the user e-mail is already present, `false` otherwise.
+   * @param[in] string $email An e-mail address.
    * @retval bool
    */
   public function isEmailAlreadyPresent($email) {
@@ -530,15 +532,22 @@ class Member extends Storable implements IUser, Extension\ICount {
 
   /**
    * @brief Removes the specified provider and all its information.
-   * @param[in] string $consumerName The consumer name.
-   * @param[in] string $userId The user id.
+   * @param[in] string $login The login address ($userId@$consumerName).
    * @attention The e-mail associated to the login is never removed from the list of e-mails.
    */
-  public function removeLogin($consumerName, $userId) {
-    $login = $this->buildLoginName($userId, $consumerName);
-
-    if (isset($this->meta['logins'][$login]))
+  public function removeLogin($login) {
+    if ($this->isLoginAlreadyPresent($login))
       unset($this->meta['logins'][$login]);
+  }
+
+
+  /**
+   * @brief Returns `true` if the user login is already present, `false` otherwise.
+   * @param[in] string $login The login address ($userId@$consumerName).
+   * @retval bool
+   */
+  public function isLoginAlreadyPresent($login) {
+    return isset($this->meta['logins'][$login]);
   }
 
   //!@}
