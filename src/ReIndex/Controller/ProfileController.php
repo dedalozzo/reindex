@@ -417,6 +417,9 @@ class ProfileController extends ListController {
 
           $email = $this->request->getPost('email');
 
+          if ($this->user->isEmailAlreadyPresent($email))
+            throw new Exception\InvalidEmailException("L'e-mail che stai tentando di aggiungere è già presente.");
+
           $opts = new ViewQueryOpts();
           $opts->setKey($email)->setLimit(1);
 
@@ -429,7 +432,26 @@ class ProfileController extends ListController {
 
           $this->user->save();
 
+          // Removes the email.
+          unset($_POST["email"]);
+
           $this->flash->success('Congratulations, the e-mail has been added to your account. You should receive shortly an e-mail to verify your address.');
+        }
+        elseif ($this->request->getPost('removeEmail')) {
+          $email = $this->request->getPost("removeEmail", "email");
+
+          if ($this->user->canRemoveEmail($email)) {
+            $this->user->removeEmail($email);
+            $this->user->save();
+
+            // Removes the email.
+            unset($_POST["email"]);
+
+            $this->flash->success('Congratulations, the e-mail has been removed from your account.');
+          }
+          else {
+            throw new Exception\InvalidEmailException("L'e-mail non può essere rimossa.");
+          }
         }
 
       }
@@ -438,8 +460,6 @@ class ProfileController extends ListController {
         $this->flash->error($e->getMessage());
       }
 
-    }
-    else {
     }
 
     $this->view->setVar('title', sprintf('%s\'s e-mails', $username));
