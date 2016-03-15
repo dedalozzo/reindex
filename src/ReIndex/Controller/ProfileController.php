@@ -15,6 +15,7 @@ use ReIndex\Helper;
 use ReIndex\Exception;
 use ReIndex\Validator\Password;
 use ReIndex\Validator\Username;
+use ReIndex\Security\User\IUser;
 
 use Phalcon\Mvc\View;
 use Phalcon\Validation\Validator\Confirmation;
@@ -34,20 +35,30 @@ class ProfileController extends ListController {
 
   /**
    * @brief Given a username returns the correspondent user.
+   * @param[in] string $username A username.
+   * @retval User::IUser An user instance.
    */
   protected function getUser($username) {
     $this->log->addDebug(sprintf('Username: %s', $username));
 
     $user = UserFactory::fromUsername($username);
 
-    // If the user doesn't exist, forward to 404.
-    if (!$user->isMember()) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
-
-    $user->incHits($this->user->id);
-
-    $this->view->setVar('profile', $user);
+    if ($user->isMember()) {
+      $user->incHits($this->user->id);
+      $this->view->setVar('profile', $user);
+    }
 
     return $user;
+  }
+
+
+  /**
+   * @brief Returns `true` if the specified user matches the current one, `false` otherwise.
+   * @param[in] User::IUser An user instance.
+   * @retval bool
+   */
+  protected function isSameUser(IUser $user) {
+    return ($user->isMember() or $this->user->match($user->getId()));
   }
 
 
@@ -77,6 +88,9 @@ class ProfileController extends ListController {
    */
   public function indexAction($username) {
     $user = $this->getUser($username);
+
+    // If the user doesn't exist, forward to 404.
+    if (!$user->isMember()) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $opts = new ViewQueryOpts();
 
@@ -113,6 +127,9 @@ class ProfileController extends ListController {
   public function aboutAction($username) {
     $user = $this->getUser($username);
 
+    // If the user doesn't exist, forward to 404.
+    if (!$user->isMember()) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+
     $this->view->setVar('title', sprintf('About %s', $username));
     $this->view->pick('views/profile/about');
   }
@@ -124,6 +141,9 @@ class ProfileController extends ListController {
    */
   public function connectionsAction($username, $filter = NULL) {
     $user = $this->getUser($username);
+
+    // If the user doesn't exist, forward to 404.
+    if (!$user->isMember()) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $this->view->setVar('title', sprintf('%s\'s connections', $username));
     $this->view->pick('views/profile/connections');
@@ -137,6 +157,9 @@ class ProfileController extends ListController {
    */
   public function repositoriesAction($username, $filter = NULL) {
     $user = $this->getUser($username);
+
+    // If the user doesn't exist, forward to 404.
+    if (!$user->isMember()) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $filters = ['personal-projects' => NULL, 'forks' => NULL];
     if (is_null($filter)) $filter = 'personal-projects';
@@ -205,6 +228,9 @@ class ProfileController extends ListController {
   public function activitiesAction($username) {
     $user = $this->getUser($username);
 
+    // If the user doesn't exist, forward to 404.
+    if (!$user->isMember()) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+
     $this->view->setVar('title', sprintf('%s\'s activities', $username));
     $this->view->pick('views/profile/activities');
   }
@@ -216,7 +242,7 @@ class ProfileController extends ListController {
    */
   public function settingsAction($username) {
     $user = $this->getUser($username);
-    if (!$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
+    if (!$this->isSameUser($user) or !$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     // The validation object must be created in any case.
     $validation = new Helper\ValidationHelper();
@@ -271,7 +297,7 @@ class ProfileController extends ListController {
    */
   public function passwordAction($username) {
     $user = $this->getUser($username);
-    if (!$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
+    if (!$this->isSameUser($user) or !$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     // The validation object must be created in any case.
     $validation = new Helper\ValidationHelper();
@@ -325,7 +351,7 @@ class ProfileController extends ListController {
    */
   public function usernameAction($username) {
     $user = $this->getUser($username);
-    if (!$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
+    if (!$this->isSameUser($user) or !$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     // The validation object must be created in any case.
     $validation = new Helper\ValidationHelper();
@@ -372,7 +398,7 @@ class ProfileController extends ListController {
    */
   public function loginsAction($username) {
     $user = $this->getUser($username);
-    if (!$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
+    if (!$this->isSameUser($user) or !$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     if ($this->request->isPost()) {
       
@@ -409,7 +435,7 @@ class ProfileController extends ListController {
    */
   public function emailsAction($username) {
     $user = $this->getUser($username);
-    if (!$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
+    if (!$this->isSameUser($user) or !$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     // The validation object must be created in any case.
     $validation = new Helper\ValidationHelper();
@@ -492,7 +518,7 @@ class ProfileController extends ListController {
    */
   public function privacyAction($username) {
     $user = $this->getUser($username);
-    if (!$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
+    if (!$this->isSameUser($user) or !$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     if ($this->request->isPost()) {
 
