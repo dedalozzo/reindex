@@ -31,6 +31,7 @@ use ReIndex\Validator\Username;
 /**
  * @brief Controller of Authentication actions.
  * @nosubgrouping
+ * @todo Add the support for a stronger password encryption.
  */
 class AuthController extends BaseController {
 
