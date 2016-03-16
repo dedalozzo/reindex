@@ -36,10 +36,42 @@ class AuthController extends BaseController {
 
 
   /**
+   * @brief Performs the consumer join operation.
+   * @param[in] Security::OAuth2Consumer $consumer A consumer instance.
+   */
+  protected function join($consumer) {
+    if ($this->user->isMember())
+      $this->addSocialLogin($consumer);
+    else
+      $this->performLogon($consumer);
+  }
+
+
+  /**
+   * @brief Try to add the social login to the current member.
+   * @param[in] Security::OAuth2Consumer $consumer A consumer instance.
+   */
+  protected function addSocialLogin($consumer) {
+    $this->flash->clear();
+
+    try {
+      $consumer->join();
+      $this->flash->success(sprintf('Congratulations, your %s social login has been added.', $this->di['config'][$consumer->getName()]['name']));
+    }
+    catch (\Exception $e) {
+      // Displays the error message.
+      $this->flash->error($e->getMessage());
+    }
+
+    header('Location: /' . $this->user->username . '/settings/logins/');
+  }
+
+
+  /**
    * @brief Performs the logon using the specified consumer.
    * @param[in] Security::OAuth2Consumer $consumer A consumer instance.
    */
-  protected function consumerLogon($consumer) {
+  protected function performLogon($consumer) {
     $this->flash->clear();
 
     try {
@@ -301,8 +333,7 @@ class AuthController extends BaseController {
    * @brief Sign in with Facebook.
    */
   public function facebookAction() {
-    if ($this->user->isMember()) return header('Location: /');
-    $this->consumerLogon(new Consumer\FacebookConsumer);
+    $this->join(new Consumer\FacebookConsumer);
   }
 
 
@@ -310,8 +341,7 @@ class AuthController extends BaseController {
    * @brief Sign in with LinkedIn.
    */
   public function linkedinAction() {
-    if ($this->user->isMember()) return header('Location: /');
-    $this->consumerLogon(new Consumer\LinkedInConsumer());
+    $this->join(new Consumer\LinkedInConsumer());
   }
 
 
@@ -319,8 +349,7 @@ class AuthController extends BaseController {
    * @brief Sign in with GitHub.
    */
   public function githubAction() {
-    if ($this->user->isMember()) return header('Location: /');
-    $this->consumerLogon(new Consumer\GitHubConsumer());
+    $this->join(new Consumer\GitHubConsumer());
   }
 
 
@@ -328,8 +357,7 @@ class AuthController extends BaseController {
    * @brief Sign in with Google+.
    */
   public function googleAction() {
-    if ($this->user->isMember()) return header('Location: /');
-    $this->consumerLogon(new Consumer\GoogleConsumer());
+    $this->join(new Consumer\GoogleConsumer());
   }
 
 }
