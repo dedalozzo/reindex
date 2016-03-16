@@ -138,8 +138,8 @@ abstract class OAuth2Consumer {
       if ($this->user->isMember()) {
         // The current user is not a guest, but a member.
 
-        if ($this->user->isVerifiedEmail($userEmail)) {
-          // The current user email match with the $userMail and it is verified.
+        if ($this->user->match($user->getId())) {
+          // The user found is actually the current user.
           $this->update($this->user, $userData);
         }
         else
