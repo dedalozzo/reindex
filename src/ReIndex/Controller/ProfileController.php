@@ -182,7 +182,7 @@ class ProfileController extends ListController {
 
     // Merges together the repositories of different users.
     foreach ($logins as $login) {
-      $repos = array_merge($repos, $github->api('user')->repositories($login[1]));
+      $repos = array_merge($repos, $github->api('user')->repositories($login[4]));
     }
 
     $sorter = function ($one, $two) {
