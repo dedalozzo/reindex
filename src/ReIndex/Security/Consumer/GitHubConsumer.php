@@ -26,12 +26,12 @@ class GitHubConsumer extends OAuth2Consumer {
 
   const ID = 'id';
   const EMAIL = 'email';
-  const LOGIN = 'login';
   const FIRST_NAME = 'first';
   const LAST_NAME = 'last';
   const HEADLINE = 'company';
   const ABOUT = 'bio';
   const PROFILE_URL = 'html_url';
+  const USERNAME = 'login';
 
   //!@}
 
@@ -59,7 +59,7 @@ class GitHubConsumer extends OAuth2Consumer {
    * @copydoc OAuth2Consumer::update()
    */
   protected function update(Member $user, array $userData) {
-    $user->setMetadata('username', $this->buildUsername($userData[static::LOGIN]), FALSE, FALSE);
+    $user->setMetadata('username', $this->buildUsername($userData[static::USERNAME]), FALSE, FALSE);
 
     $names = Text::splitFullName(@$userData['name']);
     $user->setMetadata('firstName', @$names[static::FIRST_NAME], FALSE, FALSE);
