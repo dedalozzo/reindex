@@ -519,13 +519,14 @@ class Member extends Storable implements IUser, Extension\ICount {
    * @brief Searches for the user identified by the specified email, if any returns it, otherwise return `false`.
    * @param[in] string $consumerName The consumer name.
    * @param[in] string $userId The user id.
-   * @param[in] string $email The user's e-mail.
-   * @param[in] bool $verified The e-mail is verified or not.
    * @param[in] string $profileUrl The user's profile URL.
+   * @param[in] string $email The user's e-mail.
+   * @param[in] string $userId The username.
+   * @param[in] bool $verified The e-mail is verified or not.
    */
-  public function addLogin($consumerName, $userId, $profileUrl, $email, $verified) {
+  public function addLogin($consumerName, $userId, $profileUrl, $email, $username, $verified) {
     $login = $this->buildLoginName($userId, $consumerName);
-    $this->meta['logins'][$login] = [$consumerName, $userId, $email, $profileUrl];
+    $this->meta['logins'][$login] = [$consumerName, $userId, $email, $profileUrl, $username];
     $this->addEmail($email, $verified);
   }
 
