@@ -133,6 +133,16 @@ class Member extends Storable implements IUser, Extension\ICount {
 
 
   /**
+   * @brief Returns `true` if the user e-mail is primary, `false` otherwise.
+   * @param[in] string $email An e-mail address.
+   * @retval bool
+   */
+  public function isPrimaryEmail($email) {
+    return ($this->meta['primaryEmail'] === $email);
+  }
+
+
+  /**
    * @brief Returns all the e-mails associated with the current user.
    * @retval array An associative array using as keys the e-mail addresses, and as values if the address are verified or
    * not.
