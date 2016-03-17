@@ -494,9 +494,41 @@ class ProfileController extends ListController {
 
             $this->flash->success('Congratulations, the e-mail has been removed from your account.');
           }
-          else {
+          else
             throw new Exception\InvalidEmailException("L'e-mail non può essere rimossa.");
-          }
+        }
+        elseif ($this->request->getPost('resendVerificationEmail')) {
+          $email = $this->request->getPost("resendVerificationEmail", "email");
+
+          if (!$this->user->isEmailAlreadyPresent($email))
+            throw new Exception\InvalidEmailException("The e-mail you are trying to verify is not associated to your account.");
+          elseif ($this->user->isVerifiedEmail($email))
+            throw new Exception\InvalidEmailException("The e-mail is already verified.");
+
+          // todo: Send the verification e-mail.
+
+          // Removes the email.
+          unset($_POST["email"]);
+
+          $this->flash->success(sprintf('Congratulations, the verification e-mail has been sent to the following e-mail address: %s.', $email));
+        }
+        elseif ($this->request->getPost('setAsPrimaryEmail')) {
+          $email = $this->request->getPost("setAsPrimaryEmail", "email");
+
+          if (!$this->user->isEmailAlreadyPresent($email))
+            throw new Exception\InvalidEmailException("You are trying to set as primary an e-mail that doesn't belong to you.");
+          elseif ($this->user->isPrimaryEmail($email))
+            throw new Exception\InvalidEmailException(sprintf("The address %s is already your primary e-mail.", $email));
+          elseif (!$this->user->isVerifiedEmail($email))
+            throw new Exception\InvalidEmailException("You are trying to set as primary an address hasn't been verified yet.");
+
+          $this->user->primaryEmail = $email;
+          $this->user->save();
+
+          // Removes the email.
+          unset($_POST["email"]);
+
+          $this->flash->success(sprintf('Congratulations, %s has been set as your primary e-mail.', $email));
         }
 
       }
