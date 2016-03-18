@@ -13,7 +13,7 @@ namespace ReIndex\Controller;
 use EoC\Opt\ViewQueryOpts;
 use EoC\Couch;
 
-use ReIndex\Helper\Time;
+use ReIndex\Helper;;
 use ReIndex\Model\Member;
 
 use Phalcon\Mvc\View;
@@ -51,7 +51,11 @@ class MemberController extends ListController {
       $member->username = $result[$i]['value'][0];
       $member->gravatar = Member::getGravatar($result[$i]['value'][1]);
       $member->createdAt = $result[$i]['value'][2];
-      $member->when = Time::when($result[$i]['value'][2], false);
+      $member->firstName = $result[$i]['value'][3];
+      $member->lastName = $result[$i]['value'][4];
+      $member->headline = $result[$i]['value'][5];
+      $member->when = Helper\Time::when($member->createdAt, false);
+      $member->hitsCount = Helper\Text::formatNumber($this->redis->hGet(Helper\Text::unversion($member->id), 'hits'));
 
       $members[] = $member;
     }
