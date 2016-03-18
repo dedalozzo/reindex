@@ -20,7 +20,7 @@ logDir = "log/"
 
 postsPerPage = 15;
 tagsPerPage = 40;
-membersPerPage = 40;
+membersPerPage = 20;
 
 editingGracePeriod = 0
 votingGracePeriod = 300
