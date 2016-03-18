@@ -771,7 +771,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'member')
-    $emit($doc->_id, [$doc->username, $doc->primaryEmail, $doc->createdAt]);
+    $emit($doc->_id, [$doc->username, $doc->primaryEmail, $doc->createdAt, $doc->firstName, $doc->lastName, $doc->headline]);
 };
 MAP;
 
