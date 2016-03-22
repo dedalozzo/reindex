@@ -11,6 +11,7 @@
 namespace ReIndex\Controller;
 
 
+use ReIndex\Validation;
 use ReIndex\Helper;
 use ReIndex\Exception\InvalidFieldException;
 use ReIndex\Model\Article;
@@ -51,7 +52,7 @@ class ArticleController extends IndexController {
       return $this->dispatcher->forward(['controller' => 'auth', 'action' => 'signin']);
 
     // The validation object must be created in any case.
-    $validation = new Helper\ValidationHelper();
+    $validation = new Validation();
     $this->view->setVar('validation', $validation);
 
     if ($this->request->isPost()) {

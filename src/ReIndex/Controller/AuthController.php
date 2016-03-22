@@ -20,7 +20,7 @@ use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
 use ReIndex\Exception;
-use ReIndex\Helper\ValidationHelper;
+use ReIndex\Validation;
 use ReIndex\Helper\Cookie;
 use ReIndex\Model\Member;
 use ReIndex\Security\Consumer;
@@ -100,7 +100,7 @@ class AuthController extends BaseController {
     $this->view->setVar("signin", TRUE);
 
     // The validation object must be created in any case.
-    $validation = new ValidationHelper();
+    $validation = new Validation();
     $this->view->setVar('validation', $validation);
 
     if ($this->request->isPost()) {
@@ -178,7 +178,7 @@ class AuthController extends BaseController {
     $this->view->setVar("signup", TRUE);
 
     // The validation object must be created in any case.
-    $validation = new ValidationHelper();
+    $validation = new Validation();
     $this->view->setVar('validation', $validation);
 
     if ($this->request->isPost()) {

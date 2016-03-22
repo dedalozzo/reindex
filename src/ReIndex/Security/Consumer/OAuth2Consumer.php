@@ -23,6 +23,7 @@ use Phalcon\Validation\Validator\PresenceOf;
 use ReIndex\Model\Member;
 use ReIndex\Factory\UserFactory;
 use ReIndex\Helper;
+use Reindex\Validation;
 use ReIndex\Exception;
 
 
@@ -264,7 +265,7 @@ abstract class OAuth2Consumer {
    * @param[in] array $userData An associative array with the user information.
    */
   protected function validate(array $userData) {
-    $validation = new Helper\ValidationHelper();
+    $validation = new Validation();
     $validation->add(static::ID, new PresenceOf(["message" => "L'id è obbligatorio."]));
     $validation->add(static::EMAIL, new PresenceOf(["message" => "L'e-mail è obbligatoria."]));
 

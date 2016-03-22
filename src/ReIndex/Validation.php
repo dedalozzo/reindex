@@ -8,7 +8,7 @@
  */
 
 
-namespace ReIndex\Helper;
+namespace ReIndex;
 
 
 use Phalcon\Validation as PhalconValidation;

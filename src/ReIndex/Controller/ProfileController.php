@@ -13,6 +13,7 @@ namespace ReIndex\Controller;
 use ReIndex\Factory\UserFactory;
 use ReIndex\Helper;
 use ReIndex\Exception;
+use ReIndex\Validation;
 use ReIndex\Validator\Password;
 use ReIndex\Validator\Username;
 use ReIndex\Security\User\IUser;
@@ -245,7 +246,7 @@ class ProfileController extends ListController {
     if (!$this->isSameUser($user) or !$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     // The validation object must be created in any case.
-    $validation = new Helper\ValidationHelper();
+    $validation = new Validation();
     $this->view->setVar('validation', $validation);
 
     if ($this->request->isPost()) {
@@ -300,7 +301,7 @@ class ProfileController extends ListController {
     if (!$this->isSameUser($user) or !$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     // The validation object must be created in any case.
-    $validation = new Helper\ValidationHelper();
+    $validation = new Validation();
     $this->view->setVar('validation', $validation);
 
     if ($this->request->isPost()) {
@@ -354,7 +355,7 @@ class ProfileController extends ListController {
     if (!$this->isSameUser($user) or !$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     // The validation object must be created in any case.
-    $validation = new Helper\ValidationHelper();
+    $validation = new Validation();
     $this->view->setVar('validation', $validation);
 
     if ($this->request->isPost()) {
@@ -438,7 +439,7 @@ class ProfileController extends ListController {
     if (!$this->isSameUser($user) or !$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     // The validation object must be created in any case.
-    $validation = new Helper\ValidationHelper();
+    $validation = new Validation();
     $this->view->setVar('validation', $validation);
 
     if ($this->request->isPost()) {
