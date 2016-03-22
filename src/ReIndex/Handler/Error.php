@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file ErrorHandler.php
- * @brief This file contains the ErrorHandler class.
+ * @file Error.php
+ * @brief This file contains the Error class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -25,7 +25,7 @@ use ReIndex\Version;
  * @brief A monolog error handler that redirects the user to an error page.
  * @nosubgrouping
  */
-class ErrorHandler extends AbstractProcessingHandler {
+class Error extends AbstractProcessingHandler {
   protected $di; // Stores the default Dependency Injector.
   protected $user; // Stores the current user.
 

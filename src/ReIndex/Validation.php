@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file ValidationHelper.php
- * @brief This file contains the ValidationHelper class.
+ * @file Validation.php
+ * @brief This file contains the Validation class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -11,14 +11,14 @@
 namespace ReIndex\Helper;
 
 
-use Phalcon\Validation;
+use Phalcon\Validation as PhalconValidation;
 
 
 /**
  * @brief This class extends the Phalcon Validation, adding new methods.
  * @nosubgrouping
  */
-class ValidationHelper extends Validation {
+class Validation extends PhalconValidation {
 
   /**
    * @brief Returns the first error message for the specified field.
