@@ -19,7 +19,7 @@ use Monolog\Handler\StreamHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Graze\Monolog\Handler\WhoopsHandler;
 
-use ReIndex\Handler\ErrorHandler as ReIndexErrorHandler;
+use ReIndex\Handler\Error as ReIndexErrorHandler;
 
 
 $start = microtime(true);
