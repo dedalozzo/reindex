@@ -12,6 +12,7 @@
 namespace ReIndex\Model;
 
 
+use EoC\Couch;
 use EoC\Doc\Doc;
 use EoC\Generator\UUID;
 
@@ -21,7 +22,7 @@ use ReIndex\Helper;
 
 
 /**
- * @brief This class is used to represent a storable object.
+ * @brief This class is used to represent a storable object and implements the Active Record patten.
  * @nosubgrouping
  */
 abstract class Storable extends Doc {
@@ -60,6 +61,19 @@ abstract class Storable extends Doc {
       $instance->setId($id);
 
     return $instance;
+  }
+
+
+  /**
+   * @brief Tries to get the object from the database identified by the provided ID.
+   * @param[in] string $id An object ID.
+   * @retval object
+   */
+  public static function find($id) {
+    $di = Di::getDefault();
+    $couch = $di['couchdb'];
+
+    return $couch->getDoc(Couch::STD_DOC_PATH, $id);
   }
 
 
