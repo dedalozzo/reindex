@@ -11,7 +11,7 @@
 namespace ReIndex;
 
 
-use Phalcon\Validation as PhalconValidation;
+use \Phalcon\Validation as PhalconValidation;
 
 
 /**
