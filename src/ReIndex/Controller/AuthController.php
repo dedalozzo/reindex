@@ -40,7 +40,7 @@ class AuthController extends BaseController {
    * @brief Performs the consumer join operation.
    * @param[in] Security::OAuth2Consumer $consumer A consumer instance.
    */
-  protected function join($consumer) {
+  protected function join(Consumer\IConsumer $consumer) {
     if ($this->user->isMember())
       $this->addSocialLogin($consumer);
     else
@@ -52,7 +52,7 @@ class AuthController extends BaseController {
    * @brief Try to add the social login to the current member.
    * @param[in] Security::OAuth2Consumer $consumer A consumer instance.
    */
-  protected function addSocialLogin($consumer) {
+  protected function addSocialLogin(Consumer\IConsumer $consumer) {
     $this->flash->clear();
 
     try {
@@ -72,7 +72,7 @@ class AuthController extends BaseController {
    * @brief Performs the logon using the specified consumer.
    * @param[in] Security::OAuth2Consumer $consumer A consumer instance.
    */
-  protected function performLogon($consumer) {
+  protected function performLogon(Consumer\IConsumer $consumer) {
     $this->flash->clear();
 
     try {
