@@ -8,7 +8,6 @@
  */
 
 
-//! oAuth2 consumers
 namespace ReIndex\Security\Consumer;
 
 
@@ -23,7 +22,7 @@ use Phalcon\Validation\Validator\PresenceOf;
 use ReIndex\Model\Member;
 use ReIndex\Factory\UserFactory;
 use ReIndex\Helper;
-use Reindex\Validation;
+use ReIndex\Validation;
 use ReIndex\Exception;
 
 
@@ -31,7 +30,7 @@ use ReIndex\Exception;
  * @brief Ancestor class of each OAuth2 consumer class.
  * @nosubgrouping
  */
-abstract class OAuth2Consumer {
+abstract class OAuth2Consumer implements IConsumer {
 
   /** @name Field Names */
   //!@{
@@ -345,36 +344,31 @@ abstract class OAuth2Consumer {
 
 
   /**
-   * @brief Returns `true` in case the linked provider is trustworthy, `false` otherwise.
-   * @retval bool
+   * @copydoc IConsumer::isTrustworthy()
    */
   abstract public function isTrustworthy();
 
 
   /**
-   * @brief The authenticated user joins the ReIndex social network.
-   * @retval Model::Member An user instance.
+   * @copydoc IConsumer::join()
    */
   abstract public function join();
 
 
   /**
-   * @brief Retrieves the user friends.
-   * @retval array
+   * @copydoc IConsumer::getFriends()
    */
   abstract public function getFriends();
 
 
   /**
-   * @brief Returns the consumer name.
-   * @retval string
+   * @copydoc IConsumer::getName()
    */
   abstract public function getName();
 
 
   /**
-   * @brief Returns the data scope.
-   * @retval array
+   * @copydoc IConsumer::getScope()
    */
   abstract public function getScope();
 
