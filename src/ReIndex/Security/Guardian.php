@@ -15,6 +15,8 @@ namespace ReIndex\Security;
 use EoC\Extension;
 use EoC\Opt\ViewQueryOpts;
 
+use Phalcon\Acl\RoleInterface;
+
 use ReIndex\Factory\UserFactory;
 use ReIndex\Exception\NotEnoughPrivilegesException;
 use ReIndex\Security\User\IUser;
@@ -32,6 +34,8 @@ class Guardian {
   protected static $user = NULL;
 
   private $couch;
+  
+  protected $roles = [];
 
 
   public function __construct($config, $di) {
@@ -73,7 +77,7 @@ class Guardian {
    * @brief Returns `true` is the current user can impersonate the specified user, `false` otherwise.
    * @details An admin can impersonate any member, but he can't impersonate another admin. A member (even an admin) can
    * impersonate a guest. No one can impersonate itself and a guest, of course, can't impersonate anyone.
-   * @param[in] IUser $user
+   * @param[in] IUser $user An user instance.
    * @retval bool
    */
   private function canImpersonate(IUser $user) {
@@ -88,13 +92,34 @@ class Guardian {
 
   /**
    * @brief Impersonates the given user.
-   * @param[in] IUser $user
+   * @param[in] IUser $user An user instance.
    */
   public function impersonate(IUser $user) {
     if ($this->canImpersonate($user))
       self::$user = $user;
     else
       throw new NotEnoughPrivilegesException('Non hai sufficienti privilegi per impersonare un altro utente.');
+  }
+
+
+  /**
+   * @brief Loads the given role.
+   * @param[in] Phalcon::Acl::IRole $role An instance of a class that implements IRole.
+   */
+  public function loadRole(RoleInterface $role) {
+    if (array_key_exists($role->getName(), $this->roles))
+      throw new \Exception(sprintf("The '%s' role already exists.", $role->getName()));
+    
+    $this->roles[$role->getName()] = $role;
+  }
+
+
+  /**
+   * @brief Unloads all the roles.
+   */
+  public function resetRoles() {
+    unset($this->roles);
+    $this->roles = [];
   }
 
 }
