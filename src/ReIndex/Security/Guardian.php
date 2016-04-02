@@ -15,11 +15,10 @@ namespace ReIndex\Security;
 use EoC\Extension;
 use EoC\Opt\ViewQueryOpts;
 
-use Phalcon\Acl\RoleInterface;
-
 use ReIndex\Factory\UserFactory;
 use ReIndex\Exception\NotEnoughPrivilegesException;
 use ReIndex\Security\User\IUser;
+use ReIndex\Security\Role\IRole;
 
 
 /**
@@ -104,9 +103,9 @@ class Guardian {
 
   /**
    * @brief Loads the given role.
-   * @param[in] Phalcon::Acl::IRole $role An instance of a class that implements IRole.
+   * @param[in] ReIndex::Security::Role::IRole $role An instance of a class that implements IRole.
    */
-  public function loadRole(RoleInterface $role) {
+  public function loadRole(IRole $role) {
     if (array_key_exists($role->getName(), $this->roles))
       throw new \Exception(sprintf("The '%s' role already exists.", $role->getName()));
     
