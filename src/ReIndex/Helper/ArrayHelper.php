@@ -76,7 +76,7 @@ class ArrayHelper extends ElephantOnCouchArrayHelper {
 
   /**
    * @brief Merge the two given arrays.
-   * @details The returned array doesn't contain duplicate values
+   * @details The returned array doesn't contain duplicate values.
    * @param[in] array $array1 The first array.
    * @param[in] array $array2 The first array.
    * @retval array
