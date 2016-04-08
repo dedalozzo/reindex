@@ -150,10 +150,10 @@ abstract class OAuth2Consumer implements IConsumer {
         // The user is a guest and the provider fortunately is trustworthy. This means that $userEmail has been verified
         // by someone we trust.
 
-        if (!$user->isVerifiedEmail($userEmail)) {
+        if (!$user->emails->isVerified($userEmail)) {
           // For security reason we let the user sign in only if the e-mail in our system is not verified. We must
           // prevent an attacker to execute the sign in procedure.
-          $this->signIn($user, $userData);
+          $this->signIn($user, $userData); // We know $user is an instance of Member for sure.
         }
         else
           throw new Exception\UserMismatchException(sprintf('L\'e-mail primaria del tuo account %1$s è già in uso ed è stata verificata, dunque hai già un\'utenza attiva. Per sicurezza il sistema non ti consente di autenticarti: qualcuno potrebbe infatti essersi impossessato del tuo account %1$s, al momento non associato al tuo profilo su questo sito. Se non ricordi la password, segui <a href="#">la procedura di recupero</a> e accedi utilizzando l\'e-mail e la nuova password che ti verrà spedita all\'indirizzo di posta associato al tuo account %1$s. Una volta fatto il sign in puoi collegare il tuo account %1$s.', $this->di['config'][$this->getName()]['name']));
@@ -337,7 +337,7 @@ abstract class OAuth2Consumer implements IConsumer {
    * @param[in] array $userData An associative array with the user information.
    */
   protected function update(Member $user, array $userData) {
-    $user->addLogin($this->getName(), $userData[static::ID], @$userData[static::PROFILE_URL], $userData[static::EMAIL], @$userData[static::USERNAME], $this->isTrustworthy());
+    $user->logins->add($this->getName(), $userData[static::ID], @$userData[static::PROFILE_URL], $userData[static::EMAIL], @$userData[static::USERNAME], $this->isTrustworthy());
     $user->internetProtocolAddress = $_SERVER['REMOTE_ADDR'];
     $user->save();
   }
