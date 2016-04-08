@@ -48,42 +48,4 @@ interface IUser {
    */
   function isMember();
 
-
-  /**
-   * @brief Returns `true` in case the user is an administrator.
-   * @retval bool
-   */
-  function isAdmin();
-
-
-  /**
-   * @brief Returns `true` in case the user is a developer.
-   * @retval bool
-   */
-  function isDeveloper();
-
-
-
-  /**
-   * @brief Returns `true` in case the user is a moderator.
-   * @retval bool
-   */
-  function isModerator();
-
-
-  /**
-   * @brief Returns `true` in case the user is a reviewer.
-   * @details An user can obtain this privilege earning reputation.
-   * @retval bool
-   */
-  function isReviewer();
-
-
-  /**
-   * @brief Returns `true` in case the user is an editor.
-   * @details An user can obtain this privilege earning reputation.
-   * @retval bool
-   */
-  function isEditor();
-
 }
