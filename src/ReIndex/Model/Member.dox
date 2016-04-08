@@ -13,7 +13,9 @@ class Member  {
   string $firstName; //!< First name.
   string $lastName; //!< Last surname.
 
-  string $primaryEmail; //!< Primary e-mail.
+  string $emails; //!< A collection of e-mails.
+  string $logins; //!< A collection of consumers' logins.
+
   string $password; //!< Password chosen by the member.
   string $hash; //!< String hash sent via e-mail to the member to confirm that his e-mail is real.
   string $internetProtocolAddress; //!< The IP address of the member.
