@@ -49,7 +49,7 @@ class Article extends Post {
    * @details When a user works on an article, he wants save many time the item before submit it for peer revision.
    */
   public function markAsDraft() {
-    $this->meta['status'] = Enum\DocStatus::DRAFT;
+    $this->meta['status'] = Enum\VersionState::DRAFT;
 
     // Used to group by year, month and day.
     $this->meta['year'] = date("Y", $this->createdAt);
