@@ -15,14 +15,16 @@ use EoC\Opt\ViewQueryOpts;
 
 use ReIndex\Helper;
 use ReIndex\Exception;
-use ReIndex\Enum\DocStatus;
+use ReIndex\Enum\VersionState;
 
 
 /**
- * @brief A generic content created by a user.
+ * @brief A version of a content created by a user.
  * @nosubgrouping
  */
 abstract class Versionable extends Storable {
+
+  protected $state;
 
 
   /**
@@ -30,238 +32,12 @@ abstract class Versionable extends Storable {
    */
   public function __construct() {
     parent::__construct();
-    $this->meta["status"] = DocStatus::CREATED;
+
+    $this->meta['state'] = VersionState::CREATED;
+    $this->state = new VersionState($this->meta);
+
     $this->meta['versionable'] = TRUE;
   }
-
-
-  /** @name Status Checking Methods */
-  //!@{
-
-  /**
-   * @brief Returns `true` in case the provided status matches the current version status.
-   * @param[in] string $status The status to check.
-   * @retval bool
-   */
-  protected function checkStatus($status) {
-    return ($this->meta["status"] === $status) ? TRUE : FALSE;
-  }
-
-
-  /**
-   * @brief Returns the version status.
-   * @retval string
-   */
-  public function getStatus() {
-    return $this->meta["status"];
-  }
-
-
-  /**
-   * @brief Returns `true` if this document has just been created, `false` otherwise.
-   * @retval bool
-   */
-  public function isCreated() {
-    return $this->checkStatus(DocStatus::CREATED);
-  }
-
-
-  /**
-   * @brief Returns `true` if this document is only a draft, `false` otherwise.
-   * @retval bool
-   */
-  public function isDraft() {
-    return $this->checkStatus(DocStatus::DRAFT);
-  }
-
-
-  /**
-   * @brief Returns `true` if this document revision is the current one, `false` otherwise.
-   * @retval bool
-   */
-  public function isCurrent() {
-    return $this->checkStatus(DocStatus::CURRENT);
-  }
-
-
-  /**
-   * @brief Returns `true` if this document has been put into the trash, `false` otherwise.
-   * @retval bool
-   */
-  public function isMovedToTrash() {
-    return $this->checkStatus(DocStatus::DELETED);
-  }
-
-
-  /**
-   * @brief Returns `true` if this document has been submitted for peer review, `false` otherwise.
-   * @retval bool
-   */
-  public function isSubmittedForPeerReview() {
-    return $this->checkStatus(DocStatus::SUBMITTED);
-  }
-
-
-  /**
-   * @brief Returns `true` if this document revision has been approved, `false` otherwise.
-   * @retval bool
-   */
-  public function isApproved() {
-    return $this->checkStatus(DocStatus::APPROVED);
-  }
-
-
-  /**
-   * @brief Returns `true` if this document revision has been rejected, `false` otherwise.
-   * @retval bool
-   */
-  public function isRejected() {
-    return $this->checkStatus(DocStatus::REJECTED);
-  }
-
-
-  /**
-   * @brief Returns `true` if this document has been returned for revision, `false` otherwise.
-   * @retval bool
-   */
-  public function isReturnedForRevision() {
-    return $this->checkStatus(DocStatus::RETURNED);
-  }
-
-  //@}
-
-
-  /** @name Access Control Methods */
-  //!@{
-
-  /**
-   * @brief Returns `true` if the post can be viewed by the current user, `false` otherwise.
-   * @retval bool
-   */
-  public function canBeViewed() {
-    if ($this->isCurrent()) return TRUE;
-
-    elseif ($this->user->match($this->creatorId)) return TRUE;
-
-    elseif ($this->user->isEditor() && $this->approved()) return TRUE;
-
-    elseif ($this->user->isModerator() &&
-      ($this->isSubmittedForPeerReview() or
-        $this->isReturnedForRevision() or
-        $this->isRejected() or
-        $this->isMovedToTrash()))
-      return TRUE;
-    else
-      return FALSE;
-  }
-
-
-  /**
-   * @brief Returns `true` if the document can be edited, `false` otherwise.
-   * @retval bool
-   */
-  public function canBeEdited() {
-    if (($this->user->isAdmin() or $this->user->isEditor() or $this->user->match($this->creatorId)) &&
-      ($this->isCurrent() or $this->isDraft()))
-      return TRUE;
-    else
-      return FALSE;
-  }
-
-
-  /**
-   * @brief Returns `true` if the document can be submitted for peer review, `false` otherwise.
-   * @retval bool
-   */
-  public function canBeSubmitted() {
-    if ($this->isSubmittedForPeerReview()) return FALSE;
-
-    if ($this->user->match($this->creatorId) && ($this->isCreated() or $this->isDraft()))
-      return TRUE;
-    else
-      return FALSE;
-  }
-
-
-  /**
-   * @brief Returns `true` if the document can be approved, `false` otherwise.
-   * @retval bool
-   */
-  public function canBeApproved() {
-    if ($this->user->isModerator() && ($this->isCreated() or $this->isDraft() or $this->isSubmittedForPeerReview()))
-      return TRUE;
-    else
-      return FALSE;
-  }
-
-
-  /**
-   * @brief Returns `true` if the member can ask the original author to revise the document, `false` otherwise.
-   * @retval bool
-   */
-  public function canBeReturnedForRevision() {
-    if ($this->isReturnedForRevision()) return FALSE;
-
-    if (($this->user->isModerator() && $this->isSubmittedForPeerReview()) or
-      ($this->user->isAdmin() && $this->isCurrent()))
-      return TRUE;
-    else
-      return FALSE;
-  }
-
-
-  /**
-   * @brief Returns `true` if the document revision can be rejected, `false` otherwise.
-   * @retval bool
-   */
-  public function canBeRejected() {
-    if ($this->user->isModerator() && $this->isSubmittedForPeerReview())
-      return TRUE;
-    else
-      return FALSE;
-  }
-
-
-  /**
-   * @brief Returns `true` if the document can be reverted to another version, `false` otherwise.
-   * @retval bool
-   */
-  public function canBeReverted() {
-    if ($this->user->isModerator())
-      return TRUE;
-    else
-      return FALSE;
-  }
-
-
-  /**
-   * @brief Returns `true` if the document can be moved to trash, `false` otherwise.
-   * @retval bool
-   */
-  public function canBeMovedToTrash() {
-    if ($this->isMovedToTrash()) return FALSE;
-
-    if (($this->user->isModerator() && $this->isCurrent()) or ($this->user->match($this->creatorId) && $this->isDraft()))
-      return TRUE;
-    else
-      return FALSE;
-  }
-
-
-  /**
-   * @brief Returns `true` if the post can be moved to trash, `false` otherwise.
-   * @retval bool
-   */
-  public function canBeRestored() {
-    if ($this->isMovedToTrash() and
-      ($this->user->isModerator() && ($this->dustmanId == $this->user->id)) or
-      $this->user->isAdmin())
-      return TRUE;
-    else
-      return FALSE;
-  }
-
-  //@}
 
 
   /** @name Control Versioning Methods */
@@ -271,7 +47,7 @@ abstract class Versionable extends Storable {
    * @brief Submits the document for peer review.
    */
   public function submit() {
-    $this->meta['status'] = DocStatus::SUBMITTED;
+    $this->meta['state'] = VersionState::SUBMITTED;
   }
 
 
@@ -279,7 +55,7 @@ abstract class Versionable extends Storable {
    * @brief Approves the document revision, making of it the current version.
    */
   public function approve() {
-    $this->meta['status'] = DocStatus::CURRENT;
+    $this->meta['state'] = VersionState::CURRENT;
   }
 
 
@@ -288,7 +64,7 @@ abstract class Versionable extends Storable {
    * @param[in] $reason The reason why the document has been returned for revision.
    */
   public function returnForRevision($reason) {
-    $this->meta['status'] = DocStatus::RETURNED;
+    $this->meta['state'] = VersionState::RETURNED;
     $this->meta['rejectReason'] = $reason;
     $this->meta['moderatorId'] = $this->user->id;
     // todo: send a notification to the user
@@ -301,7 +77,7 @@ abstract class Versionable extends Storable {
    * @param[in] $reason The reason why the revision has been rejected.
    */
   public function reject($reason) {
-    $this->meta['status'] = DocStatus::REJECTED;
+    $this->meta['state'] = VersionState::REJECTED;
     $this->meta['rejectReason'] = $reason;
     $this->meta['moderatorId'] = $this->user->id;
     // todo: send a notification to the user
@@ -315,7 +91,7 @@ abstract class Versionable extends Storable {
    * @todo Implement the method Versionable.revert().
    */
   public function revert($versionNumber = NULL) {
-    $this->meta['status'] = DocStatus::APPROVED;
+    $this->meta['state'] = VersionState::APPROVED;
   }
 
 
@@ -323,20 +99,20 @@ abstract class Versionable extends Storable {
    * @brief Moves the document to the trash.
    */
   public function moveToTrash() {
-    $this->meta['prevStatus'] = $this->meta['status'];
-    $this->meta['status'] = DocStatus::DELETED;
+    $this->meta['prevstate'] = $this->meta['state'];
+    $this->meta['state'] = VersionState::DELETED;
     $this->meta['dustmanId'] = $this->user->id;
     $this->meta['deletedAt'] = time();
   }
 
 
   /**
-   * @brief Restores the document to its previous status, removing it from trash.
+   * @brief Restores the document to its previous state, removing it from trash.
    */
   public function restore() {
-    // In case the document has been deleted, restore it to its previous status.
-    $this->meta['status'] = $this->meta['prevStatus'];
-    unset($this->meta['prevStatus']);
+    // In case the document has been deleted, restore it to its previous state.
+    $this->meta['state'] = $this->meta['prevstate'];
+    unset($this->meta['prevstate']);
     unset($this->meta['dustmanId']);
     unset($this->meta['deletedAt']);
   }
@@ -357,9 +133,9 @@ abstract class Versionable extends Storable {
    * @copydoc Storable::save()
    */
   public function save() {
-    // We force the document status in case it hasn't been changed.
-    if ($this->isCreated())
-      $this->meta["status"] = DocStatus::SUBMITTED;
+    // We force the document state in case it hasn't been changed.
+    if ($this->state->isCreated())
+      $this->meta["state"] = VersionState::SUBMITTED;
 
     // Put your code here.
     parent::save();
@@ -389,6 +165,11 @@ abstract class Versionable extends Storable {
 
 
   //! @cond HIDDEN_SYMBOLS
+
+  public function getState() {
+    return $this->state->get();
+  }
+
 
   public function setId($value) {
     $pos = stripos($value, Helper\Text::SEPARATOR);
