@@ -93,64 +93,6 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   }
 
 
-  /** @name Access Control Methods */
-  //!@{
-
-  /**
-   * @copydoc Versionable::canBeEdited()
-   */
-  public function canBeEdited() {
-    if (($this->user->isAdmin() or (($this->user->isEditor() or $this->user->match($this->creatorId)) && !$this->isLocked())) &&
-      ($this->isCurrent() or $this->isDraft()))
-      return TRUE;
-    else
-      return FALSE;
-  }
-
-
-  /**
-   * @brief Returns `true` if the post can be protected, `false` otherwise.
-   * @retval bool
-   */
-  public function canBeProtected() {
-    if ($this->isProtected()) return FALSE;
-
-    if ($this->user->isModerator() && ($this->isCurrent() or $this->isDraft()))
-      return TRUE;
-    else
-      return FALSE;
-  }
-
-
-  /**
-   * @brief Returns `true` if the protection can be removed from the post, `false` otherwise.
-   * @retval bool
-   */
-  public function canBeUnprotected() {
-    if (!$this->isProtected()) return FALSE;
-
-    if (($this->user->isAdmin() or ($this->user->isModerator() && $this->user->match($this->protectorId))) &&
-      ($this->isCurrent() or $this->isDraft()))
-      return TRUE;
-    else
-      return FALSE;
-  }
-
-
-  /**
-   * @brief Returns `true` if the user can hide or show the post, `false` otherwise.
-   * @retval bool
-   */
-  public function canVisibilityBeChanged() {
-    if ($this->user->isAdmin() && ($this->isCurrent() or $this->isDraft()))
-      return TRUE;
-    else
-      return FALSE;
-  }
-
-  //!@}
-
-
   /** @name Protection Methods */
   //!@{
 
@@ -182,6 +124,28 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
 
   /**
+   * @brief Closes the post.
+   * @details No more answers or comments can be added.
+   * @see http://meta.stackexchange.com/questions/10582/what-is-a-closed-or-on-hold-question
+   */
+  public function close() {
+    $this->meta['protection'] = self::CLOSED_PL;
+    $this->meta['protectorId'] = $this->user->id;
+  }
+
+
+  /**
+   * @brief Locks the post.
+   * @details No more new answers (or comments), votes, edits, question comments.
+   * @see http://meta.stackexchange.com/questions/22228/what-is-a-locked-post
+   */
+  public function lock() {
+    $this->meta['protection'] = self::LOCKED_PL;
+    $this->meta['protectorId'] = $this->user->id;
+  }
+
+
+  /**
    * @brief Removes the post protection.
    */
   public function unprotect() {
@@ -197,34 +161,11 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     return ($this->isProtected() && $this->meta['protection'] == self::CLOSED_PL) ? TRUE : FALSE;
   }
 
-
-  /**
-   * @brief Closes the post.
-   * @details No more answers or comments can be added.
-   * @see http://meta.stackexchange.com/questions/10582/what-is-a-closed-or-on-hold-question
-   */
-  public function close() {
-    $this->meta['protection'] = self::CLOSED_PL;
-    $this->meta['protectorId'] = $this->user->id;
-  }
-
-
   /**
    * @brief Returns `true` if the post is locked.
    */
   public function isLocked() {
     return ($this->isProtected() && $this->protection == self::LOCKED_PL) ? TRUE : FALSE;
-  }
-
-
-  /**
-   * @brief Locks the post.
-   * @details No more new answers (or comments), votes, edits, question comments.
-   * @see http://meta.stackexchange.com/questions/22228/what-is-a-locked-post
-   */
-  public function lock() {
-    $this->meta['protection'] = self::LOCKED_PL;
-    $this->meta['protectorId'] = $this->user->id;
   }
 
   //!@}
