@@ -408,8 +408,8 @@ class ProfileController extends ListController {
         if ($this->request->getPost('removeLogin')) {
           $login = $this->request->getPost('removeLogin', 'string');
 
-          if ($this->user->isLoginAlreadyPresent($login)) {
-            $this->user->removeLogin($login);
+          if ($this->user->logins->exists($login)) {
+            $this->user->logins->remove($login);
             $this->user->save();
 
             $this->flash->success("Congratulations, the social login has been removed from your account. The associated e-mail addresses haven't been removed.");
@@ -448,7 +448,7 @@ class ProfileController extends ListController {
 
         // The user is trying to add an e-mail.
         if ($this->request->getPost('addEmail')) {
-          if (count($this->user->getEmails()) >= $this->di['config']->application->maxEmailsPerUser)
+          if (count($this->user->emails) >= $this->di['config']->application->maxEmailsPerUser)
             throw new Exception\TooManyEmailsException("You have reached the maximum number of e-mails allowed.");
 
           $validation->setFilters("email", "trim");
@@ -463,7 +463,7 @@ class ProfileController extends ListController {
 
           $email = $this->request->getPost('email');
 
-          if ($this->user->isEmailAlreadyPresent($email))
+          if ($this->user->emails->exists($email))
             throw new Exception\InvalidEmailException("L'e-mail che stai tentando di aggiungere è già presente.");
 
           $opts = new ViewQueryOpts();
@@ -474,7 +474,7 @@ class ProfileController extends ListController {
           if (!$rows->isEmpty())
             throw new Exception\InvalidEmailException("L'e-mail che stai tentando di aggiungere è già utilizzata da un altro utente.");
 
-          $this->user->addEmail($email);
+          $this->user->emails->add($email);
 
           $this->user->save();
 
@@ -486,8 +486,8 @@ class ProfileController extends ListController {
         elseif ($this->request->getPost('removeEmail')) {
           $email = $this->request->getPost("removeEmail", "email");
 
-          if ($this->user->canRemoveEmail($email)) {
-            $this->user->removeEmail($email);
+          if ($this->user->emails->canRemove($email)) {
+            $this->user->emails->remove($email);
             $this->user->save();
 
             // Removes the email.
@@ -501,9 +501,9 @@ class ProfileController extends ListController {
         elseif ($this->request->getPost('resendVerificationEmail')) {
           $email = $this->request->getPost("resendVerificationEmail", "email");
 
-          if (!$this->user->isEmailAlreadyPresent($email))
+          if (!$this->user->emails->exists($email))
             throw new Exception\InvalidEmailException("The e-mail you are trying to verify is not associated to your account.");
-          elseif ($this->user->isVerifiedEmail($email))
+          elseif ($this->user->emails->isVerified($email))
             throw new Exception\InvalidEmailException("The e-mail is already verified.");
 
           // todo: Send the verification e-mail.
@@ -516,14 +516,14 @@ class ProfileController extends ListController {
         elseif ($this->request->getPost('setAsPrimaryEmail')) {
           $email = $this->request->getPost("setAsPrimaryEmail", "email");
 
-          if (!$this->user->isEmailAlreadyPresent($email))
+          if (!$this->user->emails->exists($email))
             throw new Exception\InvalidEmailException("You are trying to set as primary an e-mail that doesn't belong to you.");
-          elseif ($this->user->isPrimaryEmail($email))
+          elseif ($this->user->emails->isPrimary($email))
             throw new Exception\InvalidEmailException(sprintf("The address %s is already your primary e-mail.", $email));
-          elseif (!$this->user->isVerifiedEmail($email))
+          elseif (!$this->user->emails->isVerified($email))
             throw new Exception\InvalidEmailException("You are trying to set as primary an address hasn't been verified yet.");
 
-          $this->user->primaryEmail = $email;
+          $this->user->emails->setPrimary($email);
           $this->user->save();
 
           // Removes the email.
