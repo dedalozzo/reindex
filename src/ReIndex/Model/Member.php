@@ -11,7 +11,6 @@
 namespace ReIndex\Model;
 
 
-use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
 use ReIndex\Collection\EmailCollection;
@@ -224,46 +223,6 @@ class Member extends Storable implements IUser, Extension\ICount {
     return TRUE;
   }
 
-
-  /**
-   * @copydoc IUser::isDeveloper()
-   */
-  public function isDeveloper() {
-    return isset($this->meta['developer']);
-  }
-
-
-  /**
-   * @copydoc IUser::isAdmin()
-   */
-  public function isAdmin() {
-    return $this->isDeveloper() or isset($this->meta['admin']);
-  }
-
-
-  /**
-   * @copydoc IUser::isModerator()
-   */
-  public function isModerator() {
-    return $this->isAdmin() or isset($this->meta['moderator']);
-  }
-
-
-  /**
-   * @copydoc IUser::isReviewer()
-   */
-  public function isReviewer() {
-    return $this->isModerator() or isset($this->meta['reviewer']);
-  }
-
-
-  /**
-   * @copydoc IUser::isEditor()
-   */
-  public function isEditor() {
-    return $this->isReviewer() or isset($this->meta['editor']);
-  }
-
   //!@}
 
 
@@ -282,28 +241,6 @@ class Member extends Storable implements IUser, Extension\ICount {
       $expireOn = (new \DateTime())->setTimestamp($this->meta['bannedOn'])->add(sprintf('P%dD', $this->meta['bannedFor']))->getTimestamp();
       return (time() > $expireOn) ? TRUE : FALSE;
     }
-  }
-
-
-  /**
-   * @brief Returns `true` if the user logged in is allowed to ban the current user, `false` otherwise.
-   * @retval bool
-   */
-  protected function canBeBanned() {
-    if ($this->user->isAdmin() && !$this->isAdmin() && !$this->user->match($this->id))
-      return TRUE;
-    elseif ($this->user->isModerator() && !$this->isModerator() && !$this->user->match($this->id))
-      return TRUE;
-    else
-      return FALSE;
-  }
-
-
-  /**
-   * @brief Alias of canBeBanned().
-   */
-  protected function canBeUnBanned() {
-    $this->canBeBanned();
   }
 
 
