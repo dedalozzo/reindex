@@ -13,7 +13,7 @@ namespace ReIndex\Controller;
 
 use EoC\Opt\ViewQueryOpts;
 
-use ReIndex\Enum\DocStatus;
+use ReIndex\Enum\VersionState;
 use ReIndex\Helper;
 use ReIndex\Model\Member;
 
@@ -78,7 +78,7 @@ abstract class ListController extends BaseController {
       $entry = (object)($posts[$i]['value']);
       $entry->id = $posts[$i]['id'];
 
-      if ($entry->status == DocStatus::CURRENT) {
+      if ($entry->status == VersionState::CURRENT) {
         $entry->url = Helper\Url::build($entry->publishedAt, $entry->slug);
         $entry->timestamp = Helper\Time::when($entry->publishedAt);
       }
