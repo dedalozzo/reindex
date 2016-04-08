@@ -14,6 +14,8 @@ namespace ReIndex\Model;
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
+use ReIndex\Collection\EmailCollection;
+use ReIndex\Collection\LoginCollection;
 use ReIndex\Extension;
 use ReIndex\Exception;
 use ReIndex\Security\User\IUser;
@@ -27,11 +29,18 @@ use ReIndex\Security\User\System;
 class Member extends Storable implements IUser, Extension\ICount {
   use Extension\TCount;
 
+  private $emails;
+  private $logins;
+
 
   public function __construct() {
     parent::__construct();
+
     $this->meta['emails'] = [];
+    $this->emails = new EmailCollection($this->meta);
+
     $this->meta['logins'] = [];
+    $this->logins = new LoginCollection($this->meta);
   }
 
 
@@ -117,97 +126,6 @@ class Member extends Storable implements IUser, Extension\ICount {
   }
 
 
-  /** @name E-mails Management Methods */
-  //!@{
-
-  protected function setPrimaryEmail($value) {
-    $this->meta['primaryEmail'] = $value;
-  }
-
-
-  /**
-   * @brief Returns `true` if the user e-mail is primary, `false` otherwise.
-   * @param[in] string $email An e-mail address.
-   * @retval bool
-   */
-  public function isPrimaryEmail($email) {
-    return ($this->meta['primaryEmail'] === $email);
-  }
-
-
-  /**
-   * @brief Returns all the e-mails associated with the current user.
-   * @retval array An associative array using as keys the e-mail addresses, and as values if the address are verified or
-   * not.
-   */
-  public function getEmails() {
-    return $this->meta['emails'];
-  }
-
-
-  /**
-   * @brief Adds an e-mail address to the current user.
-   * @param[in] string $email An e-mail address.
-   * @param[in] bool $verified The e-mail address has been verified.
-   */
-  public function addEmail($email, $verified = FALSE) {
-    $this->meta['emails'][$email] = $verified;
-
-    if (count($this->meta['emails']) == 1)
-      $this->primaryEmail = $email;
-  }
-
-
-  /**
-   * @brief Returns `true` in case the e-mail can be removed, `false` otherwise.
-   * @details An e-mail can be removed only if it's not the only one associated to the member, and if there is at least
-   * another verified e-mail and if it's not the primary e-mail.
-   * @param[in] string $email An e-mail address.
-   * @retval bool
-   */
-  public function canRemoveEmail($email) {
-    if (array_key_exists($email, $this->meta['emails']) && count($this->meta['emails']) > 1
-        && $email != $this->primaryEmail
-        && (!$this->meta['emails'][$email] or count(array_filter($this->meta['emails'])) > 1))
-      return TRUE;
-    else
-      return FALSE;
-  }
-
-
-  /**
-   * @brief Removes, when possible, the specified e-mail address from the list of e-mail addresses associated to the
-   * current user.
-   * @param[in] string $email An e-mail address.
-   */
-  public function removeEmail($email) {
-    if ($this->canRemoveEmail($email))
-      unset($this->meta['emails'][$email]);
-  }
-
-
-  /**
-   * @brief Returns `true` if the user e-mail has been verified, `false` otherwise.
-   * @param[in] string $email An e-mail address.
-   * @retval bool
-   */
-  public function isVerifiedEmail($email) {
-    return (isset($this->meta['emails'][$email])) ? $this->meta['emails'][$email] : FALSE;
-  }
-
-
-  /**
-   * @brief Returns `true` if the user e-mail is already present, `false` otherwise.
-   * @param[in] string $email An e-mail address.
-   * @retval bool
-   */
-  public function isEmailAlreadyPresent($email) {
-    return isset($this->meta['emails'][$email]);
-  }
-
-  //!@}
-
-
   /** @name Access Control Management Methods */
   //!@{
 
@@ -286,52 +204,6 @@ class Member extends Storable implements IUser, Extension\ICount {
     }
     else
       throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
-  }
-
-
-  /**
-   * @brief Grants the reviewer privileges.
-   */
-  public function grantReviewer() {
-    $this->meta['reviewer'] = TRUE;
-  }
-
-
-  /**
-   * @brief Revokes the reviewer privileges.
-   */
-  public function revokeReviewer() {
-    if ($this->isMetadataPresent('reviewer'))
-      unset($this->meta['reviewer']);
-  }
-
-
-  /**
-   * @brief Grants the editor privileges.
-   */
-  public function grantEditor() {
-    $this->meta['editor'] = TRUE;
-  }
-
-
-  /**
-   * @brief Revokes the editor privileges.
-   */
-  public function revokeEditor() {
-    if ($this->isMetadataPresent('editor'))
-      unset($this->meta['editor']);
-  }
-
-
-  /**
-   * @brief Revokes all privileges.
-   */
-  public function revokeAll() {
-    $this->revokeDeveloper();
-    $this->revokeAdmin();
-    $this->revokeModerator();
-    $this->revokeReviewer();
-    $this->revokeEditor();
   }
 
 
@@ -494,197 +366,6 @@ class Member extends Storable implements IUser, Extension\ICount {
   //!@}
 
 
-  /** @name Login Management Methods */
-  //!@{
-
-  /**
-   * @brief Returns a login name based on the user id and consumer name.
-   * @param[in] string $userId The user id.
-   * @param[in] string $consumerName The consumer name.
-   * @retval string
-   */
-  private function buildLoginName($userId, $consumerName) {
-    return $userId.'@'.$consumerName;
-  }
-
-
-  /**
-   * @brief Returns all the logins associated with the current user.
-   * @retval array An associative array using as keys the combination of the id with the consumer name.
-   * not.
-   */
-  public function getLogins() {
-    return $this->meta['logins'];
-  }
-
-
-  /**
-   * @brief Searches for the user identified by the specified email, if any returns it, otherwise return `false`.
-   * @param[in] string $consumerName The consumer name.
-   * @param[in] string $userId The user id.
-   * @param[in] string $profileU§+
-   *rl The user's profile URL.
-   * @param[in] string $email The user's e-mail.
-   * @param[in] string $username The username.
-   * @param[in] bool $verified The e-mail is verified or not.
-   */
-  public function addLogin($consumerName, $userId, $profileUrl, $email, $username, $verified) {
-    $login = $this->buildLoginName($userId, $consumerName);
-    $this->meta['logins'][$login] = [$consumerName, (string)$userId, $email, $profileUrl, $username];
-    $this->addEmail($email, $verified);
-  }
-
-
-  /**
-   * @brief Removes the specified provider and all its information.
-   * @param[in] string $login The login address ($userId@$consumerName).
-   * @attention The e-mail associated to the login is never removed from the list of e-mails.
-   */
-  public function removeLogin($login) {
-    if ($this->isLoginAlreadyPresent($login))
-      unset($this->meta['logins'][$login]);
-  }
-
-
-  /**
-   * @brief Returns `true` if the user login is already present, `false` otherwise.
-   * @param[in] string $login The login address ($userId@$consumerName).
-   * @retval bool
-   */
-  public function isLoginAlreadyPresent($login) {
-    return isset($this->meta['logins'][$login]);
-  }
-
-  //!@}
-
-
-  /** @name Friendship Management Methods */
-  //!@{
-
-  public function isFriend(Member $member, &$friendshipId = NULL, &$approved = FALSE) {
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $member->id]);
-
-    $result = $this->couch->queryView("friendship", "perMember", NULL, $opts);
-
-    if ($result->isEmpty())
-      return FALSE;
-    else {
-      $friendshipId = $result[0]['id'];
-      $approved = $result[0]['approved'];
-      return TRUE;
-    }
-  }
-
-
-  public function addFriend(Member $member) {
-    if ($this->match($member->id))
-      throw new Exception\UserMismatchException("You can't add yourself as a friend. Are you stupid or what?");
-
-    if ($member->isBlacklisted($this))
-      throw new Exception\UserMismatchException("Unfortunately you have been blacklisted from the user you are trying to add as a friend.");
-
-    if ($this->isFriend($member, $friendshipId, $approved)) {
-      if ($approved)
-        throw new Exception\UserMismatchException("You are already friend with the user.");
-      else
-        throw new Exception\UserMismatchException("You have already sent a friend request to this user.");
-    }
-
-    // Creates and stores the friendship.
-    $friendship = Friendship::request($member);
-    $this->couch->saveDoc($friendship);
-  }
-
-
-  public function removeFriend(Member $member) {
-    // We don't care if the friendship has been approved or not, we just remove it.
-    if ($this->isFriend($member, $friendshipId)) {
-      $friendship = $this->couch->getDoc(Couch::STD_DOC_PATH, $friendshipId);
-      $this->couch->deleteDoc(Couch::STD_DOC_PATH, $friendshipId, $friendship->rev);
-    }
-    else
-      throw new Exception\UserMismatchException("You are not friends.");
-  }
-
-
-  public function approveFriend(Member $member) {
-    if ($this->isFriend($member, $friendshipId)) {
-      $friendship = $this->couch->getDoc(Couch::STD_DOC_PATH, $friendshipId);
-
-      if (!$this->match($friendship->receiverId)) throw new Exception\UserMismatchException("You cannot approve someone else's friendship.");
-
-      if (!$friendship->isApproved()) {
-        $friendship->approve();
-        $this->couch->saveDoc($friendship);
-      }
-      else
-        throw new \RuntimeException("The friendship has been approved already.");
-    }
-    else
-      throw new Exception\UserMismatchException("You are not friends.");
-  }
-
-
-  public function rejectFriend(Member $member, $blacklist = FALSE) {
-
-    if ($this->isFriend($member, $friendshipId)) {
-      $friendship = $this->couch->getDoc(Couch::STD_DOC_PATH, $friendshipId);
-
-      if (!$this->match($friendship->receiverId)) throw new Exception\UserMismatchException("It's not up to you approve someone else's friendship.");
-
-      if (!$friendship->isApproved()) {
-        $friendship->approve();
-        $this->couch->saveDoc($friendship);
-      }
-      else
-        throw new \RuntimeException("The friendship has been approved already.");
-    }
-    else
-      throw new Exception\UserMismatchException("You are not friends.");
-  }
-
-
-  public function isBlacklisted(Member $member, &$blackId) {
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $member->id]);
-
-    $result = $this->couch->queryView("blacklist", "perMember", NULL, $opts);
-
-    if ($result->isEmpty())
-      return FALSE;
-    else {
-      $blackId = $result[0]['id'];
-      return TRUE;
-    }
-  }
-
-
-  public function addToBlackList(Member $member) {
-
-  }
-
-
-  public function removeFromBlacklist(Member $member) {
-
-  }
-
-
-  public function getBlacklist() {
-
-  }
-
-
-  /**
-   * @brief Adds a bunch of potential friends to the list of friends, using a list of e-mails.
-   * @todo Implement the inviteFriends() method.
-   */
-  public function inviteFriends() {
-  }
-
-  //!@}
-
-
   //! @cond HIDDEN_SYMBOLS
 
   public function getFirstName() {
@@ -750,13 +431,13 @@ class Member extends Storable implements IUser, Extension\ICount {
   }
 
 
-  public function getPrimaryEmail() {
-    return $this->meta['primaryEmail'];
+  public function getEmails() {
+    return $this->emails;
   }
 
 
-  public function issetPrimaryEmail() {
-    return isset($this->meta['primaryEmail']);
+  public function getLogins() {
+    return $this->logins;
   }
 
 
