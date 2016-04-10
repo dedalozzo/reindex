@@ -31,11 +31,11 @@ abstract class AbstractPrivilegeCommand extends AbstractCommand {
    * @brief Configures the command.
    */
   protected function configure() {
-    $this->setDescription(sprintf("%s a privilege to a user.", ucfirst($this->getName().'s')));
+    $this->setDescription(sprintf("%s a role to a user.", ucfirst($this->getName().'s')));
 
-    $this->addArgument("privilege",
+    $this->addArgument("role",
       InputArgument::REQUIRED,
-      sprintf("The privilege you intend to %s to the specified user.", $this->getName()));
+      sprintf("The role's name you intend to %s to the specified user.", $this->getName()));
 
     $this->addArgument("username",
       InputArgument::REQUIRED,
@@ -49,7 +49,7 @@ abstract class AbstractPrivilegeCommand extends AbstractCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     $couch = $this->di['couchdb'];
 
-    $privilege = $input->getArgument('privilege');
+    $privilege = $input->getArgument('role');
     $username = $input->getArgument('username');
 
     // Sets the options.
