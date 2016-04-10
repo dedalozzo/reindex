@@ -13,8 +13,9 @@ class Member  {
   string $firstName; //!< First name.
   string $lastName; //!< Last surname.
 
-  string $emails; //!< A collection of e-mails.
-  string $logins; //!< A collection of consumers' logins.
+  array $emails; //!< A collection of e-mails.
+  array $logins; //!< A collection of consumers' logins.
+  array $roles;  //!< A collection of roles associated with the member.
 
   string $password; //!< Password chosen by the member.
   string $hash; //!< String hash sent via e-mail to the member to confirm that his e-mail is real.
