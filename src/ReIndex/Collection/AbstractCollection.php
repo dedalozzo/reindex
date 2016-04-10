@@ -7,6 +7,7 @@
  */
 
 
+//! Collections
 namespace ReIndex\Collection;
 
 
@@ -32,21 +33,21 @@ abstract class AbstractCollection implements \IteratorAggregate, \Countable, \Ar
 
 
   /**
-   * @brief Removes the specified value from the collection.
-   * @param[in] mixed $value A value.
+   * @brief Removes from the collection the item identified by the provided key.
+   * @param[in] mixed $key A key.
    */
-  public function remove($value) {
-    unset($this->meta[static::NAME][$value]);
+  public function remove($key) {
+    unset($this->meta[static::NAME][$key]);
   }
 
 
   /**
-   * @brief Returns `true` if the value is already present, `false` otherwise.
-   * @param[in] mixed $value A value.
+   * @brief Returns `true` if the key is already present, `false` otherwise.
+   * @param[in] mixed $key A key.
    * @retval bool
    */
-  public function exists($value) {
-    return isset($this->meta[static::NAME][$value]);
+  public function exists($key) {
+    return isset($this->meta[static::NAME][$key]);
   }
 
   
