@@ -23,13 +23,13 @@ class RoleCollection extends AbstractCollection {
 
 
   /**
-   * @brief Adds the specified role to the current member.
+   * @brief Grants the specified role to the current member.
    * @details The algorithm discards any role when a more important one has been granted to the member. That means you
    * can't add the Moderator role to an Admin, etc. You can also grant multiple roles to a member, to assign special
    * permissions.
    * @param[in] IRole $role A role object.
    */
-  public function add(IRole $role) {
+  public function grant(IRole $role) {
     // Checks if the same role has been already assigned to the member.
     if ($this->exists($role->getName()))
       throw new \RuntimeException('The role has been already assigned to the member.');
@@ -53,11 +53,32 @@ class RoleCollection extends AbstractCollection {
 
 
   /**
-   * @brief Removes the specified role from the current member.
+   * @brief Alias of RoleCollection::grant.
+   */
+  public function add(IRole $role) {
+    $this->grant($role);
+  }
+
+
+  /**
+   * @brief Revokes the specified role for the current member.
    * @param[in] string $roleName A role's name.
    */
-  public function remove($roleName) {
+  public function revoke($roleName) {
     parent::remove($roleName);
+
+    // todo: Ogni member deve avere almeno una role inserita automaticamente alla creazione dell'utente e tale role
+    // non può essere rimossa. La role in questione è MemberRole. Può essere rimpiazzata unicamente da una role che
+    // eredita, per cui quando si rimuove una role bisogna vedere se la role che rimane è una subclass della classe
+    // MemberRole.
+  }
+
+
+  /**
+   * @brief Alias of RoleCollection::revoke.
+   */
+  public function remove($roleName) {
+    $this->revoke($roleName);
   }
 
 
@@ -68,12 +89,6 @@ class RoleCollection extends AbstractCollection {
    */
   public function exists($roleName) {
     return parent::exists($roleName);
-  }
-
-
-  public function getRoleStrategy(IRole $role) {
-    // Ritorna la role strategy associata alla role passata come parametro oppure, in caso esista una subclasse della
-    // role, tra le role associate all'utente, torna la role strategy associata a quella subclasse.
   }
 
 }
