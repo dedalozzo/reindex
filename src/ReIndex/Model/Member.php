@@ -132,80 +132,11 @@ class Member extends Storable implements IUser, Extension\ICount {
   //!@{
 
   /**
-   * @brief Grants the administrator privileges.
-   * @attention Only the System user can grant the administrator privileges.
+   * @brief
+   * @retval
    */
-  public function grantAdmin() {
-    if ($this->user instanceof System)
-      $this->meta['admin'] = TRUE;
-    else
-      throw new Exception\NotEnoughPrivilegesException("I privilegi di amministratore possono essere assegnati dall'utente di sistema.");
-  }
+  public function has($permissionClass) {
 
-
-  /**
-   * @brief Revokes the administrator privileges.
-   * @attention Only the System user can revoke the administrator privileges.
-   */
-  public function revokeAdmin() {
-    if ($this->user instanceof System) {
-      if ($this->isMetadataPresent('admin'))
-        unset($this->meta['admin']);
-    }
-    else
-      throw new Exception\NotEnoughPrivilegesException("I privilegi di amministratore possono essere revocati dall'utente di sistema.");
-  }
-
-
-  /**
-   * @brief Grants the developer privileges.
-   * @attention Only the System user can grant the administrator privileges.
-   */
-  public function grantDeveloper() {
-    if ($this->user instanceof System)
-      $this->meta['developer'] = TRUE;
-    else
-      throw new Exception\NotEnoughPrivilegesException("I privilegi di sviluppatore possono essere assegnati dall'utente di sistema.");
-  }
-
-
-  /**
-   * @brief Revokes the developer privileges.
-   * @attention Only the System user can revoke the administrator privileges.
-   */
-  public function revokeDeveloper() {
-    if ($this->user instanceof System) {
-      if ($this->isMetadataPresent('developer'))
-        unset($this->meta['developer']);
-    }
-    else
-      throw new Exception\NotEnoughPrivilegesException("I privilegi di sviluppatore possono essere revocati dall'utente di sistema.");
-  }
-
-
-  /**
-   * @brief Grants the moderator privileges.
-   * @attention Only an admin can grant the moderator privileges (or System of course).
-   */
-  public function grantModerator() {
-    if ($this->user instanceof System or ($this->user->isAdmin() && !$this->user->match($this->id)))
-      $this->meta['moderator'] = TRUE;
-    else
-      throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
-  }
-
-
-  /**
-   * @brief Revokes the moderator privileges.
-   * @attention Only an admin can revoke the moderator privileges (or System of course).
-   */
-  public function revokeModerator() {
-    if ($this->user instanceof System or ($this->user->isAdmin() && !$this->user->match($this->id))) {
-      if ($this->isMetadataPresent('moderator'))
-        unset($this->meta['moderator']);
-    }
-    else
-      throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
   }
 
 
