@@ -13,9 +13,8 @@ namespace ReIndex\Model;
 
 use EoC\Opt\ViewQueryOpts;
 
-use ReIndex\Collection\EmailCollection;
-use ReIndex\Collection\LoginCollection;
 use ReIndex\Extension;
+use ReIndex\Collection;
 use ReIndex\Exception;
 use ReIndex\Security\User\IUser;
 use ReIndex\Security\User\System;
@@ -28,18 +27,22 @@ use ReIndex\Security\User\System;
 class Member extends Storable implements IUser, Extension\ICount {
   use Extension\TCount;
 
-  private $emails;
-  private $logins;
+  private $emails; // Collection of e-mails.
+  private $logins; // Collection of consumers' logins.
+  private $roles;  // Collection of roles.
 
 
   public function __construct() {
     parent::__construct();
 
     $this->meta['emails'] = [];
-    $this->emails = new EmailCollection($this->meta);
+    $this->emails = new Collection\EmailCollection($this->meta);
 
     $this->meta['logins'] = [];
-    $this->logins = new LoginCollection($this->meta);
+    $this->logins = new Collection\LoginCollection($this->meta);
+
+    $this->meta['roles'] = [];
+    $this->roles = new Collection\RoleCollection($this->meta);
   }
 
 
@@ -375,6 +378,11 @@ class Member extends Storable implements IUser, Extension\ICount {
 
   public function getLogins() {
     return $this->logins;
+  }
+
+
+  public function getRoles() {
+    return $this->roles;
   }
 
 
