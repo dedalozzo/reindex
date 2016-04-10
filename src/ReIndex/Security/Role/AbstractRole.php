@@ -7,11 +7,8 @@
  */
 
 
-//! Classes to describe roles
+//! Classes to describe the roles a member can assume
 namespace ReIndex\Security\Role;
-
-
-use ReIndex\Security\Role\Permission\IPermission;
 
 
 /**
@@ -43,24 +40,4 @@ abstract class AbstractRole implements IRole {
 
   abstract public function getDescription();
 
-
-  public function grantPermission($name, $class) {
-    //$this->permissions[$operation->getName()] = $operation;
-  }
-
-
-  public function revokePermission($permissionName) {
-    if ($this->permissionExists($permissionName))
-      unset($this->permissions[$permissionName]);
-  }
-
-
-  public function permissionExists($permissionName) {
-    return array_key_exists($permissionName, $this->permissions) ? TRUE : FALSE;
-  }
-
-
-  function obtainPermissionClass($name) {
-    //! @todo: Implement obtainPermissionClass() method.
-  }
 }
