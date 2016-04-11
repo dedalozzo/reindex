@@ -11,6 +11,9 @@
 namespace ReIndex\Security\User;
 
 
+use ReIndex\Security\Role\Permission\IPermission;
+
+
 /**
  * @brief This class represents an anonymous user.
  * @nosubgrouping
@@ -38,6 +41,15 @@ class Anonymous implements IUser {
 
 
   /**
+   * @brief This implementation returns always `false`.
+   * @retval bool
+   */
+  public function has(IPermission $permission) {
+    return FALSE;
+  }
+
+
+  /**
    * @brief This implementation returns always `true`.
    * @retval bool
    */
@@ -51,51 +63,6 @@ class Anonymous implements IUser {
    * @retval bool
    */
   public function isMember() {
-    return FALSE;
-  }
-
-
-  /**
-   * @brief This implementation returns always `false`.
-   * @retval bool
-   */
-  public function isAdmin() {
-    return FALSE;
-  }
-
-
-  /**
-   * @brief This implementation returns always `false`.
-   * @retval bool
-   */
-  public function isDeveloper() {
-    return FALSE;
-  }
-
-
-  /**
-   * @brief This implementation returns always `false`.
-   * @retval bool
-   */
-  public function isModerator() {
-    return FALSE;
-  }
-
-
-  /**
-   * @brief This implementation returns always `false`.
-   * @retval bool
-   */
-  public function isEditor() {
-    return FALSE;
-  }
-
-
-  /**
-   * @brief This implementation returns always `false`.
-   * @retval bool
-   */
-  public function isReviewer() {
     return FALSE;
   }
 
