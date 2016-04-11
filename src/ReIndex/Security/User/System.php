@@ -11,6 +11,9 @@
 namespace ReIndex\Security\User;
 
 
+use ReIndex\Security\Role\Permission\IPermission;
+
+
 /**
  * @brief A special user used to perform special task.
  * @nosubgrouping
@@ -41,6 +44,15 @@ class System implements IUser {
    * @brief This implementation returns always `false`.
    * @retval bool
    */
+  public function has(IPermission $permission) {
+    return FALSE;
+  }
+
+
+  /**
+   * @brief This implementation returns always `false`.
+   * @retval bool
+   */
   public function isGuest() {
     return FALSE;
   }
@@ -52,51 +64,6 @@ class System implements IUser {
    */
   public function isMember() {
     return FALSE;
-  }
-
-
-  /**
-   * @brief This implementation returns always `true`.
-   * @retval bool
-   */
-  public function isAdmin() {
-    return TRUE;
-  }
-
-
-  /**
-   * @brief This implementation returns always `false`.
-   * @retval bool
-   */
-  public function isDeveloper() {
-    return FALSE;
-  }
-
-
-  /**
-   * @brief This implementation returns always `true`.
-   * @retval bool
-   */
-  public function isModerator() {
-    return TRUE;
-  }
-
-
-  /**
-   * @brief This implementation returns always `true`.
-   * @retval bool
-   */
-  public function isEditor() {
-    return TRUE;
-  }
-
-
-  /**
-   * @brief This implementation returns always `true`.
-   * @retval bool
-   */
-  public function isReviewer() {
-    return TRUE;
   }
 
 }
