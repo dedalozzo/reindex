@@ -10,7 +10,7 @@
 namespace ReIndex\Security\Role;
 
 
-class SupervisorRole extends AdminRole {
+class SupervisorRole extends DeveloperRole {
 
   public function getDescription() {
     //! @todo: Implement getDescription() method.
