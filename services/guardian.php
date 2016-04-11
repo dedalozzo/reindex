@@ -16,13 +16,7 @@ use ReIndex\Security\Role;
 $di->setShared('guardian',
   function() use ($config, $di) {
     $guardian = new Security\Guardian($config, $di);
-    
-    $guardian->loadRole(new Role\SupervisorRole());
-    $guardian->loadRole(new Role\AdminRole());
-    $guardian->loadRole(new Role\ModeratorRole());
-    $guardian->loadRole(new Role\ReviewerRole());
-    $guardian->loadRole(new Role\EditorRole());
-
+  
     return $guardian;
   }
 );
