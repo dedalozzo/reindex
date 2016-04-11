@@ -39,7 +39,7 @@ interface IUser {
 
 
   /**
-   * @brief Returns `true` if the provided user has the provided permission, `false` otherwise.
+   * @brief Returns `true` if the provided user has the permission to execute a specific operation, `false` otherwise.
    * @param[in] IPermission $permission A permission.
    * @retval bool
    */
