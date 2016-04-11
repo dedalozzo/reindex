@@ -10,7 +10,7 @@
 namespace ReIndex\Security\Role;
 
 
-class AdminRole extends AbstractRole {
+class AdminRole extends ModeratorRole {
 
   
   public function getDescription() {
