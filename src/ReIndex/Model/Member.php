@@ -16,8 +16,9 @@ use EoC\Opt\ViewQueryOpts;
 use ReIndex\Extension;
 use ReIndex\Collection;
 use ReIndex\Exception;
+use ReIndex\Helper\ClassHelper;
 use ReIndex\Security\User\IUser;
-use ReIndex\Security\User\System;
+use ReIndex\Security\Role\Permission\IPermission;
 
 
 /**
@@ -135,8 +136,27 @@ class Member extends Storable implements IUser, Extension\ICount {
    * @brief
    * @retval
    */
-  public function has($permissionClass) {
+  public function has(IPermission $permission) {
+    $result = FALSE;
 
+    // Gets the class name of the provided instance, pruned by its namespace.
+    $className = ClassHelper::getClassName(get_class($permission));
+
+    foreach ($this->roles as $role) {
+      $reflection = new \ReflectionClass($role);
+
+      // Gets the namespace for the role pruned of the class name.
+      $namespaceName = $reflection->getNamespaceName();
+
+      $class = $namespaceName . '\\' . $role->getName() .'\\' . $className;
+
+      if (class_exists($class)) {
+        $obj = clone $permission;
+        $result = $obj->check();
+      }
+    }
+
+    return $result;
   }
 
 
