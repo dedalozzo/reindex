@@ -11,6 +11,9 @@
 namespace ReIndex\Security\Role;
 
 
+use ReIndex\Helper\ClassHelper;
+
+
 /**
  * @brief Abstract class that implements the IRole interface. Since abstract this class cannot be instantiated.
  * @details It's important to note that an permission's name is camel case starting with lowercase letter.
@@ -24,7 +27,7 @@ abstract class AbstractRole implements IRole {
 
 
   public function __construct() {
-    $this->name = lcfirst(preg_replace('/Role/', '', get_class()));
+    $this->name = preg_replace('/Role$/', '', ClassHelper::getClassName(get_class($this)));
   }
 
 
