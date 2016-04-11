@@ -29,12 +29,12 @@ class ClassHelper {
 
 
   /**
-   * @brief Given a class within its namespace, it does return the class name pruned by its namespace.
+   * @brief Given a class within its namespace, it returns the class name pruned by its namespace.
    * @param[in] string $class The class included its namespace.
    * @retval string The class name.
    */
   public static function getClassName($class) {
-    return join('', array_slice(explode('\\', $class), -1));
+    return substr(strrchr($class, '\\'), 1);
   }
 
-} 
+}
