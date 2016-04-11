@@ -10,7 +10,7 @@
 namespace ReIndex\Security\Role;
 
 
-class ModeratorRole extends AbstractRole {
+class ModeratorRole extends ReviewerRole {
 
   public function getDescription() {
     //! @todo: Implement getDescription() method.
