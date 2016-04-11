@@ -23,7 +23,7 @@ abstract class AbstractRole implements IRole {
   
   protected $name;
 
-  protected $permissions= [];
+  protected $permissions = [];
 
 
   public function __construct() {
