@@ -12,6 +12,9 @@
 namespace ReIndex\Security\User;
 
 
+use ReIndex\Security\Role\Permission\IPermission;
+
+
 /**
  * @brief This interface defines common methods between every class who represent an user.
  * @nosubgrouping
@@ -32,7 +35,15 @@ interface IUser {
    * @param[in] string $id The id to match.
    * @retval bool
    */
-  public function match($id);
+  function match($id);
+
+
+  /**
+   * @brief Returns `true` if the provided user has the provided permission, `false` otherwise.
+   * @param[in] IPermission $permission A permission.
+   * @retval bool
+   */
+  function has(IPermission $permission);
 
 
   /**
