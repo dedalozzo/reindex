@@ -30,30 +30,30 @@ class Guardian {
 
   private static $initialized = FALSE;
 
-  protected static $user = NULL;
+  protected static $user = NULL; // Current user.
+  protected static $roles = []; // Available roles.
 
-  private $couch;
-  
-  protected $roles = [];
+  private $log; // Monolog instance.
+  private $couch; // CouchDB client instance.
 
 
   public function __construct($config, $di) {
+    $this->log = $di['log'];
+    $this->couch = $di['couchdb'];
 
     if (!self::$initialized) {
       self::$initialized = TRUE;
       self::$user = UserFactory::fromCookie();
+
+      $this->loadRole(new Role\SupervisorRole());
+      $this->loadRole(new Role\DeveloperRole());
+      $this->loadRole(new Role\AdminRole());
+      $this->loadRole(new Role\ModeratorRole());
+      $this->loadRole(new Role\ReviewerRole());
+      $this->loadRole(new Role\EditorRole());
+      $this->loadRole(new Role\TrustedRole());
+      $this->loadRole(new Role\MemberRole());
     }
-
-    $this->couch = $di['couchdb'];
-  }
-
-
-  /**
-   * @brief Returns the logged in user.
-   * @retval IUser
-   */
-  public function getUser() {
-    return self::$user;
   }
 
 
@@ -73,31 +73,40 @@ class Guardian {
 
 
   /**
-   * @brief Returns `true` is the current user can impersonate the specified user, `false` otherwise.
-   * @details An admin can impersonate any member, but he can't impersonate another admin. A member (even an admin) can
-   * impersonate a guest. No one can impersonate itself and a guest, of course, can't impersonate anyone.
-   * @param[in] IUser $user An user instance.
-   * @retval bool
-   */
-  private function canImpersonate(IUser $user) {
-    if (self::$user->isAdmin() && $user->isMember() && !$user->isAdmin())
-      return TRUE;
-    elseif (self::$user->isMember() && $user->isGuest())
-      return TRUE;
-    else
-      return FALSE;
-  }
-
-
-  /**
    * @brief Impersonates the given user.
    * @param[in] IUser $user An user instance.
    */
   public function impersonate(IUser $user) {
     if ($this->canImpersonate($user))
-      self::$user = $user;
+      $this->user = $user;
     else
       throw new NotEnoughPrivilegesException('Non hai sufficienti privilegi per impersonare un altro utente.');
+  }
+
+
+  /**
+   * @brief Returns the logged in user.
+   * @retval IUser
+   */
+  public function getUser() {
+    return self::$user;
+  }
+
+
+  /**
+   * @brief Gets the available roles.
+   */
+  public function getRoles() {
+    return self::$roles;
+  }
+
+
+  /**
+   * @brief Unloads all the roles.
+   */
+  public function resetRoles() {
+    unset(self::$roles);
+    self::$roles = [];
   }
 
 
@@ -106,19 +115,12 @@ class Guardian {
    * @param[in] ReIndex::Security::Role::IRole $role An instance of a class that implements IRole.
    */
   public function loadRole(IRole $role) {
-    if (array_key_exists($role->getName(), $this->roles))
+    $class = get_class($role);
+
+    if (array_key_exists($class, self::$roles))
       throw new \Exception(sprintf("The '%s' role already exists.", $role->getName()));
-    
-    $this->roles[$role->getName()] = $role;
-  }
 
-
-  /**
-   * @brief Unloads all the roles.
-   */
-  public function resetRoles() {
-    unset($this->roles);
-    $this->roles = [];
+    self::$roles[$class] = $role;
   }
 
 }
