@@ -10,7 +10,7 @@
 namespace ReIndex\Security\Role;
 
 
-class ReviewerRole extends AbstractRole {
+class ReviewerRole extends EditorRole {
 
 
   public function getDescription() {
