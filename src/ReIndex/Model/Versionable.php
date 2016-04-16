@@ -166,16 +166,21 @@ abstract class Versionable extends Storable {
 
   //! @cond HIDDEN_SYMBOLS
 
-  public function getState() {
-    return $this->state->get();
-  }
-
-
   public function setId($value) {
     $pos = stripos($value, Helper\Text::SEPARATOR);
     $this->meta['unversionId'] = Helper\Text::unversion($value);
     $this->meta['versionNumber'] = ($pos) ? substr($value, $pos + strlen(Helper\Text::SEPARATOR)) : (string)time();
     $this->meta['_id'] = $this->meta['unversionId'] . Helper\Text::SEPARATOR . $this->meta['versionNumber'];
+  }
+
+
+  public function getState() {
+    return $this->state;
+  }
+
+
+  public function issetState() {
+    return isset($this->state);
   }
 
 
