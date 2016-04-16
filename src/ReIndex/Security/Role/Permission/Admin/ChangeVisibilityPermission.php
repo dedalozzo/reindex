@@ -14,7 +14,12 @@ use ReIndex\Security\Role\Permission\AbstractPostPermission;
 
 
 class ChangeVisibilityPermission extends AbstractPostPermission {
-  
+
+
+  public function getDescription() {
+    //! @todo: Implement getDescription() method.
+  }
+
 
   /**
    * @brief Returns `true` if the user can hide or show the post, `false` otherwise.
