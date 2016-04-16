@@ -11,7 +11,9 @@
 namespace ReIndex\Security\User;
 
 
+use ReIndex\Security\Role\GuestRole;
 use ReIndex\Security\Role\Permission\IPermission;
+use ReIndex\Helper\ClassHelper;
 
 
 /**
@@ -41,11 +43,34 @@ class Anonymous implements IUser {
 
 
   /**
-   * @brief This implementation returns always `false`.
-   * @retval bool
+   * @copydoc IUser::has()
    */
   public function has(IPermission $permission) {
-    return FALSE;
+    $result = FALSE;
+
+    $role = new GuestRole();
+
+    // Gets the class name of the provided instance, pruned by its namespace.
+    $className = ClassHelper::getClassName(get_class($permission));
+
+    // Creates a reflection class for the role.
+    $reflection = new \ReflectionClass($role);
+
+    // Gets the namespace for the role pruned of the class name.
+    $namespaceName = $reflection->getNamespaceName();
+
+    // Determines the permission class related to the role.
+    $class = $namespaceName . '\\Permission\\' . $role->getName() . '\\' . $className;
+
+    if (class_exists($class)) { // If a permission exists for the role...
+      // Casts the original permission object to an instance of the determined class.
+      $obj = $permission->castAs($class);
+
+      // Invokes on it the check() method.
+      $result = $obj->check();
+    }
+
+    return $result;
   }
 
 
