@@ -16,6 +16,11 @@ use ReIndex\Security\Role\Permission\Member\EditPostPermission as Superclass;
 class EditPostPermission extends Superclass {
 
 
+  public function getDescription() {
+    //! @todo: Implement getDescription() method.
+  }
+
+
   /**
    * @brief Returns `true` if the user has, at least, the Editor role and the post is unlocked, `false` otherwise.
    * @retval bool

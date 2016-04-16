@@ -16,6 +16,11 @@ use ReIndex\Security\Role\Permission\AbstractPostPermission;
 class EditPostPermission extends AbstractPostPermission {
 
 
+  public function getDescription() {
+    //! @todo: Implement getDescription() method.
+  }
+
+
   /**
    * @brief Returns `true` if the user is the creator of the post and the post is unlocked, `false` otherwise.
    * @retval bool
