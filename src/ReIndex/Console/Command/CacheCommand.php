@@ -16,6 +16,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
@@ -40,18 +41,19 @@ class CacheCommand extends AbstractCommand {
 
 
   /**
-   * @brief Updates posts popularity.
+   * @brief Updates the database cache.
    */
   private function buildCache(InputInterface $input, OutputInterface $output) {
     $output->writeln("Building cache...");
-
-    $progress = $this->getApplication()->getHelperSet()->get('progress');
 
     $opts = new ViewQueryOpts();
     $opts->doNotReduce();
     $ids = array_column($this->couch->queryView('posts', 'unversion', NULL, $opts)->asArray(), 'id');
 
-    $progress->start($output, count($ids));
+    $progress = new ProgressBar($this->output, count($ids));
+    $progress->setRedrawFrequency(1);
+    $progress->setOverwrite(TRUE);
+    $progress->start();
 
     foreach ($ids as $id) {
       $post = $this->couch->getDoc(Couch::STD_DOC_PATH, $id);
