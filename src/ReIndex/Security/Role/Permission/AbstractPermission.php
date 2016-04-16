@@ -13,6 +13,10 @@ namespace ReIndex\Security\Role\Permission;
 use Phalcon\Di;
 
 
+/**
+ * @brief Abstract class that implements the IPermission interface. Since abstract, this class cannot be instantiated.
+ * @nosubgrouping
+ */
 abstract class AbstractPermission implements IPermission {
 
   protected $di;
@@ -41,6 +45,20 @@ abstract class AbstractPermission implements IPermission {
   }
 
 
+  abstract public function getDescription();
+
+
   abstract public function check();
+
+
+  public function castAs($newClass) {
+    $obj = new $newClass;
+    
+    foreach (get_object_vars($this) as $key => $name) {
+      $obj->$key = $name;
+    }
+    
+    return $obj;
+  }  
 
 }
