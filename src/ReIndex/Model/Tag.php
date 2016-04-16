@@ -79,7 +79,7 @@ class Tag extends Versionable implements Extension\ICount, Extension\IStar {
    */
   public function addSynonym(Tag $tag) {
     // You can't add a synonym to a synonym, neither you can add a master to a synonym.
-    if ($this->isSynonym() or !$this->isCurrent() or $tag->isSynonym() or !$tag->isCurrent()) return;
+    if ($this->isSynonym() or !$this->state->isCurrent() or $tag->isSynonym() or !$tag->state->isCurrent()) return;
 
     array_push($this->meta['synonyms'], $tag->unversionId);
     $this->addMultipleSynonymsAtOnce($tag->getSynonyms());
@@ -137,7 +137,7 @@ class Tag extends Versionable implements Extension\ICount, Extension\IStar {
 
   public function setName($value) {
     // A tag name can't be changed unless the tag has never been approved.
-    if ($this->isCreated())
+    if ($this->state->isCreated())
       $this->meta['name'] = $value;
     else
       throw new \RuntimeException("Il nome di un tag non può essere cambiato.");
