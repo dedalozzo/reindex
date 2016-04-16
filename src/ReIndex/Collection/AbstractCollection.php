@@ -80,6 +80,17 @@ abstract class AbstractCollection implements \IteratorAggregate, \Countable, \Ar
 
 
   /**
+   * @brief Returns `true` in case there aren't items inside the collection, `false` otherwise.
+   * @details Since the PHP core developers are noobs, `empty()` cannot be used on any class that implements ArrayAccess.
+   * @attention This method must be used in place of `empty()`.
+   * @retval bool
+   */
+  public function isEmpty() {
+    return empty($this->meta[static::NAME]) ? TRUE : FALSE;
+  }
+
+
+  /**
    * @brief Whether or not an offset exists.
    * @details This method is executed when using `isset()` or `empty()` on objects implementing ArrayAccess.
    * @param[in] integer $offset An offset to check for.
