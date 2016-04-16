@@ -605,15 +605,6 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   // @{
 
   /**
-   * @brief Adds the specified tag to the list of tags.
-   * @param[in] int $tagId The tag uuid.
-   */
-  protected function addTagId($tagId) {
-    $this->meta['tags'][] = Helper\Text::unversion($tagId);
-  }
-
-
-  /**
    * @brief Resolve the synonyms and returns only unique master tags.
    * @retval array
    */
@@ -630,6 +621,16 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    */
   public function resetTags() {
     $this->unsetMetadata('tags');
+  }
+
+
+  /**
+   * @brief Adds the specified tag to the list of tags.
+   * @attention Don't use this method even if it's public, unless you know what are you doing.
+   * @param[in] int $tagId The tag uuid.
+   */
+  public function addTagId($tagId) {
+    $this->meta['tags'][] = Helper\Text::unversion($tagId);
   }
 
 
