@@ -16,6 +16,11 @@ use ReIndex\Security\Role\Permission\AbstractPermission;
 class DebugPermission extends AbstractPermission {
 
 
+  public function getDescription() {
+    //! @todo: Implement getDescription() method.
+  }
+
+
   /**
    * @brief Returns `true` if the user can enable the debugger, `false` otherwise.
    * @retval bool
