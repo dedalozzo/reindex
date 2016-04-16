@@ -10,6 +10,11 @@
 namespace ReIndex\Security\Role\Permission\Moderator;
 
 
-class UnbanMemberPermission {
+class UnbanMemberPermission extends BanMemberPermission {
+
+
+  public function getDescription() {
+    //! @todo: Implement getDescription() method.
+  }
 
 }
