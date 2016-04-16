@@ -1,7 +1,7 @@
 <?php
 /**
  * @file ReturnForRevisionVersionPermission.php
- * @brief This file contains the ${CLASS_NAME} class.
+ * @brief This file contains the ReturnForRevisionVersionPermission class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -11,6 +11,12 @@ namespace ReIndex\Security\Role\Permission\Reviewer;
 
 
 class ReturnForRevisionVersionPermission {
+
+
+  public function getDescription() {
+    //! @todo: Implement getDescription() method.
+  }
+
 
   /**
    * @brief Returns `true` if the member can ask the original author to revise the document, `false` otherwise.
