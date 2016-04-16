@@ -19,9 +19,14 @@ class BanMemberPermission extends AbstractPermission {
   protected $member;
 
 
-  public function __construct(Member $member) {
+  public function __construct(Member $member = NULL) {
     parent::__construct();
     $this->member = $member;
+  }
+
+
+  public function getDescription() {
+    //! @todo: Implement getDescription() method.
   }
 
 
