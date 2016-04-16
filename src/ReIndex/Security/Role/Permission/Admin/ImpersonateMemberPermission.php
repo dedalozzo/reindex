@@ -15,6 +15,12 @@ use ReIndex\Security\Role\Permission\AbstractPermission;
 
 class ImpersonateMemberPermission extends AbstractPermission {
 
+
+  public function getDescription() {
+    //! @todo: Implement getDescription() method.
+  }
+
+
   /**
    * @brief Returns `true` is the current user can impersonate the specified user, `false` otherwise.
    * @details An admin can impersonate any member, but he can't impersonate another admin. A member (even an admin) can
