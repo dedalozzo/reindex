@@ -15,6 +15,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
@@ -70,11 +71,7 @@ class CacheCommand extends AbstractCommand {
     $this->setName("cache");
     $this->setDescription("Performs database cache maintenance activities.");
     $this->addArgument("subcommand",
-      InputArgument::REQUIRED, <<<'DESC'
-Use `clear` to clean database cache.
-Use `build` to rebuild database cache.
-DESC
-    );
+      InputArgument::REQUIRED, 'Use `clear` to clean database cache. Use `build` to rebuild database cache.');
   }
 
 
@@ -90,19 +87,24 @@ DESC
 
     $subcommand = $input->getArgument('subcommand');
 
-    $dialog = $this->getHelperSet()->get('dialog');
-
     switch ($subcommand) {
       case 'clear':
-        $confirm = $dialog->ask($output, 'Are you sure you want clear database cache? [Y/n]'.PHP_EOL, 'n');
-        if ($confirm == 'Y')
+        $question = new ConfirmationQuestion('Are you sure you want clear database cache? [Y/n]', FALSE);
+
+        $helper = $this->getHelper('question');
+
+        if ($helper->ask($input, $output, $question))
           $this->clearCache();
+
         break;
       case 'build':
-        $confirm = $dialog->ask($output, 'Are you sure you want build database cache? [Y/n]'.PHP_EOL, 'n');
-        if ($confirm == 'Y') {
+        $question = new ConfirmationQuestion('Are you sure you want build database cache? [Y/n]', FALSE);
+
+        $helper = $this->getHelper('question');
+
+        if ($helper->ask($input, $output, $question))
           $this->buildCache($input, $output);
-        }
+
         break;
     }
 
