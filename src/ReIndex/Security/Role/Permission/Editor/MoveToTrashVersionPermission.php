@@ -12,6 +12,12 @@ namespace ReIndex\Security\Role\Permission\Editor;
 
 class MoveToTrashVersionPermission {
 
+
+  public function getDescription() {
+    //! @todo: Implement getDescription() method.
+  }
+
+
   /**
    * @brief Returns `true` if the document can be moved to trash, `false` otherwise.
    * @retval bool
