@@ -12,6 +12,12 @@ namespace ReIndex\Security\Role\Permission\Moderator;
 
 class RestoreVersionPermission {
 
+
+  public function getDescription() {
+    //! @todo: Implement getDescription() method.
+  }
+
+
   /**
    * @brief Returns `true` if the post can be moved to trash, `false` otherwise.
    * @retval bool
