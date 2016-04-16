@@ -16,6 +16,11 @@ use ReIndex\Security\Role\Permission\AbstractPostPermission;
 class ProtectPostPermission extends AbstractPostPermission {
 
 
+  public function getDescription() {
+    //! @todo: Implement getDescription() method.
+  }
+
+
   /**
    * @brief Returns `true` if the protection can be removed from the post, `false` otherwise.
    * @retval bool
