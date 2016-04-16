@@ -12,6 +12,12 @@ namespace ReIndex\Security\Role\Permission\Reviewer;
 
 class RejectVersionPermission {
 
+
+  public function getDescription() {
+    //! @todo: Implement getDescription() method.
+  }
+
+
   /**
    * @brief Returns `true` if the document revision can be rejected, `false` otherwise.
    * @retval bool
