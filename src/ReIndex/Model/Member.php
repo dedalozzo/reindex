@@ -19,6 +19,7 @@ use ReIndex\Exception;
 use ReIndex\Helper\ClassHelper;
 use ReIndex\Security\User\IUser;
 use ReIndex\Security\Role\Permission\IPermission;
+use ReIndex\Security\Role\MemberRole;
 
 
 /**
@@ -129,12 +130,23 @@ class Member extends Storable implements IUser, Extension\ICount {
   }
 
 
+  /**
+   * @copydoc Storable::save()
+   */
+  public function save() {
+    // We must grant at least the MemberRole for the current member.
+    if (empty($this->roles))
+      $this->roles->grant(new MemberRole());
+
+    parent::save();
+  }
+
+  
   /** @name Access Control Management Methods */
   //!@{
 
   /**
-   * @brief
-   * @retval
+   * @copydoc IUser::has()
    */
   public function has(IPermission $permission) {
     $result = FALSE;
@@ -143,17 +155,35 @@ class Member extends Storable implements IUser, Extension\ICount {
     $className = ClassHelper::getClassName(get_class($permission));
 
     foreach ($this->roles as $role) {
-      $reflection = new \ReflectionClass($role);
 
-      // Gets the namespace for the role pruned of the class name.
-      $namespaceName = $reflection->getNamespaceName();
+      do {
+        // Creates a reflection class for the role.
+        $reflection = new \ReflectionClass($role);
 
-      $class = $namespaceName . '\\' . $role->getName() .'\\' . $className;
+        // Gets the namespace for the role pruned of the class name.
+        $namespaceName = $reflection->getNamespaceName();
 
-      if (class_exists($class)) {
-        $obj = clone $permission;
-        $result = $obj->check();
-      }
+        // Determines the permission class related to the role.
+        $class = $namespaceName . '\\Permission\\' . $role->getName() . '\\' . $className;
+
+        if (class_exists($class)) { // If a permission exists for the role...
+          // Casts the original permission object to an instance of the determined class.
+          $obj = $permission->castAs($class);
+
+          // Invokes on it the check() method.
+          $result = $obj->check();
+
+          // Exits from the do while and foreach as well.
+          break 2;
+        }
+        else { // Go back to the previous role in the hierarchy. For example, from AdminRole to ModeratorRole.
+          $role = $reflection->getParentClass();
+
+          if (!$role) // No more roles in the hierarchy.
+            break;
+        }
+      } while (TRUE);
+
     }
 
     return $result;
@@ -327,13 +357,28 @@ class Member extends Storable implements IUser, Extension\ICount {
   }
 
 
+  public function issetEmails() {
+    return isset($this->emails);
+  }
+
+
   public function getLogins() {
     return $this->logins;
   }
 
 
+  public function issetLogins() {
+    return isset($this->logins);
+  }
+
+
   public function getRoles() {
     return $this->roles;
+  }
+
+
+  public function issetRoles() {
+    return isset($this->roles);
   }
 
 
