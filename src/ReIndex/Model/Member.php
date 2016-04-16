@@ -154,19 +154,19 @@ class Member extends Storable implements IUser, Extension\ICount {
     // Gets the class name of the provided instance, pruned by its namespace.
     $className = ClassHelper::getClassName(get_class($permission));
 
-    foreach ($this->roles as $role) {
+    foreach ($this->roles as $roleName => $roleClass) {
 
       do {
-        // Creates a reflection class for the role.
-        $reflection = new \ReflectionClass($role);
+        // Creates a reflection class for the roleName.
+        $reflection = new \ReflectionClass($roleClass);
 
-        // Gets the namespace for the role pruned of the class name.
+        // Gets the namespace for the roleName pruned of the class name.
         $namespaceName = $reflection->getNamespaceName();
 
-        // Determines the permission class related to the role.
-        $class = $namespaceName . '\\Permission\\' . $role->getName() . '\\' . $className;
+        // Determines the permission class related to the roleName.
+        $class = $namespaceName . '\\Permission\\' . $roleName . '\\' . $className;
 
-        if (class_exists($class)) { // If a permission exists for the role...
+        if (class_exists($class)) { // If a permission exists for the roleName...
           // Casts the original permission object to an instance of the determined class.
           $obj = $permission->castAs($class);
 
@@ -176,10 +176,10 @@ class Member extends Storable implements IUser, Extension\ICount {
           // Exits from the do while and foreach as well.
           break 2;
         }
-        else { // Go back to the previous role in the hierarchy. For example, from AdminRole to ModeratorRole.
-          $role = $reflection->getParentClass();
+        else { // Go back to the previous role class in the hierarchy. For example, from AdminRole to ModeratorRole.
+          $roleClass = $reflection->getParentClass();
 
-          if (!$role) // No more roles in the hierarchy.
+          if (!$roleClass) // No more roles in the hierarchy.
             break;
         }
       } while (TRUE);
