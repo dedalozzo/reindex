@@ -18,7 +18,7 @@ trait TPin {
 
 
   public function pin() {
-    if ($this->isPublished()) {
+    if ($this->state->isPublished()) {
       $this->meta['pinned'] = TRUE;
       $this->save();
     }
