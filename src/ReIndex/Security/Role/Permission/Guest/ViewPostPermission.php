@@ -10,14 +10,30 @@
 namespace ReIndex\Security\Role\Permission\Member;
 
 
+use ReIndex\Model\Post;
+
+
 class ViewPostPermission {
+
+  protected $post;
+
+
+  public function __construct(Post $post = NULL) {
+    $this->post = $post;
+  }
+
+
+  public function getDescription() {
+    //! @todo: Implement getDescription() method.
+  }
+
 
   /**
    * @brief Returns `true` if the post can be viewed by the current user, `false` otherwise.
    * @retval bool
    */
   public function check() {
-    if ($this->isCurrent()) return TRUE;
+    if ($this->post->state->isCurrent()) return TRUE;
 
     elseif ($this->user->match($this->creatorId)) return TRUE;
 
