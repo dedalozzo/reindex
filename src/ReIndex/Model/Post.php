@@ -87,7 +87,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     if (!$deferred) {
       $this->deindex();
 
-      if ($this->isCurrent())
+      if ($this->state->isCurrent())
         $this->index();
     }
   }
