@@ -14,6 +14,7 @@ namespace ReIndex\Controller;
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
+use ReIndex\Security\Role\Permission\Guest\ViewPostPermission;
 use ReIndex\Validation;
 use ReIndex\Helper;
 use ReIndex\Exception\InvalidFieldException;
@@ -578,8 +579,8 @@ class IndexController extends ListController {
       return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $post = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $rows[0]['id']);
-
-    if (!$post->canBeViewed())
+    
+    if (!$this->user->has(new ViewPostPermission($post)))
       return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     $post->incHits($post->creatorId);
