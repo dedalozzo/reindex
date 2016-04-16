@@ -22,23 +22,23 @@ interface IRole  {
 
 
   /**
-   * @brief Returns the role name.
+   * @brief Magic method __toString.
+   * @return string
+   */
+  function __toString();
+
+
+  /**
+   * @brief Returns the role's name.
    * @return string
    */
   function getName();
 
 
   /**
-   * @brief Returns the role description.
+   * @brief Returns the role's description.
    * @return string
    */
   function getDescription();
-
-
-  /**
-   * @brief Magic method __toString.
-   * @return string
-   */
-  function __toString();
 
 }
