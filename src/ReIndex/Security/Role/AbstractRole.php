@@ -16,7 +16,6 @@ use ReIndex\Helper\ClassHelper;
 
 /**
  * @brief Abstract class that implements the IRole interface. Since abstract this class cannot be instantiated.
- * @details It's important to note that an permission's name is camel case starting with lowercase letter.
  * @nosubgrouping
  */
 abstract class AbstractRole implements IRole {
