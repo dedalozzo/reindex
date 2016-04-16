@@ -12,6 +12,12 @@ namespace ReIndex\Security\Role\Permission\Reviewer;
 
 class ApproveVersionPermission {
 
+
+  public function getDescription() {
+    //! @todo: Implement getDescription() method.
+  }
+
+
   /**
    * @brief Returns `true` if the document can be approved, `false` otherwise.
    * @retval bool
