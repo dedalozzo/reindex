@@ -13,6 +13,11 @@ namespace ReIndex\Security\Role\Permission\Moderator;
 class RevertVersionPermission {
 
 
+  public function getDescription() {
+    //! @todo: Implement getDescription() method.
+  }
+
+
   /**
    * @brief Returns `true` if the document can be reverted to another version, `false` otherwise.
    * @retval bool
