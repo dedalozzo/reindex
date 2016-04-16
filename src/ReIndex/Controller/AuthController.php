@@ -144,7 +144,7 @@ class AuthController extends BaseController {
         $user = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $rows[0]['id']);
 
         // Checks if the user has verified his e-mail.
-        if (!$user->isVerifiedEmail($email))
+        if (!$user->emails->isVerified($email))
           throw new Exception\EmailNotVerifiedException("L'utente risulta iscritto, ma l'iscrizione non è ancora stata confermata. Segui le istruzioni ricevute nella e-mail di attivazione che ti è stata inviata. Se ancora non l'hai ricevuta, <a href=\"//".$this->domainName."/invia-email-attivazione/\">richiedi una nuova e-mail di attivazione</a>.");
 
         if ($user->password != $password)
