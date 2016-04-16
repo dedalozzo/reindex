@@ -7,46 +7,35 @@
  */
 
 
-namespace ReIndex\Security\Role\Permission\Member;
+namespace ReIndex\Security\Role\Permission\Guest;
 
 
+use ReIndex\Security\Role\Permission\AbstractPermission;
 use ReIndex\Model\Post;
 
 
-class ViewPostPermission {
+class ViewPostPermission extends AbstractPermission {
 
-  protected $post;
+  public $post;
 
 
   public function __construct(Post $post = NULL) {
+    parent::__construct();
     $this->post = $post;
   }
-
-
+  
+  
   public function getDescription() {
     //! @todo: Implement getDescription() method.
   }
 
 
   /**
-   * @brief Returns `true` if the post can be viewed by the current user, `false` otherwise.
+   * @brief Returns `true` if the post can be viewed by a guest, `false` otherwise.
    * @retval bool
    */
   public function check() {
-    if ($this->post->state->isCurrent()) return TRUE;
-
-    elseif ($this->user->match($this->creatorId)) return TRUE;
-
-    elseif ($this->user->isEditor() && $this->approved()) return TRUE;
-
-    elseif ($this->user->isModerator() &&
-      ($this->isSubmittedForPeerReview() or
-        $this->isReturnedForRevision() or
-        $this->isRejected() or
-        $this->isMovedToTrash()))
-      return TRUE;
-    else
-      return FALSE;
+    return ($this->post->state->isCurrent()) ? TRUE : FALSE;
   }
 
 }
