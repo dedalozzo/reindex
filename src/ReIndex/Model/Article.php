@@ -35,9 +35,9 @@ class Article extends Post {
    * @retval bool
    */
   public function canBeMarkedAsDraft() {
-    if ($this->isDraft()) return FALSE;
+    if ($this->state->isDraft()) return FALSE;
 
-    if ($this->isCreated() && $this->user->match($this->creatorId))
+    if ($this->state->isCreated() && $this->user->match($this->creatorId))
       return TRUE;
     else
       return FALSE;
