@@ -16,6 +16,11 @@ use ReIndex\Security\Role\Permission\Moderator\ProtectPostPermission as Supercla
 class ProtectPostPermission extends Superclass {
 
 
+  public function getDescription() {
+    //! @todo: Implement getDescription() method.
+  }
+
+
   /**
    * @brief Returns `true` if the protection can be removed from the post, `false` otherwise.
    * @retval bool
@@ -28,6 +33,5 @@ class ProtectPostPermission extends Superclass {
     else
       return FALSE;
   }
-
 
 }
