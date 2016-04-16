@@ -12,6 +12,12 @@ namespace ReIndex\Security\Role\Permission\Editor;
 
 class SubmitVersionPermission {
 
+
+  public function getDescription() {
+    //! @todo: Implement getDescription() method.
+  }
+
+
   /**
    * @brief Returns `true` if the document can be submitted for peer review, `false` otherwise.
    * @retval bool
