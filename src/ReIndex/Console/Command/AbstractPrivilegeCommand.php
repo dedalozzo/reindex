@@ -19,6 +19,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
+use ReIndex\Model\Member;
+use ReIndex\Security\Guardian;
+
 
 /**
  * @brief Ancestor of grant and revokes commands.
@@ -26,7 +29,7 @@ use EoC\Opt\ViewQueryOpts;
  */
 abstract class AbstractPrivilegeCommand extends AbstractCommand {
 
-  
+
   /**
    * @brief Configures the command.
    */
@@ -43,13 +46,17 @@ abstract class AbstractPrivilegeCommand extends AbstractCommand {
   }
 
 
+  abstract protected function perform($roleName, Member $member, Guardian $guadian, OutputInterface $output);
+
+
   /**
    * @brief Executes the command.
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
+    $guardian = $this->di['guardian'];
     $couch = $this->di['couchdb'];
 
-    $privilege = $input->getArgument('role');
+    $roleName = $input->getArgument('role');
     $username = $input->getArgument('username');
 
     // Sets the options.
@@ -59,18 +66,12 @@ abstract class AbstractPrivilegeCommand extends AbstractCommand {
     $result = $couch->queryView('members', 'byUsername', NULL, $opts);
 
     if (!$result->isEmpty()) {
-      $user = $couch->getDoc(Couch::STD_DOC_PATH, $result[0]['id']);
-      $methodName = $this->getName().$privilege;
+      $member = $couch->getDoc(Couch::STD_DOC_PATH, $result[0]['id']);
 
-      if (method_exists($user, $methodName)) {
-        call_user_func([$user, $methodName]);
-        $user->save();
-      }
-      else
-        $output->writeln("The specified privilege doesn't exist.");
+      $this->perform($roleName, $member, $guardian, $output);
     }
     else
-      $output->writeln("The user `$username` doesn't exist.");
+      $output->writeln("A member with the username `$username` doesn't exist.");
 
     parent::execute($input, $output);
   }
