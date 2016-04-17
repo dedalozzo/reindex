@@ -8,7 +8,7 @@
  */
 
 
-//! Error handlers and other types of handlers
+//! Implementations of various type handlers
 namespace ReIndex\Handler;
 
 
