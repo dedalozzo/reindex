@@ -179,7 +179,7 @@ class ProfileController extends ListController {
     };
 
     $repos = [];
-    $logins = array_filter($user->getLogins(), $isGitHub);
+    $logins = array_filter($user->logins->asArray(), $isGitHub);
 
     // Merges together the repositories of different users.
     foreach ($logins as $login) {
