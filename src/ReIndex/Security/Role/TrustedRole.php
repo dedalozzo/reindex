@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file TrustedRole.php
  * @brief This file contains the TrustedRole class.
@@ -10,10 +11,17 @@
 namespace ReIndex\Security\Role;
 
 
+/**
+ * @brief A trusted member.
+ * @details It's a role granted by the system (or manually) to every member has shown to be trustworthy. A trusted
+ * member is able to perform operations that are not allowed to a simple member.
+ * @nosubgrouping
+ */
 class TrustedRole extends MemberRole {
 
+
   public function getDescription() {
-    //! @todo: Implement getDescription() method.
+    return "A trusted community's member.";
   }
 
 }
