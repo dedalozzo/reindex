@@ -11,11 +11,27 @@
 namespace ReIndex\Console\Command;
 
 
+use Symfony\Component\Console\Output\OutputInterface;
+
+use ReIndex\Model\Member;
+use ReIndex\Security\Guardian;
+
+
 /**
  * @brief Grants a privilege to a user.
  * @nosubgrouping
  */
-class GrantCommand extends AbstractPrivilegeCommand {
+class GrantCommand extends AbstractRoleCommand {
+
+
+  protected function perform($roleName, Member $member, Guardian $guardian, OutputInterface $output) {
+    if ($guardian->roleExists($roleName)) {
+      $member->roles->grant($guardian->getRole($roleName));
+      $member->save();
+    }
+    else
+      $output->writeln("The role `$roleName` doesn't exist.");
+  }
 
 
   /**
