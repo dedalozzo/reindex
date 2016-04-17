@@ -73,18 +73,6 @@ class Guardian {
 
 
   /**
-   * @brief Impersonates the given user.
-   * @param[in] IUser $user An user instance.
-   */
-  public function impersonate(IUser $user) {
-    if ($this->canImpersonate($user))
-      $this->user = $user;
-    else
-      throw new NotEnoughPrivilegesException('Non hai sufficienti privilegi per impersonare un altro utente.');
-  }
-
-
-  /**
    * @brief Returns the logged in user.
    * @retval IUser
    */
@@ -96,7 +84,7 @@ class Guardian {
   /**
    * @brief Gets the available roles.
    */
-  public function getRoles() {
+  public function allRoles() {
     return self::$roles;
   }
 
@@ -112,15 +100,34 @@ class Guardian {
 
   /**
    * @brief Loads the given role.
-   * @param[in] ReIndex::Security::Role::IRole $role An instance of a class that implements IRole.
+   * @param[in] Role::IRole $role An instance of a class that implements IRole.
    */
   public function loadRole(IRole $role) {
-    $class = get_class($role);
+    if (array_key_exists($role->getName(), self::$roles))
+      throw new \RuntimeException(sprintf("The '%s' role already exists.", $role->getName()));
 
-    if (array_key_exists($class, self::$roles))
-      throw new \Exception(sprintf("The '%s' role already exists.", $role->getName()));
+    self::$roles[$role->getName()] = $role;
+  }
 
-    self::$roles[$class] = $role;
+
+  /**
+   * @brief Returns `true` if the role is already present, `false` otherwise.
+   * @param[in] string $name A role's name.
+   * @retval bool
+   */
+  public function roleExists($name) {
+    return isset(self::$roles[$name]);
+  }
+
+
+  /**
+   * @brief Returns the role identified by the given name.
+   * @param[in] string $name A role's name.
+   * @warning This method doesn't check if the role exists, so be careful.
+   * @retval bool
+   */
+  public function getRole($name) {
+    return self::$roles[$name];
   }
 
 }
