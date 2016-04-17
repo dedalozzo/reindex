@@ -32,19 +32,23 @@ class RoleCollection extends AbstractCollection {
   public function grant(IRole $role) {
     // Checks if the same role has been already assigned to the member.
     if ($this->exists($role->getName()))
-      throw new \RuntimeException('The role has been already assigned to the member.');
+      return;
 
     $roles = $this->meta[static::NAME];
-    foreach ($roles as $name => $class) {
-      // If a subclass of `$role` exists for the current collection then throw an exception, because a more important role
-      // has been already assigned to the member.
-      if (is_subclass_of($class, $role))
-        throw new \RuntimeException('A more important role has been already assigned to the member.');
 
-      // If `$role` is an instance of a subclass of any role previously assigned to the member that means the new role
-      // is more important and the one already assigned must be removed.
-      elseif (is_subclass_of($role, $class))
-        unset($this->meta[static::NAME][$class]);
+    foreach ($roles as $name => $class) {
+
+      if (is_subclass_of($class, $role)) {
+        // If a subclass of `$role` exists for the current collection then throw an exception, because a more important role
+        // has been already assigned to the member.
+        return;
+      }
+      elseif (is_subclass_of($role, $class)) {
+        // If `$role` is an instance of a subclass of any role previously assigned to the member that means the new role
+        // is more important and the one already assigned must be removed.
+        unset($this->meta[static::NAME][$name]);
+      }
+
     }
 
     // Uses as key the role's name and as value its class.
@@ -66,11 +70,6 @@ class RoleCollection extends AbstractCollection {
    */
   public function revoke($roleName) {
     parent::remove($roleName);
-
-    // todo: Ogni member deve avere almeno una role inserita automaticamente alla creazione dell'utente e tale role
-    // non può essere rimossa. La role in questione è MemberRole. Può essere rimpiazzata unicamente da una role che
-    // eredita, per cui quando si rimuove una role bisogna vedere se la role che rimane è una subclass della classe
-    // MemberRole.
   }
 
 
