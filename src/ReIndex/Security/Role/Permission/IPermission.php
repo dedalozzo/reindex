@@ -7,6 +7,7 @@
  */
 
 
+//! Permissions
 namespace ReIndex\Security\Role\Permission;
 
 
