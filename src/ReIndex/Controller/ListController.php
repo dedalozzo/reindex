@@ -78,7 +78,7 @@ abstract class ListController extends BaseController {
       $entry = (object)($posts[$i]['value']);
       $entry->id = $posts[$i]['id'];
 
-      if ($entry->status == VersionState::CURRENT) {
+      if ($entry->state == VersionState::CURRENT) {
         $entry->url = Helper\Url::build($entry->publishedAt, $entry->slug);
         $entry->timestamp = Helper\Time::when($entry->publishedAt);
       }
