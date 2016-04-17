@@ -1,6 +1,6 @@
 <?php
 /**
- * @file RejectVersionPermission.php
+ * @file RejectRevisionPermission.php
  * @brief This file contains the ${CLASS_NAME} class.
  * @details
  * @author Filippo F. Fadda
@@ -10,7 +10,7 @@
 namespace ReIndex\Security\Role\Permission\Reviewer;
 
 
-class RejectVersionPermission {
+class RejectRevisionPermission {
 
 
   public function getDescription() {

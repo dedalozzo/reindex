@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file AbstractPrivilegeCommand.php
- * @brief This file contains the AbstractPrivilegeCommand class.
+ * @file AbstractRoleCommand.php
+ * @brief This file contains the AbstractRoleCommand class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -27,7 +27,7 @@ use ReIndex\Security\Guardian;
  * @brief Ancestor of grant and revokes commands.
  * @nosubgrouping
  */
-abstract class AbstractPrivilegeCommand extends AbstractCommand {
+abstract class AbstractRoleCommand extends AbstractCommand {
 
 
   /**

@@ -1,6 +1,6 @@
 <?php
 /**
- * @file ApproveVersionPermission.php
+ * @file ApproveRevisionPermission.php
  * @brief This file contains the ${CLASS_NAME} class.
  * @details
  * @author Filippo F. Fadda
@@ -10,12 +10,10 @@
 namespace ReIndex\Security\Role\Permission\Reviewer;
 
 
-class ApproveVersionPermission {
+use ReIndex\Security\Role\Permission\Member\ApproveVersionPermission as Superclass;
 
 
-  public function getDescription() {
-    //! @todo: Implement getDescription() method.
-  }
+class ApproveRevisionPermission extends Superclass {
 
 
   /**

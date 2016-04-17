@@ -1,6 +1,6 @@
 <?php
 /**
- * @file RestoreVersionPermission.php
+ * @file RestoreRevisionPermission.php
  * @brief This file contains the ${CLASS_NAME} class.
  * @details
  * @author Filippo F. Fadda
@@ -10,7 +10,7 @@
 namespace ReIndex\Security\Role\Permission\Moderator;
 
 
-class RestoreVersionPermission {
+class RestoreRevisionPermission {
 
 
   public function getDescription() {

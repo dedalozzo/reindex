@@ -1,7 +1,7 @@
 <?php
 /**
- * @file ReturnForRevisionVersionPermission.php
- * @brief This file contains the ReturnForRevisionVersionPermission class.
+ * @file ReturnForRevisionPermission.php
+ * @brief This file contains the ReturnForRevisionPermission class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -10,7 +10,7 @@
 namespace ReIndex\Security\Role\Permission\Reviewer;
 
 
-class ReturnForRevisionVersionPermission {
+class ReturnForRevisionPermission {
 
 
   public function getDescription() {
