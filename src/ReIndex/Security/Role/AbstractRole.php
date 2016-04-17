@@ -7,7 +7,6 @@
  */
 
 
-//! Classes to describe the roles a member can assume
 namespace ReIndex\Security\Role;
 
 
