@@ -21,11 +21,10 @@ abstract class AbstractRole implements IRole {
   
   protected $name;
 
-  protected $permissions = [];
-
 
   public function __construct() {
-    $this->name = preg_replace('/Role$/', '', ClassHelper::getClassName(get_class($this)));
+    // The role's name must be lowercase.
+    $this->name = strtolower(preg_replace('/Role$/', '', ClassHelper::getClassName(get_class($this))));
   }
 
 
