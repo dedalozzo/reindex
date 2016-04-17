@@ -16,7 +16,7 @@ use ReIndex\Security\Role\Permission\Guest\ViewPostPermission as Superclass;
 class ViewPostPermission extends Superclass {
 
   public function check() {
-    return $this->user->match($this->creatorId) ? TRUE : FALSE;
+    return $this->user->match($this->post->creatorId) ? TRUE : FALSE;
   }
 
 }
