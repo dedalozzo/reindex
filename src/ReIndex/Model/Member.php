@@ -135,7 +135,7 @@ class Member extends Storable implements IUser, Extension\ICount {
    */
   public function save() {
     // We must grant at least the MemberRole for the current member.
-    if (empty($this->roles))
+    if ($this->roles->isEmpty())
       $this->roles->grant(new MemberRole());
 
     parent::save();
@@ -164,11 +164,11 @@ class Member extends Storable implements IUser, Extension\ICount {
         $namespaceName = $reflection->getNamespaceName();
 
         // Determines the permission class related to the roleName.
-        $class = $namespaceName . '\\Permission\\' . $roleName . '\\' . $className;
+        $newPermissionClass = $namespaceName . '\\Permission\\' . $roleName . '\\' . $className;
 
-        if (class_exists($class)) { // If a permission exists for the roleName...
+        if (class_exists($newPermissionClass)) { // If a permission exists for the roleName...
           // Casts the original permission object to an instance of the determined class.
-          $obj = $permission->castAs($class);
+          $obj = $permission->castAs($newPermissionClass);
 
           // Invokes on it the check() method.
           $result = $obj->check();
@@ -205,6 +205,18 @@ class Member extends Storable implements IUser, Extension\ICount {
    */
   public function isMember() {
     return TRUE;
+  }
+
+
+  /**
+   * @brief Impersonates the given user.
+   * @param[in] IUser $user An anonymous user or a member instance.
+   */
+  public function impersonate(IUser $user) {
+    if ($this->canImpersonate($user))
+      $this->user = $user;
+    else
+      throw new NotEnoughPrivilegesException('Non hai sufficienti privilegi per impersonare un altro utente.');
   }
 
   //!@}
