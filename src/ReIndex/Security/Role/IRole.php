@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file IRole.php
  * @brief This file contains the IRole interface.
@@ -7,6 +8,7 @@
  */
 
 
+//! Roles that a member may assume
 namespace ReIndex\Security\Role;
 
 
