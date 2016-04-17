@@ -81,7 +81,7 @@ function($doc) use ($emit) {
   if (isset($doc->supertype) && $doc->supertype == 'post')
     $emit($doc->_id, [
         'type' => $doc->type,
-        'status' => $doc->status,
+        'state' => $doc->state,
         'title' => $doc->title,
         'excerpt' => $doc->excerpt,
         'slug' => $doc->slug,
@@ -108,7 +108,7 @@ MAP;
     function unversionPosts() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->status == 'current')
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->state == 'current')
     $emit($doc->unversionId);
 };
 MAP;
@@ -127,7 +127,7 @@ MAP;
     function postsByUrl() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && ($doc->status == 'current' or $doc->status == 'deleted'))
+  if (isset($doc->supertype) && $doc->supertype == 'post' && ($doc->state == 'current' or $doc->state == 'deleted'))
     $emit([$doc->year, $doc->month, $doc->day, $doc->slug]);
 };
 MAP;
@@ -145,7 +145,7 @@ MAP;
     function postsByLegacyId() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->status == 'current')
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->state == 'current')
     $emit($doc->legacyId);
 };
 MAP;
@@ -163,7 +163,7 @@ MAP;
     function approvedRevisionsByUrl() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->status == 'approved')
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->state == 'approved')
     $emit([$doc->year, $doc->month, $doc->day, $doc->slug]);
 };
 MAP;
@@ -181,7 +181,7 @@ MAP;
     function postsPerDate() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->index && $doc->visible && $doc->status == 'current')
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->index && $doc->visible && $doc->state == 'current')
     $emit($doc->publishedAt);
 };
 MAP;
@@ -200,7 +200,7 @@ MAP;
     function postsPerDateByType() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->visible && $doc->status == 'current')
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->visible && $doc->state == 'current')
     $emit([$doc->type, $doc->publishedAt]);
 };
 MAP;
@@ -219,7 +219,7 @@ MAP;
     function postsPerDateByTag() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->index && $doc->visible && $doc->status == 'current' && isset($doc->tags))
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->index && $doc->visible && $doc->state == 'current' && isset($doc->tags))
     foreach ($doc->tags as $tagId)
       $emit([$tagId, $doc->publishedAt]);
 };
@@ -239,7 +239,7 @@ MAP;
     function postsPerDateByTagAndType() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->visible && $doc->status == 'current' && isset($doc->tags))
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->visible && $doc->state == 'current' && isset($doc->tags))
     foreach ($doc->tags as $tagId)
       $emit([$tagId, $doc->type, $doc->publishedAt]);
 };
@@ -259,7 +259,7 @@ MAP;
     function postsPerDateByUser() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->index && $doc->visible && $doc->status == 'current')
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->index && $doc->visible && $doc->state == 'current')
     $emit([$doc->creatorId, $doc->publishedAt]);
 };
 MAP;
@@ -278,7 +278,7 @@ MAP;
     function postsPerDateByUserAndType() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->visible && $doc->status == 'current')
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->visible && $doc->state == 'current')
     $emit([$doc->creatorId, $doc->type, $doc->publishedAt]);
 };
 MAP;
@@ -296,7 +296,7 @@ MAP;
     function postsPerTag() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->status == 'current' && isset($doc->tags))
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->state == 'current' && isset($doc->tags))
     foreach ($doc->tags as $tagId)
       $emit($tagId);
 };
@@ -341,7 +341,7 @@ MAP;
     function allNames() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'tag' && $doc->status == 'current')
+  if ($doc->type == 'tag' && $doc->state == 'current')
     $emit($doc->unversionId, $doc->name);
 };
 MAP;
@@ -379,7 +379,7 @@ MAP;
     function substrings() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'tag' && $doc->status == 'current') {
+  if ($doc->type == 'tag' && $doc->state == 'current') {
     $str = preg_replace('/-/su', '', $doc->name);
     $length = mb_strlen($str, 'UTF-8');
 
@@ -408,7 +408,7 @@ MAP;
     function newestTags() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'tag' && $doc->status == 'current' && $doc->master)
+  if ($doc->type == 'tag' && $doc->state == 'current' && $doc->master)
     $emit($doc->createdAt);
 };
 MAP;
@@ -425,7 +425,7 @@ MAP;
     function tagsByName() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'tag' && $doc->status == 'current' && $doc->master)
+  if ($doc->type == 'tag' && $doc->state == 'current' && $doc->master)
     $emit($doc->name);
 };
 MAP;
@@ -442,7 +442,7 @@ MAP;
     function tagsByNameSpecial() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'tag' && ($doc->status == 'current' or $doc->status == 'deleted'))
+  if ($doc->type == 'tag' && ($doc->state == 'current' or $doc->state == 'deleted'))
     $emit($doc->name);
 };
 MAP;
