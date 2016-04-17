@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file AbstractPermission.php
  * @brief This file contains the AbstractPermission class.
