@@ -46,13 +46,15 @@ class Guardian {
       self::$user = UserFactory::fromCookie();
 
       $this->loadRole(new Role\SupervisorRole());
-      $this->loadRole(new Role\DeveloperRole());
       $this->loadRole(new Role\AdminRole());
       $this->loadRole(new Role\ModeratorRole());
       $this->loadRole(new Role\ReviewerRole());
       $this->loadRole(new Role\EditorRole());
       $this->loadRole(new Role\TrustedRole());
       $this->loadRole(new Role\MemberRole());
+
+      // Special role.
+      $this->loadRole(new Role\DeveloperRole());
     }
   }
 
