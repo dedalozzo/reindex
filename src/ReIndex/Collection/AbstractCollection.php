@@ -18,7 +18,7 @@ namespace ReIndex\Collection;
  */
 abstract class AbstractCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
 
-  protected $meta;
+  protected $meta; // Stores the metadata.
 
   const NAME = "collection";
 
