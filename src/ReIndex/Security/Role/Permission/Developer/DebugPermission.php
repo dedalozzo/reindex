@@ -7,24 +7,24 @@
  */
 
 
+//! Permissions for the developer role
 namespace ReIndex\Security\Role\Permission\Developer;
 
 
 use ReIndex\Security\Role\Permission\AbstractPermission;
 
 
+/**
+ * @brief Permission to use the integrated debugger.
+ */
 class DebugPermission extends AbstractPermission {
 
 
   public function getDescription() {
-    //! @todo: Implement getDescription() method.
+    return "The member can use the integrated debugger.";
   }
 
 
-  /**
-   * @brief Returns `true` if the user can enable the debugger, `false` otherwise.
-   * @retval bool
-   */
   public function check() {
     return TRUE;
   }
