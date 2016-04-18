@@ -11,6 +11,9 @@
 namespace ReIndex\Collection;
 
 
+use Phalcon\Di;
+
+
 /**
  * @brief This class is used to represent a generic collection.
  * @details This class implements `IteratorAggregate`, `Countable`, and `ArrayAccess`.
@@ -19,6 +22,8 @@ namespace ReIndex\Collection;
 abstract class AbstractCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
 
   protected $meta; // Stores the metadata.
+  protected $di; // Stores the default Dependency Injector.
+  protected $user; // Stores the current user.
 
   const NAME = "collection";
 
@@ -29,6 +34,8 @@ abstract class AbstractCollection implements \IteratorAggregate, \Countable, \Ar
    */
   public function __construct(array &$meta) {
     $this->meta = &$meta;
+    $this->di = Di::getDefault();
+    $this->user = $this->di['guardian']->getUser();
   }
 
 
@@ -36,7 +43,7 @@ abstract class AbstractCollection implements \IteratorAggregate, \Countable, \Ar
    * @brief Removes from the collection the item identified by the provided key.
    * @param[in] mixed $key A key.
    */
-  public function remove($key) {
+  protected function remove($key) {
     unset($this->meta[static::NAME][$key]);
   }
 
