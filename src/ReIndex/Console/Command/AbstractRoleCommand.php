@@ -20,7 +20,7 @@ use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
 use ReIndex\Model\Member;
-use ReIndex\Security\Guardian;
+use ReIndex\Security\Role\IRole;
 
 
 /**
@@ -46,7 +46,7 @@ abstract class AbstractRoleCommand extends AbstractCommand {
   }
 
 
-  abstract protected function perform($roleName, Member $member, Guardian $guadian, OutputInterface $output);
+  abstract protected function perform(IRole $role, Member $member);
 
 
   /**
@@ -68,7 +68,13 @@ abstract class AbstractRoleCommand extends AbstractCommand {
     if (!$result->isEmpty()) {
       $member = $couch->getDoc(Couch::STD_DOC_PATH, $result[0]['id']);
 
-      $this->perform($roleName, $member, $guardian, $output);
+      if ($guardian->roleExists($roleName)) {
+        $role = $guardian->getRole($roleName);
+        $this->perform($role, $member);
+        $member->save();
+      }
+      else
+        $output->writeln("The role `$roleName` doesn't exist.");
     }
     else
       $output->writeln("A member with the username `$username` doesn't exist.");
