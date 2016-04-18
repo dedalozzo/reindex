@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file RoleCollection.php
  * @brief This file contains the RoleCollection class.
@@ -11,6 +12,9 @@ namespace ReIndex\Collection;
 
 
 use ReIndex\Security\Role\IRole;
+use ReIndex\Security\Role\Permission\Admin\GrantRolePermission;
+use ReIndex\Security\Role\Permission\Admin\RevokeRolePermission;
+use ReIndex\Exception\NotEnoughPrivilegesException;
 
 
 /**
@@ -30,6 +34,9 @@ class RoleCollection extends AbstractCollection {
    * @param[in] IRole $role A role object.
    */
   public function grant(IRole $role) {
+    if (!$this->user->has(new GrantRolePermission($role)))
+      throw new NotEnoughPrivilegesException('Not enough privileges to grant the role.');
+
     // Checks if the same role has been already assigned to the member.
     if ($this->exists($role->getName()))
       return;
@@ -38,12 +45,12 @@ class RoleCollection extends AbstractCollection {
 
     foreach ($roles as $name => $class) {
 
-      if (is_subclass_of($class, $role)) {
-        // If a subclass of `$role` exists for the current collection then throw an exception, because a more important role
-        // has been already assigned to the member.
+      if (is_subclass_of($class, get_class($role))) {
+        // If a subclass of `$role` exists for the current collection then the function returns, because a more
+        // important role has been already assigned to the member.
         return;
       }
-      elseif (is_subclass_of($role, $class)) {
+      elseif (is_subclass_of($role, $class, FALSE)) {
         // If `$role` is an instance of a subclass of any role previously assigned to the member that means the new role
         // is more important and the one already assigned must be removed.
         unset($this->meta[static::NAME][$name]);
@@ -57,27 +64,16 @@ class RoleCollection extends AbstractCollection {
 
 
   /**
-   * @brief Alias of RoleCollection::grant.
-   */
-  public function add(IRole $role) {
-    $this->grant($role);
-  }
-
-
-  /**
    * @brief Revokes the specified role for the current member.
-   * @param[in] string $roleName A role's name.
+   * @param[in] IRole $role A role object.
    */
-  public function revoke($roleName) {
-    parent::remove($roleName);
-  }
+  public function revoke(IRole $role) {
+    if (!$this->user->has(new RevokeRolePermission($role)))
+      throw new NotEnoughPrivilegesException('Not enough privileges to revoke the role.');
 
-
-  /**
-   * @brief Alias of RoleCollection::revoke.
-   */
-  public function remove($roleName) {
-    $this->revoke($roleName);
+    $name = $role->getName();
+    if ($this->exists($name))
+      $this->remove($name);
   }
 
 
@@ -88,6 +84,34 @@ class RoleCollection extends AbstractCollection {
    */
   public function exists($roleName) {
     return parent::exists($roleName);
+  }
+
+
+  /**
+   * @brief Returns `true` if the specified role is an instance of subclass (or an instance of the same class) of one of
+   * the roles in the collection, `false` otherwise.
+   * @param[in] IRole $role A role object.
+   * @param[in] bool $orEqual (optional) When `false` doesn't check if the role is an instance of the same class.
+   */
+  public function isSuperior(IRole $role, $orEqual = TRUE) {
+    $result = FALSE;
+
+    $roles = $this->meta[static::NAME];
+
+    foreach ($roles as $name => $class) {
+
+      if (is_subclass_of($class, get_class($role))) {
+        $result = TRUE;
+        break;
+      }
+      elseif ($orEqual && ($role instanceof $class)) {
+        $result = TRUE;
+        break;
+      }
+
+    }
+
+    return $result;
   }
 
 }
