@@ -17,7 +17,7 @@ namespace ReIndex\Security\Role;
  * member, included the admins.
   * @nosubgrouping
  */
-class SupervisorRole extends DeveloperRole {
+class SupervisorRole extends AdminRole {
 
 
   public function getDescription() {
