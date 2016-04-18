@@ -13,11 +13,10 @@ namespace ReIndex\Security\Role;
 
 /**
  * @brief A platform developer.
- * @details A platform developer is able to perform all the administrative tasks. In addition he can use some special
- * debugging tools.
+ * @details A platform developer is able to use some special debugging tools.
  * @nosubgrouping
  */
-class DeveloperRole extends AdminRole {
+class DeveloperRole extends AbstractRole {
 
 
   public function getDescription() {
