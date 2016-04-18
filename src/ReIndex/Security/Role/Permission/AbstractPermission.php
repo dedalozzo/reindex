@@ -20,18 +20,14 @@ use Phalcon\Di;
  */
 abstract class AbstractPermission implements IPermission {
 
-  protected $di;
-
-  protected $user;
-
-  protected $name;
+  protected $di; // Stores the default Dependency Injector.
+  protected $user; // Stores the current user.
+  protected $name; // Stores the permission's name.
 
 
   public function __construct() {
     $this->di = Di::getDefault();
-
     $this->user = $this->di['guardian']->getUser();
-
     $this->name = lcfirst(preg_replace('/Permission$/', '', get_class($this)));
   }
 
