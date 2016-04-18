@@ -41,11 +41,11 @@ class System implements IUser {
 
 
   /**
-   * @brief This implementation returns always `false`.
+   * @brief This implementation returns always `true`.
    * @retval bool
    */
   public function has(IPermission $permission) {
-    return FALSE;
+    return TRUE;
   }
 
 
