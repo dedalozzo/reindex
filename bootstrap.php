@@ -140,4 +140,5 @@ echo $application->handle()->getContent();
 
 $stop = microtime(true);
 $time = round($stop - $start, 3);
-//echo $time;
+
+echo PHP_EOL . '<!-- Page generated in: ' . $time .'-->' . PHP_EOL;
