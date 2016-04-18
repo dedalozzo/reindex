@@ -18,6 +18,7 @@ use ReIndex\Collection;
 use ReIndex\Exception;
 use ReIndex\Helper\ClassHelper;
 use ReIndex\Security\User\IUser;
+use ReIndex\Security\Role\Permission;
 use ReIndex\Security\Role\Permission\IPermission;
 use ReIndex\Security\Role\MemberRole;
 
@@ -29,9 +30,11 @@ use ReIndex\Security\Role\MemberRole;
 class Member extends Storable implements IUser, Extension\ICount {
   use Extension\TCount;
 
-  private $emails; // Collection of e-mails.
-  private $logins; // Collection of consumers' logins.
-  private $roles;  // Collection of roles.
+  private $emails;    // Collection of e-mails.
+  private $logins;    // Collection of consumers' logins.
+  private $roles;     // Collection of roles.
+  private $friends;   // List of friends.
+  private $blacklist; // Blacklist.
 
 
   public function __construct() {
@@ -45,6 +48,12 @@ class Member extends Storable implements IUser, Extension\ICount {
 
     $this->meta['roles'] = [];
     $this->roles = new Collection\RoleCollection($this->meta);
+
+    $this->meta['friends'] = [];
+    //$this->roles = new Collection\FriendCollection($this->meta);
+
+    $this->meta['blacklist'] = [];
+    //$this->roles = new Collection\Blacklist($this->meta);
   }
 
 
@@ -191,6 +200,18 @@ class Member extends Storable implements IUser, Extension\ICount {
 
 
   /**
+   * @brief Impersonates the given user.
+   * @param[in] IUser $user An anonymous user or a member instance.
+   */
+  public function impersonate(IUser $user) {
+    if ($this->user->has(new Permission\Admin\ImpersonateMemberPermission($user)))
+      $this->user = $user;
+    else
+      throw new Exception\NotEnoughPrivilegesException('Non hai sufficienti privilegi per impersonare un altro utente.');
+  }
+
+
+  /**
    * @brief This implementation returns always `false`.
    * @retval bool
    */
@@ -205,18 +226,6 @@ class Member extends Storable implements IUser, Extension\ICount {
    */
   public function isMember() {
     return TRUE;
-  }
-
-
-  /**
-   * @brief Impersonates the given user.
-   * @param[in] IUser $user An anonymous user or a member instance.
-   */
-  public function impersonate(IUser $user) {
-    if ($this->canImpersonate($user))
-      $this->user = $user;
-    else
-      throw new NotEnoughPrivilegesException('Non hai sufficienti privilegi per impersonare un altro utente.');
   }
 
   //!@}
