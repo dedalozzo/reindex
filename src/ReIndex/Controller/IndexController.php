@@ -491,9 +491,8 @@ class IndexController extends ListController {
    * @brief Displays the user favorites.
    * @param[in] string $filter (optional) Human readable representation of a choice.
    */
-  public function favoriteAction($filter = NULL) {
+  public function favoriteAction($filter = 'insertion-date') {
     $filters = ['insertion-date' => NULL, 'posting-date' => NULL];
-    if (is_null($filter)) $filter = 'insertion-date';
 
     $filter = Helper\ArrayHelper::key($filter, $filters);
     if ($filter === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
