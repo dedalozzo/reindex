@@ -1,7 +1,8 @@
 <?php
+
 /**
- * @file DebuggingPermission.php
- * @brief This file contains the DebuggingPermission class.
+ * @file DebugPermission.php
+ * @brief This file contains the DebugPermission class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -15,9 +16,9 @@ use ReIndex\Security\Role\Permission\AbstractPermission;
 
 
 /**
- * @brief Permission to use the integrated debugger.
+ * @brief Permission to display information related an internal server error, in case the system throw an exception.
  */
-class DebuggingPermission extends AbstractPermission {
+class DebugPermission extends AbstractPermission {
 
 
   public function getDescription() {
