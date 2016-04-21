@@ -89,7 +89,7 @@ class FooterController extends BaseController {
    * @brief Displays the php info page.
    */
   public function infoAction() {
-    if ($this->user->has(new Permission\Developer\ViewInfoPermission()))
+    if ($this->user->has(new Permission\Developer\PhpinfoPermission()))
       phpinfo();
     else
       return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
