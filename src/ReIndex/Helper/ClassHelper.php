@@ -37,4 +37,17 @@ class ClassHelper {
     return substr(strrchr($class, '\\'), 1);
   }
 
+
+  /**
+   * @brief Given a namespace, it returns the namespace itself pruned by its last part.
+   * @param[in] string $namespace A namespace.
+   * @retval string The namespace's root.
+   */
+  public static function getClassRoot($namespace) {
+    if (preg_match('/^(.*[\\\\])/', $namespace, $matches))
+      return $matches[0];
+    else
+      return "";
+  }
+
 }
