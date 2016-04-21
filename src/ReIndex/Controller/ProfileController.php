@@ -40,8 +40,6 @@ class ProfileController extends ListController {
    * @retval User::IUser An user instance.
    */
   protected function getUser($username) {
-    $this->log->addDebug(sprintf('Username: %s', $username));
-
     $user = UserFactory::fromUsername($username);
 
     if ($user->isMember()) {
