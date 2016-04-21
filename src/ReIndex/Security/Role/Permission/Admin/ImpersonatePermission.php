@@ -10,7 +10,7 @@
 namespace ReIndex\Security\Role\Permission\Admin;
 
 
-use ReIndex\Security\Role\Permission\Member\ImpersonationPermission as Superclass;
+use ReIndex\Security\Role\Permission\Member\ImpersonatePermission as Superclass;
 use ReIndex\Security\Role\AdminRole;
 
 
