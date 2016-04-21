@@ -18,8 +18,8 @@ use ReIndex\Collection;
 use ReIndex\Exception;
 use ReIndex\Helper\ClassHelper;
 use ReIndex\Security\User\IUser;
-use ReIndex\Security\Role\Permission;
-use ReIndex\Security\Role\Permission\IPermission;
+use ReIndex\Security\Role;
+use ReIndex\Security\Role\IPermission;
 use ReIndex\Security\Role\MemberRole;
 
 
@@ -160,20 +160,22 @@ class Member extends Storable implements IUser, Extension\ICount {
   public function has(IPermission $permission) {
     $result = FALSE;
 
+    $permissionReflection = new \ReflectionObject($permission);
+
     // Gets the class name of the provided instance, pruned by its namespace.
-    $className = ClassHelper::getClassName(get_class($permission));
+    $permissionClassName = $permissionReflection->getShortName();
+
+    // Determines the namespace excluded the role name.
+    $root = ClassHelper::getClassRoot($permissionReflection->getNamespaceName());
 
     foreach ($this->roles as $roleName => $roleClass) {
 
       do {
         // Creates a reflection class for the roleName.
-        $reflection = new \ReflectionClass($roleClass);
-
-        // Gets the namespace for the roleName pruned of the class name.
-        $namespaceName = $reflection->getNamespaceName();
+        $roleReflection = new \ReflectionClass($roleClass);
 
         // Determines the permission class related to the roleName.
-        $newPermissionClass = $namespaceName . '\\Permission\\' . $roleName . '\\' . $className;
+        $newPermissionClass = $root . $roleReflection->getShortName() . '\\' . $permissionClassName;
 
         if (class_exists($newPermissionClass)) { // If a permission exists for the roleName...
           // Casts the original permission object to an instance of the determined class.
@@ -186,7 +188,7 @@ class Member extends Storable implements IUser, Extension\ICount {
           break 2;
         }
         else { // Go back to the previous role class in the hierarchy. For example, from AdminRole to ModeratorRole.
-          $roleClass = $reflection->getParentClass();
+          $roleClass = $roleReflection->getParentClass()->name;
 
           if (!$roleClass) // No more roles in the hierarchy.
             break;
@@ -204,7 +206,7 @@ class Member extends Storable implements IUser, Extension\ICount {
    * @param[in] IUser $user An anonymous user or a member instance.
    */
   public function impersonate(IUser $user) {
-    if ($this->user->has(new Permission\Admin\ImpersonatePermission($user)))
+    if ($this->user->has(new \ReIndex\Security\Role\AdminRole\ImpersonatePermission($user)))
       $this->user = $user;
     else
       throw new Exception\NotEnoughPrivilegesException('Non hai sufficienti privilegi per impersonare un altro utente.');
