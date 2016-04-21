@@ -16,6 +16,7 @@ use EoC\Opt\ViewQueryOpts;
 use ReIndex\Helper;
 use ReIndex\Exception;
 use ReIndex\Enum\VersionState;
+use ReIndex\Security\Role;
 
 
 /**
@@ -47,6 +48,9 @@ abstract class Versionable extends Storable {
    * @brief Submits the document for peer review.
    */
   public function submit() {
+    if (!$this->user->has(new Role\MemberRole\SubmitRevisionPermission($this)))
+      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
+
     $this->meta['state'] = VersionState::SUBMITTED;
   }
 
@@ -55,6 +59,9 @@ abstract class Versionable extends Storable {
    * @brief Approves the document revision, making of it the current version.
    */
   public function approve() {
+    if (!$this->user->has(new Role\ReviewerRole\ApproveRevisionPermissionPermission($this)))
+      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
+
     $this->meta['state'] = VersionState::CURRENT;
   }
 
@@ -64,6 +71,9 @@ abstract class Versionable extends Storable {
    * @param[in] $reason The reason why the document has been returned for revision.
    */
   public function returnForRevision($reason) {
+    if (!$this->user->has(new Role\ReviewerRole\ReturnForRevisionPermission($this)))
+      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
+
     $this->meta['state'] = VersionState::RETURNED;
     $this->meta['rejectReason'] = $reason;
     $this->meta['moderatorId'] = $this->user->id;
@@ -77,6 +87,9 @@ abstract class Versionable extends Storable {
    * @param[in] $reason The reason why the revision has been rejected.
    */
   public function reject($reason) {
+    if (!$this->user->has(new Role\ReviewerRole\RejectRevisionPermission($this)))
+      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
+
     $this->meta['state'] = VersionState::REJECTED;
     $this->meta['rejectReason'] = $reason;
     $this->meta['moderatorId'] = $this->user->id;
@@ -91,6 +104,9 @@ abstract class Versionable extends Storable {
    * @todo Implement the method Versionable.revert().
    */
   public function revert($versionNumber = NULL) {
+    if (!$this->user->has(new Role\ModeratorRole\RevertToVersionPermission()))
+      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
+
     $this->meta['state'] = VersionState::APPROVED;
   }
 
@@ -99,6 +115,9 @@ abstract class Versionable extends Storable {
    * @brief Moves the document to the trash.
    */
   public function moveToTrash() {
+    if (!$this->user->has(new Role\MemberRole\MoveRevisionToTrashPermission($this)))
+      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
+
     $this->meta['prevstate'] = $this->meta['state'];
     $this->meta['state'] = VersionState::DELETED;
     $this->meta['dustmanId'] = $this->user->id;
@@ -110,6 +129,9 @@ abstract class Versionable extends Storable {
    * @brief Restores the document to its previous state, removing it from trash.
    */
   public function restore() {
+    if (!$this->user->has(new Role\ModeratorRole\RestoreRevisionPermission($this)))
+      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
+
     // In case the document has been deleted, restore it to its previous state.
     $this->meta['state'] = $this->meta['prevstate'];
     unset($this->meta['prevstate']);
