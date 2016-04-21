@@ -1,19 +1,21 @@
 <?php
+
 /**
- * @file EditPostPermission.php
- * @brief This file contains the EditPostPermission class.
+ * @file EditingPermission.php
+ * @brief This file contains the EditingPermission class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
+//! Permissions for the editor role
 namespace ReIndex\Security\Role\Permission\Editor;
 
 
-use ReIndex\Security\Role\Permission\Member\EditPostPermission as Superclass;
+use ReIndex\Security\Role\Permission\Member\EditingPermission as Superclass;
 
 
-class EditPostPermission extends Superclass {
+class EditingPermission extends Superclass {
 
 
   public function getDescription() {
