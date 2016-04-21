@@ -1,20 +1,20 @@
 <?php
 /**
- * @file MoveToTrashVersionPermission.php
- * @brief This file contains the MoveToTrashVersionPermission class.
+ * @file MoveRevisionToTrashPermission.php
+ * @brief This file contains the MoveRevisionToTrashPermission class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-namespace ReIndex\Security\Role\Permission\Editor;
+namespace ReIndex\Security\Role\Permission\Member;
 
 
 use ReIndex\Security\Role\Permission\AbstractPermission;
 use ReIndex\Model\Versionable;
 
 
-class MoveToTrashVersionPermission extends AbstractPermission{
+class MoveRevisionToTrashPermission extends AbstractPermission{
 
   public $versionable;
 
@@ -37,10 +37,7 @@ class MoveToTrashVersionPermission extends AbstractPermission{
   public function check() {
     if ($this->versionable->isMovedToTrash()) return FALSE;
 
-    if (($this->user->isModerator() && $this->isCurrent()) or ($this->user->match($this->versionable->creatorId) && $this->versionable->state->isDraft()))
-      return TRUE;
-    else
-      return FALSE;
+    return ($this->user->match($this->versionable->creatorId) && $this->versionable->state->isDraft()) ? TRUE : FALSE;
   }
 
 }
