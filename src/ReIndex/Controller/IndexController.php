@@ -302,6 +302,9 @@ class IndexController extends ListController {
       $this->assets->addJs($this->dist."/js/tab.min.js", FALSE);
       $this->assets->addJs($this->dist."/js/list.min.js", FALSE);
 
+      // FOR DEBUG PURPOSE ONLY UNCOMMENT THE FOLLOWING LINE AND COMMENT THE ONE ABOVE.
+      //$this->assets->addJs("/reindex/themes/".$this->themeName."/src/js/list.js", FALSE);
+
       $this->view->pick('views/index');
     }
   }
@@ -590,6 +593,8 @@ class IndexController extends ListController {
     $this->view->setVar('title', $post->title);
 
     $this->assets->addJs($this->dist."/js/post.min.js", FALSE);
+    // FOR DEBUG PURPOSE ONLY UNCOMMENT THE FOLLOWING LINE AND COMMENT THE ONE ABOVE.
+    //$this->assets->addJs("/reindex/themes/".$this->themeName."/src/js/post.js", FALSE);
 
     $this->view->pick('views/post/show');
   }
