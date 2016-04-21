@@ -648,7 +648,7 @@ class IndexController extends ListController {
     else {
       $post = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $id);
 
-      if (!$post->canBeEdited())
+      if (!$this->user->has(new Role\MemberRole\EditPostPermission($post)))
         return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
       $opts = new ViewQueryOpts();
