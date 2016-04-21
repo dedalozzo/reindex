@@ -141,4 +141,5 @@ echo $application->handle()->getContent();
 $stop = microtime(true);
 $time = round($stop - $start, 3);
 
-echo PHP_EOL . '<!-- Page generated in: ' . $time .'-->' . PHP_EOL;
+// IF YOU REMOVE THE COMMENT BELOW AJAX WILL NOT LONGER WORK!
+//echo PHP_EOL . '<!-- Page generated in: ' . $time .'-->' . PHP_EOL;
