@@ -13,7 +13,6 @@ namespace ReIndex\Collection;
 
 use ReIndex\Security\Role\IRole;
 use ReIndex\Security\Role\Permission\Admin\GrantRolePermission;
-use ReIndex\Security\Role\Permission\Admin\RevokeRolePermission;
 use ReIndex\Exception\NotEnoughPrivilegesException;
 
 
@@ -68,7 +67,7 @@ class RoleCollection extends AbstractCollection {
    * @param[in] IRole $role A role object.
    */
   public function revoke(IRole $role) {
-    if (!$this->user->has(new RevokeRolePermission($role)))
+    if (!$this->user->has(new GrantRolePermission($role)))
       throw new NotEnoughPrivilegesException('Not enough privileges to revoke the role.');
 
     $name = $role->getName();
