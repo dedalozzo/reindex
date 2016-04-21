@@ -204,7 +204,7 @@ class Member extends Storable implements IUser, Extension\ICount {
    * @param[in] IUser $user An anonymous user or a member instance.
    */
   public function impersonate(IUser $user) {
-    if ($this->user->has(new Permission\Admin\ImpersonateMemberPermission($user)))
+    if ($this->user->has(new Permission\Admin\ImpersonatePermission($user)))
       $this->user = $user;
     else
       throw new Exception\NotEnoughPrivilegesException('Non hai sufficienti privilegi per impersonare un altro utente.');
