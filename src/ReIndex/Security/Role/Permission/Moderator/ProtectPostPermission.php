@@ -7,13 +7,14 @@
  */
 
 
+//! Permissions for the moderator role
 namespace ReIndex\Security\Role\Permission\Moderator;
 
 
-use ReIndex\Security\Role\Permission\AbstractPostPermission;
+use ReIndex\Security\Role\Permission\AbstractPermission;
 
 
-class ProtectPostPermission extends AbstractPostPermission {
+class ProtectPostPermission extends AbstractPermission {
 
 
   public function getDescription() {
