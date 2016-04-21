@@ -1,7 +1,7 @@
 <?php
 /**
  * @file RestoreRevisionPermission.php
- * @brief This file contains the ${CLASS_NAME} class.
+ * @brief This file contains the RestoreRevisionPermission class.
  * @details
  * @author Filippo F. Fadda
  */
