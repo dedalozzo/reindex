@@ -12,7 +12,7 @@
 namespace ReIndex\Security\User;
 
 
-use ReIndex\Security\Role\Permission\IPermission;
+use ReIndex\Security\Role\IPermission;
 
 
 /**
