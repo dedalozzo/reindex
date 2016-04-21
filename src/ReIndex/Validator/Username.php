@@ -61,6 +61,8 @@ class Username extends Validator implements Validation\ValidatorInterface {
 
     if (empty($value))
       $message = "Il nome utente è obbligatorio.";
+    elseif ($value === 'robots.txt')
+      $message = "Il nome utente `robots.txt` è riservato, poiché usato dai motori di ricerca.";
     elseif (mb_strlen($value, "UTF-8") < $this->minLength)
       $message = sprintf("Il nome utente deve contenere almeno %d caratteri.", $this->minLength);
     elseif (mb_strlen($value, "UTF-8") > $this->maxLength)
