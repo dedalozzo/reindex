@@ -13,7 +13,7 @@ namespace ReIndex\Controller;
 
 use Phalcon\Mvc\View;
 
-use ReIndex\Security\Role\Permission;
+use ReIndex\Security\Role;
 
 
 /**
@@ -89,7 +89,7 @@ class FooterController extends BaseController {
    * @brief Displays the php info page.
    */
   public function infoAction() {
-    if ($this->user->has(new Permission\Developer\PhpinfoPermission()))
+    if ($this->user->has(new Role\DeveloperRole\PhpinfoPermission()))
       phpinfo();
     else
       return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
