@@ -1,12 +1,14 @@
 <?php
+
 /**
  * @file ViewPostPermission.php
- * @brief This file contains the ${CLASS_NAME} class.
+ * @brief This file contains the ViewPostPermission class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
+//! Permissions for the guest role.
 namespace ReIndex\Security\Role\Permission\Guest;
 
 
@@ -26,7 +28,7 @@ class ViewPostPermission extends AbstractPermission {
   
   
   public function getDescription() {
-    //! @todo: Implement getDescription() method.
+    return "Permission to read the post.";
   }
 
 
@@ -35,7 +37,7 @@ class ViewPostPermission extends AbstractPermission {
    * @retval bool
    */
   public function check() {
-    return ($this->post->state->isCurrent()) ? TRUE : FALSE;
+    return $this->post->state->isCurrent() ? TRUE : FALSE;
   }
 
 }

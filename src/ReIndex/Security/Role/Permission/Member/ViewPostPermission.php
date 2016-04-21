@@ -1,7 +1,8 @@
 <?php
+
 /**
  * @file ViewPostPermission.php
- * @brief This file contains the ${CLASS_NAME} class.
+ * @brief This file contains the ViewPostPermission class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -16,7 +17,10 @@ use ReIndex\Security\Role\Permission\Guest\ViewPostPermission as Superclass;
 class ViewPostPermission extends Superclass {
 
   public function check() {
-    return $this->user->match($this->post->creatorId) ? TRUE : FALSE;
+    if (parent::check())
+      return TRUE;
+    else
+      return $this->user->match($this->post->creatorId) ? TRUE : FALSE;
   }
 
 }

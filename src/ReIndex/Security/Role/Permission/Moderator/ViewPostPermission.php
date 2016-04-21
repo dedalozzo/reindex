@@ -20,6 +20,7 @@ class ViewPostPermission extends Superclass {
    * @retval bool
    */
   public function check() {
+
     if ($this->post->state->isSubmittedForPeerReview() or
         $this->post->state->isReturnedForRevision() or
         $this->post->state->isRejected() or
