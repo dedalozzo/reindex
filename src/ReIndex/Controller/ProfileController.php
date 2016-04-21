@@ -45,7 +45,7 @@ class ProfileController extends ListController {
     $user = UserFactory::fromUsername($username);
 
     if ($user->isMember()) {
-      $user->incHits($this->user->id);
+      $user->incHits($user->id);
       $this->view->setVar('profile', $user);
     }
 
