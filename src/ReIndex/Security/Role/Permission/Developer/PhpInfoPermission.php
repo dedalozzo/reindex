@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file PhpInfoPermission.php
- * @brief This file contains the PhpInfoPermission class.
+ * @file PhpinfoPermission.php
+ * @brief This file contains the PhpinfoPermission class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -17,7 +17,7 @@ use ReIndex\Security\Role\Permission\AbstractPermission;
 /**
  * @brief Permission to display information about PHP's configuration.
  */
-class PhpInfoPermission extends AbstractPermission {
+class PhpinfoPermission extends AbstractPermission {
 
 
   public function getDescription() {
