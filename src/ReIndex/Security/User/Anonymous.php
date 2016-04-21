@@ -12,7 +12,7 @@ namespace ReIndex\Security\User;
 
 
 use ReIndex\Security\Role\GuestRole;
-use ReIndex\Security\Role\Permission\IPermission;
+use ReIndex\Security\Role\IPermission;
 use ReIndex\Helper\ClassHelper;
 
 
@@ -50,21 +50,19 @@ class Anonymous implements IUser {
 
     $role = new GuestRole();
 
-    // Gets the class name of the provided instance, pruned by its namespace.
-    $className = ClassHelper::getClassName(get_class($permission));
+    // Creates the reflection classes.
+    $roleReflection = new \ReflectionObject($role);
+    $permissionReflection = new \ReflectionObject($permission);
 
-    // Creates a reflection class for the role.
-    $reflection = new \ReflectionClass($role);
+    // Determines the namespace excluded the role name.
+    $root = ClassHelper::getClassRoot($permissionReflection->getNamespaceName());
 
-    // Gets the namespace for the role pruned of the class name.
-    $namespaceName = $reflection->getNamespaceName();
+    // Determines the permission class related to the roleName.
+    $newPermissionClass = $root . $roleReflection->getShortName() . '\\' . $permissionReflection->getShortName();
 
-    // Determines the permission class related to the role.
-    $class = $namespaceName . '\\Permission\\' . $role->getName() . '\\' . $className;
-
-    if (class_exists($class)) { // If a permission exists for the role...
+    if (class_exists($newPermissionClass)) { // If a permission exists for the role...
       // Casts the original permission object to an instance of the determined class.
-      $obj = $permission->castAs($class);
+      $obj = $permission->castAs($newPermissionClass);
 
       // Invokes on it the check() method.
       $result = $obj->check();
