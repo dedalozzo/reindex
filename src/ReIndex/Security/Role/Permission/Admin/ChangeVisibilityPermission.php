@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file ChangeVisibilityPermission
  * @brief This file contains the ChangeVisibilityPermission class.
@@ -10,14 +11,15 @@
 namespace ReIndex\Security\Role\Permission\Admin;
 
 
-use ReIndex\Security\Role\Permission\AbstractPostPermission;
+use ReIndex\Security\Role\Permission\AbstractPermission;
 
 
-class ChangeVisibilityPermission extends AbstractPostPermission {
+class ChangeVisibilityPermission extends AbstractPermission {
+
 
 
   public function getDescription() {
-    //! @todo: Implement getDescription() method.
+    return "Member can hide the post.";
   }
 
 
@@ -26,10 +28,7 @@ class ChangeVisibilityPermission extends AbstractPostPermission {
    * @retval bool
    */
   public function check() {
-    if ($this->post->isCurrent() or $this->post->isDraft())
-      return TRUE;
-    else
-      return FALSE;
+    return ($this->post->isCurrent() or $this->post->isDraft()) ? TRUE : FALSE;
   }
 
 }
