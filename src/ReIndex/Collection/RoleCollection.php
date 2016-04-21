@@ -12,7 +12,7 @@ namespace ReIndex\Collection;
 
 
 use ReIndex\Security\Role\IRole;
-use ReIndex\Security\Role\Permission\Admin\GrantRolePermission;
+use ReIndex\Security\Role\AdminRole\GrantRolePermission;
 use ReIndex\Exception\NotEnoughPrivilegesException;
 
 
