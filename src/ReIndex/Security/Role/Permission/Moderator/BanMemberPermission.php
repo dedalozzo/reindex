@@ -26,7 +26,7 @@ class BanMemberPermission extends AbstractPermission {
 
 
   public function getDescription() {
-    //! @todo: Implement getDescription() method.
+    return "Permission to ban another community's member.";
   }
 
 
