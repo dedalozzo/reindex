@@ -15,7 +15,8 @@ use ReIndex\Security\Role\GuestRole\ViewPostPermission as Superclass;
 
 
 /**
- * @copydoc GuestRole::ViewPostPermission
+ * @copybrief GuestRole::ViewPostPermission
+ * @details A member can only see his own posts, even if they are invisible to the other members.
  */
 class ViewPostPermission extends Superclass {
 
