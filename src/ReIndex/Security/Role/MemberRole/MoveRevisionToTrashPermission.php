@@ -12,6 +12,7 @@ namespace ReIndex\Security\Role\MemberRole;
 
 
 use ReIndex\Security\Role\AbstractPermission;
+use ReIndex\Model\Versionable;
 
 
 /**
@@ -24,7 +25,7 @@ class MoveRevisionToTrashPermission extends AbstractPermission {
    * @brief Constructor.
    * param[in] Model::Versionable $context
    */
-  public function __construct($context = NULL) {
+  public function __construct(Versionable $context = NULL) {
     parent::__construct($context);
   }
 
@@ -34,12 +35,9 @@ class MoveRevisionToTrashPermission extends AbstractPermission {
   }
 
 
-  /**
-   * @brief Returns `true` if the document can be moved to trash, `false` otherwise.
-   * @retval bool
-   */
   public function check() {
-    if ($this->context->state->isMovedToTrash()) return FALSE;
+    if ($this->context->state->isMovedToTrash())
+      return FALSE;
 
     return ($this->user->match($this->context->creatorId) && $this->context->state->isDraft()) ? TRUE : FALSE;
   }

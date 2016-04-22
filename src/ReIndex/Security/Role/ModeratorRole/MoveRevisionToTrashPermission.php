@@ -15,16 +15,17 @@ use ReIndex\Security\Role\MemberRole\MoveRevisionToTrashPermission as Superclass
 
 
 /**
- * @copydoc MemberRole::MoveRevisionToTrashPermission
+ * @copybrief MemberRole::MoveRevisionToTrashPermission
+ * @details In addition a moderator can delete any post, with the exception of the protected ones.
  */
 class MoveRevisionToTrashPermission extends Superclass {
 
 
   public function check() {
-    if ($this->user->isModerator() && ($this->isCreated() or $this->isDraft() or $this->isSubmittedForPeerReview()))
-      return TRUE;
-    else
+    if ($this->context->state->isMovedToTrash())
       return FALSE;
+    else
+      return !$this->context->isProtected() ? TRUE : FALSE;
   }
 
 }
