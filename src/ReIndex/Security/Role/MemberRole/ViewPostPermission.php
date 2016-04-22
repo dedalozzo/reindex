@@ -15,7 +15,7 @@ use ReIndex\Security\Role\GuestRole\ViewPostPermission as Superclass;
 
 
 /**
- * @copydoc Guest::ViewPostPermission
+ * @copydoc GuestRole::ViewPostPermission
  */
 class ViewPostPermission extends Superclass {
 
