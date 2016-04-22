@@ -11,6 +11,7 @@
 namespace ReIndex\Security\Role\ModeratorRole;
 
 
+use ReIndex\Model\Versionable;
 use ReIndex\Security\Role\AbstractPermission;
 use EoC\Couch;
 
@@ -25,7 +26,7 @@ class RestoreRevisionPermission extends AbstractPermission {
    * @brief Constructor.
    * @param[in] Model::Versionable $context
    */
-  public function __construct($context = NULL) {
+  public function __construct(Versionable $context = NULL) {
     parent::__construct($context);
   }
 
@@ -43,13 +44,13 @@ class RestoreRevisionPermission extends AbstractPermission {
    * deleted by a member with an inferior role or by himself.
    */
   public function check() {
-    if (!$this->context->isMovedToTrash())
+    if (!$this->context->state->isMovedToTrash())
       return FALSE;
     elseif ($this->context->dustmanId == $this->user->id)
       return TRUE;
     else {
-      $member = $this->di['couchdb']->getDoc(Couch::STD_DOC_PATH, $this->context->dustmanId);
-      return $this->user->roles->isSuperior($member, FALSE) ? TRUE : FALSE;
+      $dustman = $this->di['couchdb']->getDoc(Couch::STD_DOC_PATH, $this->context->dustmanId);
+      return !$dustman->roles->isSuperior($this->getRole()) ? TRUE : FALSE;
     }
   }
 
