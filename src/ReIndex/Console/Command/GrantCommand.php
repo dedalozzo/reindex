@@ -14,6 +14,8 @@ namespace ReIndex\Console\Command;
 use ReIndex\Model\Member;
 use ReIndex\Security\Role\IRole;
 
+use Symfony\Component\Console\Output\OutputInterface;
+
 
 /**
  * @brief Grants a privilege to a user.
@@ -22,8 +24,11 @@ use ReIndex\Security\Role\IRole;
 class GrantCommand extends AbstractRoleCommand {
 
 
-  protected function perform(IRole $role, Member $member) {
-    $member->roles->grant($role);
+  protected function perform(IRole $role, Member $member, OutputInterface $output) {
+    if (!$member->roles->isSuperior($role, FALSE))
+      $member->roles->grant($role);
+    else
+      $output->writeln('A superior role already exists for the member.');
   }
 
 
