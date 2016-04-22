@@ -14,6 +14,12 @@ namespace ReIndex\Controller;
 use EoC\Couch;
 use Phalcon\Mvc\View;
 
+use ReIndex\Security\Role\AdminRole\ChangeVisibilityPermission;
+use ReIndex\Security\Role\ModeratorRole\ProtectPostPermission;
+use ReIndex\Security\Role\ModeratorRole\UnprotectPostPermission;
+use ReIndex\Security\Role\ModeratorRole\MoveRevisionToTrashPermission;
+use ReIndex\Security\Role\ModeratorRole\RestoreRevisionPermission;
+
 
 /**
  * @brief Controller for the AJAX requests.
@@ -31,6 +37,13 @@ class AjaxController extends BaseController {
         $post = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
 
         $this->view->setVar('post', $post);
+
+        $this->view->setVar('canProtect', $this->user->has(new ProtectPostPermission($post)));
+        $this->view->setVar('canUnprotect', $this->user->has(new UnprotectPostPermission($post)));
+        $this->view->setVar('canChangeVisibility', $this->user->has(new ChangeVisibilityPermission($post)));
+        $this->view->setVar('canMoveToTrash', $this->user->has(new MoveRevisionToTrashPermission($post)));
+        $this->view->setVar('canRestore', $this->user->has(new RestoreRevisionPermission($post)));
+
         $this->view->pick('views/ajax/moderator-menu');
       }
       else
