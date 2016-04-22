@@ -8,6 +8,7 @@
  */
 
 
+//! Permissions for the admin role
 namespace ReIndex\Security\Role\AdminRole;
 
 
