@@ -46,7 +46,10 @@ abstract class AbstractRoleCommand extends AbstractCommand {
   }
 
 
-  abstract protected function perform(IRole $role, Member $member);
+  /**
+   * @brief Performs the operation.
+   */
+  abstract protected function perform(IRole $role, Member $member, OutputInterface $output);
 
 
   /**
@@ -70,7 +73,7 @@ abstract class AbstractRoleCommand extends AbstractCommand {
 
       if ($guardian->roleExists($roleName)) {
         $role = $guardian->getRole($roleName);
-        $this->perform($role, $member);
+        $this->perform($role, $member, $output);
         $member->save();
       }
       else
