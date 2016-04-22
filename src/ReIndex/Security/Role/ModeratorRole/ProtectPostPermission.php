@@ -13,10 +13,14 @@ namespace ReIndex\Security\Role\ModeratorRole;
 
 
 use ReIndex\Security\Role\AbstractPermission;
+use ReIndex\Model\Post;
 
 
 /**
  * @brief Permission to close or lock a post.
+ * @details A moderator can protect only the current revision of a post, just in case it doesn't have any active
+ * protection.
+ * @nosubgrouping
  */
 class ProtectPostPermission extends AbstractPermission {
 
@@ -25,7 +29,7 @@ class ProtectPostPermission extends AbstractPermission {
    * @brief Constructor.
    * @param[in] Model::Post $context
    */
-  public function __construct($context = NULL) {
+  public function __construct(Post $context = NULL) {
     parent::__construct($context);
   }
 
@@ -36,13 +40,7 @@ class ProtectPostPermission extends AbstractPermission {
 
 
   public function check() {
-    if (!$this->context->isProtected()) return FALSE;
-
-    if ($this->user->match($this->context->protectorId) &&
-      ($this->post->context->isCurrent() or $this->context->state->isDraft()))
-      return TRUE;
-    else
-      return FALSE;
+    return (!$this->context->isProtected() && $this->context->state->isCurrent()) ? TRUE : FALSE;
   }
 
 }
