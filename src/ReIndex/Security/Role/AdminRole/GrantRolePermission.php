@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file GrantRolePermission.php
  * @brief This file contains the GrantRolePermission class.
@@ -24,7 +25,7 @@ class GrantRolePermission extends AbstractPermission {
    * @brief Constructor.
    * @param[in] IRole $context
    */
-  public function __construct(IRole $context) {
+  public function __construct(IRole $context = NULL) {
     parent::__construct($context);
   }
 
