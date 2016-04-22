@@ -36,7 +36,7 @@ class Time extends TimeHelper {
 
   /** @name Time Periods Array */
   //!@{
-  public static $periods = [
+  public static $periods = array( // Cannot use [] syntax otherwise Doxygen generates a warning.
     self::ALL_TIME => NULL,
     self::THIS_YEAR => NULL,
     self::LAST_YEAR => NULL,
@@ -46,7 +46,7 @@ class Time extends TimeHelper {
     self::LAST_WEEK => NULL,
     self::TODAY => NULL,
     self::YESTERDAY => NULL
-  ];
+  );
   //!@}
 
 
