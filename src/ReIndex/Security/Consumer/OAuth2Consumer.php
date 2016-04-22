@@ -170,7 +170,6 @@ abstract class OAuth2Consumer implements IConsumer {
 
   /**
    * @brief Tries to perform the standard user logon.
-   * @param[in] string $userEmail The user email.
    * @param[in] array $userData An associative array with the user information.
    * @retval Model::Member An user instance or `false`.
    */
