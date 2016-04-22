@@ -12,6 +12,7 @@ namespace ReIndex\Security\Role\AdminRole;
 
 
 use ReIndex\Security\Role\AbstractPermission;
+use ReIndex\Model\Post;
 
 
 /**
@@ -20,13 +21,18 @@ use ReIndex\Security\Role\AbstractPermission;
 class ChangeVisibilityPermission extends AbstractPermission {
 
 
+  public function __construct(Post $context = NULL) {
+    parent::__construct($context);
+  }
+
+
   public function getDescription() {
     return "Permission to change the visibility of a content.";
   }
 
 
   public function check() {
-    return ($this->context->state->isCurrent() or $this->context->state->isDraft()) ? TRUE : FALSE;
+    return $this->context->state->isCurrent() ? TRUE : FALSE;
   }
 
 }
