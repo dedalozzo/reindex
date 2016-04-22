@@ -19,13 +19,14 @@ use Phalcon\Di;
  * @nosubgrouping
  */
 abstract class AbstractPermission implements IPermission {
-
+  protected $context; // Stores the execution context.
   protected $di; // Stores the default Dependency Injector.
   protected $user; // Stores the current user.
   protected $name; // Stores the permission's name.
 
 
-  public function __construct() {
+  public function __construct($context = NULL) {
+    $this->context = $context;
     $this->di = Di::getDefault();
     $this->user = $this->di['guardian']->getUser();
     $this->name = lcfirst(preg_replace('/Permission$/', '', get_class($this)));
@@ -45,16 +46,24 @@ abstract class AbstractPermission implements IPermission {
   abstract public function getDescription();
 
 
+  public function setContext($context) {
+    $this->context = $context;
+  }
+
+
+  public function getContext() {
+    return $this->context;
+  }
+
+
   abstract public function check();
 
 
   public function castAs($newClass) {
     $obj = new $newClass;
-    
-    foreach (get_object_vars($this) as $key => $name) {
-      $obj->$key = $name;
-    }
-    
+
+    $obj->setContext($this->getContext());
+
     return $obj;
   }  
 
