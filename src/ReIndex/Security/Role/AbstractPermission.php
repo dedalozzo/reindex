@@ -19,10 +19,11 @@ use Phalcon\Di;
  * @nosubgrouping
  */
 abstract class AbstractPermission implements IPermission {
+  protected $role;    // Stores the execution role.
   protected $context; // Stores the execution context.
-  protected $di; // Stores the default Dependency Injector.
-  protected $user; // Stores the current user.
-  protected $name; // Stores the permission's name.
+  protected $di;      // Stores the default Dependency Injector.
+  protected $user;    // Stores the current user.
+  protected $name;    // Stores the permission's name.
 
 
   public function __construct($context = NULL) {
@@ -46,6 +47,16 @@ abstract class AbstractPermission implements IPermission {
   abstract public function getDescription();
 
 
+  public function setRole(IRole $role) {
+    $this->role = $role;
+  }
+
+
+  public function getRole() {
+    return $this->role;
+  }
+
+
   public function setContext($context) {
     $this->context = $context;
   }
@@ -62,6 +73,7 @@ abstract class AbstractPermission implements IPermission {
   public function castAs($newClass) {
     $obj = new $newClass;
 
+    $obj->setRole($this->getRole());
     $obj->setContext($this->getContext());
 
     return $obj;
