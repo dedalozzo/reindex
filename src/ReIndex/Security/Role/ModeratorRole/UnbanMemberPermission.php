@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file UnbanMemberPermission.php
+ * @file ModeratorRole/UnbanMemberPermission.php
  * @brief This file contains the UnbanMemberPermission class.
  * @details
  * @author Filippo F. Fadda
@@ -11,13 +11,27 @@
 namespace ReIndex\Security\Role\ModeratorRole;
 
 
+use ReIndex\Security\Role\AbstractPermission;
+use ReIndex\Model\Member;
+
 use EoC\Couch;
 
 
 /**
  * @brief Permission to remove a ban.
+ * @details A moderator (or a member with a superior role) can remove a ban, but only if the member has been
+ * banned by an user with an equal (or inferior) role or by himself. And of course he cannot unban himself.
  */
-class UnbanMemberPermission extends BanMemberPermission {
+class UnbanMemberPermission extends AbstractPermission {
+
+
+  /**
+   * @brief Constructor.
+   * @param[in] Model::Member $context
+   */
+  public function __construct(Member $context = NULL) {
+    parent::__construct($context);
+  }
 
 
   public function getDescription() {
@@ -25,18 +39,16 @@ class UnbanMemberPermission extends BanMemberPermission {
   }
 
 
-  /**
-   * @brief A moderator (or a member with a superior role) can remove a ban, but only if the member has been
-   * banned by an user with an equal (or inferior) role or by himself.
-   */
   public function check() {
     if (!$this->context->isBanned())
       return FALSE;
-    elseif ($this->context->bannerId == $this->user->id)
+    elseif ($this->user->match($this->context->bannerId))
+      return FALSE;
+    elseif ($this->context->bannerId === $this->user->id)
       return TRUE;
     else {
       $whoBanned = $this->di['couchdb']->getDoc(Couch::STD_DOC_PATH, $this->context->bannerId);
-      return $this->user->roles->isSuperior($whoBanned) ? TRUE : FALSE;
+      return !$whoBanned->roles->isSuperior($this->getRole(), FALSE) ? TRUE : FALSE;
     }
   }
 
