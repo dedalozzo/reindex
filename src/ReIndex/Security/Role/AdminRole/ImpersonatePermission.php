@@ -16,7 +16,7 @@ use ReIndex\Security\Role\AdminRole;
 
 
 /**
- * @copydoc Superclass::ImpersonatePermission
+ * @copydoc MemberRole::ImpersonatePermission
  */
 class ImpersonatePermission extends Superclass {
 
