@@ -21,6 +21,10 @@ use ReIndex\Model\Post;
 class ChangeVisibilityPermission extends AbstractPermission {
 
 
+  /**
+   * @brief Constructor.
+   * @param[in] Model::Post $context
+   */
   public function __construct(Post $context = NULL) {
     parent::__construct($context);
   }
