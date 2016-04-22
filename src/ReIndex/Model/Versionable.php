@@ -59,7 +59,7 @@ abstract class Versionable extends Storable {
    * @brief Approves the document revision, making of it the current version.
    */
   public function approve() {
-    if (!$this->user->has(new Role\ReviewerRole\ApproveRevisionPermissionPermission($this)))
+    if (!$this->user->has(new Role\ReviewerRole\ApproveRevisionPermission($this)))
       throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
 
     $this->meta['state'] = VersionState::CURRENT;
