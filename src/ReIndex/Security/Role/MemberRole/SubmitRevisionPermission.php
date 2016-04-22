@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file SubmitRevisionPermission.php
+ * @file MemberRole/SubmitRevisionPermission.php
  * @brief This file contains the SubmitRevisionPermission class.
  * @details
  * @author Filippo F. Fadda

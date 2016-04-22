@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file SubmitVersionPermission.php
- * @brief This file contains the SubmitVersionPermission class.
+ * @file EditorRole/SubmitRevisionPermission.php
+ * @brief This file contains the SubmitRevisionPermission class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -11,10 +11,13 @@
 namespace ReIndex\Security\Role\EditorRole;
 
 
+use ReIndex\Security\Role\MemberRole\SubmitRevisionPermission as Superclass;
+
+
 /**
- * @copydoc MemberRole::SubmitVersionPermission
+ * @copydoc MemberRole::SubmitRevisionPermission
  */
-class SubmitVersionPermission {
+class SubmitRevisionPermission extends Superclass {
 
 
   public function check() {
