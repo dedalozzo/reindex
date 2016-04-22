@@ -20,7 +20,7 @@ class Member  {
   string $password; //!< Password chosen by the member.
   string $hash; //!< String hash sent via e-mail to the member to confirm that his e-mail is real.
   string $internetProtocolAddress; //!< The IP address of the member.
-  string $locale; //!< Member's language
+  string $locale; //!< Member's language, ex. en_US
   integer $timeOffset; //!< Time offset.
 
   string $gender; //!< Sex.
