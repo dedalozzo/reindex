@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file ImpersonatePermission.php
  * @brief This file contains the ImpersonatePermission class.
@@ -23,9 +24,8 @@ use ReIndex\Security\User\IUser;
 class ImpersonatePermission extends AbstractPermission {
 
 
-  public function __construct(IUser $person) {
-    parent::__construct();
-    $this->person = $person;
+  public function __construct(IUser $context) {
+    parent::__construct($context);
   }
 
 
@@ -35,7 +35,7 @@ class ImpersonatePermission extends AbstractPermission {
 
 
   public function check() {
-    return  ($this->user->isMember() && $this->person->isGuest()) ? TRUE : FALSE;
+    return  ($this->user->isMember() && $this->context->isGuest()) ? TRUE : FALSE;
   }
 
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file BanMemberPermission.php
  * @brief This file contains the BanMemberPermission class.
@@ -11,17 +12,20 @@ namespace ReIndex\Security\Role\ModeratorRole;
 
 
 use ReIndex\Security\Role\AbstractPermission;
-use ReIndex\Model\Member;
 
 
+/**
+ * @brief Permission to ban another community's member.
+ */
 class BanMemberPermission extends AbstractPermission {
-  
-  protected $member;
 
 
-  public function __construct(Member $member = NULL) {
-    parent::__construct();
-    $this->member = $member;
+  /**
+   * @brief Constructor.
+   * @param[in] Model::Member $context
+   */
+  public function __construct($context) {
+    parent::__construct($context);
   }
 
 
@@ -30,10 +34,6 @@ class BanMemberPermission extends AbstractPermission {
   }
 
 
-  /**
-   * @brief Returns `true` if the user logged in is allowed to ban the current user, `false` otherwise.
-   * @retval bool
-   */
   public function check() {
     if ($this->user->isAdmin() && !$this->member->isAdmin() && !$this->user->match($this->member->id))
       return TRUE;

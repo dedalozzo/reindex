@@ -12,18 +12,21 @@ namespace ReIndex\Security\Role\MemberRole;
 
 
 use ReIndex\Security\Role\AbstractPermission;
+use ReIndex\Model\Post;
 
 
 /**
  * @brief Permission to edit a post.
  */
 class EditPostPermission extends AbstractPermission {
-  protected $post;
 
 
-  public function __construct($post) {
-    parent::__construct();
-    $this->post = $post;
+  /**
+   * @brief Constructor.
+   * @param[in] Model::Post $context
+   */
+  public function __construct($context) {
+    parent::__construct($context);
   }
 
 
@@ -37,9 +40,9 @@ class EditPostPermission extends AbstractPermission {
    * @retval bool
    */
   public function check() {
-    if ($this->user->match($this->post->creatorId) &&
-      !$this->post->isLocked() &&
-      ($this->post->state->isCurrent() or $this->post->state->isDraft()))
+    if ($this->user->match($this->context->creatorId) &&
+      !$this->context->isLocked() &&
+      ($this->context->state->isCurrent() or $this->context->state->isDraft()))
       return TRUE;
     else
       return FALSE;

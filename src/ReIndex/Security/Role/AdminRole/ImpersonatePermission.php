@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file ImpersonatePermission.php
  * @brief This file contains the ImpersonatePermission class.
@@ -11,10 +12,11 @@ namespace ReIndex\Security\Role\AdminRole;
 
 
 use ReIndex\Security\Role\MemberRole\ImpersonatePermission as Superclass;
+use ReIndex\Security\Role\AdminRole;
 
 
 /**
- * @copydoc Member::ImpersonatePermission
+ * @copydoc MemberRole::ImpersonatePermission
  */
 class ImpersonatePermission extends Superclass {
 

@@ -19,12 +19,13 @@ use ReIndex\Security\Role\IRole;
  */
 class GrantRolePermission extends AbstractPermission {
 
-  public $role;
 
-
-  public function __construct(IRole $role) {
-    parent::__construct();
-    $this->role = $role;
+  /**
+   * @brief Constructor.
+   * @param[in] IRole $context
+   */
+  public function __construct(IRole $context) {
+    parent::__construct($context);
   }
 
 
@@ -34,7 +35,7 @@ class GrantRolePermission extends AbstractPermission {
 
 
   public function check() {
-    return !$this->user->roles->isSuperior($this->role);
+    return !$this->user->roles->isSuperior($this->context);
   }
 
 }

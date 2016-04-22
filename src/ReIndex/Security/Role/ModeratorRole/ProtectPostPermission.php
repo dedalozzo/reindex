@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file ProtectPostPermission.php
  * @brief This file contains the ProtectPostPermission class.
@@ -14,23 +15,31 @@ namespace ReIndex\Security\Role\ModeratorRole;
 use ReIndex\Security\Role\AbstractPermission;
 
 
+/**
+ * @brief Permission to close or lock a post.
+ */
 class ProtectPostPermission extends AbstractPermission {
 
 
-  public function getDescription() {
-    //! @todo: Implement getDescription() method.
+  /**
+   * @brief Permission to close or lock a post.
+   * @param[in] Model::Post $context
+   */
+  public function __construct($context) {
+    parent::__construct($context);
   }
 
 
-  /**
-   * @brief Returns `true` if the protection can be removed from the post, `false` otherwise.
-   * @retval bool
-   */
-  public function check() {
-    if (!$this->post->isProtected()) return FALSE;
+  public function getDescription() {
+    return "Permission to close or lock a post.";
+  }
 
-    if ($this->user->match($this->post->protectorId) &&
-      ($this->post->isCurrent() or $this->post->isDraft()))
+
+  public function check() {
+    if (!$this->context->isProtected()) return FALSE;
+
+    if ($this->user->match($this->context->protectorId) &&
+      ($this->post->context->isCurrent() or $this->context->state->isDraft()))
       return TRUE;
     else
       return FALSE;

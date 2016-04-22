@@ -1,7 +1,8 @@
 <?php
+
 /**
  * @file ViewPostPermission.php
- * @brief This file contains the ${CLASS_NAME} class.
+ * @brief This file contains the ViewPostPermission class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -10,24 +11,23 @@
 namespace ReIndex\Security\Role\ModeratorRole;
 
 
-use ReIndex\Security\Role\GuestRole\ViewPostPermission as Superclass;
+use ReIndex\Security\Role\MemberRole\ViewPostPermission as Superclass;
 
 
+/**
+ * @copydoc Member::ViewPostPermission
+ */
 class ViewPostPermission extends Superclass {
 
-  /**
-   * @brief Returns `true` if the post can be viewed by the current moderator, `false` otherwise.
-   * @retval bool
-   */
-  public function check() {
 
-    if ($this->post->state->isSubmittedForPeerReview() or
-        $this->post->state->isReturnedForRevision() or
-        $this->post->state->isRejected() or
-        $this->post->state->isMovedToTrash())
+  public function check() {
+    if (parent::check())
       return TRUE;
     else
-      return FALSE;
+      return ($this->context->state->isSubmittedForPeerReview() or
+        $this->context->state->isReturnedForRevision() or
+        $this->context->state->isRejected() or
+        $this->context->state->isMovedToTrash()) ? TRUE : FALSE;
   }
 
 }

@@ -15,14 +15,18 @@ use ReIndex\Security\Role\AbstractPermission;
 use ReIndex\Model\Versionable;
 
 
+/**
+ * @brief Permission to approve a revision.
+ */
 class ApproveRevisionPermission extends AbstractPermission {
 
-  public $versionable;
 
-
-  public function __construct(Versionable $versionable) {
-    parent::__construct();
-    $this->versionable = $versionable;
+  /**
+   * @brief Constructor.
+   * @param[in] Model::Versionable $context.
+   */
+  public function __construct(Versionable $context) {
+    parent::__construct($context);
   }
 
 
@@ -36,7 +40,7 @@ class ApproveRevisionPermission extends AbstractPermission {
    * @retval bool
    */
   public function check() {
-    if ($this->user->isModerator() && ($this->isCreated() or $this->isDraft() or $this->isSubmittedForPeerReview()))
+    if ($this->user->isModerator() && ($this->context->state->isCreated() or $this->context->state->isDraft() or $this->context->state->isSubmittedForPeerReview()))
       return TRUE;
     else
       return FALSE;

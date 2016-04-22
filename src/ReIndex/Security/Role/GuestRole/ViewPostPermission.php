@@ -13,23 +13,21 @@ namespace ReIndex\Security\Role\GuestRole;
 
 
 use ReIndex\Security\Role\AbstractPermission;
+use ReIndex\Model\Post;
 
 
 /**
  * @brief Permission to read a post.
- * @retval bool
  */
 class ViewPostPermission extends AbstractPermission {
-  public $post;
 
 
   /**
    * @brief Constructor.
-   * @param[in] Post $post A post.
+   * @param[in] Model::Post $context.
    */
-  public function __construct($post = NULL) {
-    parent::__construct();
-    $this->post = $post;
+  public function __construct($context) {
+    parent::__construct($context);
   }
   
   
@@ -39,7 +37,7 @@ class ViewPostPermission extends AbstractPermission {
 
 
   public function check() {
-    return $this->post->state->isCurrent() ? TRUE : FALSE;
+    return $this->context->state->isCurrent() ? TRUE : FALSE;
   }
 
 }

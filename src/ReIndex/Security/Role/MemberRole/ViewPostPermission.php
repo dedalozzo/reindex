@@ -24,7 +24,7 @@ class ViewPostPermission extends Superclass {
     if (parent::check())
       return TRUE;
     else
-      return $this->user->match($this->post->creatorId) ? TRUE : FALSE;
+      return $this->user->match($this->context->creatorId) ? TRUE : FALSE;
   }
 
 }

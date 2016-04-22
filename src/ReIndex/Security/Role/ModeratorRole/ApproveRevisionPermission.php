@@ -17,11 +17,11 @@ use ReIndex\Security\Role\ReviewerRole\ApproveRevisionPermission as Superclass;
 /**
  * @copydoc ReviewerRole::ApproveRevisionPermission
  */
-class MoveRevisionToTrashPermission extends Superclass {
+class ApproveRevisionPermissionPermission extends Superclass {
 
 
   public function check() {
-    if ($this->user->isModerator() && ($this->isCreated() or $this->isDraft() or $this->isSubmittedForPeerReview()))
+    if  ($this->context->state->isCreated() or $this->context->state->isDraft() or $this->context->state->isSubmittedForPeerReview())
       return TRUE;
     else
       return FALSE;

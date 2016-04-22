@@ -1,7 +1,8 @@
 <?php
+
 /**
  * @file SubmitRevisionPermission.php
- * @brief This file contains the ${CLASS_NAME} class.
+ * @brief This file contains the SubmitRevisionPermission class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -14,27 +15,28 @@ use ReIndex\Security\Role\AbstractPermission;
 use ReIndex\Model\Versionable;
 
 
+/**
+ * @brief Permission to submit the revision to the Peer Review Committee.
+ */
 class SubmitRevisionPermission extends AbstractPermission {
 
-  public $versionable;
 
-
-  public function __construct(Versionable $versionable) {
-    parent::__construct();
-    $this->versionable = $versionable;
+  /**
+   * @brief Constructor.
+   * param[in] Model::Versionable $context
+   */
+  public function __construct(Versionable $context) {
+    parent::__construct($context);
   }
 
 
   public function getDescription() {
-    //! @todo: Implement getDescription() method.
+    return "Submit the revision to the Peer Review Committee.";
   }
 
 
-  /**
-   * @brief Returns `true` if the document can be moved to trash, `false` otherwise.
-   * @retval bool
-   */
   public function check() {
+    // todo Implement this method.
   }
 
 }

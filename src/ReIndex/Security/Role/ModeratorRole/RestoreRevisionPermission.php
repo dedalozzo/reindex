@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file RestoreRevisionPermission.php
  * @brief This file contains the RestoreRevisionPermission class.
@@ -10,25 +11,46 @@
 namespace ReIndex\Security\Role\ModeratorRole;
 
 
-class RestoreRevisionPermission {
+use ReIndex\Security\Role\AbstractPermission;
+use EoC\Couch;
 
 
-  public function getDescription() {
-    //! @todo: Implement getDescription() method.
+/**
+ * @brief Permission to restore a deleted content.
+ */
+class RestoreRevisionPermission extends AbstractPermission {
+
+
+  /**
+   * @brief Constructor.
+   * @param[in] Model::Versionable $context
+   */
+  public function __construct($context) {
+    parent::__construct($context);
   }
 
 
   /**
-   * @brief Returns `true` if the post can be moved to trash, `false` otherwise.
-   * @retval bool
+   * @brief Permission to restore a deleted content
+   */
+  public function getDescription() {
+    return "Permission to restore a deleted content.";
+  }
+
+
+  /**
+   * @brief A moderator (or a member with a superior role) can restore a content, but only if the content has been
+   * deleted by a member with an inferior role or by himself.
    */
   public function check() {
-    if ($this->isMovedToTrash() and
-      ($this->user->isModerator() && ($this->dustmanId == $this->user->id)) or
-      $this->user->isAdmin())
-      return TRUE;
-    else
+    if (!$this->context->isMovedToTrash())
       return FALSE;
+    elseif ($this->context->dustmanId == $this->user->id)
+      return TRUE;
+    else {
+      $member = $this->di['couchdb']->getDoc(Couch::STD_DOC_PATH, $this->context->dustmanId);
+      return $this->user->roles->isSuperior($member, FALSE) ? TRUE : FALSE;
+    }
   }
 
 

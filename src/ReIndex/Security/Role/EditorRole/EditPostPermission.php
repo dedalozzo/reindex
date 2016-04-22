@@ -16,7 +16,7 @@ use ReIndex\Security\Role\MemberRole\EditPostPermission as Superclass;
 
 
 /**
- * @copydoc Member::EditPostPermission
+ * @copydoc MemberRole::EditPostPermission
  */
 class EditPostPermission extends Superclass {
 
@@ -25,7 +25,7 @@ class EditPostPermission extends Superclass {
     if (parent::check())
       return TRUE;
     else
-     return (!$this->post->isLocked() && $this->post->state->isCurrent()) ? TRUE : FALSE;
+     return (!$this->context->isLocked() && $this->context->state->isCurrent()) ? TRUE : FALSE;
   }
 
 }

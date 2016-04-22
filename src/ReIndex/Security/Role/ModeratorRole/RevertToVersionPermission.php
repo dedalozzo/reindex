@@ -14,23 +14,19 @@ namespace ReIndex\Security\Role\ModeratorRole;
 use ReIndex\Security\Role\AbstractPermission;
 
 
+/**
+ * @brief Permission to revert the content to a specific revision.
+ */
 class RevertToVersionPermission extends AbstractPermission {
 
 
   public function getDescription() {
-    //! @todo: Implement getDescription() method.
+    return "Permission to revert the content to a specific revision.";
   }
 
 
-  /**
-   * @brief Returns `true` if the document can be reverted to another version, `false` otherwise.
-   * @retval bool
-   */
   public function check() {
-    if ($this->user->isModerator())
-      return TRUE;
-    else
-      return FALSE;
+    return TRUE;
   }
 
 }

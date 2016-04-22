@@ -14,8 +14,10 @@ namespace ReIndex\Security\Role\AdminRole;
 use ReIndex\Security\Role\AbstractPermission;
 
 
+/**
+ * @brief Permission to change the post visibility.
+ */
 class ChangeVisibilityPermission extends AbstractPermission {
-
 
 
   public function getDescription() {
@@ -23,12 +25,8 @@ class ChangeVisibilityPermission extends AbstractPermission {
   }
 
 
-  /**
-   * @brief Returns `true` if the user can hide or show the post, `false` otherwise.
-   * @retval bool
-   */
   public function check() {
-    return ($this->post->isCurrent() or $this->post->isDraft()) ? TRUE : FALSE;
+    return ($this->context->state->isCurrent() or $this->context->state->isDraft()) ? TRUE : FALSE;
   }
 
 }

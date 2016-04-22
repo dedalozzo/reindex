@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file MoveRevisionToTrashPermission.php
  * @brief This file contains the MoveRevisionToTrashPermission class.
@@ -14,19 +15,23 @@ use ReIndex\Security\Role\AbstractPermission;
 use ReIndex\Model\Versionable;
 
 
-class MoveRevisionToTrashPermission extends AbstractPermission{
+/**
+ * @brief Permission to delete the content.
+ */
+class MoveRevisionToTrashPermission extends AbstractPermission {
 
-  public $versionable;
 
-
-  public function __construct(Versionable $versionable) {
-    parent::__construct();
-    $this->versionable = $versionable;
+  /**
+   * @brief Constructor.
+   * param[in] Model::Versionable $context
+   */
+  public function __construct(Versionable $context) {
+    parent::__construct($context);
   }
 
 
   public function getDescription() {
-    //! @todo: Implement getDescription() method.
+    return "Permission to delete the content.";
   }
 
 
@@ -35,9 +40,9 @@ class MoveRevisionToTrashPermission extends AbstractPermission{
    * @retval bool
    */
   public function check() {
-    if ($this->versionable->isMovedToTrash()) return FALSE;
+    if ($this->context->state->isMovedToTrash()) return FALSE;
 
-    return ($this->user->match($this->versionable->creatorId) && $this->versionable->state->isDraft()) ? TRUE : FALSE;
+    return ($this->user->match($this->context->creatorId) && $this->context->state->isDraft()) ? TRUE : FALSE;
   }
 
 }

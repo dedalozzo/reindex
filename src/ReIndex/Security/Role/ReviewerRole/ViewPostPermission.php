@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file ViewPostPermission.php
  * @brief This file contains the ViewPostPermission class.
@@ -16,15 +17,16 @@ use ReIndex\Security\Role\MemberRole\ViewPostPermission as Superclass;
 
 class ViewPostPermission extends Superclass {
 
+
   /**
-   * @brief Returns `true` if the post can be viewed by the current moderator, `false` otherwise.
+   * @brief A reviewer can see every content has been submitted for peer review.
    * @retval bool
    */
   public function check() {
     if (parent::check())
       return TRUE;
     else
-      return $this->post->state->isSubmittedForPeerReview() ? TRUE : FALSE;
+      return $this->context->state->isSubmittedForPeerReview() ? TRUE : FALSE;
   }
 
 }
