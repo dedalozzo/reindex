@@ -37,7 +37,7 @@ class ProfileController extends ListController {
   /**
    * @brief Given a username returns the correspondent user.
    * @param[in] string $username A username.
-   * @retval User::IUser An user instance.
+   * @retval User::IUser
    */
   protected function getUser($username) {
     $user = UserFactory::fromUsername($username);
@@ -53,7 +53,7 @@ class ProfileController extends ListController {
 
   /**
    * @brief Returns `true` if the specified user matches the current one, `false` otherwise.
-   * @param[in] User::IUser An user instance.
+   * @param[in] User::IUser $user An user instance.
    * @retval bool
    */
   protected function isSameUser(IUser $user) {
@@ -136,6 +136,7 @@ class ProfileController extends ListController {
 
   /**
    * @brief Displays the user's connections.
+   * @param[in] string $username A username.
    * @param[in] string $filter (optional) Used to filter the connections.
    */
   public function connectionsAction($username, $filter = NULL) {
