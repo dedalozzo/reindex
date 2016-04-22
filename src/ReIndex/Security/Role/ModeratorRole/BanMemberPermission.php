@@ -12,10 +12,13 @@ namespace ReIndex\Security\Role\ModeratorRole;
 
 
 use ReIndex\Security\Role\AbstractPermission;
+use ReIndex\Model\Member;
 
 
 /**
  * @brief Permission to ban another community's member.
+ * @details A moderator (or a member with a superior role) can ban another member, but only if the member has an
+ * inferior role. And of course he cannot ban himself.
  */
 class BanMemberPermission extends AbstractPermission {
 
@@ -24,7 +27,7 @@ class BanMemberPermission extends AbstractPermission {
    * @brief Constructor.
    * @param[in] Model::Member $context
    */
-  public function __construct($context = NULL) {
+  public function __construct(Member $context = NULL) {
     parent::__construct($context);
   }
 
@@ -35,12 +38,12 @@ class BanMemberPermission extends AbstractPermission {
 
 
   public function check() {
-    if ($this->user->isAdmin() && !$this->member->isAdmin() && !$this->user->match($this->member->id))
-      return TRUE;
-    elseif ($this->user->isModerator() && !$this->isModerator() && !$this->user->match($this->member->id))
-      return TRUE;
-    else
+    if ($this->context->isBanned())
       return FALSE;
+    elseif ($this->user->match($this->context->id))
+      return FALSE;
+    else
+      return !$this->context->isSuperior($this->getRole()) ? TRUE : FALSE;
   }
   
 }
