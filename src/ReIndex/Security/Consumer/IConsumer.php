@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file Consumer.php
+ * @file IConsumer.php
  * @brief This file contains the Consumer interface.
  * @details
  * @author Filippo F. Fadda
