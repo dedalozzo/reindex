@@ -52,7 +52,7 @@ class Username extends Validator implements Validation\ValidatorInterface {
    *   2. the first character cannot be a number;
    *   3. all the other characters allowed are letters and numbers;
    *   4. the total length should be between `usernameMinLength` and `usernameMaxLength` chars.
-   * @param[in] Phalcon\Validation $validator An instance of a Phalcon validation component.
+   * @param[in] Phalcon\Validation $validation An instance of a Phalcon validation component.
    * @param[in] string $attribute The attribute to be validated.
    * @retval bool
    */
