@@ -19,6 +19,7 @@ use ReIndex\Property;
 use ReIndex\Helper;
 use ReIndex\Enum;
 use ReIndex\Exception;
+use ReIndex\Security\Role;
 
 use Phalcon\Di;
 
@@ -129,6 +130,9 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @see http://meta.stackexchange.com/questions/10582/what-is-a-closed-or-on-hold-question
    */
   public function close() {
+    if (!$this->user->has(new Role\ModeratorRole\ProtectPostPermission($this)))
+      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
+
     $this->meta['protection'] = self::CLOSED_PL;
     $this->meta['protectorId'] = $this->user->id;
   }
@@ -140,6 +144,9 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @see http://meta.stackexchange.com/questions/22228/what-is-a-locked-post
    */
   public function lock() {
+    if (!$this->user->has(new Role\ModeratorRole\ProtectPostPermission($this)))
+      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
+
     $this->meta['protection'] = self::LOCKED_PL;
     $this->meta['protectorId'] = $this->user->id;
   }
@@ -149,6 +156,9 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @brief Removes the post protection.
    */
   public function unprotect() {
+    if (!$this->user->has(new Role\ModeratorRole\UnprotectPostPermission($this)))
+      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
+
     $this->unsetMetadata('protection');
     $this->unsetMetadata('protectorId');
   }
