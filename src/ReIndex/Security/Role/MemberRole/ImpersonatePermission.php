@@ -24,7 +24,11 @@ use ReIndex\Security\User\IUser;
 class ImpersonatePermission extends AbstractPermission {
 
 
-  public function __construct(IUser $context) {
+  /**
+   * @brief Constructor.
+   * @param[in] Security::IUser $context
+   */
+  public function __construct(IUser $context = NULL) {
     parent::__construct($context);
   }
 
