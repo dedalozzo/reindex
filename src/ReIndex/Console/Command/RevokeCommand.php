@@ -14,6 +14,8 @@ namespace ReIndex\Console\Command;
 use ReIndex\Model\Member;
 use ReIndex\Security\Role\IRole;
 
+use Symfony\Component\Console\Output\OutputInterface;
+
 
 /**
  * @brief Revokes a privilege to a user.
@@ -22,8 +24,11 @@ use ReIndex\Security\Role\IRole;
 class RevokeCommand extends AbstractRoleCommand {
 
 
-  protected function perform(IRole $role, Member $member) {
-    $member->roles->revoke($role);
+  protected function perform(IRole $role, Member $member, OutputInterface $output) {
+    if ($member->roles->exists($role->getName()))
+      $member->roles->revoke($role);
+    else
+      $output->writeln('There is not such role associated to the member.');
   }
 
 
