@@ -44,6 +44,20 @@ interface IPermission {
 
 
   /**
+   * @brief Returns the permission's execution context.
+   * @retval mixed
+   */
+  function getContext();
+
+
+  /**
+   * @brief Sets the permission's execution context.
+   * @param[in] mixed $context The execution context.
+   */
+  function setContext($context);
+
+
+  /**
    * @brief Checks if the current user has the permission to perform the operation requested.
    * @retval mixed
    */
@@ -57,7 +71,7 @@ interface IPermission {
    * the `check()` method. Casting the permission object to a subclass instance allows to apply different strategies in
    * relation to the role associated to the member.
    * @param[in] string $newClass The subclass name, included its namespace.
-   * @retval mixed
+   * @retval IPermission
    */
   function castAs($newClass);
 
