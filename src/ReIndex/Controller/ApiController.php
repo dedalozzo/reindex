@@ -69,19 +69,14 @@ class ApiController extends BaseController {
   }
 
 
-  protected function doAction($check, $action) {
+  protected function doAction($action) {
     try {
       if ($this->request->hasPost('id')) {
         $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
-
-        if (call_user_func([$doc, $check])) {
-          call_user_func([$doc, $action]);
-          $doc->save();
-          echo json_encode([TRUE, $this->user->username, time()]);
-          $this->view->disable();
-        }
-        else
-          throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
+        call_user_func([$doc, $action]);
+        $doc->save();
+        echo json_encode([TRUE, $this->user->username, time()]);
+        $this->view->disable();
       }
       else
         throw new \RuntimeException("La risorsa non è più disponibile.");
@@ -216,7 +211,7 @@ class ApiController extends BaseController {
    * @brief Moves the document to trash.
    */
   public function moveToTrashAction() {
-    $this->doAction('canBeMovedToTrash', 'moveToTrash');
+    $this->doAction('moveToTrash');
   }
 
 
@@ -224,7 +219,7 @@ class ApiController extends BaseController {
    * @brief Restores the document.
    */
   public function restoreAction() {
-    $this->doAction('canBeRestored', 'restore');
+    $this->doAction('restore');
   }
 
 
@@ -241,7 +236,7 @@ class ApiController extends BaseController {
    * @brief Closes the post.
    */
   public function closeAction() {
-    $this->doAction('canBeProtected', 'close');
+    $this->doAction('close');
   }
 
 
@@ -249,7 +244,7 @@ class ApiController extends BaseController {
    * @brief Locks the post.
    */
   public function lockAction() {
-    $this->doAction('canBeProtected', 'lock');
+    $this->doAction('lock');
   }
 
 
@@ -257,7 +252,7 @@ class ApiController extends BaseController {
    * @brief Unprotects the post.
    */
   public function unprotectAction() {
-    $this->doAction('canBeUnprotected', 'unprotect');
+    $this->doAction('unprotect');
   }
 
 
@@ -265,7 +260,7 @@ class ApiController extends BaseController {
    * @brief Hides the post.
    */
   public function hideAction() {
-    $this->doAction('canVisibilityBeChanged', 'hide');
+    $this->doAction('hide');
   }
 
 
@@ -273,7 +268,7 @@ class ApiController extends BaseController {
    * @brief Shows the post.
    */
   public function showAction() {
-    $this->doAction('canVisibilityBeChanged', 'show');
+    $this->doAction('show');
   }
 
 }
