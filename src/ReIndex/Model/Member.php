@@ -171,13 +171,18 @@ class Member extends Storable implements IUser, Extension\ICount {
     foreach ($this->roles as $roleName => $roleClass) {
 
       do {
+        $role = new $roleClass;
+
         // Creates a reflection class for the roleName.
-        $roleReflection = new \ReflectionClass($roleClass);
+        $roleReflection = new \ReflectionObject($role);
 
         // Determines the permission class related to the roleName.
         $newPermissionClass = $root . $roleReflection->getShortName() . '\\' . $permissionClassName;
 
         if (class_exists($newPermissionClass)) { // If a permission exists for the roleName...
+          // Sets the execution role for the current user.
+          $permission->setRole($role);
+
           // Casts the original permission object to an instance of the determined class.
           $obj = $permission->castAs($newPermissionClass);
 
@@ -190,7 +195,8 @@ class Member extends Storable implements IUser, Extension\ICount {
         else { // Go back to the previous role class in the hierarchy. For example, from AdminRole to ModeratorRole.
           $parentRoleReflection = $roleReflection->getParentClass();
 
-          if (is_object($parentRoleReflection))
+          // Proceed only if the parent role is not an abstract class.
+          if (is_object($parentRoleReflection) && !$parentRoleReflection->isAbstract())
             $roleClass = $parentRoleReflection->name;
           else
             break; // No more roles in the hierarchy.
