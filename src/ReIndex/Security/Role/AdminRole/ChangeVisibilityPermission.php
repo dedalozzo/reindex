@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file ChangeVisibilityPermission
+ * @file ChangeVisibilityPermission.php
  * @brief This file contains the ChangeVisibilityPermission class.
  * @details
  * @author Filippo F. Fadda
@@ -15,13 +15,13 @@ use ReIndex\Security\Role\AbstractPermission;
 
 
 /**
- * @brief Permission to change the post visibility.
+ * @brief Permission to change the visibility of a content.
  */
 class ChangeVisibilityPermission extends AbstractPermission {
 
 
   public function getDescription() {
-    return "Member can hide the post.";
+    return "Permission to change the visibility of a content.";
   }
 
 
