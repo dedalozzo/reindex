@@ -403,8 +403,9 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   /**
    * @brief Removes the post ID from the specified Redis set and its related subsets.
    * @param[in] string $set The name of the Redis set.
+   * @param[in] \DateTime $date Use this date to create multiple subsets.
    */
-  protected function zRemSpecial($set, $date) {
+  protected function zRemSpecial($set, \DateTime $date) {
     $id = $this->unversionId;
 
     // Order set with all the posts.
@@ -467,7 +468,6 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
   /**
    * @brief Adds the post to the active index.
-   * @param[in] integer $timestamp (optional) The timestamp of the post last update.
    */
   public function zAddActive() {
     if (!$this->isVisible()) return;
