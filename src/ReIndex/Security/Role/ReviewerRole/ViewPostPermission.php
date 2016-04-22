@@ -15,13 +15,13 @@ namespace ReIndex\Security\Role\ReviewerRole;
 use ReIndex\Security\Role\MemberRole\ViewPostPermission as Superclass;
 
 
+/**
+ * @copybrief GuestRole::ViewPostPermission
+ * @details A reviewer can see every content has been submitted for peer review.
+ */
 class ViewPostPermission extends Superclass {
 
 
-  /**
-   * @brief A reviewer can see every content has been submitted for peer review.
-   * @retval bool
-   */
   public function check() {
     if (parent::check())
       return TRUE;
