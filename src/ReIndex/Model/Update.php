@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file Link.php
- * @brief This file contains the Link class.
+ * @file Update.php
+ * @brief This file contains the Update class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -12,10 +12,11 @@ namespace ReIndex\Model;
 
 
 /*
- * @brief
+ * @brief This class represents an user's update.
  * @nosubgrouping
  */
 class Update extends Post {
+
 
   protected function needForApproval() {
     return TRUE;
