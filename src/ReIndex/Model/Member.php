@@ -188,10 +188,12 @@ class Member extends Storable implements IUser, Extension\ICount {
           break 2;
         }
         else { // Go back to the previous role class in the hierarchy. For example, from AdminRole to ModeratorRole.
-          $roleClass = $roleReflection->getParentClass()->name;
+          $parentRoleReflection = $roleReflection->getParentClass();
 
-          if (!$roleClass) // No more roles in the hierarchy.
-            break;
+          if (is_object($parentRoleReflection))
+            $roleClass = $parentRoleReflection->name;
+          else
+            break; // No more roles in the hierarchy.
         }
       } while (TRUE);
 
