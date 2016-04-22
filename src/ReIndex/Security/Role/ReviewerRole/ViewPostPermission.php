@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file ViewPostPermission.php
+ * @file ReviewerRole/ViewPostPermission.php
  * @brief This file contains the ViewPostPermission class.
  * @details
  * @author Filippo F. Fadda

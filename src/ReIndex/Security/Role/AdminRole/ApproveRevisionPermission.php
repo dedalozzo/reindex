@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file ApproveRevisionPermission.php
+ * @file AdminRole/ApproveRevisionPermission.php
  * @brief This file contains the ApproveRevisionPermission class.
  * @details
  * @author Filippo F. Fadda

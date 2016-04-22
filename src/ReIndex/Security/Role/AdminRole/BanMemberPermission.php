@@ -1,6 +1,7 @@
 <?php
+
 /**
- * @file BanMemberPermission.php
+ * @file AdminRole/BanMemberPermission.php
  * @brief This file contains the BanMemberPermission class.
  * @details
  * @author Filippo F. Fadda

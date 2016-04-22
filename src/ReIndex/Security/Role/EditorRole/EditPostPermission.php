@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file EditingPermission.php
+ * @file EditorRole/EditPostPermission.php
  * @brief This file contains the EditingPermission class.
  * @details
  * @author Filippo F. Fadda

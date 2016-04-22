@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file ProtectPostPermission.php
+ * @file AdminRole/ProtectPostPermission.php
  * @brief This file contains the ProtectPostPermission class.
  * @details
  * @author Filippo F. Fadda

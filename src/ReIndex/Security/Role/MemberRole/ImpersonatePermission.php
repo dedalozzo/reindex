@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file ImpersonatePermission.php
+ * @file MemberRole/ImpersonatePermission.php
  * @brief This file contains the ImpersonatePermission class.
  * @details
  * @author Filippo F. Fadda

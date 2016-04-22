@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file MoveRevisionToTrashPermission.php
+ * @file ModeratorRole/MoveRevisionToTrashPermission.php
  * @brief This file contains the MoveRevisionToTrashPermission class.
  * @details
  * @author Filippo F. Fadda
@@ -11,11 +11,11 @@
 namespace ReIndex\Security\Role\ModeratorRole;
 
 
-use ReIndex\Security\Role\ReviewerRole\ApproveRevisionPermission as Superclass;
+use ReIndex\Security\Role\MemberRole\MoveRevisionToTrashPermission as Superclass;
 
 
 /**
- * @copydoc ReviewerRole::ApproveRevisionPermission
+ * @copydoc MemberRole::MoveRevisionToTrashPermission
  */
 class MoveRevisionToTrashPermission extends Superclass {
 

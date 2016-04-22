@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file ImpersonatePermission.php
+ * @file AdminRole/ImpersonatePermission.php
  * @brief This file contains the ImpersonatePermission class.
  * @details
  * @author Filippo F. Fadda
@@ -16,7 +16,7 @@ use ReIndex\Security\Role\AdminRole;
 
 
 /**
- * @copydoc MemberRole::ImpersonatePermission
+ * @copydoc Superclass::ImpersonatePermission
  */
 class ImpersonatePermission extends Superclass {
 

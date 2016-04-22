@@ -25,7 +25,7 @@ class RestoreRevisionPermission extends AbstractPermission {
    * @brief Constructor.
    * @param[in] Model::Versionable $context
    */
-  public function __construct($context) {
+  public function __construct($context = NULL) {
     parent::__construct($context);
   }
 

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file ProtectPostPermission.php
+ * @file ModeratorRole/ProtectPostPermission.php
  * @brief This file contains the ProtectPostPermission class.
  * @details
  * @author Filippo F. Fadda
@@ -22,10 +22,10 @@ class ProtectPostPermission extends AbstractPermission {
 
 
   /**
-   * @brief Permission to close or lock a post.
+   * @brief Constructor.
    * @param[in] Model::Post $context
    */
-  public function __construct($context) {
+  public function __construct($context = NULL) {
     parent::__construct($context);
   }
 

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file BanMemberPermission.php
+ * @file ModeratorRole/BanMemberPermission.php
  * @brief This file contains the BanMemberPermission class.
  * @details
  * @author Filippo F. Fadda
@@ -24,7 +24,7 @@ class BanMemberPermission extends AbstractPermission {
    * @brief Constructor.
    * @param[in] Model::Member $context
    */
-  public function __construct($context) {
+  public function __construct($context = NULL) {
     parent::__construct($context);
   }
 

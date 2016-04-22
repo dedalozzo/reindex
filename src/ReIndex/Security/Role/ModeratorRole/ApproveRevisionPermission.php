@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file MoveRevisionToTrashPermission.php
- * @brief This file contains the MoveRevisionToTrashPermission class.
+ * @file ModeratorRole/ApproveRevisionPermission.php
+ * @brief This file contains the ApproveRevisionPermission class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -17,7 +17,7 @@ use ReIndex\Security\Role\ReviewerRole\ApproveRevisionPermission as Superclass;
 /**
  * @copydoc ReviewerRole::ApproveRevisionPermission
  */
-class ApproveRevisionPermissionPermission extends Superclass {
+class ApproveRevisionPermission extends Superclass {
 
 
   public function check() {

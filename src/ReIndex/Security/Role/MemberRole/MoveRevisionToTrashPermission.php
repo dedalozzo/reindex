@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file MoveRevisionToTrashPermission.php
+ * @file MemberRole/MoveRevisionToTrashPermission.php
  * @brief This file contains the MoveRevisionToTrashPermission class.
  * @details
  * @author Filippo F. Fadda
@@ -12,7 +12,6 @@ namespace ReIndex\Security\Role\MemberRole;
 
 
 use ReIndex\Security\Role\AbstractPermission;
-use ReIndex\Model\Versionable;
 
 
 /**
@@ -25,7 +24,7 @@ class MoveRevisionToTrashPermission extends AbstractPermission {
    * @brief Constructor.
    * param[in] Model::Versionable $context
    */
-  public function __construct(Versionable $context) {
+  public function __construct($context = NULL) {
     parent::__construct($context);
   }
 

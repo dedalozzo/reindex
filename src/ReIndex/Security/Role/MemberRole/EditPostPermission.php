@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file EditPostPermission.php
+ * @file MemberRole/EditPostPermission.php
  * @brief This file contains the EditPostPermission class.
  * @details
  * @author Filippo F. Fadda
@@ -12,7 +12,6 @@ namespace ReIndex\Security\Role\MemberRole;
 
 
 use ReIndex\Security\Role\AbstractPermission;
-use ReIndex\Model\Post;
 
 
 /**
@@ -25,7 +24,7 @@ class EditPostPermission extends AbstractPermission {
    * @brief Constructor.
    * @param[in] Model::Post $context
    */
-  public function __construct($context) {
+  public function __construct($context = NULL) {
     parent::__construct($context);
   }
 
