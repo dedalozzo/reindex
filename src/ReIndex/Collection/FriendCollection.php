@@ -23,7 +23,8 @@ use Phalcon\Di;
 
 /**
  * @brief This class is used to represent a collection of friends.
- * @details This class uses the Lazy loading pattern.
+ * @details This class implements `IteratorAggregate`, `Countable`, and `ArrayAccess`.
+ * This class uses the Lazy loading pattern.
  */
 class FriendCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
 
@@ -39,7 +40,7 @@ class FriendCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
    */
   public function __construct() {
     $this->di = Di::getDefault();
-    $this->couchdb = $this->di['couchdb'];
+    $this->couch = $this->di['couchdb'];
     $this->user = $this->di['guardian']->getUser();
   }
 
@@ -63,30 +64,7 @@ class FriendCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
 
 
   /**
-   * @brief Returns `true` if there is an established friendship relation with the specified member, `false` otherwise.
-   * @param[in] Member $member A member.
-   * @param[out] string $friendshipId The friendship identifier.
-   * @param[out] bool $approved State of approval of the friendship.
-   * @retval bool
-   */
-  public function exists(Member $member, &$friendshipId = NULL, &$approved = FALSE) {
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $member->id]);
-
-    $result = $this->couch->queryView("friendship", "perMember", NULL, $opts);
-
-    if ($result->isEmpty())
-      return FALSE;
-    else {
-      $friendshipId = $result[0]['id'];
-      $approved = $result[0]['approved'];
-      return TRUE;
-    }
-  }
-
-
-  /**
-   * @brief Adds the specified member to the friends list.
+   * @brief Adds the specified member to the friends collection.
    * @details Every new friendship relation must be approved.
    * @param[in] Member $member A member.
    */
@@ -95,7 +73,7 @@ class FriendCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
     if ($member->match($this->user->id))
       return;
 
-    if ($member->blacklist->exists($this->user, $blackId))
+    if ($member->blacklist->exists($this->user))
       throw new Exception\UserMismatchException("Unfortunately you have been blacklisted from the user you are trying to add as a friend.");
 
     if ($this->exists($member, $friendshipId, $approved)) {
@@ -123,6 +101,29 @@ class FriendCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
     }
     else
       throw new Exception\UserMismatchException("You are not friends.");
+  }
+
+
+  /**
+   * @brief Returns `true` if there is an established friendship relation with the specified member, `false` otherwise.
+   * @param[in] Member $member A member.
+   * @param[out] string $friendshipId The friendship identifier.
+   * @param[out] bool $approved State of approval of the friendship.
+   * @retval bool
+   */
+  public function exists(Member $member, &$friendshipId = NULL, &$approved = FALSE) {
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $member->id]);
+
+    $result = $this->couch->queryView("friendship", "perMember", NULL, $opts);
+
+    if ($result->isEmpty())
+      return FALSE;
+    else {
+      $friendshipId = $result[0]['id'];
+      $approved = $result[0]['approved'];
+      return TRUE;
+    }
   }
 
 
@@ -179,7 +180,7 @@ class FriendCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
 
 
   /**
-   * @brief Adds a bunch of potential friends to the list of friends, using a list of e-mails.
+   * @brief Adds a bunch of potential friends to the friends collection, using a list of e-mails.
    * @todo Implement the inviteFriends() method.
    */
   public function invite() {
