@@ -9,13 +9,15 @@ class Member  {
   /** @name Properties */
   //!@{
 
-  string $username; //!< The username.
+  string $username;  //!< The username.
   string $firstName; //!< First name.
-  string $lastName; //!< Last surname.
+  string $lastName;  //!< Last surname.
 
-  EmailCollection $emails; //!< A collection of e-mails.
-  LoginCollection $logins; //!< A collection of consumers' logins.
-  RoleCollection $roles;  //!< A collection of roles associated with the member.
+  EmailCollection $emails;  //!< A collection of e-mails.
+  LoginCollection $logins;  //!< A collection of consumers' logins.
+  RoleCollection $roles;    //!< A collection of roles associated with the member.
+  FriendCollection $friends //!< A collection of member's friends.
+  Blacklist $blacklist;     //!< The member's blacklist.
 
   string $password; //!< Password chosen by the member.
   string $hash; //!< String hash sent via e-mail to the member to confirm that his e-mail is real.
