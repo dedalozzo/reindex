@@ -77,7 +77,7 @@ class Blacklist extends AbstractCollection {
    * @param[in] Member $member A member.
    */
   public function remove(Member $member) {
-    parent::remove($member->id);
+    unset($this->meta[static::NAME][$member->id]);
   }
 
 
@@ -87,7 +87,7 @@ class Blacklist extends AbstractCollection {
    * @retval bool
    */
   public function exists(Member $member) {
-    return parent::exists($member->id);
+    return array_key_exists($this->meta[static::NAME], $member->id);
   }
 
 
