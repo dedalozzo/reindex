@@ -40,25 +40,6 @@ abstract class AbstractCollection implements \IteratorAggregate, \Countable, \Ar
 
 
   /**
-   * @brief Removes from the collection the item identified by the provided key.
-   * @param[in] mixed $key A key.
-   */
-  protected function remove($key) {
-    unset($this->meta[static::NAME][$key]);
-  }
-
-
-  /**
-   * @brief Returns `true` if the key is already present, `false` otherwise.
-   * @param[in] mixed $key A key.
-   * @retval bool
-   */
-  public function exists($key) {
-    return array_key_exists($this->meta[static::NAME], $key);
-  }
-
-  
-  /**
    * @brief Returns the collection as a real array.
    * @retval array An associative array using as keys the e-mail addresses, and as values if the address are verified or
    * not.
