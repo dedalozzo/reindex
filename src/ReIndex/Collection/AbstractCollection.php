@@ -21,9 +21,9 @@ use Phalcon\Di;
  */
 abstract class AbstractCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
 
-  protected $meta; // Stores the metadata.
-  protected $di; // Stores the default Dependency Injector.
-  protected $user; // Stores the current user.
+  protected $meta;  // Stores the metadata.
+  protected $di;    // Stores the default Dependency Injector.
+  protected $user;  // Stores the current user.
 
   const NAME = "collection";
 
@@ -122,12 +122,12 @@ abstract class AbstractCollection implements \IteratorAggregate, \Countable, \Ar
   //! @cond HIDDEN_SYMBOLS
 
   public function offsetSet($offset, $value) {
-    throw new \BadMethodCallException("Result is immutable and cannot be changed.");
+    throw new \BadMethodCallException("Collection is immutable and cannot be changed.");
   }
 
 
   public function offsetUnset($offset) {
-    throw new \BadMethodCallException("Result is immutable and cannot be changed.");
+    throw new \BadMethodCallException("Collection is immutable and cannot be changed.");
   }
 
   //! @endcond
