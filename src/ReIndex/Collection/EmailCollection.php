@@ -66,7 +66,7 @@ class EmailCollection extends AbstractCollection {
    * @retval bool
    */
   public function exists($email) {
-    return parent::exists($email);
+    return isset($this->meta[static::NAME][$email]);
   }
 
 
