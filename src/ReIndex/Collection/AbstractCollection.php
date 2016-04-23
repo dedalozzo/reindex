@@ -54,7 +54,7 @@ abstract class AbstractCollection implements \IteratorAggregate, \Countable, \Ar
    * @retval bool
    */
   public function exists($key) {
-    return isset($this->meta[static::NAME][$key]);
+    return array_key_exists($this->meta[static::NAME], $key);
   }
 
   
