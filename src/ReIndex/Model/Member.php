@@ -411,22 +411,22 @@ class Member extends Storable implements IUser, Extension\ICount {
 
 
   public function getFriends() {
-    return $this->roles;
+    return $this->friends;
   }
 
 
   public function issetFriends() {
-    return isset($this->roles);
+    return isset($this->friends);
   }
 
 
   public function getBlacklist() {
-    return $this->roles;
+    return $this->blacklist;
   }
 
 
   public function issetBlacklist() {
-    return isset($this->roles);
+    return isset($this->blacklist);
   }
 
 
