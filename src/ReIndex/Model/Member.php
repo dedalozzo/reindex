@@ -49,11 +49,8 @@ class Member extends Storable implements IUser, Extension\ICount {
     $this->meta['roles'] = [];
     $this->roles = new Collection\RoleCollection($this->meta);
 
-    $this->meta['friends'] = [];
-    //$this->roles = new Collection\FriendCollection($this->meta);
-
-    $this->meta['blacklist'] = [];
-    //$this->roles = new Collection\Blacklist($this->meta);
+    $this->friends = new Collection\FriendCollection();
+    $this->blacklist = new Collection\Blacklist();
   }
 
 
@@ -409,6 +406,26 @@ class Member extends Storable implements IUser, Extension\ICount {
 
 
   public function issetRoles() {
+    return isset($this->roles);
+  }
+
+
+  public function getFriends() {
+    return $this->roles;
+  }
+
+
+  public function issetFriends() {
+    return isset($this->roles);
+  }
+
+
+  public function getBlacklist() {
+    return $this->roles;
+  }
+
+
+  public function issetBlacklist() {
     return isset($this->roles);
   }
 
