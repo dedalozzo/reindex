@@ -541,7 +541,7 @@ class IndexController extends ListController {
     $stars = $rows->asArray();
 
     // If the query returned more entries than the ones must display on the page, a link to the next page must be provided.
-    if ($rows->count() > $this->resultsPerPage) {
+    if (count($rows) > $this->resultsPerPage) {
       $last = array_pop($stars);
       $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last['key'][$key], $last['id']));
     }
