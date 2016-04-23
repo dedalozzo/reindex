@@ -49,8 +49,11 @@ class Member extends Storable implements IUser, Extension\ICount {
     $this->meta['roles'] = [];
     $this->roles = new Collection\RoleCollection($this->meta);
 
-    $this->friends = new Collection\FriendList();
-    $this->blacklist = new Collection\Blacklist();
+    // Friendships are stored outside the member scope because.
+    $this->friends = new Collection\FriendCollection();
+
+    $this->meta['blacklist'] = [];
+    $this->blacklist = new Collection\Blacklist($this->meta);
   }
 
 
