@@ -153,9 +153,9 @@ class FriendCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
   /**
    * @brief Rejects the friendship with the specified member.
    * @param[in] Member $member A member.
-   * @param[in] bool $blacklist When `true` adds the member to the blacklist.
+   * @todo Send the reject notification.
    */
-  public function reject(Member $member, $blacklist = FALSE) {
+  public function reject(Member $member) {
 
     if ($this->exists($member, $friendshipId, $approved)) {
 
@@ -168,11 +168,6 @@ class FriendCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
         throw new Exception\UserMismatchException("It's not up to you reject someone else's friendship.");
 
       $this->couch->deleteDoc(Couch::STD_DOC_PATH, $friendship->id, $friendship->rev);
-
-      if ($blacklist)
-        $this->user->blacklist->add($member);
-
-      // todo Send the reject notification.
     }
     else
       throw new Exception\UserMismatchException("You are not friends.");
