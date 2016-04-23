@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file FriendList.php
- * @brief This file contains the FriendList class.
+ * @file FriendCollection.php
+ * @brief This file contains the FriendCollection class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -25,7 +25,7 @@ use Phalcon\Di;
  * @brief This class is used to represent a collection of friends.
  * @details This class uses the Lazy loading pattern.
  */
-class FriendList implements \IteratorAggregate, \Countable, \ArrayAccess {
+class FriendCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
 
   protected $di;    // Stores the default Dependency Injector.
   protected $user;  // Stores the current user.
@@ -51,17 +51,24 @@ class FriendList implements \IteratorAggregate, \Countable, \ArrayAccess {
    */
   protected function getFriendships() {
     // Test is made using `is_null()` instead of `empty()` because a member may have no friends at all.
-    if (is_null($this->data)) {
+    if (is_null($this->friendships)) {
       $opts = new ViewQueryOpts();
-      $opts->doNotReduce()->setKey([$this->id]);
+      $opts->doNotReduce()->setKey([$this->user->id]);
 
       $this->data = $this->couch->queryView("friendship", "perMember", NULL, $opts)->asArray();
     }
 
-    return $this->data;
+    return $this->friendships;
   }
 
 
+  /**
+   * @brief Returns `true` if there is an established friendship relation with the specified member, `false` otherwise.
+   * @param[in] Member $member A member.
+   * @param[out] string $friendshipId The friendship identifier.
+   * @param[out] bool $approved State of approval of the friendship.
+   * @retval bool
+   */
   public function exists(Member $member, &$friendshipId = NULL, &$approved = FALSE) {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $member->id]);
@@ -79,8 +86,8 @@ class FriendList implements \IteratorAggregate, \Countable, \ArrayAccess {
 
 
   /**
-   * @brief Adds the specified member to the collection.
-   * @details Every new friendship must be approved.
+   * @brief Adds the specified member to the friends list.
+   * @details Every new friendship relation must be approved.
    * @param[in] Member $member A member.
    */
   public function add(Member $member) {
@@ -88,7 +95,7 @@ class FriendList implements \IteratorAggregate, \Countable, \ArrayAccess {
     if ($member->match($this->user->id))
       return;
 
-    if ($member->blacklist->exists($this->user))
+    if ($member->blacklist->exists($this->user, $blackId))
       throw new Exception\UserMismatchException("Unfortunately you have been blacklisted from the user you are trying to add as a friend.");
 
     if ($this->exists($member, $friendshipId, $approved)) {
@@ -104,8 +111,12 @@ class FriendList implements \IteratorAggregate, \Countable, \ArrayAccess {
   }
 
 
+  /**
+   * @brief Removes the specified member from your friendships.
+   * @details The algorithm doesn't care if the friendship has been approved or not, it just removes it.
+   * @param[in] Member $member A member.
+   */
   public function remove(Member $member) {
-    // We don't care if the friendship has been approved or not, we just remove it.
     if ($this->exists($member, $friendshipId)) {
       $friendship = $this->couch->getDoc(Couch::STD_DOC_PATH, $friendshipId);
       $this->couch->deleteDoc(Couch::STD_DOC_PATH, $friendshipId, $friendship->rev);
@@ -115,37 +126,52 @@ class FriendList implements \IteratorAggregate, \Countable, \ArrayAccess {
   }
 
 
+  /**
+   * @brief Approves the friendship with the specified member.
+   * @param[in] Member $member A member.
+   */
   public function approve(Member $member) {
-    if ($this->exists($member, $friendshipId)) {
-      $friendship = $this->couch->getDoc(Couch::STD_DOC_PATH, $friendshipId);
+    if ($this->exists($member, $friendshipId, $approved)) {
 
-      if (!$this->match($friendship->receiverId)) throw new Exception\UserMismatchException("You cannot approve someone else's friendship.");
+      if (!$approved) {
+        $friendship = $this->couch->getDoc(Couch::STD_DOC_PATH, $friendshipId);
 
-      if (!$friendship->isApproved()) {
+        if (!$this->match($friendship->receiverId))
+          throw new Exception\UserMismatchException("It's not up to you approve someone else's friendship.");
+
         $friendship->approve();
+
         $this->couch->saveDoc($friendship);
       }
-      else
-        throw new \RuntimeException("The friendship has been approved already.");
     }
     else
       throw new Exception\UserMismatchException("You are not friends.");
   }
 
 
+  /**
+   * @brief Rejects the friendship with the specified member.
+   * @param[in] Member $member A member.
+   * @param[in] bool $blacklist When `true` adds the member to the blacklist.
+   */
   public function reject(Member $member, $blacklist = FALSE) {
 
-    if ($this->exists($member, $friendshipId)) {
+    if ($this->exists($member, $friendshipId, $approved)) {
+
+      if ($approved)
+        throw new \RuntimeException("The friendship has been already approved, try to remove it instead.");
+
       $friendship = $this->couch->getDoc(Couch::STD_DOC_PATH, $friendshipId);
 
-      if (!$this->match($friendship->receiverId)) throw new Exception\UserMismatchException("It's not up to you approve someone else's friendship.");
+      if (!$this->match($friendship->receiverId))
+        throw new Exception\UserMismatchException("It's not up to you reject someone else's friendship.");
 
-      if (!$friendship->isApproved()) {
-        $friendship->approve();
-        $this->couch->saveDoc($friendship);
-      }
-      else
-        throw new \RuntimeException("The friendship has been approved already.");
+      $this->couch->deleteDoc(Couch::STD_DOC_PATH, $friendship->id, $friendship->rev);
+
+      if ($blacklist)
+        $this->user->blacklist->add($member);
+
+      // todo Send the reject notification.
     }
     else
       throw new Exception\UserMismatchException("You are not friends.");
