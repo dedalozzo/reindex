@@ -49,7 +49,7 @@ class Member extends Storable implements IUser, Extension\ICount {
     $this->meta['roles'] = [];
     $this->roles = new Collection\RoleCollection($this->meta);
 
-    $this->friends = new Collection\FriendCollection();
+    $this->friends = new Collection\FriendList();
     $this->blacklist = new Collection\Blacklist();
   }
 
