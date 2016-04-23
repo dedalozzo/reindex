@@ -57,7 +57,7 @@ class LoginCollection extends AbstractCollection {
    * @attention The e-mail associated to the login is never removed from the list of e-mails.
    */
   public function remove($login) {
-    parent::remove($login);
+    unset($this->meta[static::NAME][$login]);
   }
 
 
@@ -67,7 +67,7 @@ class LoginCollection extends AbstractCollection {
    * @retval bool
    */
   public function exists($login) {
-    return parent::exists($login);
+    return isset($this->meta[static::NAME][$login]);
   }
 
 
