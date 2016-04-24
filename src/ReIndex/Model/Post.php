@@ -79,10 +79,6 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    * @param[in] bool $deferred When `true` doesn't update the indexes.
    */
   public function save($deferred = FALSE) {
-    $this->html = $this->markdown->parse($this->body);
-    $purged = Helper\Text::purge($this->html);
-    $this->excerpt = Helper\Text::truncate($purged);
-
     parent::save();
 
     if (!$deferred) {
