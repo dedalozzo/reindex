@@ -638,6 +638,9 @@ class IndexController extends ListController {
 
         $title = $this->request->getPost('email');
         $body = $this->request->getPost('body');
+
+        //$article->html = $this->markdown->parse($this->body);
+        //$article->excerpt = Helper\Text::truncate(Helper\Text::purge($this->html));
       }
       catch (\Exception $e) {
         // Displays the error message.
