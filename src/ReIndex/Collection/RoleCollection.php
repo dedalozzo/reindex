@@ -72,7 +72,7 @@ class RoleCollection extends AbstractCollection {
 
     $name = $role->getName();
     if ($this->exists($name))
-      $this->remove($name);
+      unset($this->meta[static::NAME][$name]);
   }
 
 
@@ -82,7 +82,7 @@ class RoleCollection extends AbstractCollection {
    * @retval bool
    */
   public function exists($roleName) {
-    return parent::exists($roleName);
+    return isset($this->meta[static::NAME][$roleName]);
   }
 
 
