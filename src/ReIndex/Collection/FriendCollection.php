@@ -113,7 +113,7 @@ class FriendCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
    */
   public function exists(Member $member, &$friendshipId = NULL, &$approved = FALSE) {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([$this->id, $member->id]);
+    $opts->doNotReduce()->setLimit(1)->setKey([$this->user->id, $member->id]);
 
     $result = $this->couch->queryView("friendship", "perMember", NULL, $opts);
 
