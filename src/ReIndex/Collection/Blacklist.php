@@ -68,7 +68,7 @@ class Blacklist extends AbstractCollection {
    */
   public function add(Member $member) {
     // Stores just the member ID.
-    $this->meta[static::NAME][$member->id];
+    $this->meta[static::NAME][$member->id] = NULL;
   }
 
 
