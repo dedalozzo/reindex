@@ -962,7 +962,7 @@ MAP;
   }
 
 
-  protected function initFrienships() {
+  protected function initFriendships() {
     $doc = DesignDoc::create('friendships');
 
 
