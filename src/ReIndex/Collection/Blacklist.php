@@ -55,7 +55,7 @@ class Blacklist extends AbstractCollection {
       // Assigns the members' IDs.
       $ids = array_keys($this->meta[static::NAME]);
 
-      $this->data = $this->couch->queryView("members", "all", $ids, $opts)->asArray();
+      $this->blacklist = $this->couch->queryView("members", "all", $ids, $opts)->asArray();
     }
 
     return $this->blacklist;
@@ -95,7 +95,7 @@ class Blacklist extends AbstractCollection {
    * @brief Returns the collection as a real array.
    */
   public function asArray() {
-    return $this->getBlacklist()->asArray();
+    return $this->getBlacklist();
   }
 
 }
