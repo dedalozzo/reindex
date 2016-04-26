@@ -52,6 +52,7 @@ class ProfileGroup extends Group {
     $this->add('/settings/emails/', ['action' => 'emails', 'username' => 1], ['GET', 'POST']);
     $this->add('/settings/logins/', ['action' => 'logins', 'username' => 1], ['GET', 'POST']);
     $this->add('/settings/privacy/', ['action' => 'privacy', 'username' => 1], ['GET', 'POST']);
+    $this->add('/settings/blacklist/', ['action' => 'blacklist', 'username' => 1], ['GET', 'POST']);
   }
 
 }
