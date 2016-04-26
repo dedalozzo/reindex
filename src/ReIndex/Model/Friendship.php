@@ -29,7 +29,7 @@ class Friendship extends Doc {
   public static function request(Member $member, $approved = FALSE) {
     $instance = new self();
 
-    $instance->meta["senderId"] = $instance->user->id;
+    $instance->meta["senderId"] = $instance->receiver->id;
     $instance->meta["receiverId"] = $member->id;
     $instance->meta["approved"] = $approved;
 
@@ -51,10 +51,10 @@ class Friendship extends Doc {
 
 
   public function reject() {
-    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if ($this->receiver->isGuest()) throw new Exception\NoReceiverLoggedInException('Nessun utente loggato nel sistema.');
 
-    if (!$this->user->match($this->receiverId))
-      throw new Exception\UserMismatchException("You can't reject someone else's friendship.");
+    if (!$this->receiver->match($this->receiverId))
+      throw new Exception\ReceiverMismatchException("You can't reject someone else's friendship.");
 
     if ($this->meta["approved"])
       throw new \RuntimeException("You can't reject a friendship request you have already approved.");
@@ -68,10 +68,10 @@ class Friendship extends Doc {
 
 
   public function withdraw() {
-    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+    if ($this->receiver->isGuest()) throw new Exception\NoReceiverLoggedInException('Nessun utente loggato nel sistema.');
 
-    if (!$this->user->match($this->receiverId))
-      throw new Exception\UserMismatchException("You can't reject someone else's friendship.");
+    if (!$this->receiver->match($this->receiverId))
+      throw new Exception\ReceiverMismatchException("You can't reject someone else's friendship.");
     
     
     $this->reject();
@@ -89,5 +89,114 @@ class Friendship extends Doc {
   public function save() {
     $this->couch->saveDoc($this);
   }
+
+
+  //! @cond HIDDEN_SYMBOLS
+
+  public function getSenderId() {
+    return $this->meta['senderId'];
+  }
+
+
+  public function issetSenderId() {
+    return isset($this->meta['senderId']);
+  }
+
+
+  public function setSenderId($value) {
+    $this->meta['senderId'] = $value;
+  }
+
+
+  public function unsetSenderId() {
+    if ($this->isMetadataPresent('senderId'))
+      unset($this->meta['senderId']);
+  }
+
+
+  public function getReceiverId() {
+    return $this->meta['receiverId'];
+  }
+
+
+  public function issetReceiverId() {
+    return isset($this->meta['receiverId']);
+  }
+
+
+  public function setReceiverId($value) {
+    $this->meta['receiverId'] = $value;
+  }
+
+
+  public function unsetReceiverId() {
+    if ($this->isMetadataPresent('receiverId'))
+      unset($this->meta['receiverId']);
+  }
+
+  
+  public function getApproved() {
+    return $this->meta['approved'];
+  }
+
+
+  public function issetApproved() {
+    return isset($this->meta['approved']);
+  }
+
+
+  public function setApproved($value) {
+    $this->meta['approved'] = $value;
+  }
+
+
+  public function unsetApproved() {
+    if ($this->isMetadataPresent('approved'))
+      unset($this->meta['approved']);
+  }
+  
+
+  public function getRequestedAt() {
+    return $this->meta['requestedAt'];
+  }
+
+
+  public function issetRequestedAt() {
+    return isset($this->meta['requestedAt']);
+  }
+
+
+  public function setRequestedAt($value) {
+    $this->meta['requestedAt'] = $value;
+  }
+
+
+  public function unsetRequestedAt() {
+    if ($this->isMetadataPresent('requestedAt'))
+      unset($this->meta['requestedAt']);
+  }
+
+
+  public function getApprovedAt() {
+    return $this->meta['approvedAt'];
+  }
+
+
+  public function issetApprovedAt() {
+    return isset($this->meta['approvedAt']);
+  }
+
+
+  public function setApprovedAt($value) {
+    $this->meta['approvedAt'] = $value;
+  }
+
+
+  public function unsetApprovedAt() {
+    if ($this->isMetadataPresent('approvedAt'))
+      unset($this->meta['approvedAt']);
+  }
+
+  //! @endcond
 
 }
