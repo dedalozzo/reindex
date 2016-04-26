@@ -146,7 +146,7 @@ class Member extends Storable implements IUser, Extension\ICount {
     $memberRole = new MemberRole();
 
     // We must grant at least the MemberRole for the current member.
-    if (!$this->roles->isSuperior($memberRole))
+    if (!$this->roles->areSuperiorThan($memberRole))
       $this->roles->grant($memberRole);
 
     parent::save();
