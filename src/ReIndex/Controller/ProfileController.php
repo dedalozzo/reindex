@@ -596,15 +596,10 @@ class ProfileController extends ListController {
           if ($nickname === $this->user->username)
             throw new Exception\UserMismatchException("Non puoi aggiungere te stesso alla blacklist.");
 
-          $opts = new ViewQueryOpts();
-          $opts->setKey($nickname)->setLimit(1);
+          $member = UserFactory::fromUsername($nickname);
 
-          $rows = $this->couch->queryView("members", "byUsername", NULL, $opts);
-
-          if ($rows->isEmpty())
+          if ($member->isGuest())
             throw new Exception\UserNotFoundException("Non esiste nessun utente con lo username inserito.");
-
-          $member = $this->couch->getDoc(Couch::STD_DOC_PATH, $rows->asArray()[0]['id']);
 
           if ($this->user->blacklist->exists($member))
             throw new Exception\UserMismatchException("L'utente che stai cercando di aggiungere è già presente nella tua blacklist.");
@@ -622,22 +617,22 @@ class ProfileController extends ListController {
           // Removes the username.
           unset($_POST["nickname"]);
 
-          $this->flash->success(sprintf('Congratulations, the user `%s` has been to your blacklist.', $member->username));
+          $this->flash->success(sprintf('Congratulations, the user `%s` has been added to your blacklist.', $member->username));
         }
         elseif ($this->request->getPost('removeMember')) {
-          $nickname = $this->request->getPost("removeMember", "nickname");
+          $nickname = $this->request->getPost("removeMember", "string");
 
-          if ($this->user->blacklist->exists($nickname)) {
-            $this->user->blacklist->remove($nickname);
+          $member = UserFactory::fromUsername($nickname);
+
+          if ($member->isMember() && $this->user->blacklist->exists($member)) {
+            $this->user->blacklist->remove($member);
             $this->user->save();
 
-            // Removes the email.
+            // Removes the username.
             unset($_POST["nickname"]);
 
             $this->flash->success('Congratulations, the user has been removed from your blacklist.');
           }
-          else
-            throw new Exception\UserNotFoundException("L'utente non è presente nella tua blacklist.");
         }
 
       }
