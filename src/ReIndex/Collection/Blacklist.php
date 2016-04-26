@@ -87,7 +87,7 @@ class Blacklist extends AbstractCollection {
    * @retval bool
    */
   public function exists(Member $member) {
-    return array_key_exists($this->meta[static::NAME], $member->id);
+    return array_key_exists($member->id, $this->meta[static::NAME]);
   }
 
 
