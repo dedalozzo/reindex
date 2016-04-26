@@ -25,7 +25,7 @@ class GrantCommand extends AbstractRoleCommand {
 
 
   protected function perform(IRole $role, Member $member, OutputInterface $output) {
-    if (!$member->roles->isSuperior($role, FALSE))
+    if (!$member->roles->areSuperiorThan($role, FALSE))
       $member->roles->grant($role);
     else
       $output->writeln('A superior role already exists for the member.');
