@@ -1,7 +1,7 @@
 <?php
 
 
-namespace ReIndex\Model\Accessory;
+namespace ReIndex\Model;
 
 
 class Vote {
