@@ -583,21 +583,21 @@ class ProfileController extends ListController {
 
         // The user is trying to add a member to the blacklist.
         if ($this->request->getPost('addMember')) {
-          $validation->setFilters("username", "trim");
-          $validation->add("username", new PresenceOf(["message" => "Lo username è obbligatorio."]));
+          $validation->setFilters("nickname", "trim");
+          $validation->add("nickname", new PresenceOf(["message" => "Lo username è obbligatorio."]));
 
           $group = $validation->validate($_POST);
           if (count($group) > 0) {
             throw new Exception\InvalidFieldException("I campi sono incompleti o i valori indicati non sono validi. Gli errori sono segnalati in rosso sotto ai rispettivi campi d'inserimento.");
           }
 
-          $username = $this->request->getPost('username');
+          $nickname = $this->request->getPost('nickname');
 
-          if ($username === $this->user->username)
+          if ($nickname === $this->user->username)
             throw new Exception\UserMismatchException("Non puoi aggiungere te stesso alla blacklist.");
 
           $opts = new ViewQueryOpts();
-          $opts->setKey($username)->setLimit(1);
+          $opts->setKey($nickname)->setLimit(1);
 
           $rows = $this->couch->queryView("members", "byUsername", NULL, $opts);
 
@@ -612,27 +612,27 @@ class ProfileController extends ListController {
           if ($this->user->friends->exists($member))
             throw new Exception\UserNotFoundException("Non puoi aggiungere un tuo amico alla blacklist, prima rimuovilo dagli amici, poi aggiungilo alla blacklist.");
 
-          if ($member->roles->isSuperior(new ModeratorRole()))
-            throw new Exception\InvalidEmailException(sprintf("Siamo spiacenti ma non puoi aggiungere questo utente alla blacklist, in quanto moderatore o amministratore della comunità. Se sei oggetto di molestie contattaci via e-mail all'indirizzo %s.", $this->config->application->supportEmail));
+          if ($member->roles->areSuperiorThan(new ModeratorRole()))
+            throw new Exception\InvalidEmailException(sprintf("Siamo spiacenti ma non puoi aggiungere questo utente alla blacklist, in quanto moderatore o amministratore della comunità. Se sei oggetto di molestie da parte di un moderatore contattaci via e-mail all'indirizzo %s.", $this->config->application->supportEmail));
 
           $this->user->blacklist->add($member);
 
           $this->user->save();
 
           // Removes the username.
-          unset($_POST["username"]);
+          unset($_POST["nickname"]);
 
           $this->flash->success('Congratulations, the user has been to your blacklist.');
         }
         elseif ($this->request->getPost('removeMember')) {
-          $username = $this->request->getPost("removeMember", "username");
+          $nickname = $this->request->getPost("removeMember", "nickname");
 
-          if ($this->user->blacklist->exists($username)) {
-            $this->user->blacklist->remove($username);
+          if ($this->user->blacklist->exists($nickname)) {
+            $this->user->blacklist->remove($nickname);
             $this->user->save();
 
             // Removes the email.
-            unset($_POST["username"]);
+            unset($_POST["nickname"]);
 
             $this->flash->success('Congratulations, the user has been removed from your blacklist.');
           }
