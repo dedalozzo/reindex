@@ -107,23 +107,33 @@ class FriendCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
   /**
    * @brief Returns `true` if there is an established friendship relation with the specified member, `false` otherwise.
    * @param[in] Member $member A member.
-   * @param[out] string $friendshipId The friendship identifier.
-   * @param[out] bool $approved State of approval of the friendship.
    * @retval bool
    */
-  public function exists(Member $member, &$friendshipId = NULL, &$approved = FALSE) {
+  public function exists(Member $member) {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(1)->setKey([$this->user->id, $member->id]);
 
-    $result = $this->couch->queryView("friendship", "perMember", NULL, $opts);
+    $result = $this->couch->queryView("friendships", "approvedPerMember", NULL, $opts);
+
+    return $result->isEmpty() ? FALSE : TRUE;
+  }
+
+
+  /**
+   * @brief Returns a friendship object if a friendship request exists, `false` otherwise.
+   * @param[in] Member $member A member.
+   * @retval Model::Friendship
+   */
+  public function pendingRequest(Member $member) {
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->setLimit(1)->setKey([$this->user->id, $member->id]);
+
+    $result = $this->couch->queryView("friendships", "pendingRequest", NULL, $opts);
 
     if ($result->isEmpty())
       return FALSE;
-    else {
-      $friendshipId = $result[0]['id'];
-      $approved = $result[0]['approved'];
-      return TRUE;
-    }
+    else
+      return $this->couch->getDoc(Couch::STD_DOC_PATH, $result[0]['id']);
   }
 
 
@@ -132,21 +142,17 @@ class FriendCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
    * @param[in] Member $member A member.
    */
   public function approve(Member $member) {
-    if ($this->exists($member, $friendshipId, $approved)) {
+    if ($friendship = $this->pendingRequest($member)) {
 
-      if (!$approved) {
-        $friendship = $this->couch->getDoc(Couch::STD_DOC_PATH, $friendshipId);
+      if (!$this->user->match($friendship->receiverId))
+        throw new Exception\UserMismatchException("It's not up to you approve someone else's friendship.");
 
-        if (!$this->match($friendship->receiverId))
-          throw new Exception\UserMismatchException("It's not up to you approve someone else's friendship.");
+      $friendship->approve();
 
-        $friendship->approve();
-
-        $this->couch->saveDoc($friendship);
-      }
+      $this->couch->saveDoc($friendship);
     }
     else
-      throw new Exception\UserMismatchException("You are not friends.");
+      throw new Exception\UserMismatchException("The friendship request doesn't exist anymore.");
   }
 
 
@@ -156,21 +162,15 @@ class FriendCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
    * @todo Send the reject notification.
    */
   public function reject(Member $member) {
+    if ($friendship = $this->pendingRequest($member)) {
 
-    if ($this->exists($member, $friendshipId, $approved)) {
-
-      if ($approved)
-        throw new \RuntimeException("The friendship has been already approved, try to remove it instead.");
-
-      $friendship = $this->couch->getDoc(Couch::STD_DOC_PATH, $friendshipId);
-
-      if (!$this->match($friendship->receiverId))
+      if (!$this->user->match($friendship->receiverId))
         throw new Exception\UserMismatchException("It's not up to you reject someone else's friendship.");
 
       $this->couch->deleteDoc(Couch::STD_DOC_PATH, $friendship->id, $friendship->rev);
     }
     else
-      throw new Exception\UserMismatchException("You are not friends.");
+      throw new Exception\UserMismatchException("The friendship request doesn't exist anymore.");
   }
 
 
