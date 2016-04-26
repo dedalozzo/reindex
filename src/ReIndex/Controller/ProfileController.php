@@ -17,6 +17,7 @@ use ReIndex\Validation;
 use ReIndex\Validator\Password;
 use ReIndex\Validator\Username;
 use ReIndex\Security\User\IUser;
+use ReIndex\Security\Role\ModeratorRole;
 
 use Phalcon\Mvc\View;
 use Phalcon\Validation\Validator\Confirmation;
@@ -57,7 +58,7 @@ class ProfileController extends ListController {
    * @retval bool
    */
   protected function isSameUser(IUser $user) {
-    return ($user->isMember() or $this->user->match($user->getId()));
+    return ($user->isMember() && $this->user->match($user->getId()));
   }
 
 
@@ -242,7 +243,7 @@ class ProfileController extends ListController {
    */
   public function settingsAction($username) {
     $user = $this->getUser($username);
-    if (!$this->isSameUser($user) or !$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
+    if (!$this->isSameUser($user)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     // The validation object must be created in any case.
     $validation = new Validation();
@@ -297,7 +298,7 @@ class ProfileController extends ListController {
    */
   public function passwordAction($username) {
     $user = $this->getUser($username);
-    if (!$this->isSameUser($user) or !$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
+    if (!$this->isSameUser($user)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     // The validation object must be created in any case.
     $validation = new Validation();
@@ -351,7 +352,7 @@ class ProfileController extends ListController {
    */
   public function usernameAction($username) {
     $user = $this->getUser($username);
-    if (!$this->isSameUser($user) or !$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
+    if (!$this->isSameUser($user)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     // The validation object must be created in any case.
     $validation = new Validation();
@@ -398,7 +399,7 @@ class ProfileController extends ListController {
    */
   public function loginsAction($username) {
     $user = $this->getUser($username);
-    if (!$this->isSameUser($user) or !$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
+    if (!$this->isSameUser($user)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     if ($this->request->isPost()) {
       
@@ -435,7 +436,7 @@ class ProfileController extends ListController {
    */
   public function emailsAction($username) {
     $user = $this->getUser($username);
-    if (!$this->isSameUser($user) or !$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
+    if (!$this->isSameUser($user)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     // The validation object must be created in any case.
     $validation = new Validation();
@@ -550,7 +551,7 @@ class ProfileController extends ListController {
    */
   public function privacyAction($username) {
     $user = $this->getUser($username);
-    if (!$this->isSameUser($user) or !$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
+    if (!$this->isSameUser($user)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     if ($this->request->isPost()) {
 
@@ -561,6 +562,94 @@ class ProfileController extends ListController {
 
     $this->view->setVar('title', sprintf('%s\'s privacy settings', $this->user->username));
     $this->view->pick('views/profile/privacy');
+  }
+
+
+  /**
+   * @brief Displays the blacklisted members and let the user to add or remove an user from the blacklist.
+   * @param[in] string $username A username.
+   */
+  public function blacklistAction($username) {
+    $user = $this->getUser($username);
+    if (!$this->isSameUser($user)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
+
+    // The validation object must be created in any case.
+    $validation = new Validation();
+    $this->view->setVar('validation', $validation);
+
+    if ($this->request->isPost()) {
+
+      try {
+
+        // The user is trying to add a member to the blacklist.
+        if ($this->request->getPost('addMember')) {
+          $validation->setFilters("username", "trim");
+          $validation->add("username", new PresenceOf(["message" => "Lo username è obbligatorio."]));
+
+          $group = $validation->validate($_POST);
+          if (count($group) > 0) {
+            throw new Exception\InvalidFieldException("I campi sono incompleti o i valori indicati non sono validi. Gli errori sono segnalati in rosso sotto ai rispettivi campi d'inserimento.");
+          }
+
+          $username = $this->request->getPost('username');
+
+          if ($username === $this->user->username)
+            throw new Exception\UserMismatchException("Non puoi aggiungere te stesso alla blacklist.");
+
+          $opts = new ViewQueryOpts();
+          $opts->setKey($username)->setLimit(1);
+
+          $rows = $this->couch->queryView("members", "byUsername", NULL, $opts);
+
+          if ($rows->isEmpty())
+            throw new Exception\UserNotFoundException("Non esiste nessun utente con lo username inserito.");
+
+          $member = $this->couch->getDoc(Couch::STD_DOC_PATH, $rows->asArray()[0]['id']);
+
+          if ($this->user->blacklist->exists($member))
+            throw new Exception\UserMismatchException("L'utente che stai cercando di aggiungere è già presente nella tua blacklist.");
+
+          if ($this->user->friends->exists($member))
+            throw new Exception\UserNotFoundException("Non puoi aggiungere un tuo amico alla blacklist, prima rimuovilo dagli amici, poi aggiungilo alla blacklist.");
+
+          if ($member->roles->isSuperior(new ModeratorRole()))
+            throw new Exception\InvalidEmailException(sprintf("Siamo spiacenti ma non puoi aggiungere questo utente alla blacklist, in quanto moderatore o amministratore della comunità. Se sei oggetto di molestie contattaci via e-mail all'indirizzo %s.", $this->config->application->supportEmail));
+
+          $this->user->blacklist->add($member);
+
+          $this->user->save();
+
+          // Removes the username.
+          unset($_POST["username"]);
+
+          $this->flash->success('Congratulations, the user has been to your blacklist.');
+        }
+        elseif ($this->request->getPost('removeMember')) {
+          $username = $this->request->getPost("removeMember", "username");
+
+          if ($this->user->blacklist->exists($username)) {
+            $this->user->blacklist->remove($username);
+            $this->user->save();
+
+            // Removes the email.
+            unset($_POST["username"]);
+
+            $this->flash->success('Congratulations, the user has been removed from your blacklist.');
+          }
+          else
+            throw new Exception\UserNotFoundException("L'utente non è presente nella tua blacklist.");
+        }
+
+      }
+      catch (\Exception $e) {
+        // Displays the error message.
+        $this->flash->error($e->getMessage());
+      }
+
+    }
+
+    $this->view->setVar('title', sprintf('%s\'s blacklist', $username));
+    $this->view->pick('views/profile/blacklist');
   }
 
 } 
