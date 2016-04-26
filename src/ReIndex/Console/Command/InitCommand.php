@@ -962,6 +962,56 @@ MAP;
   }
 
 
+  protected function initFrienships() {
+    $doc = DesignDoc::create('friendships');
+
+
+    // @params: [userId]
+    function friendshipsApprovedPerMember() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (($doc->type == 'friendship') && $doc->approved) {
+    $emit([$doc->senderId, $doc->receiverId]);
+    $emit([$doc->receiverId, $doc->senderId]);
+  }
+};
+MAP;
+
+      $handler = new ViewHandler("approvedPerMember");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
+
+      return $handler;
+    }
+
+    $doc->addHandler(friendshipsApprovedPerMember());
+
+
+    // @params: [userId]
+    function pendingRequestsPerMember() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (($doc->type == 'friendship') && !$doc->approved) {
+    $emit([$doc->senderId, $doc->receiverId]);
+    $emit([$doc->receiverId, $doc->senderId]);
+  }
+};
+MAP;
+
+      $handler = new ViewHandler("pendingRequest");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
+
+      return $handler;
+    }
+
+    $doc->addHandler(pendingRequestsPerMember());
+
+
+    $this->couch->saveDoc($doc);
+  }
+
+
   protected function initUpdates() {
     $doc = DesignDoc::create('updates');
 
@@ -1079,6 +1129,10 @@ MAP;
 
           case 'members':
             $this->initMembers();
+            break;
+
+          case 'friendships':
+            $this->initFriendships();
             break;
 
           case 'reputation':
