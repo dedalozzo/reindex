@@ -92,18 +92,16 @@ class RoleCollection extends AbstractCollection {
    * @param[in] IRole $role A role object.
    * @param[in] bool $orEqual (optional) When `false` doesn't check if the role is an instance of the same class.
    */
-  public function isSuperior(IRole $role, $orEqual = TRUE) {
+  public function areSuperiorThan(IRole $role, $orEqual = TRUE) {
     $result = FALSE;
 
     $roles = $this->meta[static::NAME];
 
+    $roleClass = get_class($role);
+
     foreach ($roles as $name => $class) {
 
-      if (is_subclass_of($class, get_class($role))) {
-        $result = TRUE;
-        break;
-      }
-      elseif ($orEqual && ($role instanceof $class)) {
+      if (is_subclass_of($class, $roleClass) or ($orEqual && ($class === $roleClass))) {
         $result = TRUE;
         break;
       }
