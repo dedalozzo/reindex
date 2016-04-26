@@ -126,7 +126,7 @@ class FriendCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
    */
   public function pendingRequest(Member $member) {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([$this->user->id, $member->id]);
+    $opts->doNotReduce()->setLimit(1)->setKey([$member->id, $this->user->id]);
 
     $result = $this->couch->queryView("friendships", "pendingRequest", NULL, $opts);
 
