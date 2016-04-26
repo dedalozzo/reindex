@@ -622,7 +622,7 @@ class ProfileController extends ListController {
           // Removes the username.
           unset($_POST["nickname"]);
 
-          $this->flash->success('Congratulations, the user has been to your blacklist.');
+          $this->flash->success(sprintf('Congratulations, the user `%s` has been to your blacklist.', $member->username));
         }
         elseif ($this->request->getPost('removeMember')) {
           $nickname = $this->request->getPost("removeMember", "nickname");
