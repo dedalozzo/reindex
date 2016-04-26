@@ -1,0 +1,20 @@
+<?php
+
+
+namespace ReIndex\Model;
+
+
+class Friendship {
+
+  /** @name Properties */
+  //!@{
+
+  public string $senderId; //!< Who requested the friendship.
+  public string $receiverId; //!< Who received the request.
+  public bool $approved; //!< When `true` means the friendship has been approved.
+  public int $requestedAt; //!< A timestamp of the friendship request.
+  public int $approvedAt; //!< A timestamp of the friendship approval.
+
+  //!@}
+
+}
