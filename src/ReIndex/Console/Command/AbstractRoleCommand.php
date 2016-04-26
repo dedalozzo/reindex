@@ -21,6 +21,7 @@ use EoC\Opt\ViewQueryOpts;
 
 use ReIndex\Model\Member;
 use ReIndex\Security\Role\IRole;
+use ReIndex\Factory\UserFactory;
 
 
 /**
@@ -62,15 +63,9 @@ abstract class AbstractRoleCommand extends AbstractCommand {
     $roleName = $input->getArgument('role');
     $username = $input->getArgument('username');
 
-    // Sets the options.
-    $opts = new ViewQueryOpts();
-    $opts->setKey($username)->setLimit(1);
+    $member = UserFactory::fromUsername($username);
 
-    $result = $couch->queryView('members', 'byUsername', NULL, $opts);
-
-    if (!$result->isEmpty()) {
-      $member = $couch->getDoc(Couch::STD_DOC_PATH, $result[0]['id']);
-
+    if ($member->isMember()) {
       if ($guardian->roleExists($roleName)) {
         $role = $guardian->getRole($roleName);
         $this->perform($role, $member, $output);
