@@ -143,9 +143,11 @@ class Member extends Storable implements IUser, Extension\ICount {
    * @copydoc Storable::save()
    */
   public function save() {
+    $memberRole = new MemberRole();
+
     // We must grant at least the MemberRole for the current member.
-    if (!$this->roles->isSuperior(new MemberRole()))
-      $this->roles->grant(new MemberRole());
+    if (!$this->roles->isSuperior($memberRole))
+      $this->roles->grant($memberRole);
 
     parent::save();
   }
