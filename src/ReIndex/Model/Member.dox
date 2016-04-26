@@ -23,10 +23,10 @@ class Member  {
   string $hash; //!< String hash sent via e-mail to the member to confirm that his e-mail is real.
   string $internetProtocolAddress; //!< The IP address of the member.
   string $locale; //!< Member's language, ex. en_US
-  integer $timeOffset; //!< Time offset.
+  int $timeOffset; //!< Time offset.
 
   string $gender; //!< Sex.
-  integer $birthday; //!< Date of birth.
+  int $birthday; //!< Date of birth.
   string $about; //!< A few words about the member.
 
   // We don not use these constants, because every registered member must agree to the Terms of Services, Privacy Policy
