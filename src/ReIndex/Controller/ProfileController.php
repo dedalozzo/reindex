@@ -13,11 +13,11 @@ namespace ReIndex\Controller;
 use ReIndex\Factory\UserFactory;
 use ReIndex\Helper;
 use ReIndex\Exception;
+use ReIndex\Security\User\IUser;
+use ReIndex\Security\Role\ModeratorRole;
 use ReIndex\Validation;
 use ReIndex\Validator\Password;
 use ReIndex\Validator\Username;
-use ReIndex\Security\User\IUser;
-use ReIndex\Security\Role\ModeratorRole;
 
 use Phalcon\Mvc\View;
 use Phalcon\Validation\Validator\Confirmation;
@@ -243,7 +243,8 @@ class ProfileController extends ListController {
    */
   public function settingsAction($username) {
     $user = $this->getUser($username);
-    if (!$this->isSameUser($user)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
+
+    if ($this->user->isGuest() or !$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     // The validation object must be created in any case.
     $validation = new Validation();
@@ -287,8 +288,9 @@ class ProfileController extends ListController {
       //$this->tag->setDefault("about", $this->user->about);
     }
 
+    $this->view->setVar('profile', $this->user);
     $this->view->setVar('title', sprintf('%s\'s settings', $this->user->username));
-    $this->view->pick('views/profile/settings');
+    $this->view->pick('views/profile/settings/personal-info');
   }
 
 
@@ -296,9 +298,8 @@ class ProfileController extends ListController {
    * @brief Let the user to update his own password.
    * @param[in] string $username A username.
    */
-  public function passwordAction($username) {
-    $user = $this->getUser($username);
-    if (!$this->isSameUser($user)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
+  public function passwordAction() {
+    if ($this->user->isGuest()) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     // The validation object must be created in any case.
     $validation = new Validation();
@@ -341,8 +342,9 @@ class ProfileController extends ListController {
     $this->view->setVar('passwordMinLength', Password::MIN_LENGTH);
     $this->view->setVar('passwordMaxLength', Password::MAX_LENGTH);
 
+    $this->view->setVar('profile', $this->user);
     $this->view->setVar('title', sprintf('%s\'s settings', $this->user->username));
-    $this->view->pick('views/profile/password');
+    $this->view->pick('views/profile/settings/password');
   }
 
 
@@ -352,7 +354,8 @@ class ProfileController extends ListController {
    */
   public function usernameAction($username) {
     $user = $this->getUser($username);
-    if (!$this->isSameUser($user)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
+
+    if ($this->user->isGuest() or !$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     // The validation object must be created in any case.
     $validation = new Validation();
@@ -388,8 +391,9 @@ class ProfileController extends ListController {
     $this->view->setVar('usernameMinLength', $this->config->application->usernameMinLength);
     $this->view->setVar('usernameMaxLength', $this->config->application->usernameMaxLength);
 
+    $this->view->setVar('profile', $this->user);
     $this->view->setVar('title', sprintf('%s\'s settings', $this->user->username));
-    $this->view->pick('views/profile/username');
+    $this->view->pick('views/profile/settings/username');
   }
 
 
@@ -399,10 +403,11 @@ class ProfileController extends ListController {
    */
   public function loginsAction($username) {
     $user = $this->getUser($username);
-    if (!$this->isSameUser($user)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
+
+    if ($this->user->isGuest() or !$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     if ($this->request->isPost()) {
-      
+
       try {
 
         if ($this->request->getPost('removeLogin')) {
@@ -422,11 +427,12 @@ class ProfileController extends ListController {
         // Displays the error message.
         $this->flash->error($e->getMessage());
       }
-      
+
     }
 
+    $this->view->setVar('profile', $this->user);
     $this->view->setVar('title', sprintf('%s\'s logins', $this->user->username));
-    $this->view->pick('views/profile/logins');
+    $this->view->pick('views/profile/settings/logins');
   }
 
 
@@ -436,7 +442,8 @@ class ProfileController extends ListController {
    */
   public function emailsAction($username) {
     $user = $this->getUser($username);
-    if (!$this->isSameUser($user)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
+
+    if ($this->user->isGuest() or !$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     // The validation object must be created in any case.
     $validation = new Validation();
@@ -540,8 +547,9 @@ class ProfileController extends ListController {
 
     }
 
-    $this->view->setVar('title', sprintf('%s\'s e-mails', $username));
-    $this->view->pick('views/profile/emails');
+    $this->view->setVar('profile', $this->user);
+    $this->view->setVar('title', sprintf('%s\'s e-mails', $this->user->username));
+    $this->view->pick('views/profile/settings/emails');
   }
 
 
@@ -551,7 +559,8 @@ class ProfileController extends ListController {
    */
   public function privacyAction($username) {
     $user = $this->getUser($username);
-    if (!$this->isSameUser($user)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
+
+    if ($this->user->isGuest() or !$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     if ($this->request->isPost()) {
 
@@ -560,8 +569,9 @@ class ProfileController extends ListController {
       $this->tag->setDefault("username", $this->user->username);
     }
 
+    $this->view->setVar('profile', $this->user);
     $this->view->setVar('title', sprintf('%s\'s privacy settings', $this->user->username));
-    $this->view->pick('views/profile/privacy');
+    $this->view->pick('views/profile/settings/privacy');
   }
 
 
@@ -571,7 +581,8 @@ class ProfileController extends ListController {
    */
   public function blacklistAction($username) {
     $user = $this->getUser($username);
-    if (!$this->isSameUser($user)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
+
+    if ($this->user->isGuest() or !$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     // The validation object must be created in any case.
     $validation = new Validation();
@@ -643,8 +654,9 @@ class ProfileController extends ListController {
 
     }
 
-    $this->view->setVar('title', sprintf('%s\'s blacklist', $username));
-    $this->view->pick('views/profile/blacklist');
+    $this->view->setVar('profile', $this->user);
+    $this->view->setVar('title', sprintf('%s\'s blacklist', $this->user->username));
+    $this->view->pick('views/profile/settings/blacklist');
   }
 
 } 
