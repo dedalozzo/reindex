@@ -1013,7 +1013,7 @@ MAP;
 
 
   protected function initFollowers() {
-    $doc = DesignDoc::create('friendships');
+    $doc = DesignDoc::create('followers');
 
 
     // @params: [userId]
