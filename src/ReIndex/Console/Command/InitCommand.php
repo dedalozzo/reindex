@@ -1012,6 +1012,54 @@ MAP;
   }
 
 
+  protected function initFollowers() {
+    $doc = DesignDoc::create('friendships');
+
+
+    // @params: [userId]
+    function followersPerMember() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'follower') {
+    $emit([$doc->memberId, $doc->followerId]);
+  }
+};
+MAP;
+
+      $handler = new ViewHandler("perMember");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
+
+      return $handler;
+    }
+
+    $doc->addHandler(followersPerMember());
+
+
+    // @params: [userId]
+    function followingPerMember() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'follower') {
+    $emit([$doc->followerId, $doc->memberId]);
+  }
+};
+MAP;
+
+      $handler = new ViewHandler("following");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
+
+      return $handler;
+    }
+
+    $doc->addHandler(followingPerMember());
+
+
+    $this->couch->saveDoc($doc);
+  }
+
+
   protected function initUpdates() {
     $doc = DesignDoc::create('updates');
 
@@ -1076,7 +1124,8 @@ MAP;
       InputArgument::IS_ARRAY | InputArgument::REQUIRED,
       "The documents containing the views you want create. Use 'all' if you want insert all the documents, 'members' if
       you want just init the members or separate multiple documents with a space. The available documents are: docs, posts,
-      tags, revisions, votes, scores, stars, subscriptions, favorites, members, reputation, replies, updates.");
+      tags, revisions, votes, scores, stars, subscriptions, favorites, members, friendships, followers, reputation, replies,
+      updates.");
   }
 
 
@@ -1133,6 +1182,10 @@ MAP;
 
           case 'friendships':
             $this->initFriendships();
+            break;
+
+          case 'followers':
+            $this->initFollowers();
             break;
 
           case 'reputation':
