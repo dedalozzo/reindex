@@ -8,5 +8,6 @@ couch query reputation/perMember &
 couch query favorites/perAddedAt --limit=1 &
 couch query members/allNames --limit=1 &
 couch query friendships/approvedPerMember --limit=1 &
+couch query followers/perMember --limit=1 &
 couch query replies/newestPerPost &
 couch query updates/perDateByPostId --limit=1 &
