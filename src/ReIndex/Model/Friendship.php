@@ -50,39 +50,6 @@ class Friendship extends Doc {
   }
 
 
-  public function reject() {
-    if ($this->receiver->isGuest()) throw new Exception\NoReceiverLoggedInException('Nessun utente loggato nel sistema.');
-
-    if (!$this->receiver->match($this->receiverId))
-      throw new Exception\ReceiverMismatchException("You can't reject someone else's friendship.");
-
-    if ($this->meta["approved"])
-      throw new \RuntimeException("You can't reject a friendship request you have already approved.");
-
-    // This is not really necessary.
-    $this->meta['approved'] = FALSE;
-
-    $this->delete();
-    $this->save();
-  }
-
-
-  public function withdraw() {
-    if ($this->receiver->isGuest()) throw new Exception\NoReceiverLoggedInException('Nessun utente loggato nel sistema.');
-
-    if (!$this->receiver->match($this->receiverId))
-      throw new Exception\ReceiverMismatchException("You can't reject someone else's friendship.");
-    
-    
-    $this->reject();
-  }
-  
-  
-  public function cancel() {
-    
-  }
-
-
   /**
    * @brief Saves the friendship to the database.
    */
