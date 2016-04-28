@@ -241,7 +241,7 @@ class ProfileController extends ListController {
    * @brief Let the current user to update his own personal info.
    * @param[in] string $username A username.
    */
-  public function settingsAction($username) {
+  public function infoAction($username) {
     $user = $this->getUser($username);
 
     if ($this->user->isGuest() or !$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
@@ -290,7 +290,7 @@ class ProfileController extends ListController {
 
     $this->view->setVar('profile', $this->user);
     $this->view->setVar('title', sprintf('%s\'s settings', $this->user->username));
-    $this->view->pick('views/profile/settings/personal-info');
+    $this->view->pick('views/profile/settings/info');
   }
 
 
