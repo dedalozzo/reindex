@@ -46,7 +46,7 @@ class ProfileGroup extends Group {
     $this->addGet('/repositories/', ['action' => 'repositories', 'username' => 1]);
     $this->addGet('/repositories/{filter}/', ['action' => 'repositories', 'username' => 1]);
 
-    $this->add('/settings/', ['action' => 'settings', 'username' => 1], ['GET', 'POST']);
+    $this->add('/settings/', ['action' => 'info', 'username' => 1], ['GET', 'POST']);
     $this->add('/settings/password/', ['action' => 'password', 'username' => 1], ['GET', 'POST']);
     $this->add('/settings/username/', ['action' => 'username', 'username' => 1], ['GET', 'POST']);
     $this->add('/settings/emails/', ['action' => 'emails', 'username' => 1], ['GET', 'POST']);
