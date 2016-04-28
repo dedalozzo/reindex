@@ -26,7 +26,7 @@ use Phalcon\Mvc\View;
 class MemberController extends ListController {
 
 
-  private function isFriend($id) {
+  private function isMyFriend($id) {
     $opts = new ViewQueryOpts();
     $opts->doNotreduce()->setLimit(1)->setKey([$this->user->id, $id]);
     return !$this->couch->queryView("friendships", "approvedPerMember", NULL, $opts)->isEmpty();
@@ -35,8 +35,15 @@ class MemberController extends ListController {
 
   private function getFriendsCount($id) {
     $opts = new ViewQueryOpts();
-    $opts->reduce()->reverseOrderOfResults()->setStartKey([$id], Couch::WildCard())->setEndKey([$id]);
+    $opts->reduce()->reverseOrderOfResults()->setStartKey([$id, Couch::WildCard()])->setEndKey([$id]);
     return $this->couch->queryView("friendships", "approvedPerMember", NULL, $opts)->getReducedValue();
+  }
+
+
+  private function getFollowesCount($id) {
+    $opts = new ViewQueryOpts();
+    $opts->reduce()->setKey($id);
+    return $this->couch->queryView("followers", "perMember", NULL, $opts)->getReducedValue();
   }
 
 
@@ -70,7 +77,8 @@ class MemberController extends ListController {
       $member->when = Helper\Time::when($member->createdAt, false);
       $member->hitsCount = Helper\Text::formatNumber($this->redis->hGet(Helper\Text::unversion($member->id), 'hits'));
       $member->friendsCount = Helper\Text::formatNumber($this->getFriendsCount($member->id));
-      $member->isFriend = $this->isFriend($member->id);
+      $member->followersCount = Helper\Text::formatNumber($this->getFollowesCount($member->id));
+      $member->isMyFriend = $this->isMyFriend($member->id);
 
       $members[] = $member;
     }
