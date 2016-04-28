@@ -76,15 +76,14 @@ class FriendCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
     if ($member->blacklist->exists($this->user))
       throw new Exception\UserMismatchException("Unfortunately you have been blacklisted from the user you are trying to add as a friend.");
 
-    if ($this->exists($member, $friendshipId, $approved)) {
-      if ($approved)
-        throw new Exception\UserMismatchException("You are already friend with the user.");
-      else
-        throw new Exception\UserMismatchException("You have already sent a friend request to this user.");
-    }
+    if ($this->exists($member))
+      throw new Exception\UserMismatchException("You are already friend with the user.");
+
+    if ($this->pendingRequest($member))
+      throw new Exception\UserMismatchException("You have already sent a friend request to this user.");
 
     // Creates and stores the friendship.
-    $friendship = Friendship::request($member);
+    $friendship = Friendship::request($this->user, $member);
     $this->couch->saveDoc($friendship);
   }
 
@@ -95,7 +94,7 @@ class FriendCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
    * @param[in] Member $member A member.
    */
   public function remove(Member $member) {
-    if ($this->exists($member, $friendshipId)) {
+    if ($this->exists($member)) {
       $friendship = $this->couch->getDoc(Couch::STD_DOC_PATH, $friendshipId);
       $this->couch->deleteDoc(Couch::STD_DOC_PATH, $friendshipId, $friendship->rev);
     }
