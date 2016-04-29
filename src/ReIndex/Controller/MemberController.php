@@ -26,7 +26,7 @@ use Phalcon\Mvc\View;
 class MemberController extends ListController {
 
 
-  private function isMyFriend($id) {
+  private function friendshipExists($id) {
     $opts = new ViewQueryOpts();
     $opts->doNotreduce()->setLimit(1)->setKey([$this->user->id, $id]);
     return !$this->couch->queryView("friendships", "approvedPerMember", NULL, $opts)->isEmpty();
@@ -78,7 +78,7 @@ class MemberController extends ListController {
       $member->hitsCount = Helper\Text::formatNumber($this->redis->hGet(Helper\Text::unversion($member->id), 'hits'));
       $member->friendsCount = Helper\Text::formatNumber($this->getFriendsCount($member->id));
       $member->followersCount = Helper\Text::formatNumber($this->getFollowesCount($member->id));
-      $member->isMyFriend = $this->isMyFriend($member->id);
+      $member->friendshipExists = $this->friendshipExists($member->id);
 
       $members[] = $member;
     }
@@ -94,7 +94,16 @@ class MemberController extends ListController {
 
     parent::initialize();
 
+    if ($this->user->isGuest())
+      return $this->dispatcher->forward(['controller' => 'auth', 'action' => 'logon']);
+
     $this->resultsPerPage = $this->di['config']->application->membersPerPage;
+
+    // FOR DEBUG PURPOSE ONLY UNCOMMENT THE FOLLOWING LINE AND COMMENT THE ONE ABOVE.
+    $this->assets->addJs("/reindex/themes/".$this->themeName."/src/js/member.js", FALSE);
+
+    //$this->assets->addJs($this->dist."/js/member.js", FALSE);
+
     $this->view->pick('views/member');
   }
 
