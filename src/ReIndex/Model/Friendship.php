@@ -35,6 +35,8 @@ class Friendship extends Doc {
     $instance->meta["receiverId"] = $receiver->id;
     $instance->meta["approved"] = FALSE;
     $instance->meta["requestedAt"] = time();
+
+    return $instance;
   }
 
 
