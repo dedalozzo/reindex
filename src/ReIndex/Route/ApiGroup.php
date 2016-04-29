@@ -29,7 +29,9 @@ class ApiGroup extends Group {
         'controller' => 'api'
       ]);
 
-    $this->setHostname('api.'.Di::getDefault()['config']['application']['domainName']);
+    $this->setHostname(Di::getDefault()['config']['application']['domainName']);
+
+    $this->setPrefix('/api');
 
     $this->addPost('/like/', ['action' => 'like']);
     $this->addPost('/star/', ['action' => 'star']);
@@ -46,6 +48,8 @@ class ApiGroup extends Group {
     $this->addPost('/unprotect/', ['action' => 'unprotect']);
     $this->addPost('/hide/', ['action' => 'hide']);
     $this->addPost('/show/', ['action' => 'show']);
+    $this->addPost('/addfriend/', ['action' => 'addFriend']);
+    $this->addPost('/removefriend/', ['action' => 'removeFriend']);
   }
 
 }
