@@ -23,7 +23,6 @@ abstract class AbstractCollection implements \IteratorAggregate, \Countable, \Ar
 
   protected $meta;  // Stores the metadata.
   protected $di;    // Stores the default Dependency Injector.
-  protected $user;  // Stores the current user.
 
   const NAME = "collection";
 
@@ -35,7 +34,6 @@ abstract class AbstractCollection implements \IteratorAggregate, \Countable, \Ar
   public function __construct(array &$meta) {
     $this->meta = &$meta;
     $this->di = Di::getDefault();
-    $this->user = $this->di['guardian']->getUser();
   }
 
 
