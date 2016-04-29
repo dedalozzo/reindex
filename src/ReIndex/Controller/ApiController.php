@@ -25,6 +25,7 @@ class ApiController extends BaseController {
 
   /**
    * @brief Extracts the domain name.
+   * @attention This method works, but we no londer use Cross-site HTTP requests.
    * @param[in] $url The URL.
    * @retval string
    */
@@ -52,6 +53,7 @@ class ApiController extends BaseController {
    * web applications.\n
    * To make possible cross-site AJAX calls, for example from www.programmazione.it to api.programmazione.it, we
    * must set `Access-Control-Allow-Origin` header.
+   * @attention This method works, but we no londer use Cross-site HTTP requests.
    */
   protected function validateOrigin() {
 
@@ -90,7 +92,9 @@ class ApiController extends BaseController {
   public function initialize() {
     parent::initialize();
 
-    $this->validateOrigin();
+    // DON'T CHANGE THIS.
+    // We no longer validate the origin because we use the same domain.
+    //$this->validateOrigin();
   }
 
 
@@ -269,6 +273,52 @@ class ApiController extends BaseController {
    */
   public function showAction() {
     $this->doAction('show');
+  }
+
+
+  /**
+   * @brief Adds a friend.
+   */
+  public function addFriendAction() {
+    $this->log->addDebug("Step 3");
+    try {
+      if ($this->request->hasPost('id')) {
+        $this->log->addDebug("Step 4");
+        $member = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
+        $this->log->addDebug("Step 5");
+        $this->user->friends->add($member);
+        $this->log->addDebug("Step 6");
+        echo json_encode([TRUE]);
+        $this->log->addDebug("Step 7");
+        $this->view->disable();
+        $this->log->addDebug("Step 10");
+      }
+      else
+        throw new \RuntimeException("La risorsa non è più disponibile.");
+    }
+    catch (\Exception $e) {
+      echo json_encode([FALSE, $e->getMessage()]);
+    }
+  }
+
+
+  /**
+   * @brief Removes the friend.
+   */
+  public function removeFriendAction() {
+    try {
+      if ($this->request->hasPost('id')) {
+        $member = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
+        $this->user->friends->remove($member);
+        echo json_encode([TRUE]);
+        $this->view->disable();
+      }
+      else
+        throw new \RuntimeException("La risorsa non è più disponibile.");
+    }
+    catch (\Exception $e) {
+      echo json_encode([FALSE, $e->getMessage()]);
+    }
   }
 
 }
