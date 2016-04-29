@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file LoginCollection.php
  * @brief This file contains the LoginCollection class.
