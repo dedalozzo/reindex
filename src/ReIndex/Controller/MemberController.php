@@ -94,9 +94,6 @@ class MemberController extends ListController {
 
     parent::initialize();
 
-    if ($this->user->isGuest())
-      return $this->dispatcher->forward(['controller' => 'auth', 'action' => 'logon']);
-
     $this->resultsPerPage = $this->di['config']->application->membersPerPage;
 
     // FOR DEBUG PURPOSE ONLY UNCOMMENT THE FOLLOWING LINE AND COMMENT THE ONE ABOVE.
