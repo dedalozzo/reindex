@@ -13,7 +13,6 @@ namespace ReIndex\Collection;
 
 use ReIndex\Model\Member;
 
-use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
 
