@@ -16,8 +16,6 @@ use EoC\Extension;
 use EoC\Opt\ViewQueryOpts;
 
 use ReIndex\Factory\UserFactory;
-use ReIndex\Exception\NotEnoughPrivilegesException;
-use ReIndex\Security\User\IUser;
 use ReIndex\Security\Role\IRole;
 
 
