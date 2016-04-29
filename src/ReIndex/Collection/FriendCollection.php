@@ -38,10 +38,10 @@ class FriendCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
   /**
    * @brief Creates a new collection of friends.
    */
-  public function __construct() {
+  public function __construct(Member $user) {
+    $this->user = $user;
     $this->di = Di::getDefault();
     $this->couch = $this->di['couchdb'];
-    $this->user = $this->di['guardian']->getUser();
   }
 
 
@@ -94,10 +94,8 @@ class FriendCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
    * @param[in] Member $member A member.
    */
   public function remove(Member $member) {
-    if ($this->exists($member)) {
-      $friendship = $this->couch->getDoc(Couch::STD_DOC_PATH, $friendshipId);
-      $this->couch->deleteDoc(Couch::STD_DOC_PATH, $friendshipId, $friendship->rev);
-    }
+    if ($friendship = $this->exists($member))
+      $this->couch->deleteDoc(Couch::STD_DOC_PATH, $friendship->id, $friendship->rev);
     else
       throw new Exception\UserMismatchException("You are not friends.");
   }
@@ -106,7 +104,7 @@ class FriendCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
   /**
    * @brief Returns `true` if there is an established friendship relation with the specified member, `false` otherwise.
    * @param[in] Member $member A member.
-   * @retval bool
+   * @retval Model::Friendship or `false` in case the member is not a friend.
    */
   public function exists(Member $member) {
     $opts = new ViewQueryOpts();
@@ -114,7 +112,10 @@ class FriendCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
 
     $result = $this->couch->queryView("friendships", "approvedPerMember", NULL, $opts);
 
-    return $result->isEmpty() ? FALSE : TRUE;
+    if ($result->isEmpty())
+      return FALSE;
+    else
+      return $this->couch->getDoc(Couch::STD_DOC_PATH, $result[0]['id']);
   }
 
 
