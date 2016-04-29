@@ -280,18 +280,12 @@ class ApiController extends BaseController {
    * @brief Adds a friend.
    */
   public function addFriendAction() {
-    $this->log->addDebug("Step 3");
     try {
       if ($this->request->hasPost('id')) {
-        $this->log->addDebug("Step 4");
         $member = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
-        $this->log->addDebug("Step 5");
         $this->user->friends->add($member);
-        $this->log->addDebug("Step 6");
         echo json_encode([TRUE]);
-        $this->log->addDebug("Step 7");
         $this->view->disable();
-        $this->log->addDebug("Step 10");
       }
       else
         throw new \RuntimeException("La risorsa non è più disponibile.");
