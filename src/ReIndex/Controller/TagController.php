@@ -24,7 +24,7 @@ use ReIndex\Helper;
 class TagController extends ListController {
 
 
-  protected function getEntries($ids) {
+  protected function getTags($ids) {
     if (empty($ids))
       return [];
 
@@ -105,12 +105,12 @@ class TagController extends ListController {
       $opts = new ViewQueryOpts();
       $opts->doNotReduce();
       $rows = $this->couch->queryView("tags", "allNames", $keys, $opts);
-      $ids = $this->getEntries(array_column($rows->asArray(), 'id'));
+      $ids = $this->getTags(array_column($rows->asArray(), 'id'));
     }
     else
       $ids = [];
 
-    $this->view->setVar('entries', $ids);
+    $this->view->setVar('tags', $ids);
     $this->view->setVar('title', 'Tags attivi');
   }
 
@@ -129,14 +129,14 @@ class TagController extends ListController {
 
     $tags = $this->couch->queryView("tags", "byName", NULL, $opts)->asArray();
 
-    $entries = $this->getEntries(array_column($tags, 'id'));
+    $entries = $this->getTags(array_column($tags, 'id'));
 
     if (count($entries) > $this->resultsPerPage) {
       $last = array_pop($entries);
       $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->name, $last->id));
     }
 
-    $this->view->setVar('entries', $entries);
+    $this->view->setVar('tags', $entries);
     $this->view->setVar('title', 'Tags per nome');
   }
 
@@ -155,14 +155,14 @@ class TagController extends ListController {
 
     $tags = $this->couch->queryView("tags", "newest", NULL, $opts)->asArray();
 
-    $entries = $this->getEntries(array_column($tags, 'id'));
+    $entries = $this->getTags(array_column($tags, 'id'));
 
     if (count($entries) > $this->resultsPerPage) {
       $last = array_pop($entries);
       $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->createdAt, $last->id));
     }
 
-    $this->view->setVar('entries', $entries);
+    $this->view->setVar('tags', $entries);
     $this->view->setVar('title', 'Nuovi tags');
   }
 
@@ -186,7 +186,7 @@ class TagController extends ListController {
       $opts->setKey($this->request->getPost('filter'));
       $tags = $this->couch->queryView('tags', 'substrings', NULL, $opts)->asArray();
 
-      $entries = $this->getEntries(array_column($tags, 'id'));
+      $entries = $this->getTags(array_column($tags, 'id'));
       echo json_encode($entries);
 
       $this->view->disable();
