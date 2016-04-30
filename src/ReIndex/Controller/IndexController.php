@@ -14,7 +14,8 @@ namespace ReIndex\Controller;
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
-use ReIndex\Security\Role;
+use ReIndex\Enum\VersionState;
+use ReIndex\Model\Member;use ReIndex\Security\Role;
 use ReIndex\Validation;
 use ReIndex\Helper;
 use ReIndex\Exception\InvalidFieldException;
@@ -131,6 +132,95 @@ class IndexController extends ListController {
 
 
   /**
+   * @brief Given a set of keys, retrieves entries.
+   */
+  protected function getPosts($ids) {
+    if (empty($ids))
+      return [];
+
+    $opts = new ViewQueryOpts();
+
+    // Posts.
+    $opts->doNotReduce();
+    $posts = $this->couch->queryView("posts", "all", $ids, $opts);
+
+    Helper\ArrayHelper::unversion($ids);
+
+    // Likes.
+    if ($this->user->isMember()) {
+      $opts->reset();
+      $opts->doNotReduce()->includeMissingKeys();
+
+      $keys = [];
+      foreach ($ids as $postId)
+        $keys[] = [$postId, $this->user->id];
+
+      $likes = $this->couch->queryView("votes", "perItemAndMember", $keys, $opts);
+    }
+
+    // Scores.
+    $opts->reset();
+    $opts->includeMissingKeys()->groupResults();
+    $scores = $this->couch->queryView("votes", "perItem", $ids, $opts);
+
+    // Replies.
+    $opts->reset();
+    $opts->includeMissingKeys()->groupResults();
+    $replies = $this->couch->queryView("replies", "perPost", $ids, $opts);
+
+    // Members.
+    $creatorIds = array_column(array_column($posts->asArray(), 'value'), 'creatorId');
+    $opts->reset();
+    $opts->doNotReduce()->includeMissingKeys();
+    $members = $this->couch->queryView("members", "allNames", $creatorIds, $opts);
+
+    $entries = [];
+    $postCount = count($posts);
+    for ($i = 0; $i < $postCount; $i++) {
+      $entry = (object)($posts[$i]['value']);
+      $entry->id = $posts[$i]['id'];
+
+      if ($entry->state == VersionState::CURRENT) {
+        $entry->url = Helper\Url::build($entry->publishedAt, $entry->slug);
+        $entry->timestamp = Helper\Time::when($entry->publishedAt);
+      }
+      else {
+        $entry->url = Helper\Url::build($entry->createdAt, $entry->slug);
+        $entry->timestamp = Helper\Time::when($entry->createdAt);
+      }
+
+      $entry->username = $members[$i]['value'][0];
+      $entry->gravatar = Member::getGravatar($members[$i]['value'][1]);
+      $entry->hitsCount = Helper\Text::formatNumber($this->redis->hGet(Helper\Text::unversion($entry->id), 'hits'));
+      $entry->score = is_null($scores[$i]['value']) ? 0 : $scores[$i]['value'];
+      $entry->repliesCount = is_null($replies[$i]['value']) ? 0 : $replies[$i]['value'];
+      $entry->liked = $this->user->isGuest() || is_null($likes[$i]['value']) ? FALSE : TRUE;
+
+      if (!empty($entry->tags)) {
+        // Tags.
+        $opts->reset();
+        $opts->doNotReduce();
+
+        // Resolves the synonyms.
+        $synonyms = $this->couch->queryView("tags", "synonyms", $entry->tags, $opts);
+
+        // Extracts the masters.
+        $masters = array_unique(array_column($synonyms->asArray(), 'value'));
+
+        $entry->tags = $this->couch->queryView("tags", "allNames", $masters, $opts);
+      }
+      else
+        $entry->tags = [];
+
+      $entries[] = $entry;
+    }
+
+    return $entries;
+  }
+
+
+
+  /**
    * @brief Gets a list of tags recently updated.
    * @param[in] int $count The number of tags to be returned.
    */
@@ -221,7 +311,7 @@ class IndexController extends ListController {
       $opts = new ViewQueryOpts();
       $opts->doNotReduce();
       $rows = $this->couch->queryView("posts", "unversion", $keys, $opts);
-      $ids = $this->getEntries(array_column($rows->asArray(), 'id'));
+      $ids = $this->getPosts(array_column($rows->asArray(), 'id'));
     }
     else
       $ids = [];
@@ -555,7 +645,7 @@ class IndexController extends ListController {
       $posts = $this->couch->queryView("posts", "unversion", array_column($stars, 'value'), $opts)->asArray();
     }
 
-    $this->view->setVar('entries', $this->getEntries(array_column($posts, 'id')));
+    $this->view->setVar('entries', $this->getPosts(array_column($posts, 'id')));
     $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
     $this->view->setVar('filters', $filters);
     $this->view->setVar('title', sprintf('Favorite %s', ucfirst($this->getLabel())));
@@ -593,9 +683,9 @@ class IndexController extends ListController {
     $this->view->setVar('replies', $post->getReplies());
     $this->view->setVar('title', $post->title);
 
-    $this->assets->addJs($this->dist."/js/post.min.js", FALSE);
+    //$this->assets->addJs($this->dist."/js/post.min.js", FALSE);
     // FOR DEBUG PURPOSE ONLY UNCOMMENT THE FOLLOWING LINE AND COMMENT THE ONE ABOVE.
-    //$this->assets->addJs("/reindex/themes/".$this->themeName."/src/js/post.js", FALSE);
+    $this->assets->addJs("/reindex/themes/".$this->themeName."/src/js/post.js", FALSE);
 
     $this->view->pick('views/post/show');
   }
