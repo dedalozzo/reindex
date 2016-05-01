@@ -13,8 +13,8 @@ namespace ReIndex\Controller;
 use EoC\Opt\ViewQueryOpts;
 use EoC\Couch;
 
-use ReIndex\Helper;;
 use ReIndex\Model\Member;
+use ReIndex\Helper\Time;
 
 use Phalcon\Mvc\View;
 
@@ -24,67 +24,6 @@ use Phalcon\Mvc\View;
  * @nosubgrouping
  */
 class MemberController extends ListController {
-
-
-  private function friendshipExists($id) {
-    $opts = new ViewQueryOpts();
-    $opts->doNotreduce()->setLimit(1)->setKey([$this->user->id, $id]);
-    return !$this->couch->queryView("friendships", "approvedPerMember", NULL, $opts)->isEmpty();
-  }
-
-
-  private function getFriendsCount($id) {
-    $opts = new ViewQueryOpts();
-    $opts->reduce()->reverseOrderOfResults()->setStartKey([$id, Couch::WildCard()])->setEndKey([$id]);
-    return $this->couch->queryView("friendships", "approvedPerMember", NULL, $opts)->getReducedValue();
-  }
-
-
-  private function getFollowesCount($id) {
-    $opts = new ViewQueryOpts();
-    $opts->reduce()->setKey($id);
-    return $this->couch->queryView("followers", "perMember", NULL, $opts)->getReducedValue();
-  }
-
-
-  protected function getEntries($keys) {
-    if (empty($keys))
-      return [];
-
-    $opts = new ViewQueryOpts();
-
-    // Gets the tags properties.
-    $opts->doNotReduce();
-    $result = $this->couch->queryView("members", "all", $keys, $opts);
-
-    $this->view->setVar('membersCount', $result->getTotalRows());
-
-    // Retrieves the members reputation.
-    //$opts->reset();
-    //$opts->groupResults()->includeMissingKeys();
-    //$reputations = $this->couch->queryView("reputation", "perMember", $keys, $opts);
-
-    $members = [];
-    $membersCount = count($result);
-    for ($i = 0; $i < $membersCount; $i++) {
-      $member = new \stdClass();
-      $member->id = $result[$i]['id'];
-      $member->username = $result[$i]['value'][0];
-      $member->gravatar = Member::getGravatar($result[$i]['value'][1]);
-      $member->createdAt = $result[$i]['value'][2];
-      $member->fullName = $result[$i]['value'][3] . ' ' . $result[$i]['value'][4];
-      $member->headline = $result[$i]['value'][5];
-      $member->when = Helper\Time::when($member->createdAt, false);
-      $member->hitsCount = Helper\Text::formatNumber($this->redis->hGet(Helper\Text::unversion($member->id), 'hits'));
-      $member->friendsCount = Helper\Text::formatNumber($this->getFriendsCount($member->id));
-      $member->followersCount = Helper\Text::formatNumber($this->getFollowesCount($member->id));
-      $member->friendshipExists = $this->friendshipExists($member->id);
-
-      $members[] = $member;
-    }
-
-    return $members;
-  }
 
 
   public function initialize() {
@@ -119,8 +58,8 @@ class MemberController extends ListController {
    * @param[in] string $filter (optional) Human readable representation of a period.
    */
   public function reputationAction($filter = NULL) {
-    $period = $this->getPeriod($filter);
-    if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+    $filter = Time::period($filter);
+    if ($filter === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $this->view->setVar('submenu', $this->periods);
     $this->view->setVar('submenuIndex', $period);
@@ -140,16 +79,16 @@ class MemberController extends ListController {
     $opts->setStartKey($startKey);
     if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
 
-    $members = $this->couch->queryView("members", "newest", NULL, $opts)->asArray();
+    $rows = $this->couch->queryView("members", "newest", NULL, $opts)->asArray();
 
-    $entries = $this->getEntries(array_column($members, 'id'));
+    $members = Member::collect(array_column($rows, 'id'));
 
-    if (count($entries) > $this->resultsPerPage) {
-      $last = array_pop($entries);
+    if (count($members) > $this->resultsPerPage) {
+      $last = array_pop($members);
       $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->createdAt, $last->id));
     }
 
-    $this->view->setVar('members', $entries);
+    $this->view->setVar('members', $members);
     $this->view->setVar('title', 'Nuovi utenti');
   }
 
@@ -166,16 +105,16 @@ class MemberController extends ListController {
     $opts->setStartKey($startKey);
     if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
 
-    $members = $this->couch->queryView("members", "byUsername", NULL, $opts)->asArray();
+    $rows = $this->couch->queryView("members", "byUsername", NULL, $opts)->asArray();
 
-    $entries = $this->getEntries(array_column($members, 'id'));
+    $members = Member::collect(array_column($rows, 'id'));
 
-    if (count($entries) > $this->resultsPerPage) {
-      $last = array_pop($entries);
+    if (count($members) > $this->resultsPerPage) {
+      $last = array_pop($members);
       $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->username, $last->id));
     }
 
-    $this->view->setVar('members', $entries);
+    $this->view->setVar('members', $members);
     $this->view->setVar('title', 'Utenti per nome');
   }
 
