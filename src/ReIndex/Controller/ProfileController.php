@@ -10,6 +10,8 @@
 
 namespace ReIndex\Controller;
 
+use ReIndex\Model\Post;
+use ReIndex\Model\Member;
 use ReIndex\Factory\UserFactory;
 use ReIndex\Helper;
 use ReIndex\Exception;
@@ -104,14 +106,14 @@ class ProfileController extends ListController {
     $opts->reduce()->setStartKey([$user->id, Couch::WildCard()])->unsetOpt('startkey_docid');
     $count = $this->couch->queryView("posts", "perDateByUser", NULL, $opts)->getReducedValue();
 
-    $entries = $this->getEntries(array_column($rows->asArray(), 'id'));
+    $posts = Post::collect(array_column($rows->asArray(), 'id'));
 
-    if (count($entries) > $this->resultsPerPage) {
-      $last = array_pop($entries);
+    if (count($posts) > $this->resultsPerPage) {
+      $last = array_pop($posts);
       $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->publishedAt, $last->id));
     }
 
-    $this->view->setVar('entries', $entries);
+    $this->view->setVar('posts', $posts);
     $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
     $this->view->setVar('entriesLabel', 'contributi');
     $this->view->setVar('title', sprintf('%s timeline', $username));
@@ -145,6 +147,25 @@ class ProfileController extends ListController {
 
     // If the user doesn't exist, forward to 404.
     if (!$user->isMember()) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+
+    $opts = new ViewQueryOpts();
+    $opts->setLimit($this->resultsPerPage+1);
+
+    // Paginates results.
+    $startKey = isset($_GET['startkey']) ? $_GET['startkey'] : chr(0);
+    $opts->setStartKey($startKey);
+    if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
+
+    $rows = $this->couch->queryView("friendships", "approvedPerMember", NULL, $opts)->asArray();
+
+    $members = Member::collect(array_column($rows, 'id'));
+
+    if (count($members) > $this->resultsPerPage) {
+      $last = array_pop($members);
+      $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->username, $last->id));
+    }
+
+    $this->view->setVar('members', $members);
 
     $this->view->setVar('title', sprintf('%s\'s connections', $username));
     $this->view->pick('views/profile/connections');
