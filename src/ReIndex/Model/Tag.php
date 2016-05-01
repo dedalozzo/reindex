@@ -11,6 +11,7 @@
 namespace ReIndex\Model;
 
 
+use Phalcon\Di;
 use ReIndex\Extension;
 use ReIndex\Property;
 use ReIndex\Helper;
@@ -33,6 +34,47 @@ class Tag extends Versionable implements Extension\ICount, Extension\IStar {
     parent::__construct();
     $this->meta['master'] = TRUE;
     $this->meta['synonyms'] = [];
+  }
+
+
+  /**
+   * @brief Given a list of IDs, returns the correspondent objects.
+   * @retval array
+   */
+  public static function collect(array $ids) {
+    if (empty($ids))
+      return [];
+
+    $couch = Di::getDefault()['couchdb'];
+
+    $opts = new ViewQueryOpts();
+
+    // Gets the tags properties.
+    $opts->doNotReduce();
+    $tags = $couch->queryView("tags", "all", $ids, $opts);
+
+    Helper\ArrayHelper::unversion($ids);
+
+    // Retrieves the number of posts per tag.
+    $opts->reset();
+    $opts->groupResults()->includeMissingKeys();
+    $postsCount = $couch->queryView("posts", "perTag", $ids, $opts);
+
+    $entries = [];
+    $tagsCount = count($tags);
+    for ($i = 0; $i < $tagsCount; $i++) {
+      $entry = new \stdClass();
+      $entry->id = $tags[$i]['id'];
+      $entry->name = $tags[$i]['value'][0];
+      $entry->excerpt = $tags[$i]['value'][1];
+      $entry->createdAt = $tags[$i]['value'][2];
+      //$entry->whenHasBeenPublished = Helper\Time::when($tags[$i]['value'][2]);
+      $entry->postsCount = is_null($postsCount[$i]['value']) ? 0 : $postsCount[$i]['value'];
+
+      $entries[] = $entry;
+    }
+
+    return $entries;
   }
 
 
