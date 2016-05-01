@@ -11,16 +11,19 @@
 namespace ReIndex\Model;
 
 
-use EoC\Opt\ViewQueryOpts;
-
 use ReIndex\Extension;
 use ReIndex\Collection;
 use ReIndex\Exception;
-use ReIndex\Helper\ClassHelper;
+use ReIndex\Helper;
 use ReIndex\Security\User\IUser;
 use ReIndex\Security\Role;
 use ReIndex\Security\Role\IPermission;
 use ReIndex\Security\Role\MemberRole;
+
+use EoC\Couch;
+use EoC\Opt\ViewQueryOpts;
+
+use Phalcon\Di;
 
 
 /**
@@ -54,6 +57,69 @@ class Member extends Storable implements IUser, Extension\ICount {
 
     $this->meta['blacklist'] = [];
     $this->blacklist = new Collection\Blacklist($this->meta);
+  }
+
+
+  /**
+   * @brief Given a list of IDs, returns the correspondent objects.
+   * @retval array
+   */
+  public static function collect(array $ids) {
+    if (empty($ids))
+      return [];
+
+    $di = Di::getDefault();
+    $couch = $di['couchdb'];
+    $redis = $di['redis'];
+    $user = $di['guardian']->getUser();
+
+    $opts = new ViewQueryOpts();
+
+    // Gets the members' properties.
+    $opts->doNotReduce();
+    $result = $couch->queryView("members", "all", $ids, $opts);
+
+    // Retrieves the members reputation.
+    //$opts->reset();
+    //$opts->groupResults()->includeMissingKeys();
+    //$reputations = $this->couch->queryView("reputation", "perMember", $keys, $opts);
+
+    $members = [];
+    $membersCount = count($result);
+    for ($i = 0; $i < $membersCount; $i++) {
+      $id = $result[$i]['id'];
+
+      $member = new \stdClass();
+      $member->id = $id;
+      $member->username = $result[$i]['value'][0];
+      $member->gravatar = Member::getGravatar($result[$i]['value'][1]);
+      $member->createdAt = $result[$i]['value'][2];
+      $member->fullName = $result[$i]['value'][3] . ' ' . $result[$i]['value'][4];
+      $member->headline = $result[$i]['value'][5];
+      $member->when = Helper\Time::when($member->createdAt, false);
+
+      // Friendship.
+      $opts->reset();
+      $opts->doNotreduce()->setLimit(1)->setKey([$user->id, $id]);
+      $member->friendshipExists = !$couch->queryView("friendships", "approvedPerMember", NULL, $opts)->isEmpty();
+
+      // Hits count.
+      $member->hitsCount = Helper\Text::formatNumber($redis->hGet($id, 'hits'));
+
+      // Friends count.
+      $opts->reset();
+      $opts->reduce()->reverseOrderOfResults()->setStartKey([$id, Couch::WildCard()])->setEndKey([$id]);
+      $member->friendsCount = Helper\Text::formatNumber($couch->queryView("friendships", "approvedPerMember", NULL, $opts)->getReducedValue());
+
+      // Followers count.
+      $opts->reset();
+      $opts->reduce()->setKey($id);
+      $member->followersCount = Helper\Text::formatNumber($couch->queryView("followers", "perMember", NULL, $opts)->getReducedValue());
+
+      $members[] = $member;
+    }
+
+    return $members;
   }
 
 
@@ -168,7 +234,7 @@ class Member extends Storable implements IUser, Extension\ICount {
     $permissionClassName = $permissionReflection->getShortName();
 
     // Determines the namespace excluded the role name.
-    $root = ClassHelper::getClassRoot($permissionReflection->getNamespaceName());
+    $root = Helper\ClassHelper::getClassRoot($permissionReflection->getNamespaceName());
 
     foreach ($this->roles as $roleName => $roleClass) {
 
