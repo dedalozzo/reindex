@@ -15,6 +15,7 @@ use EoC\Opt\ViewQueryOpts;
 use EoC\Couch;
 
 use ReIndex\Helper;
+use ReIndex\Model\Tag;
 
 
 /**
@@ -22,41 +23,6 @@ use ReIndex\Helper;
  * @nosubgrouping
  */
 class TagController extends ListController {
-
-
-  protected function getTags($ids) {
-    if (empty($ids))
-      return [];
-
-    $opts = new ViewQueryOpts();
-
-    // Gets the tags properties.
-    $opts->doNotReduce();
-    $tags = $this->couch->queryView("tags", "all", $ids, $opts);
-
-    Helper\ArrayHelper::unversion($ids);
-
-    // Retrieves the number of posts per tag.
-    $opts->reset();
-    $opts->groupResults()->includeMissingKeys();
-    $postsCount = $this->couch->queryView("posts", "perTag", $ids, $opts);
-
-    $entries = [];
-    $tagsCount = count($tags);
-    for ($i = 0; $i < $tagsCount; $i++) {
-      $entry = new \stdClass();
-      $entry->id = $tags[$i]['id'];
-      $entry->name = $tags[$i]['value'][0];
-      $entry->excerpt = $tags[$i]['value'][1];
-      $entry->createdAt = $tags[$i]['value'][2];
-      //$entry->whenHasBeenPublished = Helper\Time::when($tags[$i]['value'][2]);
-      $entry->postsCount = is_null($postsCount[$i]['value']) ? 0 : $postsCount[$i]['value'];
-
-      $entries[] = $entry;
-    }
-
-    return $entries;
-  }
 
 
   public function initialize() {
@@ -105,7 +71,7 @@ class TagController extends ListController {
       $opts = new ViewQueryOpts();
       $opts->doNotReduce();
       $rows = $this->couch->queryView("tags", "allNames", $keys, $opts);
-      $ids = $this->getTags(array_column($rows->asArray(), 'id'));
+      $ids = Tag::collect(array_column($rows->asArray(), 'id'));
     }
     else
       $ids = [];
@@ -129,7 +95,7 @@ class TagController extends ListController {
 
     $tags = $this->couch->queryView("tags", "byName", NULL, $opts)->asArray();
 
-    $entries = $this->getTags(array_column($tags, 'id'));
+    $entries = Tag::collect(array_column($tags, 'id'));
 
     if (count($entries) > $this->resultsPerPage) {
       $last = array_pop($entries);
@@ -155,7 +121,7 @@ class TagController extends ListController {
 
     $tags = $this->couch->queryView("tags", "newest", NULL, $opts)->asArray();
 
-    $entries = $this->getTags(array_column($tags, 'id'));
+    $entries = Tag::collect(array_column($tags, 'id'));
 
     if (count($entries) > $this->resultsPerPage) {
       $last = array_pop($entries);
@@ -186,7 +152,7 @@ class TagController extends ListController {
       $opts->setKey($this->request->getPost('filter'));
       $tags = $this->couch->queryView('tags', 'substrings', NULL, $opts)->asArray();
 
-      $entries = $this->getTags(array_column($tags, 'id'));
+      $entries = Tag::collect(array_column($tags, 'id'));
       echo json_encode($entries);
 
       $this->view->disable();
