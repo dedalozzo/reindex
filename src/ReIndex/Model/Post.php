@@ -20,6 +20,7 @@ use ReIndex\Helper;
 use ReIndex\Enum;
 use ReIndex\Exception;
 use ReIndex\Security\Role;
+use ReIndex\Enum\VersionState;
 
 use Phalcon\Di;
 
@@ -71,6 +72,102 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     $this->meta['visible'] = TRUE;
 
     $this->zRemTags = ($this->isMetadataPresent('tags')) ? Helper\ArrayHelper::merge($this->meta['tags'], $this->uniqueMasters()->asArray()) : [];
+  }
+
+
+  /**
+   * @brief Given a list of IDs, returns the correspondent objects.
+   * @retval array
+   */
+  public static function collect(array $ids) {
+    if (empty($ids))
+      return [];
+
+    $di = Di::getDefault();
+    $couch = $di['couchdb'];
+    $redis = $di['redis'];
+    $user = $di['guardian']->getUser();
+
+    $opts = new ViewQueryOpts();
+
+    // Posts.
+    $opts->doNotReduce();
+    $posts = $couch->queryView("posts", "all", $ids, $opts);
+
+    Helper\ArrayHelper::unversion($ids);
+
+    // Likes.
+    if ($user->isMember()) {
+      $opts->reset();
+      $opts->doNotReduce()->includeMissingKeys();
+
+      $keys = [];
+      foreach ($ids as $postId)
+        $keys[] = [$postId, $user->id];
+
+      $likes = $couch->queryView("votes", "perItemAndMember", $keys, $opts);
+    }
+    else
+      $likes = [];
+
+    // Scores.
+    $opts->reset();
+    $opts->includeMissingKeys()->groupResults();
+    $scores = $couch->queryView("votes", "perItem", $ids, $opts);
+
+    // Replies.
+    $opts->reset();
+    $opts->includeMissingKeys()->groupResults();
+    $replies = $couch->queryView("replies", "perPost", $ids, $opts);
+
+    // Members.
+    $creatorIds = array_column(array_column($posts->asArray(), 'value'), 'creatorId');
+    $opts->reset();
+    $opts->doNotReduce()->includeMissingKeys();
+    $members = $couch->queryView("members", "allNames", $creatorIds, $opts);
+
+    $entries = [];
+    $postCount = count($posts);
+    for ($i = 0; $i < $postCount; $i++) {
+      $entry = (object)($posts[$i]['value']);
+      $entry->id = $posts[$i]['id'];
+
+      if ($entry->state == VersionState::CURRENT) {
+        $entry->url = Helper\Url::build($entry->publishedAt, $entry->slug);
+        $entry->timestamp = Helper\Time::when($entry->publishedAt);
+      }
+      else {
+        $entry->url = Helper\Url::build($entry->createdAt, $entry->slug);
+        $entry->timestamp = Helper\Time::when($entry->createdAt);
+      }
+
+      $entry->username = $members[$i]['value'][0];
+      $entry->gravatar = Member::getGravatar($members[$i]['value'][1]);
+      $entry->hitsCount = Helper\Text::formatNumber($redis->hGet(Helper\Text::unversion($entry->id), 'hits'));
+      $entry->score = is_null($scores[$i]['value']) ? 0 : $scores[$i]['value'];
+      $entry->repliesCount = is_null($replies[$i]['value']) ? 0 : $replies[$i]['value'];
+      $entry->liked = $user->isGuest() || is_null($likes[$i]['value']) ? FALSE : TRUE;
+
+      if (!empty($entry->tags)) {
+        // Tags.
+        $opts->reset();
+        $opts->doNotReduce();
+
+        // Resolves the synonyms.
+        $synonyms = $couch->queryView("tags", "synonyms", $entry->tags, $opts);
+
+        // Extracts the masters.
+        $masters = array_unique(array_column($synonyms->asArray(), 'value'));
+
+        $entry->tags = $couch->queryView("tags", "allNames", $masters, $opts);
+      }
+      else
+        $entry->tags = [];
+
+      $entries[] = $entry;
+    }
+
+    return $entries;
   }
 
 
