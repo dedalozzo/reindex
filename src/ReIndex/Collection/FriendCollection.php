@@ -84,7 +84,7 @@ class FriendCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
 
     // Creates and stores the friendship.
     $friendship = Friendship::request($this->user, $member);
-    $this->couch->saveDoc($friendship);
+    $friendship->save();
   }
 
 
@@ -94,8 +94,10 @@ class FriendCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
    * @param[in] Member $member A member.
    */
   public function remove(Member $member) {
-    if ($friendship = $this->exists($member))
-      $this->couch->deleteDoc(Couch::STD_DOC_PATH, $friendship->id, $friendship->rev);
+    if ($friendship = $this->exists($member)) {
+      $friendship->delete();
+      $friendship->save();
+    }
     else
       throw new Exception\UserMismatchException("You are not friends.");
   }
@@ -148,8 +150,7 @@ class FriendCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
         throw new Exception\UserMismatchException("It's not up to you approve someone else's friendship.");
 
       $friendship->approve();
-
-      $this->couch->saveDoc($friendship);
+      $friendship->save();
     }
     else
       throw new Exception\UserMismatchException("The friendship request doesn't exist anymore.");
