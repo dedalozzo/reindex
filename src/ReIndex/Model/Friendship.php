@@ -11,8 +11,6 @@
 namespace ReIndex\Model;
 
 
-use EoC\Doc\Doc;
-
 use ReIndex\Exception;
 
 
@@ -20,7 +18,7 @@ use ReIndex\Exception;
  * @brief This class is used to store the friendship between two different members.
  * @nosubgrouping
  */
-class Friendship extends Doc {
+class Friendship extends Storable {
 
 
   /**
@@ -34,9 +32,14 @@ class Friendship extends Doc {
     $instance->meta["senderId"] = $sender->id;
     $instance->meta["receiverId"] = $receiver->id;
     $instance->meta["approved"] = FALSE;
-    $instance->meta["requestedAt"] = time();
 
     return $instance;
+  }
+
+
+  public function save() {
+    parent::save();
+    $this->redis;
   }
 
 
@@ -46,7 +49,6 @@ class Friendship extends Doc {
    */
   public function approve() {
     $this->meta["approve"] = TRUE;
-    $this->meta["approvedAt"] = time();
   }
 
 
@@ -67,20 +69,42 @@ class Friendship extends Doc {
   }
 
 
+  public function issetSenderId() {
+    return isset($this->meta['senderId']);
+  }
+
+
+  public function setSenderId($value) {
+    $this->meta['senderId'] = $value;
+  }
+
+
+  public function unsetSenderId() {
+    if ($this->isMetadataPresent('senderId'))
+      unset($this->meta['senderId']);
+  }
+  
+
   public function getReceiverId() {
     return $this->meta['receiverId'];
   }
 
 
-  public function getRequestedAt() {
-    return $this->meta['requestedAt'];
+  public function issetReceiverId() {
+    return isset($this->meta['receiverId']);
   }
 
 
-  public function getApprovedAt() {
-    return $this->meta['approvedAt'];
+  public function setReceiverId($value) {
+    $this->meta['receiverId'] = $value;
   }
 
+
+  public function unsetReceiverId() {
+    if ($this->isMetadataPresent('receiverId'))
+      unset($this->meta['receiverId']);
+  }
+  
   //! @endcond
 
 }
