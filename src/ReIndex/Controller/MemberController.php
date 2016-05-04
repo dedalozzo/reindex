@@ -88,7 +88,7 @@ class MemberController extends ListController {
       $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->createdAt, $last->id));
     }
 
-    $this->view->setVar('members', $members);
+    $this->view->setVar('entries', $members);
     $this->view->setVar('title', 'Nuovi utenti');
   }
 
@@ -114,7 +114,7 @@ class MemberController extends ListController {
       $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->username, $last->id));
     }
 
-    $this->view->setVar('members', $members);
+    $this->view->setVar('entries', $members);
     $this->view->setVar('title', 'Utenti per nome');
   }
 
