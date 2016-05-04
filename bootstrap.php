@@ -138,8 +138,8 @@ $application->setDI($di);
 echo $application->handle()->getContent();
 
 
-$stop = microtime(true);
-$time = round($stop - $start, 3);
+//$stop = microtime(true);
+//$time = round($stop - $start, 3);
 
 // IF YOU REMOVE THE COMMENT BELOW AJAX WILL NOT LONGER WORK!
 //echo PHP_EOL . '<!-- Page generated in: ' . $time .'-->' . PHP_EOL;
