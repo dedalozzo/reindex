@@ -178,11 +178,17 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   public function save($deferred = FALSE) {
     parent::save();
 
+
     if (!$deferred) {
+      // Marks the start of a transaction block. Subsequent commands will be queued for atomic execution using `exec()`.
+      $this->redis->multi();
+
       $this->deindex();
 
       if ($this->state->isCurrent())
         $this->index();
+
+      $this->redis->exec();
     }
   }
 
