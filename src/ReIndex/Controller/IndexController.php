@@ -226,7 +226,7 @@ class IndexController extends ListController {
     else
       $posts = [];
 
-    $this->view->setVar('posts', $posts);
+    $this->view->setVar('entries', $posts);
     $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
   }
 
@@ -555,7 +555,7 @@ class IndexController extends ListController {
       $posts = $this->couch->queryView("posts", "unversion", array_column($stars, 'value'), $opts)->asArray();
     }
 
-    $this->view->setVar('posts', Post::collect(array_column($posts, 'id')));
+    $this->view->setVar('entries', Post::collect(array_column($posts, 'id')));
     $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
     $this->view->setVar('filters', $filters);
     $this->view->setVar('title', sprintf('Favorite %s', ucfirst($this->getLabel())));
