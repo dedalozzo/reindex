@@ -25,7 +25,7 @@ class RevokeCommand extends AbstractRoleCommand {
 
 
   protected function perform(IRole $role, Member $member, OutputInterface $output) {
-    if ($member->roles->exists($role->getName()))
+    if ($member->roles->exists($role))
       $member->roles->revoke($role);
     else
       $output->writeln('There is not such role associated to the member.');
