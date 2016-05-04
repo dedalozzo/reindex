@@ -71,12 +71,12 @@ class TagController extends ListController {
       $opts = new ViewQueryOpts();
       $opts->doNotReduce();
       $rows = $this->couch->queryView("tags", "allNames", $keys, $opts);
-      $ids = Tag::collect(array_column($rows->asArray(), 'id'));
+      $tags = Tag::collect(array_column($rows->asArray(), 'id'));
     }
     else
-      $ids = [];
+      $tags = [];
 
-    $this->view->setVar('tags', $ids);
+    $this->view->setVar('entries', $tags);
     $this->view->setVar('title', 'Tags attivi');
   }
 
@@ -93,16 +93,16 @@ class TagController extends ListController {
     $opts->setStartKey($startKey);
     if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
 
-    $tags = $this->couch->queryView("tags", "byName", NULL, $opts)->asArray();
+    $rows = $this->couch->queryView("tags", "byName", NULL, $opts)->asArray();
 
-    $entries = Tag::collect(array_column($tags, 'id'));
+    $tags = Tag::collect(array_column($rows, 'id'));
 
-    if (count($entries) > $this->resultsPerPage) {
-      $last = array_pop($entries);
+    if (count($tags) > $this->resultsPerPage) {
+      $last = array_pop($tags);
       $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->name, $last->id));
     }
 
-    $this->view->setVar('tags', $entries);
+    $this->view->setVar('entries', $tags);
     $this->view->setVar('title', 'Tags per nome');
   }
 
@@ -119,16 +119,16 @@ class TagController extends ListController {
     $opts->setStartKey($startKey);
     if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
 
-    $tags = $this->couch->queryView("tags", "newest", NULL, $opts)->asArray();
+    $rows = $this->couch->queryView("tags", "newest", NULL, $opts)->asArray();
 
-    $entries = Tag::collect(array_column($tags, 'id'));
+    $tags = Tag::collect(array_column($rows, 'id'));
 
-    if (count($entries) > $this->resultsPerPage) {
-      $last = array_pop($entries);
+    if (count($tags) > $this->resultsPerPage) {
+      $last = array_pop($tags);
       $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->createdAt, $last->id));
     }
 
-    $this->view->setVar('tags', $entries);
+    $this->view->setVar('entries', $tags);
     $this->view->setVar('title', 'Nuovi tags');
   }
 
@@ -150,10 +150,10 @@ class TagController extends ListController {
     if ($this->request->hasPost('filter')) {
       $opts = new ViewQueryOpts();
       $opts->setKey($this->request->getPost('filter'));
-      $tags = $this->couch->queryView('tags', 'substrings', NULL, $opts)->asArray();
+      $rows = $this->couch->queryView('tags', 'substrings', NULL, $opts)->asArray();
 
-      $entries = Tag::collect(array_column($tags, 'id'));
-      echo json_encode($entries);
+      $tags = Tag::collect(array_column($rows, 'id'));
+      echo json_encode($tags);
 
       $this->view->disable();
     }
