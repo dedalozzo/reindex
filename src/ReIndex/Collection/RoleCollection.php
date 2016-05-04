@@ -24,6 +24,18 @@ class RoleCollection extends AbstractCollection {
 
   const NAME = "roles";
 
+  protected $user;  // Stores the current user.
+
+
+  /**
+   * @brief Creates a new collection of roles.
+   * @param[in] array $meta Member's array of metadata.
+   */
+  public function __construct(array &$meta) {
+    parent::__construct($meta);
+    $this->user = $this->di['guardian']->getUser();
+  }
+
 
   /**
    * @brief Grants the specified role to the current member.
@@ -37,7 +49,7 @@ class RoleCollection extends AbstractCollection {
       throw new NotEnoughPrivilegesException('Not enough privileges to grant the role.');
 
     // Checks if the same role has been already assigned to the member.
-    if ($this->exists($role->getName()))
+    if ($this->exists($role))
       return;
 
     $roles = $this->meta[static::NAME];
@@ -70,19 +82,18 @@ class RoleCollection extends AbstractCollection {
     if (!$this->user->has(new GrantRolePermission($role)))
       throw new NotEnoughPrivilegesException('Not enough privileges to revoke the role.');
 
-    $name = $role->getName();
-    if ($this->exists($name))
-      unset($this->meta[static::NAME][$name]);
+    if ($this->exists($role))
+      unset($this->meta[static::NAME][$role->getName()]);
   }
 
 
   /**
    * @brief Returns `true` if the role is already present, `false` otherwise.
-   * @param[in] string $roleName A role's name.
+   * @param[in] IRole $role A role object.
    * @retval bool
    */
-  public function exists($roleName) {
-    return isset($this->meta[static::NAME][$roleName]);
+  public function exists(IRole $role) {
+    return isset($this->meta[static::NAME][$role->getName()]);
   }
 
 
