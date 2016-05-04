@@ -51,7 +51,7 @@ class Tag extends Versionable implements Extension\ICount, Extension\IStar {
 
     // Gets the tags properties.
     $opts->doNotReduce();
-    $tags = $couch->queryView("tags", "all", $ids, $opts);
+    $rows = $couch->queryView("tags", "all", $ids, $opts);
 
     Helper\ArrayHelper::unversion($ids);
 
@@ -60,21 +60,21 @@ class Tag extends Versionable implements Extension\ICount, Extension\IStar {
     $opts->groupResults()->includeMissingKeys();
     $postsCount = $couch->queryView("posts", "perTag", $ids, $opts);
 
-    $entries = [];
-    $tagsCount = count($tags);
+    $tags = [];
+    $tagsCount = count($rows);
     for ($i = 0; $i < $tagsCount; $i++) {
-      $entry = new \stdClass();
-      $entry->id = $tags[$i]['id'];
-      $entry->name = $tags[$i]['value'][0];
-      $entry->excerpt = $tags[$i]['value'][1];
-      $entry->createdAt = $tags[$i]['value'][2];
+      $tag = new \stdClass();
+      $tag->id = $rows[$i]['id'];
+      $tag->name = $rows[$i]['value'][0];
+      $tag->excerpt = $rows[$i]['value'][1];
+      $tag->createdAt = $rows[$i]['value'][2];
       //$entry->whenHasBeenPublished = Helper\Time::when($tags[$i]['value'][2]);
-      $entry->postsCount = is_null($postsCount[$i]['value']) ? 0 : $postsCount[$i]['value'];
+      $tag->postsCount = is_null($postsCount[$i]['value']) ? 0 : $postsCount[$i]['value'];
 
-      $entries[] = $entry;
+      $tags[] = $tag;
     }
 
-    return $entries;
+    return $tags;
   }
 
 
