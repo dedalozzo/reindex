@@ -20,7 +20,7 @@ use ReIndex\Exception\NotEnoughPrivilegesException;
  * @brief This class is used to represent a collection of roles.
  * @nosubgrouping
  */
-class RoleCollection extends AbstractCollection {
+class RoleCollection extends MetaCollection {
 
   const NAME = "roles";
 

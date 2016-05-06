@@ -15,7 +15,7 @@ namespace ReIndex\Collection;
  * @brief This class is used to represent a collection of consumers' logins.
  * @nosubgrouping
  */
-class LoginCollection extends AbstractCollection {
+class LoginCollection extends MetaCollection {
 
   const NAME = "logins";
 

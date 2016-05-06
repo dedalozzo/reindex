@@ -20,7 +20,7 @@ use EoC\Opt\ViewQueryOpts;
  * @brief This class is used to represent the member's blacklist.
  * @details This class uses the Lazy loading pattern.
  */
-class Blacklist extends AbstractCollection {
+class Blacklist extends MetaCollection {
 
   const NAME = "blacklist";
 

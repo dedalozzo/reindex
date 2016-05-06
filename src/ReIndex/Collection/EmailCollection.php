@@ -14,7 +14,7 @@ namespace ReIndex\Collection;
  * @brief This class is used to represent a collection of e-mails.
  * @nosubgrouping
  */
-class EmailCollection extends AbstractCollection {
+class EmailCollection extends MetaCollection {
 
   const NAME = "emails";
 
