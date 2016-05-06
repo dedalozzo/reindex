@@ -1,7 +1,7 @@
 <?php
 /**
- * @file AbstractCollection.php
- * @brief This file contains the AbstractCollection class.
+ * @file MetaCollection.php
+ * @brief This file contains the MetaCollection class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -19,7 +19,7 @@ use Phalcon\Di;
  * @details This class implements `IteratorAggregate`, `Countable`, and `ArrayAccess`.
  * @nosubgrouping
  */
-abstract class AbstractCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
+abstract class MetaCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
 
   protected $meta;  // Stores the metadata.
   protected $di;    // Stores the default Dependency Injector.
