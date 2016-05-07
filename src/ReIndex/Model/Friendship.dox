@@ -11,6 +11,8 @@ class Friendship {
 
   public string $senderId; //!< Who requested the friendship.
   public string $receiverId; //!< Who received the request.
+  public int $requestedAt; //!< A timestamp of the friendship request.
+  public int $approvedAt; //!< A timestamp of the friendship approval.
 
   //!@}
 
