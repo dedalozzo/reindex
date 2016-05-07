@@ -16,6 +16,10 @@ use ReIndex\Model\Member;
 use Phalcon\Di;
 
 
+/**
+ * @brief This class is used to represent a collection who doesn't store any real data but relay instead on a database.
+ * @nosubgrouping
+ */
 abstract class FakeCollection implements \Countable {
 
   protected $di;    // Stores the default Dependency Injector.
