@@ -19,6 +19,7 @@ use EoC\Opt\ViewQueryOpts;
 /**
  * @brief This class is used to represent the member's blacklist.
  * @details This class uses the Lazy loading pattern.
+ * @nosubgrouping
  */
 class Blacklist extends MetaCollection {
 
