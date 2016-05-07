@@ -14,6 +14,7 @@ namespace ReIndex\Collection;
 use ReIndex\Model\Member;
 use ReIndex\Exception;
 use ReIndex\Model\Friendship;
+use ReIndex\Model\Follower;
 
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
@@ -25,6 +26,7 @@ use Phalcon\Di;
  * @brief This class is used to represent a collection of friends.
  * @details This class implements `IteratorAggregate`, `Countable`, and `ArrayAccess`.
  * This class uses the Lazy loading pattern.
+ * @nosubgrouping
  */
 class FriendCollection extends FakeCollection {
 
@@ -66,6 +68,12 @@ class FriendCollection extends FakeCollection {
     // Creates and stores the friendship.
     $friendship = Friendship::request($this->user->id, $member->id);
     $this->couch->saveDoc($friendship);
+
+    // Follows the member.
+    if (!$member->followers->exists($this->user)) {
+      $follower = Follower::create($member->id, $this->user->id);
+      $this->couch->saveDoc($follower);
+    }
   }
 
 
@@ -75,8 +83,13 @@ class FriendCollection extends FakeCollection {
    * @param[in] Member $member A member.
    */
   public function remove(Member $member) {
-    if ($friendship = $this->exists($member))
+    if ($friendship = $this->exists($member)) {
       $this->couch->deleteDoc(Couch::STD_DOC_PATH, $friendship->id, $friendship->rev);
+
+      // If you remove the member from your friends, you don't follow it anymore.
+      if ($follower = $member->followers->exists($this->user))
+        $this->couch->deleteDoc(Couch::STD_DOC_PATH, $follower->id, $follower->rev);
+    }
     else
       throw new Exception\UserMismatchException("You are not friends.");
   }
@@ -130,6 +143,12 @@ class FriendCollection extends FakeCollection {
 
       $friendship->approve();
       $this->couch->saveDoc($friendship);
+
+      // Follows the member.
+      if (!$member->followers->exists($this->user)) {
+        $follower = Follower::create($member->id, $this->user->id);
+        $this->couch->saveDoc($follower);
+      }
     }
     else
       throw new Exception\UserMismatchException("The friendship request doesn't exist anymore.");
