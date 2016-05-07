@@ -64,8 +64,8 @@ class FriendCollection extends FakeCollection {
       throw new Exception\UserMismatchException("You have already sent a friend request to this user.");
 
     // Creates and stores the friendship.
-    $friendship = Friendship::request($this->user, $member);
-    $friendship->save();
+    $friendship = Friendship::request($this->user->id, $member->id);
+    $this->couch->saveDoc($friendship);
   }
 
 
@@ -75,10 +75,8 @@ class FriendCollection extends FakeCollection {
    * @param[in] Member $member A member.
    */
   public function remove(Member $member) {
-    if ($friendship = $this->exists($member)) {
-      $friendship->delete();
-      $friendship->save();
-    }
+    if ($friendship = $this->exists($member))
+      $this->couch->deleteDoc(Couch::STD_DOC_PATH, $friendship->id, $friendship->rev);
     else
       throw new Exception\UserMismatchException("You are not friends.");
   }
@@ -131,7 +129,7 @@ class FriendCollection extends FakeCollection {
         throw new Exception\UserMismatchException("It's not up to you approve someone else's friendship.");
 
       $friendship->approve();
-      $friendship->save();
+      $this->couch->saveDoc($friendship);
     }
     else
       throw new Exception\UserMismatchException("The friendship request doesn't exist anymore.");
