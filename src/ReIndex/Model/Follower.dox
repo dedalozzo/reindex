@@ -1,0 +1,17 @@
+<?php
+
+
+namespace ReIndex\Model;
+
+
+class Follower {
+
+  /** @name Properties */
+  //!@{
+
+  public string $memberId; //!< The ID of the member who is followed.
+  public string $followerId; //!< The follower ID.
+
+  //!@}
+
+}
