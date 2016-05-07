@@ -23,17 +23,13 @@ use Phalcon\Di;
 
 /**
  * @brief This class is used to represent a collection of followers.
+ * @nosubgrouping
  */
 class FollowerCollection extends FakeCollection {
 
   protected $followersCount = NULL; // Stores the number of followers in the collection.
 
 
-  /**
-   * @brief Using the lady loading pattern, this method returns the member's friendships count.
-   * @details Since the friends data resides on a database, the system prevent from loading them, unless they are
-   * strictly needed.
-   */
   protected function getCount() {
     // Test is made using `is_null()` instead of `empty()` because a member may have no followers at all.
     if (is_null($this->followersCount)) {
@@ -58,12 +54,12 @@ class FollowerCollection extends FakeCollection {
       throw new Exception\UserMismatchException("You are nut.");
 
     // You are already following the member.
-    if ($this->exists($member))
+    if ($member->followers->exists($this->user))
       throw new Exception\UserMismatchException("You are already following him.");
 
     // Creates and stores the relation.
-    $follower = Follower::request($this->user, $member);
-    $follower->save();
+    $follower = Follower::create($member->id, $this->user->id);
+    $this->couch->save($follower);
   }
 
 
@@ -73,10 +69,8 @@ class FollowerCollection extends FakeCollection {
    * @retval bool Returns `true` in case of success, `false` otherwise.
    */
   public function unfollow(Member $member) {
-    if ($follower = $this->exists($member)) {
-      $follower->delete();
-      $follower->save();
-    }
+    if ($follower = $member->followers->exists($this->user))
+      $this->couch->deleteDoc(Couch::STD_DOC_PATH, $follower->id, $follower->rev);
     else
       throw new Exception\UserMismatchException("You are not following him.");
   }
