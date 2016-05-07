@@ -11,35 +11,32 @@
 namespace ReIndex\Model;
 
 
+use EoC\Doc\Doc;
+
 use ReIndex\Exception;
+
 
 
 /**
  * @brief This class is used to store the friendship between two different members.
  * @nosubgrouping
  */
-class Friendship extends Storable {
+class Friendship extends Doc {
 
 
   /**
    * @brief Creates an instance of Friendship class.
-   * @param[in] Member $sender The sender of the friendship request.
-   * @param[in] Member $receiver The receiver of the friendship request.
+   * @param[in] string $senderId The sender ID of the member requested the friendship.
+   * @param[in] string $receiverId The receiver ID of the member requested the friendship.
    */
-  public static function request(Member $sender, Member $receiver) {
+  public static function request($senderId, $receiverId) {
     $instance = new self();
 
-    $instance->meta["senderId"] = $sender->id;
-    $instance->meta["receiverId"] = $receiver->id;
+    $instance->meta["senderId"] = $senderId;
+    $instance->meta["receiverId"] = $receiverId;
     $instance->meta["approved"] = FALSE;
 
     return $instance;
-  }
-
-
-  public function save() {
-    parent::save();
-    $this->redis;
   }
 
 
@@ -104,7 +101,48 @@ class Friendship extends Storable {
     if ($this->isMetadataPresent('receiverId'))
       unset($this->meta['receiverId']);
   }
+
+  public function getRequestedAt() {
+    return $this->meta['requestedAt'];
+  }
+
+
+  public function issetRequestedAt() {
+    return isset($this->meta['requestedAt']);
+  }
+
+
+  public function setRequestedAt($value) {
+    $this->meta['requestedAt'] = $value;
+  }
+
+
+  public function unsetRequestedAt() {
+    if ($this->isMetadataPresent('requestedAt'))
+      unset($this->meta['requestedAt']);
+  }
   
+
+  public function getApprovedAt() {
+    return $this->meta['approvedAt'];
+  }
+
+
+  public function issetApprovedAt() {
+    return isset($this->meta['approvedAt']);
+  }
+
+
+  public function setApprovedAt($value) {
+    $this->meta['approvedAt'] = $value;
+  }
+
+
+  public function unsetApprovedAt() {
+    if ($this->isMetadataPresent('approvedAt'))
+      unset($this->meta['approvedAt']);
+  }
+
   //! @endcond
 
 }
