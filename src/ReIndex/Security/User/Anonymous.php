@@ -61,11 +61,18 @@ class Anonymous implements IUser {
     $newPermissionClass = $root . $roleReflection->getShortName() . '\\' . $permissionReflection->getShortName();
 
     if (class_exists($newPermissionClass)) { // If a permission exists for the role...
-      // Casts the original permission object to an instance of the determined class.
-      $obj = $permission->castAs($newPermissionClass);
+      // Sets the execution role for the current user.
+      $permission->setRole($role);
 
-      // Invokes on it the check() method.
-      $result = $obj->check();
+      if ($permissionReflection->getName() != $newPermissionClass) {
+        // Casts the original permission object to an instance of the determined class.
+        $obj = $permission->castAs($newPermissionClass);
+
+        // Invokes on it the check() method.
+        $result = $obj->check();
+      }
+      else
+        $result = $permission->check();
     }
 
     return $result;
