@@ -25,7 +25,7 @@ class ImpersonatePermission extends Superclass {
     if (parent::check())
       return TRUE;
     else
-      return !$this->user->roles->isSuperior(new AdminRole());
+      return !$this->context->roles->areSuperiorThan(new AdminRole());
   }
 
 }
