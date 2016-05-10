@@ -37,7 +37,7 @@ class GrantRolePermission extends AbstractPermission {
 
 
   public function check() {
-    return !$this->user->roles->isSuperior($this->context);
+    return $this->user->roles->areSuperiorThan($this->context);
   }
 
 }
