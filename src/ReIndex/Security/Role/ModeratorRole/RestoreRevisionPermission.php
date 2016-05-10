@@ -50,7 +50,7 @@ class RestoreRevisionPermission extends AbstractPermission {
       return TRUE;
     else {
       $dustman = $this->di['couchdb']->getDoc(Couch::STD_DOC_PATH, $this->context->dustmanId);
-      return !$dustman->roles->isSuperior($this->getRole()) ? TRUE : FALSE;
+      return !$dustman->roles->areSuperiorThan($this->getRole()) ? TRUE : FALSE;
     }
   }
 
