@@ -30,7 +30,7 @@ use Phalcon\Di;
  * @details Every post is versioned into the database, has tags and also a owner, who created the entry.
  * @nosubgrouping
  */
-abstract class Post extends Versionable implements Extension\ICount, Extension\IStar, Extension\IVote, Extension\ISubscribe {
+abstract class Post extends Versionable implements Extension\ICache, Extension\ICount, Extension\IStar, Extension\IVote, Extension\ISubscribe {
   use Extension\TCount, Extension\TStar, Extension\TVote, Extension\TSubscribe;
   use Property\TExcerpt, Property\TBody, Property\TDescription;
 
@@ -177,7 +177,6 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
    */
   public function save($deferred = FALSE) {
     parent::save();
-
 
     if (!$deferred) {
       // Marks the start of a transaction block. Subsequent commands will be queued for atomic execution using `exec()`.
@@ -662,15 +661,6 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     $this->zAddNewest();
     $this->zAddPopular();
     $this->zAddActive();
-  }
-
-
-  /**
-   * @brief Reindex the post.
-   */
-  public function reindex() {
-    $this->deindex();
-    $this->index();
   }
 
   //!@}
