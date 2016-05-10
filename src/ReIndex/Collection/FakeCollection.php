@@ -18,6 +18,7 @@ use Phalcon\Di;
 
 /**
  * @brief This class is used to represent a collection who doesn't store any real data but relay instead on a database.
+ * @details This class implements `Countable`.
  * @nosubgrouping
  */
 abstract class FakeCollection implements \Countable {
@@ -25,6 +26,7 @@ abstract class FakeCollection implements \Countable {
   protected $di;    // Stores the default Dependency Injector.
   protected $user;  // Stores the current user.
   protected $couch; // Stores the CouchDB instance.
+  protected $redis; // Stores the Redis instance.
 
 
   /**
@@ -34,13 +36,12 @@ abstract class FakeCollection implements \Countable {
     $this->user = $user;
     $this->di = Di::getDefault();
     $this->couch = $this->di['couchdb'];
+    $this->redis = $this->di['redis'];
   }
 
 
   /**
-   * @brief Using the lady loading pattern, this method returns the collection count.
-   * @details Since the data resides on a database, the system prevent from loading them, unless they are strictly
-   * needed.
+   * @brief This method returns the collection count.
    */
   abstract protected function getCount();
 
@@ -50,7 +51,7 @@ abstract class FakeCollection implements \Countable {
    * @retval integer
    */
   public function count() {
-    return count($this->getCount());
+    return $this->getCount();
   }
 
 
