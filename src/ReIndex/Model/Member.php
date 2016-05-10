@@ -33,6 +33,17 @@ use Phalcon\Di;
 class Member extends Storable implements IUser, Extension\ICount {
   use Extension\TCount;
 
+  /** @name Redis Names */
+  //!@{
+
+  const USR_HASH = 'usr_'; //!< Members Redis hash.
+  const USRNAME_SET = 'usrname_'; //!< Full name Redis set.
+  const USRFN_SET = 'usrfn_'; //!< Full name Redis set.
+  const USRIFN_SET = 'usrifn_'; //!< Inverted full name Redis set.
+
+  //!@}
+
+
   private $emails;    // Collection of e-mails.
   private $logins;    // Collection of consumers' logins.
   private $roles;     // Collection of roles.
@@ -216,9 +227,65 @@ class Member extends Storable implements IUser, Extension\ICount {
       $this->roles->grant($memberRole);
 
     parent::save();
+
+    //$this->reindex();
   }
 
-  
+
+  /** @name Indexing Methods */
+  //!@{
+
+
+  /**
+   * @brief Reindex the member.
+   */
+  public function reindex() {
+    $key = self::USR_HASH . $this->id;
+
+    // Returns the values associated with the specified fields in the hash stored at member ID.
+    // For every field that does not exist in the hash, a nil value is returned. Because a non-existing keys are treated
+    // as empty hashes, running `hMGet()` against a non-existing key will return a list of `null` values.
+    $member = $this->redis->hMGet($key, ['username', 'fullname']);
+
+    $this->redis->multi();
+
+    // The username has been changed.
+    if ($member['username'] != $this->username) {
+      $this->redis->hSet($key, 'username', $this->username);
+
+      foreach ($this->friends as $friend) {
+        //$this->redis->zAdd(Member::USRNAME_SET . $this->id, 0, $id);
+      }
+    }
+
+    $fullName = $this->firstName . $this->lastName;
+
+    // In case name and surname aren't available we use the username as full name.
+    if (empty($fullName)) {
+      $fullName = $member->username;
+      $invertedFullName = $fullName;
+    }
+    else {
+      $invertedFullName = $this->lastName . $this->firstName;
+    }
+
+    // The full name has been changed.
+    if ($member['fullName'] != $fullName) {
+      $this->redis->hSet($key, 'fullName', $fullName);
+      //$this->redis->zAdd(Member::USRNAME_SET . 'post', $score, $id);
+    }
+
+    // The full name has been changed.
+    if ($member['invertedFullName'] != $invertedFullName) {
+      $this->redis->hSet($key, 'invertedFullName', $invertedFullName);
+    }
+
+    $this->redis->exec();
+  }
+
+  //!@}
+
+
   /** @name Access Control Management Methods */
   //!@{
 
@@ -282,7 +349,7 @@ class Member extends Storable implements IUser, Extension\ICount {
    * @param[in] IUser $user An anonymous user or a member instance.
    */
   public function impersonate(IUser $user) {
-    if ($this->user->has(new \ReIndex\Security\Role\AdminRole\ImpersonatePermission($user)))
+    if ($this->user->has(new Role\AdminRole\ImpersonatePermission($user)))
       $this->user = $user;
     else
       throw new Exception\NotEnoughPrivilegesException('Non hai sufficienti privilegi per impersonare un altro utente.');
@@ -332,7 +399,8 @@ class Member extends Storable implements IUser, Extension\ICount {
    * @param[in] integer $days The ban duration in days. When zero, the ban is permanent.
    */
   public function ban($days = 0) {
-    if (!$this->canBeBanned()) throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
+    if (!$this->user->has(new Role\ModeratorRole\BanMemberPermission($this)))
+      throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
 
     $this->meta['banned'] = TRUE;
     $this->meta['bannedOn'] = time();
@@ -348,10 +416,10 @@ class Member extends Storable implements IUser, Extension\ICount {
 
   /**
    * @brief Removes the ban.
-   * @param[in] bool $ignore When `true` ignores the security check.
    */
-  public function unban($ignore = FALSE) {
-    if (!$this->canBeUnBanned() && !$ignore) throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
+  public function unban() {
+    if (!$this->user->has(new Role\ModeratorRole\UnbanMemberPermission($this)))
+      throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
 
     if ($this->isMetadataPresent('banned')) {
       unset($this->meta['banned']);
@@ -488,6 +556,16 @@ class Member extends Storable implements IUser, Extension\ICount {
 
   public function issetFriends() {
     return isset($this->friends);
+  }
+
+
+  public function getFollowers() {
+    return $this->followers;
+  }
+
+
+  public function issetFollowers() {
+    return isset($this->followers);
   }
 
 
