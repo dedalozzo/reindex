@@ -98,8 +98,8 @@ class RoleCollection extends MetaCollection {
 
 
   /**
-   * @brief Returns `true` if the specified role is an instance of subclass (or an instance of the same class) of one of
-   * the roles in the collection, `false` otherwise.
+   * @brief Returns `true` if at least one of the role associated to the current user is an instance of subclass (or an
+   * instance of the same class) of the specified role object, `false` otherwise.
    * @param[in] IRole $role A role object.
    * @param[in] bool $orEqual (optional) When `false` doesn't check if the role is an instance of the same class.
    */
