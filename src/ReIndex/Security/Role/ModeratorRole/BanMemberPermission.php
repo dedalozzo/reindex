@@ -43,7 +43,7 @@ class BanMemberPermission extends AbstractPermission {
     elseif ($this->user->match($this->context->id))
       return FALSE;
     else
-      return !$this->context->isSuperior($this->getRole()) ? TRUE : FALSE;
+      return !$this->context->areSuperiorThan($this->getRole()) ? TRUE : FALSE;
   }
   
 }
