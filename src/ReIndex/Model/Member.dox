@@ -13,11 +13,12 @@ class Member  {
   string $firstName; //!< First name.
   string $lastName;  //!< Last surname.
 
-  EmailCollection $emails;  //!< A collection of e-mails.
-  LoginCollection $logins;  //!< A collection of consumers' logins.
-  RoleCollection $roles;    //!< A collection of roles associated with the member.
-  FriendCollection $friends //!< List of all the member's friendships.
-  Blacklist $blacklist;     //!< The member's blacklist.
+  EmailCollection $emails;       //!< A collection of e-mails.
+  LoginCollection $logins;       //!< A collection of consumers' logins.
+  RoleCollection $roles;         //!< A collection of roles associated with the member.
+  FriendCollection $friends;     //!< A collection of all member's friendships.
+  FollowerCollection $followers; //!< A collection of all member's followers.
+  Blacklist $blacklist;          //!< The member's blacklist.
 
   string $password; //!< Password chosen by the member.
   string $hash; //!< String hash sent via e-mail to the member to confirm that his e-mail is real.
