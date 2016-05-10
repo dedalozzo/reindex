@@ -45,7 +45,7 @@ class UnprotectPostPermission extends AbstractPermission {
       return TRUE;
     else {
       $protector = $this->di['couchdb']->getDoc(Couch::STD_DOC_PATH, $this->context->bannerId);
-      return !$protector->roles->isSuperior($this->getRole()) ? TRUE : FALSE;
+      return !$protector->roles->areSuperiorThan($this->getRole()) ? TRUE : FALSE;
     }
   }
 
