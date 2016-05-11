@@ -24,25 +24,55 @@ use Phalcon\Di;
 
 /**
  * @brief This class is used to represent a collection of friends.
- * @details This class implements `IteratorAggregate`, `Countable`, and `ArrayAccess`.
- * This class uses the Lazy loading pattern.
  * @nosubgrouping
  */
 class FriendCollection extends FakeCollection {
 
-  protected $friendsCount = NULL; // Stores the number of friends in the collection.
+  /** @name Redis Names */
+  //!@{
+
+  const TS_SET = '_ts';    //!< Friendship approval timestamp Redis set.
+  const UN_SET = '_un';    //!< Username Redis set.
+  const FN_SET = '_fn';    //!< Full name Redis set.
+  const IFN_SET = '_ifn';  //!< Inverted full name Redis set.
+
+  //!@}
+
+
+  /**
+   * @brief Adds the friendship to the indexes.
+   * @attention This function must be called twice, inverting the IDs.
+   * @param[in] string $memberId Member ID.
+   * @param[in] string $friendId Friend ID.
+   */
+  protected function indexFrienship($memberId, $friendId) {
+    $hash = $this->redis->hMGet($friendId . Member::MR_HASH, ['username', 'fullName', 'invFullName']);
+
+    $this->redis->zAdd($memberId . self::TS_SET, time(), $friendId);
+    $this->redis->zAdd($memberId . self::UN_SET, 0, $hash['username'].':'.$friendId);
+    $this->redis->zAdd($memberId . self::FN_SET, 0, $hash['fullName'].':'.$friendId);
+    $this->redis->zAdd($memberId . self::IFN_SET, 0, $hash['invFullName'].':'.$friendId);
+  }
+
+
+  /**
+   * @brief Removes the friendship from the indexes.
+   * @attention This function must be called twice, inverting the IDs.
+   * @param[in] string $memberId Member ID.
+   * @param[in] string $friendId Friend ID.
+   */
+  protected function deindexFriendship($memberId, $friendId) {
+    $hash = $this->redis->hMGet($friendId . Member::MR_HASH, ['username', 'fullName', 'invFullName']);
+
+    $this->redis->zRem($memberId . self::TS_SET, $friendId);
+    $this->redis->zRem($memberId . self::UN_SET, $hash['username'].':'.$friendId);
+    $this->redis->zRem($memberId . self::FN_SET, $hash['fullName'].':'.$friendId);
+    $this->redis->zRem($memberId . self::IFN_SET, $hash['invFullName'].':'.$friendId);
+  }
 
 
   protected function getCount() {
-    // Test is made using `is_null()` instead of `empty()` because a member may have no friends at all.
-    if (is_null($this->friendsCount)) {
-      $opts = new ViewQueryOpts();
-      $opts->doNotReduce()->setKey([$this->user->id]);
-
-      $this->friendsCount = $this->couch->queryView("friendship", "perMember", NULL, $opts)->getReducedValu();
-    }
-
-    return $this->friendsCount;
+    return $this->redis->zCount($this->user->id . self::TS_SET, 0, '+inf');
   }
 
 
@@ -85,6 +115,13 @@ class FriendCollection extends FakeCollection {
   public function remove(Member $member) {
     if ($friendship = $this->exists($member)) {
       $this->couch->deleteDoc(Couch::STD_DOC_PATH, $friendship->id, $friendship->rev);
+
+      $this->redis->multi();
+
+      $this->deindexFriendship($this->user->id, $member->id);
+      $this->deindexFriendship($member->id, $this->user->id);
+
+      $this->redis->exec();
 
       // If you remove the member from your friends, you don't follow it anymore.
       if ($follower = $member->followers->exists($this->user))
@@ -144,6 +181,13 @@ class FriendCollection extends FakeCollection {
       $friendship->approve();
       $this->couch->saveDoc($friendship);
 
+      $this->redis->multi();
+
+      $this->indexFrienship($this->user->id, $member->id);
+      $this->indexFrienship($member->id, $this->user->id);
+
+      $this->redis->exec();
+
       // Follows the member.
       if (!$member->followers->exists($this->user)) {
         $follower = Follower::create($member->id, $this->user->id);
@@ -179,5 +223,5 @@ class FriendCollection extends FakeCollection {
    */
   public function invite() {
   }
-  
+
 }
