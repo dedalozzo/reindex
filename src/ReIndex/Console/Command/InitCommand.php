@@ -971,8 +971,8 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if (($doc->type == 'friendship') && $doc->approved) {
-    $emit([$doc->senderId, $doc->receiverId]);
-    $emit([$doc->receiverId, $doc->senderId]);
+    $emit([$doc->senderId, $doc->receiverId], $doc->approvedAt);
+    $emit([$doc->receiverId, $doc->senderId], $doc->approvedAt);
   }
 };
 MAP;
@@ -992,8 +992,8 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if (($doc->type == 'friendship') && !$doc->approved) {
-    $emit([$doc->senderId, $doc->receiverId]);
-    $emit([$doc->receiverId, $doc->senderId]);
+    $emit([$doc->senderId, $doc->receiverId], $doc->requestedAt);
+    $emit([$doc->receiverId, $doc->senderId], $doc->requestedAt);
   }
 };
 MAP;
