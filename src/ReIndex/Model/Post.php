@@ -52,8 +52,6 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
 
   //!@}
 
-  const INDEX = FALSE; //!< A generic post doesn't appear on the home page.
-
   // Since the user can add new tags in a second moment, we must store in a member the original tags, otherwise the zRem
   // methods will not work properly.
   private $zRemTags;
@@ -67,8 +65,7 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
     $this->markdown = $this->di['markdown'];
     $this->log = $this->di['log'];
 
-    $this->meta['supertype'] = 'post';
-    $this->meta['index'] = static::INDEX; // We use static because the INDEX constant is overridden by subclasses.
+    // After the creation the post must be visible.
     $this->meta['visible'] = TRUE;
 
     $this->zRemTags = ($this->isMetadataPresent('tags')) ? Helper\ArrayHelper::merge($this->meta['tags'], $this->uniqueMasters()->asArray()) : [];
@@ -176,16 +173,24 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
    * @param[in] bool $deferred When `true` doesn't update the indexes.
    */
   public function save($deferred = FALSE) {
+    // Since we can't use reflection inside EoC Server, we need a way to recognize every subclass of the `Post` class.
+    // This is done using a property `post`, we can test using `isset($doc->isPost)`.
+    if (empty($this->meta['isPost']))
+      $this->meta['isPost'] = TRUE;
+
+    // Same like before, but this time we use `isset($doc->useCache)` to test if the class implements the `ICache`
+    // interface.
+    if (empty($this->meta['useCache']))
+      $this->meta['useCache'] = TRUE;
+
+    // Now we call the parent implementation.
     parent::save();
 
     if (!$deferred) {
       // Marks the start of a transaction block. Subsequent commands will be queued for atomic execution using `exec()`.
       $this->redis->multi();
 
-      $this->deindex();
-
-      if ($this->state->isCurrent())
-        $this->index();
+      $this->reindex();
 
       $this->redis->exec();
     }
@@ -658,9 +663,22 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
    * @brief Adds the post ID to the indexes.
    */
   public function index() {
+    // We are only indexing current versions.
+    if (!$this->state->isCurrent())
+      return;
+
     $this->zAddNewest();
     $this->zAddPopular();
     $this->zAddActive();
+  }
+
+
+  /**
+   * @brief Performs deindex then reindex.
+   */
+  public function reindex() {
+    $this->deindex();
+    $this->reindex();
   }
 
   //!@}
