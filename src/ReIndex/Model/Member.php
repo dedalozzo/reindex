@@ -45,10 +45,6 @@ class Member extends Storable implements IUser, Extension\ICache, Extension\ICou
   public function __construct() {
     parent::__construct();
 
-    // Since we can't use reflection inside EoC Server, we need a way to recognize if a class implements the `ICache`
-    // interface. This is done using a property `useCache`, we can test using `isset($doc->useCache)`.
-    $this->meta['useCache'] = TRUE;
-
     $this->meta['emails'] = [];
     $this->emails = new Collection\EmailCollection($this->meta);
 
@@ -241,6 +237,11 @@ class Member extends Storable implements IUser, Extension\ICache, Extension\ICou
     // We must grant at least the MemberRole for the current member.
     if (!$this->roles->areSuperiorThan($memberRole))
       $this->roles->grant($memberRole);
+
+    // Since we can't use reflection inside EoC Server, we need a way to recognize if a class implements the `ICache`
+    // interface. This is done using a property `useCache`, we can test using `isset($doc->useCache)`.
+    if (empty($this->meta['useCache']))
+      $this->meta['useCache'] = TRUE;
 
     parent::save();
 
