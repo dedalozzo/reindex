@@ -44,26 +44,30 @@ class InitCommand extends AbstractCommand {
     $this->initMembers();
     $this->initUpdates();
     $this->initReplies();
+    $this->initVarious();
   }
 
 
   protected function initDocs() {
     $doc = DesignDoc::create('docs');
 
-    function docsByType() {
+
+    function toIndexDocs() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  $emit($doc->type);
+  if (isset($doc->useCache))
+    $emit($doc->id);
 };
 MAP;
 
-      $handler = new ViewHandler("byType");
+      $handler = new ViewHandler("toIndex");
       $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
 
       return $handler;
     }
 
-    $doc->addHandler(docsByType());
+    $doc->addHandler(toIndexDocs());
 
 
     $this->couch->saveDoc($doc);
@@ -78,7 +82,7 @@ MAP;
     function allPosts() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post')
+  if (isset($doc->isPost))
     $emit($doc->_id, [
         'type' => $doc->type,
         'state' => $doc->state,
@@ -108,7 +112,7 @@ MAP;
     function unversionPosts() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->state == 'current')
+  if (isset($doc->isPost) && $doc->state == 'current')
     $emit($doc->unversionId);
 };
 MAP;
@@ -127,7 +131,7 @@ MAP;
     function postsByUrl() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && ($doc->state == 'current' or $doc->state == 'deleted'))
+  if (isset($doc->isPost) && ($doc->state == 'current' or $doc->state == 'deleted'))
     $emit([$doc->year, $doc->month, $doc->day, $doc->slug]);
 };
 MAP;
@@ -145,7 +149,7 @@ MAP;
     function postsByLegacyId() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->state == 'current')
+  if (isset($doc->isPost) && $doc->state == 'current')
     $emit($doc->legacyId);
 };
 MAP;
@@ -163,7 +167,7 @@ MAP;
     function approvedRevisionsByUrl() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->state == 'approved')
+  if (isset($doc->isPost) && $doc->state == 'approved')
     $emit([$doc->year, $doc->month, $doc->day, $doc->slug]);
 };
 MAP;
@@ -177,126 +181,10 @@ MAP;
     $doc->addHandler(approvedRevisionsByUrl());
 
 
-    // @params: NONE
-    function postsPerDate() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->index && $doc->visible && $doc->state == 'current')
-    $emit($doc->publishedAt);
-};
-MAP;
-
-      $handler = new ViewHandler("perDate");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
-
-      return $handler;
-    }
-
-    $doc->addHandler(postsPerDate());
-
-
-    // @params: type
-    function postsPerDateByType() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->visible && $doc->state == 'current')
-    $emit([$doc->type, $doc->publishedAt]);
-};
-MAP;
-
-      $handler = new ViewHandler("perDateByType");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
-
-      return $handler;
-    }
-
-    $doc->addHandler(postsPerDateByType());
-
-
-    // @params: NONE
-    function postsPerDateByTag() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->index && $doc->visible && $doc->state == 'current' && isset($doc->tags))
-    foreach ($doc->tags as $tagId)
-      $emit([$tagId, $doc->publishedAt]);
-};
-MAP;
-
-      $handler = new ViewHandler("perDateByTag");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
-
-      return $handler;
-    }
-
-    $doc->addHandler(postsPerDateByTag());
-
-
-    // @params: type
-    function postsPerDateByTagAndType() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->visible && $doc->state == 'current' && isset($doc->tags))
-    foreach ($doc->tags as $tagId)
-      $emit([$tagId, $doc->type, $doc->publishedAt]);
-};
-MAP;
-
-      $handler = new ViewHandler("perDateByTagAndType");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
-
-      return $handler;
-    }
-
-    $doc->addHandler(postsPerDateByTagAndType());
-
-
-    // @params: creatorId
-    function postsPerDateByUser() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->index && $doc->visible && $doc->state == 'current')
-    $emit([$doc->creatorId, $doc->publishedAt]);
-};
-MAP;
-
-      $handler = new ViewHandler("perDateByUser");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
-
-      return $handler;
-    }
-
-    $doc->addHandler(postsPerDateByUser());
-
-
-    // @params: creatorId, type
-    function postsPerDateByUserAndType() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->visible && $doc->state == 'current')
-    $emit([$doc->creatorId, $doc->type, $doc->publishedAt]);
-};
-MAP;
-
-      $handler = new ViewHandler("perDateByUserAndType");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
-
-      return $handler;
-    }
-
-    $doc->addHandler(postsPerDateByUserAndType());
-
-
     function postsPerTag() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->state == 'current' && isset($doc->tags))
+  if (isset($doc->isPost) && $doc->state == 'current' && isset($doc->tags))
     foreach ($doc->tags as $tagId)
       $emit($tagId);
 };
@@ -1060,12 +948,12 @@ MAP;
   }
 
 
-  protected function initUpdates() {
-    $doc = DesignDoc::create('updates');
+  protected function initComments() {
+    $doc = DesignDoc::create('comments');
 
 
     // @params: postId
-    function updatesPerDateByPostId() {
+    function commentsPerDateByPostId() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'comment')
@@ -1081,7 +969,131 @@ MAP;
       return $handler;
     }
 
-    $doc->addHandler(updatesPerDateByPostId());
+    $doc->addHandler(commentsPerDateByPostId());
+
+
+    $this->couch->saveDoc($doc);
+  }
+
+
+  protected function initVarious() {
+    $doc = DesignDoc::create('various');
+
+
+    // @params: NONE
+    function postsPerDate() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->index && $doc->visible && $doc->state == 'current')
+    $emit($doc->publishedAt);
+};
+MAP;
+
+      $handler = new ViewHandler("postsPerDate");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
+
+      return $handler;
+    }
+
+    $doc->addHandler(postsPerDate());
+
+
+    // @params: type
+    function postsPerDateByType() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->visible && $doc->state == 'current')
+    $emit([$doc->type, $doc->publishedAt]);
+};
+MAP;
+
+      $handler = new ViewHandler("postsPerDateByType");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
+
+      return $handler;
+    }
+
+    $doc->addHandler(postsPerDateByType());
+
+
+    // @params: NONE
+    function postsPerDateByTag() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->index && $doc->visible && $doc->state == 'current' && isset($doc->tags))
+    foreach ($doc->tags as $tagId)
+      $emit([$tagId, $doc->publishedAt]);
+};
+MAP;
+
+      $handler = new ViewHandler("postsPerDateByTag");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
+
+      return $handler;
+    }
+
+    $doc->addHandler(postsPerDateByTag());
+
+
+    // @params: type
+    function postsPerDateByTagAndType() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->visible && $doc->state == 'current' && isset($doc->tags))
+    foreach ($doc->tags as $tagId)
+      $emit([$tagId, $doc->type, $doc->publishedAt]);
+};
+MAP;
+
+      $handler = new ViewHandler("postsPerDateByTagAndType");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
+
+      return $handler;
+    }
+
+    $doc->addHandler(postsPerDateByTagAndType());
+
+
+    // @params: creatorId
+    function postsPerDateByUser() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->index && $doc->visible && $doc->state == 'current')
+    $emit([$doc->creatorId, $doc->publishedAt]);
+};
+MAP;
+
+      $handler = new ViewHandler("postsPerDateByUser");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
+
+      return $handler;
+    }
+
+    $doc->addHandler(postsPerDateByUser());
+
+
+    // @params: creatorId, type
+    function postsPerDateByUserAndType() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->visible && $doc->state == 'current')
+    $emit([$doc->creatorId, $doc->type, $doc->publishedAt]);
+};
+MAP;
+
+      $handler = new ViewHandler("postsPerDateByUserAndType");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
+
+      return $handler;
+    }
+
+    $doc->addHandler(postsPerDateByUserAndType());
 
 
     $this->couch->saveDoc($doc);
@@ -1095,7 +1107,7 @@ MAP;
     function recentTags() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post')
+  if (isset($doc->isPost))
     $emit($doc->publishedAt, $doc->points);
 };
 MAP;
@@ -1125,7 +1137,7 @@ MAP;
       "The documents containing the views you want create. Use 'all' if you want insert all the documents, 'members' if
       you want just init the members or separate multiple documents with a space. The available documents are: docs, posts,
       tags, revisions, votes, scores, stars, subscriptions, favorites, members, friendships, followers, reputation, replies,
-      updates.");
+      comments, various.");
   }
 
 
@@ -1196,8 +1208,12 @@ MAP;
             $this->initReplies();
             break;
 
-          case 'updates':
-            $this->initUpdates();
+          case 'comments':
+            $this->initComments();
+            break;
+
+          case 'various':
+            $this->initVarious();
             break;
 
           case 'tests':
