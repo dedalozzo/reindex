@@ -30,19 +30,10 @@ use Phalcon\Di;
  * @brief This class is used to represent a registered user.
  * @nosubgrouping
  */
-class Member extends Storable implements IUser, Extension\ICount {
+class Member extends Storable implements IUser, Extension\ICache, Extension\ICount {
   use Extension\TCount;
 
-  /** @name Redis Names */
-  //!@{
-
-  const USR_HASH = 'usr_'; //!< Members Redis hash.
-  const USRNAME_SET = 'usrname_'; //!< Full name Redis set.
-  const USRFN_SET = 'usrfn_'; //!< Full name Redis set.
-  const USRIFN_SET = 'usrifn_'; //!< Inverted full name Redis set.
-
-  //!@}
-
+  const MR_HASH = '_mr'; //!< Members Redis hash.
 
   private $emails;    // Collection of e-mails.
   private $logins;    // Collection of consumers' logins.
@@ -53,6 +44,10 @@ class Member extends Storable implements IUser, Extension\ICount {
 
   public function __construct() {
     parent::__construct();
+
+    // Since we can't use reflection inside EoC Server, we need a way to recognize if a class implements the `ICache`
+    // interface. This is done using a property `useCache`, we can test using `isset($doc->useCache)`.
+    $this->meta['useCache'] = TRUE;
 
     $this->meta['emails'] = [];
     $this->emails = new Collection\EmailCollection($this->meta);
@@ -68,6 +63,26 @@ class Member extends Storable implements IUser, Extension\ICount {
 
     $this->meta['blacklist'] = [];
     $this->blacklist = new Collection\Blacklist($this->meta);
+  }
+
+
+  /**
+   * @brief Returns a full name suitable for string comparison.
+   * @retval string
+   */
+  protected function getFullNameForIndex() {
+    $fullName = $this->firstName . $this->lastName;
+    return empty($fullName) ? $this->username : strtolower($this->firstName . $this->lastName);
+  }
+
+
+  /**
+   * @brief Returns an inverted full name suitable for string comparison.
+   * @retval string
+   */
+  protected function getInvFullNameForIndex() {
+    $fullName = $this->firstName . $this->lastName;
+    return empty($fullName) ? $this->username : strtolower($this->lastName . $this->firstName);
   }
 
 
@@ -217,9 +232,10 @@ class Member extends Storable implements IUser, Extension\ICount {
 
 
   /**
-   * @copydoc Storable::save()
+   * @brief Saves the member.
+   * @param[in] bool $deferred When `true` doesn't update the indexes.
    */
-  public function save() {
+  public function save($deferred = FALSE) {
     $memberRole = new MemberRole();
 
     // We must grant at least the MemberRole for the current member.
@@ -228,59 +244,57 @@ class Member extends Storable implements IUser, Extension\ICount {
 
     parent::save();
 
-    //$this->reindex();
+    if (!$deferred) {
+      $this->index();
+    }
   }
 
 
   /** @name Indexing Methods */
   //!@{
 
-
   /**
-   * @brief Reindex the member.
+   * @copydoc ICache::index()
    */
-  public function reindex() {
-    $key = self::USR_HASH . $this->id;
+  public function index() {
+    $key = $this->id . self::MR_HASH;
 
     // Returns the values associated with the specified fields in the hash stored at member ID.
     // For every field that does not exist in the hash, a nil value is returned. Because a non-existing keys are treated
     // as empty hashes, running `hMGet()` against a non-existing key will return a list of `null` values.
-    $member = $this->redis->hMGet($key, ['username', 'fullname']);
+    $hash = $this->redis->hMGet($key, ['username', 'fullName', 'invFullName']);
 
-    $this->redis->multi();
+    $username = $this->username;
+    $fullName = $this->getFullNameForIndex();
+    $invFullName = $this->getInvFullNameForIndex();
 
-    // The username has been changed.
-    if ($member['username'] != $this->username) {
-      $this->redis->hSet($key, 'username', $this->username);
+    // Username or full name has been changed or the member has never been indexed.
+    if ($hash['username'] != $username or $hash['fullName'] != $fullName) {
+      $opts = new ViewQueryOpts();
+      $opts->doNotReduce()->setKey([$this->user->id]);
+      $rows = $this->couch->queryView("friendship", "approvedPerMember", NULL, $opts);
 
-      foreach ($this->friends as $friend) {
-        //$this->redis->zAdd(Member::USRNAME_SET . $this->id, 0, $id);
+      $this->redis->multi();
+
+      foreach ($rows as $row) {
+        $memberId = $row['id'][1];
+        $friendId = $this->id;
+
+        $this->redis->zRem($memberId . Collection\FriendCollection::TS_SET, $friendId);
+        $this->redis->zRem($memberId . Collection\FriendCollection::UN_SET, $hash['username'].':'.$friendId);
+        $this->redis->zRem($memberId . Collection\FriendCollection::FN_SET, $hash['fullName'].':'.$friendId);
+        $this->redis->zRem($memberId . Collection\FriendCollection::IFN_SET, $hash['invFullName'].':'.$friendId);
+
+        $this->redis->zAdd($memberId . Collection\FriendCollection::TS_SET, $row['value'], $friendId);
+        $this->redis->zAdd($memberId . Collection\FriendCollection::UN_SET, 0, $hash['username'].':'.$friendId);
+        $this->redis->zAdd($memberId . Collection\FriendCollection::FN_SET, 0, $hash['fullName'].':'.$friendId);
+        $this->redis->zAdd($memberId . Collection\FriendCollection::IFN_SET, 0, $hash['invFullName'].':'.$friendId);
       }
-    }
 
-    $fullName = $this->firstName . $this->lastName;
+      $this->redis->hMSet($this->id . self::MR_HASH, ['username' => $username, 'fullName' => $fullName, 'invFullName' => $invFullName]);
 
-    // In case name and surname aren't available we use the username as full name.
-    if (empty($fullName)) {
-      $fullName = $member->username;
-      $invertedFullName = $fullName;
+      $this->redis->exec();
     }
-    else {
-      $invertedFullName = $this->lastName . $this->firstName;
-    }
-
-    // The full name has been changed.
-    if ($member['fullName'] != $fullName) {
-      $this->redis->hSet($key, 'fullName', $fullName);
-      //$this->redis->zAdd(Member::USRNAME_SET . 'post', $score, $id);
-    }
-
-    // The full name has been changed.
-    if ($member['invertedFullName'] != $invertedFullName) {
-      $this->redis->hSet($key, 'invertedFullName', $invertedFullName);
-    }
-
-    $this->redis->exec();
   }
 
   //!@}
