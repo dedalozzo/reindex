@@ -324,9 +324,9 @@ class IndexController extends ListController {
       $this->view->setVar('entriesLabel', $this->getLabel());
 
       // Those are the notebook pages, printed using the `updates.volt` widget.
-      $this->view->setVar('questions', $this->getInfo('perDateByType', 'question'));
-      $this->view->setVar('articles', $this->getInfo('perDateByType', 'article'));
-      $this->view->setVar('books', $this->getInfo('perDateByType', 'book'));
+      //$this->view->setVar('questions', $this->getInfo('perDateByType', 'question'));
+      //$this->view->setVar('articles', $this->getInfo('perDateByType', 'article'));
+      //$this->view->setVar('books', $this->getInfo('perDateByType', 'book'));
 
       $this->log->addDebug(sprintf('Type: %s', $this->type));
     }
