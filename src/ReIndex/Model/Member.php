@@ -68,7 +68,9 @@ class Member extends Storable implements IUser, Extension\ICache, Extension\ICou
    */
   protected function getFullNameForIndex() {
     $fullName = $this->firstName . $this->lastName;
-    return empty($fullName) ? $this->username : strtolower($this->firstName . $this->lastName);
+
+    // We add the ID because someone might have used a name that matches username.
+    return empty($fullName) ? $this->username . ':' . $this->id : strtolower($fullName) . ':' . $this->id;
   }
 
 
@@ -77,8 +79,10 @@ class Member extends Storable implements IUser, Extension\ICache, Extension\ICou
    * @retval string
    */
   protected function getInvFullNameForIndex() {
-    $fullName = $this->firstName . $this->lastName;
-    return empty($fullName) ? $this->username : strtolower($this->lastName . $this->firstName);
+    $invFullName = $this->lastName . $this->firstName;
+
+    // We add the ID because someone might have used a name that matches username.
+    return empty($invFullName) ? $this->username . ':' . $this->id : strtolower($invFullName) . ':' . $this->id;
   }
 
 
@@ -273,7 +277,7 @@ class Member extends Storable implements IUser, Extension\ICache, Extension\ICou
     if ($hash['username'] != $username or $hash['fullName'] != $fullName) {
       $opts = new ViewQueryOpts();
       $opts->doNotReduce()->setKey([$this->user->id]);
-      $rows = $this->couch->queryView("friendship", "approvedPerMember", NULL, $opts);
+      $rows = $this->couch->queryView("friendships", "approvedPerMember", NULL, $opts);
 
       $this->redis->multi();
 
