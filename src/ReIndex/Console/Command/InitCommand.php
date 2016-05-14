@@ -42,7 +42,7 @@ class InitCommand extends AbstractCommand {
     $this->initReputation();
     $this->initFavorites();
     $this->initMembers();
-    $this->initUpdates();
+    $this->initComments();
     $this->initReplies();
     $this->initVarious();
   }
