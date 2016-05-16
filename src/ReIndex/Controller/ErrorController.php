@@ -49,4 +49,19 @@ class ErrorController extends BaseController {
     $this->view->disableLevel(View::LEVEL_MAIN_LAYOUT);
     $this->view->pick('views/error/basic');
   }
+
+
+  /**
+   * @brief 503 Service Unavailable.
+   */
+  public function show503Action() {
+    $this->response->setHeader('HTTP/1.0 503', 'Service Unavailable');
+    $this->view->setVar('code', '401');
+    $this->view->setVar('title', 'Servizio non disponibile');
+    $this->view->setVar('message', "Il sito è in manutenzione, il servizio è temporaneamente non disponibile. Riprova più tardi.");
+    $this->view->setVar('method', strtolower($_SERVER['REQUEST_METHOD']));
+    $this->view->setVar('url', "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']);
+    $this->view->disableLevel(View::LEVEL_MAIN_LAYOUT);
+    $this->view->pick('views/error/basic');
+  }
 }
