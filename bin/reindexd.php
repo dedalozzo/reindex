@@ -28,7 +28,7 @@ try {
   // Reads the application's configuration.
   $config = new IniReader($root.'/config.ini');
 
-  $log = new Logger('pit-press');
+  $log = new Logger('reindexd');
 
   // Registers the Monolog error handler to log errors and exceptions.
   ErrorHandler::register($log);
