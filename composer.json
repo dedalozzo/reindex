@@ -27,7 +27,6 @@
         "graze/monolog-extensions": "*",
         "filp/whoops": "dev-master",
         "knplabs/github-api": "~1",
-        "misterion/ko-process": "*",
         "reindex/reboot": "dev-master"
     },
     "repositories": [
