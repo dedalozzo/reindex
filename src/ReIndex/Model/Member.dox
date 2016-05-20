@@ -20,15 +20,15 @@ class Member  {
   FollowerCollection $followers; //!< A collection of all member's followers.
   Blacklist $blacklist;          //!< The member's blacklist.
 
-  string $password; //!< Password chosen by the member.
-  string $hash; //!< String hash sent via e-mail to the member to confirm that his e-mail is real.
-  string $internetProtocolAddress; //!< The IP address of the member.
-  string $locale; //!< Member's language, ex. en_US
-  int $timeOffset; //!< Time offset.
+  string $password;                 //!< Password chosen by the member.
+  string $hash;                     //!< String hash sent via e-mail to the member to confirm that his e-mail is real.
+  string $internetProtocolAddress;  //!< The IP address of the member.
+  string $locale;                   //!< Member's language, ex. en_US
+  int $timeOffset;                  //!< Time offset.
 
   string $gender; //!< Sex.
-  int $birthday; //!< Date of birth.
-  string $about; //!< A few words about the member.
+  int $birthday;  //!< Date of birth.
+  string $about;  //!< A few words about the member.
 
   // We don not use these constants, because every registered member must agree to the Terms of Services, Privacy Policy
   // and Cookie Policy. Here just to remember them.
