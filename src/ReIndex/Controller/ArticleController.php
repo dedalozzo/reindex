@@ -75,7 +75,7 @@ class ArticleController extends IndexController {
         $article->title = $this->request->getPost('title');
         $article->body = $this->request->getPost('body');
         $article->creatorId = $this->user->id;
-        $article->addMultipleTagsAtOnce($this->request->getPost('tags'));
+        $article->tags->addMultipleAtOnce($this->request->getPost('tags'));
 
         $article->approve();
         $article->save();
