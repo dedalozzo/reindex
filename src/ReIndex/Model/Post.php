@@ -18,6 +18,7 @@ use ReIndex\Extension;
 use ReIndex\Property;
 use ReIndex\Helper;
 use ReIndex\Enum;
+use ReIndex\Collection;
 use ReIndex\Exception;
 use ReIndex\Security\Role;
 use ReIndex\Enum\VersionState;
@@ -52,9 +53,11 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
 
   //!@}
 
-  // Since the user can add new tags in a second moment, we must store in a member the original tags, otherwise the zRem
-  // methods will not work properly.
-  private $zRemTags;
+  // Since the user can add new tags in a second moment, we must store the original tags, otherwise the zRem methods will not work properly.
+  private $originalTags;
+
+  // Collection of tags.
+  private $tags;
 
   protected $markdown; // Stores the Markdown parser instance.
   protected $log; // Stores the logger instance.
@@ -62,13 +65,20 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
 
   public function __construct() {
     parent::__construct();
+
     $this->markdown = $this->di['markdown'];
     $this->log = $this->di['log'];
 
-    // After the creation the post must be visible.
-    $this->meta['visible'] = TRUE;
+    $this->meta['tags'] = [];
+    $this->tags = new Collection\TagCollection($this->meta);
+  }
 
-    $this->zRemTags = ($this->isMetadataPresent('tags')) ? Helper\ArrayHelper::merge($this->meta['tags'], $this->uniqueMasters()->asArray()) : [];
+
+  public function assignArray(array $array) {
+    parent::assignArray($array);
+
+    // We can't do this inside the constructor since the metadata are assigned just after the object creation.
+    $this->originalTags = !$this->tags->isEmpty() ? Helper\ArrayHelper::merge($this->meta['tags'], $this->tags->uniqueMasters()->asArray()) : [];
   }
 
 
@@ -182,6 +192,10 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
     // interface.
     if (empty($this->meta['useCache']))
       $this->meta['useCache'] = TRUE;
+
+    // After the creation the post must be visible.
+    if (empty($this->meta['visible']))
+      $this->meta['visible'] = TRUE;
 
     // Now we call the parent implementation.
     parent::save();
@@ -441,7 +455,7 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
     $this->redis->zAdd($set . $this->type, $score, $id);
 
     if ($this->isMetadataPresent('tags')) {
-      $tags = $this->uniqueMasters();
+      $tags = $this->tags->uniqueMasters();
 
       foreach ($tags as $tagId) {
         // Order set with all the posts related to a specific tag.
@@ -467,7 +481,7 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
     // Order set with all the posts of a specific type.
     $this->redis->zRem($set.$this->type, $id);
 
-    foreach ($this->zRemTags as $tagId) {
+    foreach ($this->originalTags as $tagId) {
       // Order set with all the posts related to a specific tag.
       $this->redis->zRem($set . $tagId . '_' . 'post', $id);
 
@@ -495,7 +509,7 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
     $this->zMultipleAdd($set . $this->type, $date, $id, $score);
 
     if ($this->isMetadataPresent('tags')) {
-      $tags = $this->uniqueMasters();
+      $tags = $this->tags->uniqueMasters();
 
       foreach ($tags as $tagId) {
         // Order set with all the posts related to a specific tag.
@@ -522,7 +536,7 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
     // Order set with all the posts of a specific type.
     $this->zMultipleRem($set . $this->type, $date, $id);
 
-    foreach ($this->zRemTags as $tagId) {
+    foreach ($this->originalTags as $tagId) {
       // Order set with all the posts related to a specific tag.
       $this->zMultipleRem($set . $tagId . '_' . 'post', $date, $id);
 
@@ -588,7 +602,7 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
     $this->redis->zAdd(self::ACT_SET . $this->type, $timestamp, $id);
 
     if ($this->isMetadataPresent('tags')) {
-      $tags = $this->uniqueMasters();
+      $tags = $this->tags->uniqueMasters();
 
       foreach ($tags as $tagId) {
         // Filters posts which should appear on the home page.
@@ -621,7 +635,7 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
     // Order set with all the posts of a specific type: article, question, ecc.
     $this->redis->zRem(self::ACT_SET . $this->type, $id);
 
-    foreach ($this->zRemTags as $tagId) {
+    foreach ($this->originalTags as $tagId) {
       // Filters posts which should appear on the home page.
 
       // Order set with all the posts related to a specific tag.
@@ -668,7 +682,7 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
    */
   public function reindex() {
     $this->deindex();
-    $this->reindex();
+    $this->index();
   }
 
   //!@}
@@ -704,95 +718,6 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
     $opts->groupResults();
     return $this->couch->queryView("replies", "perPost", [$this->unversionId], $opts)->getReducedValue();
   }
-
-  //!@}
-
-
-  /** @name Tagging Methods */
-  // @{
-
-  /**
-   * @brief Resolve the synonyms and returns only unique master tags.
-   * @retval array
-   */
-  protected function uniqueMasters() {
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce();
-    $masters = $this->couch->queryView("tags", "synonyms", $this->meta['tags'], $opts);
-    return array_unique(array_column($masters->asArray(), 'value'));
-  }
-
-
-  /**
-   * @brief Removes all associated tags.
-   */
-  public function resetTags() {
-    $this->unsetMetadata('tags');
-  }
-
-
-  /**
-   * @brief Adds the specified tag to the list of tags.
-   * @attention Don't use this method even if it's public, unless you know what are you doing.
-   * @param[in] int $tagId The tag uuid.
-   */
-  public function addTagId($tagId) {
-    $this->meta['tags'][] = Helper\Text::unversion($tagId);
-  }
-
-
-  /**
-   * @brief Adds many tags at once to the list of tags.
-   * @param[in] array $names An array of strings, the tag names.
-   */
-  public function addMultipleTagsAtOnce(array $names) {
-    $names = array_unique($names);
-
-    $opts = new ViewQueryOpts();
-    $opts->includeMissingKeys();
-    $rows = $this->couch->queryView("tags", "byNameSpecial", $names, $opts)->asArray();
-
-    foreach ($rows as $row) {
-      // A tag hasn't been found, so creates it.
-      if (is_null($row['id'])) {
-        $tag = Tag::create();
-        $tag->name = $row['key'];
-        $tag->creatorId = $this->creatorId;
-        $tag->approve();
-        $tag->save();
-
-        $this->addTagId($tag->unversionId);
-      }
-      else
-        $this->addTagId(Helper\Text::unversion($row['id']));
-    }
-  }
-
-
-  /**
-   * @brief Gets the associated list of tags.
-   */
-  public function getTags() {
-    if ($this->isMetadataPresent('tags')) {
-      $ids = $this->uniqueMasters();
-
-      $opts = new ViewQueryOpts();
-      $opts->doNotReduce();
-      return $this->couch->queryView("tags", "allNames", $ids, $opts);
-    }
-    else
-      return [];
-  }
-
-
-  // In case of a Post we add the tags, so we can obtain the favorites of a specific tag.
-  /*
-  if (method_exists($item, 'getTags')) {
-    $tags = array_column($item->getTags(), 'id');
-    ArrayHelper::unversion($tags);
-    $instance->meta['itemTags'] = $tags;
-  }
-  */
 
   //!@}
 
@@ -859,6 +784,16 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
   public function unsetPublishedAt() {
     if ($this->isMetadataPresent('publishedAt'))
       unset($this->meta['publishedAt']);
+  }
+
+
+  public function getTags() {
+    return $this->tags;
+  }
+
+
+  public function issetTags() {
+    return isset($this->tags);
   }
 
   //! @endcond
