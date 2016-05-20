@@ -21,6 +21,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 use EoC\Hook\IChunkHook;
+use Eoc\Exception\ServerErrorException;
 
 use ReIndex\Extension\ICache;
 
@@ -51,23 +52,6 @@ class IndexCommand extends AbstractCommand implements IChunkHook {
    * @brief Updates the database cache.
    */
   private function buildCache(InputInterface $input, OutputInterface $output) {
-    $output->writeln("Building cache...");
-
-    $opts = new ViewQueryOpts();
-    $opts->reduce();
-    $docsCount = $this->couch->queryView("docs", "toIndex", NULL, $opts)->getReducedValue();
-
-    $this->progress = new ProgressBar($output, $docsCount);
-    $this->progress->setRedrawFrequency(1);
-    $this->progress->setOverwrite(TRUE);
-    $this->progress->start();
-
-    $opts->reset();
-    $opts->doNotReduce();
-
-    $this->couch->queryView("docs", "toIndex", NULL, $opts, $this);
-
-    $this->progress->finish();
   }
 
 
@@ -78,7 +62,7 @@ class IndexCommand extends AbstractCommand implements IChunkHook {
     $this->setName("index");
     $this->setDescription("Performs database indexes maintenance activities.");
     $this->addArgument("subcommand",
-      InputArgument::REQUIRED, 'Use `clear` to clean database indexes. Use `all` to recreate the indexes.');
+      InputArgument::REQUIRED, 'Use `clear` to clean the indexes. Use `all` to recreate the indexes. Use a document ID to index a single document.');
   }
 
 
@@ -89,7 +73,6 @@ class IndexCommand extends AbstractCommand implements IChunkHook {
     $this->input = $input;
     $this->output = $output;
 
-    $this->config = $this->di['config'];
     $this->redis = $this->di['redis'];
     $this->couch = $this->di['couchdb'];
 
@@ -97,7 +80,7 @@ class IndexCommand extends AbstractCommand implements IChunkHook {
 
     switch ($subcommand) {
       case 'clear':
-        $question = new ConfirmationQuestion('Are you sure you want clear database cache? [Y/n]', FALSE);
+        $question = new ConfirmationQuestion('Are you sure you want clear the indexes? [Y/n]', FALSE);
 
         $helper = $this->getHelper('question');
 
@@ -105,13 +88,39 @@ class IndexCommand extends AbstractCommand implements IChunkHook {
           $this->clearCache();
 
         break;
-      case 'build':
-        //$question = new ConfirmationQuestion('Are you sure you want build database cache? [Y/n]', FALSE);
+      case 'all':
+        $question = new ConfirmationQuestion('Are you sure you want build database cache? [Y/n]', FALSE);
 
-        //$helper = $this->getHelper('question');
+        $helper = $this->getHelper('question');
 
-        //if ($helper->ask($input, $output, $question))
-          $this->buildCache($input, $output);
+        if ($helper->ask($input, $output, $question)) {
+          $output->writeln("Indexing documents...");
+
+          $opts = new ViewQueryOpts();
+          $opts->reduce();
+          $docsCount = $this->couch->queryView("docs", "toIndex", NULL, $opts)->getReducedValue();
+
+          $this->progress = new ProgressBar($output, $docsCount);
+          $this->progress->setRedrawFrequency(1);
+          $this->progress->setOverwrite(TRUE);
+          $this->progress->start();
+
+          $opts->reset();
+          $opts->doNotReduce();
+
+          $this->couch->queryView("docs", "toIndex", NULL, $opts, $this);
+
+          $this->progress->finish();
+        }
+
+        break;
+      default:
+        $doc = $this->couch->getDoc(Couch::STD_DOC_PATH, $subcommand);
+
+        if ($doc instanceof ICache)
+          $doc->index();
+        else
+          new \RuntimeException("The document cannot be indexed.");
 
         break;
     }
@@ -120,25 +129,22 @@ class IndexCommand extends AbstractCommand implements IChunkHook {
   }
 
 
+
+  /**
+   * @copydoc ICache::process()
+   */
   public function process($chunk) {
-    $row = json_decode($chunk);
+    $row = json_decode(trim($chunk, ',\r\n'));
 
     if (is_null($row))
       return;
 
-    $config = $this->config;
-
-    $cmd = 'rei cache '. $row->id;
+    // In order to execute a command have have it not hang your php script while it runs, the program you run must not
+    // output back to php. To do this, redirect both stdout and stderr to /dev/null, then background it.
+    // @see http://stackoverflow.com/a/3819422/1889828
+    $cmd = 'nohup setsid rei index '. $row->id . '> /dev/null 2>&1 &';
 
     exec($cmd);
-
-      $porcodio->selectDb($config->couchdb->database);
-
-      $doc = $porcodio->getDoc(Couch::STD_DOC_PATH, $row->id);
-
-      if ($doc instanceof ICache)
-        $doc->index();
-
 
     $this->progress->advance();
   }
