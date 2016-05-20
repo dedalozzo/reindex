@@ -44,7 +44,7 @@ class InitCommand extends AbstractCommand {
     $this->initMembers();
     $this->initFriendships();
     $this->initFollowers();
-    $this->initComments();
+    $this->initUpdates();
     $this->initReplies();
     $this->initVarious();
   }
@@ -950,12 +950,12 @@ MAP;
   }
 
 
-  protected function initComments() {
-    $doc = DesignDoc::create('comments');
+  protected function initUpdates() {
+    $doc = DesignDoc::create('updates');
 
 
     // @params: postId
-    function commentsPerDateByPostId() {
+    function updatesPerDateByPostId() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'comment')
@@ -971,7 +971,7 @@ MAP;
       return $handler;
     }
 
-    $doc->addHandler(commentsPerDateByPostId());
+    $doc->addHandler(updatesPerDateByPostId());
 
 
     $this->couch->saveDoc($doc);
@@ -1139,7 +1139,7 @@ MAP;
       "The documents containing the views you want create. Use 'all' if you want insert all the documents, 'members' if
       you want just init the members or separate multiple documents with a space. The available documents are: docs, posts,
       tags, revisions, votes, scores, stars, subscriptions, favorites, members, friendships, followers, reputation, replies,
-      comments, various.");
+      updates, various.");
   }
 
 
@@ -1210,8 +1210,8 @@ MAP;
             $this->initReplies();
             break;
 
-          case 'comments':
-            $this->initComments();
+          case 'updates':
+            $this->initUpdates();
             break;
 
           case 'various':
