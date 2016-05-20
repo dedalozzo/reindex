@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file CacheCommand.php
- * @brief This file contains the CacheCommand class.
+ * @file IndexCommand.php
+ * @brief This file contains the IndexCommand class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -20,16 +20,23 @@ use Symfony\Component\Console\Helper\ProgressBar;
 
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
+use EoC\Hook\IChunkHook;
+
+use ReIndex\Extension\ICache;
 
 
 /**
  * @brief Updates Redis data.
  * @nosubgrouping
  */
-class CacheCommand extends AbstractCommand {
+class IndexCommand extends AbstractCommand implements IChunkHook {
 
   private $redis;
   private $couch;
+  private $progress;
+
+  private $input;
+  private $output;
 
 
   /**
@@ -47,22 +54,20 @@ class CacheCommand extends AbstractCommand {
     $output->writeln("Building cache...");
 
     $opts = new ViewQueryOpts();
+    $opts->reduce();
+    $docsCount = $this->couch->queryView("docs", "toIndex", NULL, $opts)->getReducedValue();
+
+    $this->progress = new ProgressBar($output, $docsCount);
+    $this->progress->setRedrawFrequency(1);
+    $this->progress->setOverwrite(TRUE);
+    $this->progress->start();
+
+    $opts->reset();
     $opts->doNotReduce();
-    $ids = array_column($this->couch->queryView('posts', 'unversion', NULL, $opts)->asArray(), 'id');
 
-    $progress = new ProgressBar($this->output, count($ids));
-    $progress->setRedrawFrequency(1);
-    $progress->setOverwrite(TRUE);
-    $progress->start();
+    $this->couch->queryView("docs", "toIndex", NULL, $opts, $this);
 
-    foreach ($ids as $id) {
-      $post = $this->couch->getDoc(Couch::STD_DOC_PATH, $id);
-      $post->index();
-
-      $progress->advance();
-    }
-
-    $progress->finish();
+    $this->progress->finish();
   }
 
 
@@ -70,10 +75,10 @@ class CacheCommand extends AbstractCommand {
    * @brief Configures the command.
    */
   protected function configure() {
-    $this->setName("cache");
-    $this->setDescription("Performs database cache maintenance activities.");
+    $this->setName("index");
+    $this->setDescription("Performs database indexes maintenance activities.");
     $this->addArgument("subcommand",
-      InputArgument::REQUIRED, 'Use `clear` to clean database cache. Use `build` to rebuild database cache.');
+      InputArgument::REQUIRED, 'Use `clear` to clean database indexes. Use `all` to recreate the indexes.');
   }
 
 
@@ -84,6 +89,7 @@ class CacheCommand extends AbstractCommand {
     $this->input = $input;
     $this->output = $output;
 
+    $this->config = $this->di['config'];
     $this->redis = $this->di['redis'];
     $this->couch = $this->di['couchdb'];
 
@@ -100,17 +106,41 @@ class CacheCommand extends AbstractCommand {
 
         break;
       case 'build':
-        $question = new ConfirmationQuestion('Are you sure you want build database cache? [Y/n]', FALSE);
+        //$question = new ConfirmationQuestion('Are you sure you want build database cache? [Y/n]', FALSE);
 
-        $helper = $this->getHelper('question');
+        //$helper = $this->getHelper('question');
 
-        if ($helper->ask($input, $output, $question))
+        //if ($helper->ask($input, $output, $question))
           $this->buildCache($input, $output);
 
         break;
     }
 
     parent::execute($input, $output);
+  }
+
+
+  public function process($chunk) {
+    $row = json_decode($chunk);
+
+    if (is_null($row))
+      return;
+
+    $config = $this->config;
+
+    $cmd = 'rei cache '. $row->id;
+
+    exec($cmd);
+
+      $porcodio->selectDb($config->couchdb->database);
+
+      $doc = $porcodio->getDoc(Couch::STD_DOC_PATH, $row->id);
+
+      if ($doc instanceof ICache)
+        $doc->index();
+
+
+    $this->progress->advance();
   }
 
 }
