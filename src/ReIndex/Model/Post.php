@@ -435,8 +435,7 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
     $id = $this->unversionId;
 
     // Order set with all the posts.
-    if (static::INDEX)
-      $this->redis->zAdd($set . 'post', $score, $id);
+    $this->redis->zAdd($set . 'post', $score, $id);
 
     // Order set with all the posts of a specific type.
     $this->redis->zAdd($set . $this->type, $score, $id);
@@ -446,8 +445,7 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
 
       foreach ($tags as $tagId) {
         // Order set with all the posts related to a specific tag.
-        if (static::INDEX)
-          $this->redis->zAdd($set . $tagId . '_' . 'post', $score, $id);
+        $this->redis->zAdd($set . $tagId . '_' . 'post', $score, $id);
 
         // Order set with all the posts of a specific type, related to a specific tag.
         $this->redis->zAdd($set . $tagId . '_' . $this->type, $score, $id);
@@ -471,8 +469,7 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
 
     foreach ($this->zRemTags as $tagId) {
       // Order set with all the posts related to a specific tag.
-      if (static::INDEX)
-        $this->redis->zRem($set . $tagId . '_' . 'post', $id);
+      $this->redis->zRem($set . $tagId . '_' . 'post', $id);
 
       // Order set with all the posts of a specific type, related to a specific tag.
       $this->redis->zRem($set . $tagId . '_' . $this->type, $id);
@@ -492,8 +489,7 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
     $id = $this->unversionId;
 
     // Order set with all the posts.
-    if (static::INDEX)
-      $this->zMultipleAdd($set . 'post', $date, $id, $score);
+    $this->zMultipleAdd($set . 'post', $date, $id, $score);
 
     // Order set with all the posts of a specific type: article, question, ecc.
     $this->zMultipleAdd($set . $this->type, $date, $id, $score);
@@ -503,8 +499,7 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
 
       foreach ($tags as $tagId) {
         // Order set with all the posts related to a specific tag.
-        if (static::INDEX)
-          $this->zMultipleAdd($set . $tagId . '_' . 'post', $date, $id, $score);
+        $this->zMultipleAdd($set . $tagId . '_' . 'post', $date, $id, $score);
 
         // Order set with all the post of a specific type, related to a specific tag.
         $this->zMultipleAdd($set . $tagId . '_' . $this->type, $date, $id, $score);
@@ -522,16 +517,14 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
     $id = $this->unversionId;
 
     // Order set with all the posts.
-    if (static::INDEX)
-      $this->zMultipleRem($set . 'post', $date, $id);
+    $this->zMultipleRem($set . 'post', $date, $id);
 
     // Order set with all the posts of a specific type.
     $this->zMultipleRem($set . $this->type, $date, $id);
 
     foreach ($this->zRemTags as $tagId) {
       // Order set with all the posts related to a specific tag.
-      if (static::INDEX)
-        $this->zMultipleRem($set . $tagId . '_' . 'post', $date, $id);
+      $this->zMultipleRem($set . $tagId . '_' . 'post', $date, $id);
 
       // Order set with all the post of a specific type, related to a specific tag.
       $this->zMultipleRem($set . $tagId . '_' . $this->type, $date, $id);
@@ -589,8 +582,7 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
     $timestamp = $this->getLastUpdate();
 
     // Order set with all the posts.
-    if (static::INDEX)
-      $this->redis->zAdd(self::ACT_SET . 'post', $timestamp, $id);
+    $this->redis->zAdd(self::ACT_SET . 'post', $timestamp, $id);
 
     // Order set with all the posts of a specific type: article, question, ecc.
     $this->redis->zAdd(self::ACT_SET . $this->type, $timestamp, $id);
@@ -600,13 +592,12 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
 
       foreach ($tags as $tagId) {
         // Filters posts which should appear on the home page.
-        if (static::INDEX) {
-          // Order set with all the posts related to a specific tag.
-          $this->redis->zAdd(self::ACT_SET . $tagId . '_' . 'post', $timestamp, $id);
 
-          // Used to get a list of tags recently updated.
-          $this->redis->zAdd(self::ACT_SET . 'tags' . '_' . 'post', $timestamp, $tagId);
-        }
+        // Order set with all the posts related to a specific tag.
+        $this->redis->zAdd(self::ACT_SET . $tagId . '_' . 'post', $timestamp, $id);
+
+        // Used to get a list of tags recently updated.
+        $this->redis->zAdd(self::ACT_SET . 'tags' . '_' . 'post', $timestamp, $tagId);
 
         // Order set with all the posts of a specific type, related to a specific tag.
         $this->redis->zAdd(self::ACT_SET . $tagId . '_' . $this->type, $timestamp, $id);
@@ -632,13 +623,12 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
 
     foreach ($this->zRemTags as $tagId) {
       // Filters posts which should appear on the home page.
-      if (static::INDEX) {
-        // Order set with all the posts related to a specific tag.
-        $this->redis->zRem(self::ACT_SET . $tagId . '_' . 'post', $id);
 
-        // Used to get a list of tags recently updated.
-        $this->redis->zRem(self::ACT_SET . 'tags' . '_' . 'post', $tagId);
-      }
+      // Order set with all the posts related to a specific tag.
+      $this->redis->zRem(self::ACT_SET . $tagId . '_' . 'post', $id);
+
+      // Used to get a list of tags recently updated.
+      $this->redis->zRem(self::ACT_SET . 'tags' . '_' . 'post', $tagId);
 
       // Order set with all the posts of a specific type, related to a specific tag.
       $this->redis->zRem(self::ACT_SET . $tagId . '_' . $this->type, $id);
