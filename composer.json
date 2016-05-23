@@ -17,7 +17,7 @@
         "ext-phalcon": "*",
         "ext-iconv": "*",
         "ext-mbstring": "*",
-        "ext-pcntl": "*",
+        "ext-amqp": "*",
         "3f/eoc-client": "dev-master",
         "3f/pygmentize": "dev-master",
         "3f/converter": "dev-master",
