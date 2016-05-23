@@ -62,6 +62,7 @@ require $root . "/services/assets.php";
 require $root . "/services/view.php";
 require $root . "/services/volt.php";
 require $root . "/services/session.php";
+require $root . "/services/rabbitmq.php";
 require $root . "/services/couchdb.php";
 require $root . "/services/redis.php";
 require $root . "/services/markdown.php";

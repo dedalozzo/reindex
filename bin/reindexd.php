@@ -42,6 +42,7 @@ try {
   // Initializes the services. The order doesn't matter.
   require $root . "/services/config.php";
   require $root . "/services/log.php";
+  require $root . "/services/rabbitmq.php";
   require $root . "/services/couchdb.php";
   require $root . "/services/redis.php";
   require $root . "/services/markdown.php";
