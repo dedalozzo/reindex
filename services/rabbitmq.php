@@ -8,7 +8,7 @@
  */
 
 
-// Creates an instance of EoC client and return it.
+// Creates an instance of RabbitMQ client and return it.
 $di->setShared('rabbitmq',
   function() use ($config) {
     $rabbit = AMQPConnection([
