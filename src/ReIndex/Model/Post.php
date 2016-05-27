@@ -456,7 +456,7 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
     // Order set with all the posts of a specific type.
     $this->redis->zAdd($set . $this->type, $score, $id);
 
-    if ($this->isMetadataPresent('tags')) {
+    if (!$this->tags->isEmpty()) {
       $tags = $this->tags->uniqueMasters();
 
       foreach ($tags as $tagId) {
@@ -510,7 +510,7 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
     // Order set with all the posts of a specific type: article, question, ecc.
     $this->zMultipleAdd($set . $this->type, $date, $id, $score);
 
-    if ($this->isMetadataPresent('tags')) {
+    if (!$this->tags->isEmpty()) {
       $tags = $this->tags->uniqueMasters();
 
       foreach ($tags as $tagId) {
