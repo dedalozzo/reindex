@@ -80,7 +80,7 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
     parent::assignArray($array);
 
     // We can't do this inside the constructor since the metadata are assigned just after the object creation.
-    $this->originalTags = !$this->tags->isEmpty() ? Helper\ArrayHelper::merge($this->meta['tags'], $this->tags->uniqueMasters()->asArray()) : [];
+    $this->originalTags = !$this->tags->isEmpty() ? Helper\ArrayHelper::merge($this->meta['tags'], $this->tags->uniqueMasters()) : [];
   }
 
 
