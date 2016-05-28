@@ -14,6 +14,7 @@ namespace ReIndex\Model;
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
+use ReIndex\Feature;
 use ReIndex\Extension;
 use ReIndex\Property;
 use ReIndex\Helper;
@@ -42,14 +43,15 @@ use Phalcon\Di;
  * @property string $protection   // [readonly] Level of protection.
  * @property string $protectorId  // [readonly] The user ID of whom protected the content.
  *
- * @property TagCollection $tags  // A collection of tags.
+ * @property Collection\TagCollection $tags  // A collection of tags.
+ * @property Collection\SubscriptionCollection $subscriptions  // A collection of members who have subscribed the post.
  *
  * @endcond
  */
-abstract class Post extends Versionable implements Extension\ICount,
-  Extension\IStar, Extension\IVote, Extension\ISubscribe {
+abstract class Post extends Versionable implements Extension\ICount, Extension\IVote,
+  Feature\Starrable, Feature\Subscribable {
 
-  use Extension\TCount, Extension\TStar, Extension\TVote, Extension\TSubscribe;
+  use Extension\TCount, Extension\TVote;
   use Property\TExcerpt, Property\TBody, Property\TDescription;
 
   /** @name Protection Levels */
@@ -66,6 +68,9 @@ abstract class Post extends Versionable implements Extension\ICount,
   // Collection of tags.
   private $tags;
 
+  private $subscriptions; // A collection of members who have subscribed the post.
+  private $stars; // Galaxy of stars.
+
   protected $markdown; // Stores the Markdown parser instance.
   protected $log; // Stores the logger instance.
 
@@ -78,6 +83,9 @@ abstract class Post extends Versionable implements Extension\ICount,
 
     $this->meta['tags'] = [];
     $this->tags = new Collection\TagCollection($this->meta);
+
+    $this->subscriptions = new Collection\SubscriptionCollection($this);
+    $this->stars = new Collection\StarGalaxy($this);
   }
 
 
