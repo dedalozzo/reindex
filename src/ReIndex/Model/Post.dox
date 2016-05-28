@@ -9,16 +9,16 @@ class Post {
   /** @name Properties */
   //!@{
 
-  int $legacyId;        //!< Legacy identifier, in case you import from an old password.
+  int $legacyId;                //!< Legacy identifier, in case you import from an old password.
 
-  string $title;        //!< Title.
+  string $title;                //!< Title.
 
-  int $publishedAt;     //!< Publishing timestamp.
+  int $publishedAt;             //!< Publishing timestamp.
 
-  string $protection;   //!< [readonly] Level of protection.
-  string $protectorId;  //!< [readonly] The user ID of whom protected the content.
+  string $protection;           //!< [readonly] Level of protection.
+  string $protectorId;          //!< [readonly] The user ID of whom protected the content.
 
-  TagCollection $tags;  //!< A collection of tags.
+  TagCollection $tags;          //!< A collection of tags.
 
   //!@}
 
