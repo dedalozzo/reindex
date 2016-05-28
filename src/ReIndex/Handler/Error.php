@@ -27,7 +27,13 @@ use ReIndex\Version;
  */
 class Error extends AbstractProcessingHandler {
   protected $di; // Stores the default Dependency Injector.
+  protected $dispatcher;
   protected $user; // Stores the current user.
+  protected $assets;
+  protected $domainName;
+  protected $serverName;
+  protected $themeName;
+  protected $dist;
 
 
   /**
