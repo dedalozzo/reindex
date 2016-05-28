@@ -32,32 +32,33 @@ use Phalcon\Di;
  * 
  * @cond HIDDEN_SYMBOLS
  *
- * @property string $username;  // The username.
- * @property string $firstName; // First name.
- * @property string $lastName;  // Last surname.
+ * @property string $username  // The username.
+ * @property string $firstName // First name.
+ * @property string $lastName  // Last surname.
 
- * @property EmailCollection $emails;       // A collection of e-mails.
- * @property LoginCollection $logins;       // A collection of consumers' logins.
- * @property RoleCollection $roles;         // A collection of roles associated with the member.
- * @property FriendCollection $friends;     // A collection of all member's friendships.
- * @property FollowerCollection $followers; // A collection of all member's followers.
- * @property Blacklist $blacklist;          // The member's blacklist.
+ * @property EmailCollection $emails       // A collection of e-mails.
+ * @property LoginCollection $logins       // A collection of consumers' logins.
+ * @property RoleCollection $roles         // A collection of roles associated with the member.
+ * @property FriendCollection $friends     // A collection of all member's friendships.
+ * @property FollowerCollection $followers // A collection of all member's followers.
+ * @property Blacklist $blacklist          // The member's blacklist.
 
- * @property string $password;                 // Password chosen by the member.
- * @property string $hash;                     // String hash sent via e-mail to the member to confirm that his e-mail is real.
- * @property string $internetProtocolAddress;  // The IP address of the member.
- * @property string $locale;                   // Member's language, ex. en_US
- * @property int $timeOffset;                  // Time offset.
+ * @property string $password                 // Password chosen by the member.
+ * @property string $hash                     // String hash sent via e-mail to the member to confirm that his e-mail is real.
+ * @property string $internetProtocolAddress  // The IP address of the member.
+ * @property string $locale                   // Member's language, ex. en_US
+ * @property int $timeOffset                  // Time offset.
 
- * @property string $gender; // Sex.
- * @property int $birthday;  // Date of birth.
- * @property string $about;  // A few words about the member.
+ * @property string $gender // Sex.
+ * @property int $birthday  // Date of birth.
+ * @property string $about  // A few words about the member.
  *
  * @endcond
- * 
  */
 class Member extends Storable implements IUser, Extension\ICount {
   use Extension\TCount;
+
+  const MR_HASH = '_mr'; //!< Members Redis hash.
 
   private $emails;    // Collection of e-mails.
   private $logins;    // Collection of consumers' logins.
