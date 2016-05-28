@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file GrantRolePermission.php
+ * @file AdminRole/GrantRolePermission.php
  * @brief This file contains the GrantRolePermission class.
  * @details
  * @author Filippo F. Fadda
