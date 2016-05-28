@@ -12,12 +12,8 @@ namespace ReIndex\Console\Command;
 
 
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-
-use EoC\Couch;
-use EoC\Opt\ViewQueryOpts;
 
 use ReIndex\Model\Member;
 use ReIndex\Security\Role\IRole;
@@ -58,7 +54,6 @@ abstract class AbstractRoleCommand extends AbstractCommand {
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
     $guardian = $this->di['guardian'];
-    $couch = $this->di['couchdb'];
 
     $roleName = $input->getArgument('role');
     $username = $input->getArgument('username');
