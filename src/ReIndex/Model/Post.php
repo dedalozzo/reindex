@@ -42,7 +42,7 @@ use Phalcon\Di;
  * @property string $protection   // [readonly] Level of protection.
  * @property string $protectorId  // [readonly] The user ID of whom protected the content.
  *
- * @property $tags TagCollection  // A collection of tags.
+ * @property TagCollection $tags  // A collection of tags.
  *
  * @endcond
  */
