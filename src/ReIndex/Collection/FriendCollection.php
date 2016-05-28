@@ -11,8 +11,8 @@
 namespace ReIndex\Collection;
 
 
-use ReIndex\Model\Member;
 use ReIndex\Exception;
+use ReIndex\Model\Member;
 use ReIndex\Model\Friendship;
 use ReIndex\Model\Follower;
 
