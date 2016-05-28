@@ -11,7 +11,7 @@
 namespace ReIndex\Model;
 
 
-use Phalcon\Di;
+use ReIndex\Feature;
 use ReIndex\Extension;
 use ReIndex\Property;
 use ReIndex\Helper;
@@ -19,14 +19,16 @@ use ReIndex\Helper;
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
+use Phalcon\Di;
+
 
 /**
  * @brief A label used to categorize posts.
  * @details Every post must be tagged with a maximun of five tags.
  * @nosubgrouping
  */
-class Tag extends Versionable implements Extension\ICount, Extension\IStar {
-  use Extension\TCount, Extension\TStar;
+class Tag extends Versionable implements Extension\ICount, Feature\Starrable  {
+  use Extension\TCount;
   use Property\TExcerpt, Property\TBody, Property\TDescription;
 
 
