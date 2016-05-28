@@ -8,50 +8,21 @@
  */
 
 
-namespace ReIndex\Extension;
-
-
-use ReIndex\Model\Member;
+//! Interfaces related specific features
+namespace ReIndex\Feature;
 
 
 /**
- * @brief Defines subscribing methods.
+ * @brief Defines a common interface for all the objects supporting a subsciption mechanism.
  * @nosubgrouping
  */
-interface ISubscribe {
-
-  /** @name Subscribing Methods */
-  //!@{
-
-  /**
-   * @brief Returns `true` if the user has subscribed the current post.
-   * @param[in] Member $user The current user logged in.
-   * @param[in] string $subscriptionId (optional) The subscription document ID.
-   * @retval boolean
-   */
-  public function isSubscribed(Member $user, &$subscriptionId = NULL);
+interface Subscribable {
 
 
   /**
-   * @brief The current user will get notifications about changes related to the current item.
-   * @param[in] Member $user The current user logged in.
+   * @brief Gets the document identifier.
+   * @retval string
    */
-  public function subscribe(Member $user);
-
-
-  /**
-   * @brief The current user won't get notifications anymore.
-   * @param[in] Member $user The current user logged in.
-   */
-  public function unsubscribe(Member $user);
-
-
-  /**
-   * @brief Returns the number of members have been subscribed the item.
-   * @retval integer
-   */
-  public function getSubscribersCount();
-
-  //!@}
+  function getId();
 
 }
