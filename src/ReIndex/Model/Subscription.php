@@ -11,23 +11,27 @@
 namespace ReIndex\Model;
 
 
+use ReIndex\Feature\Subscribable;
+use ReIndex\Helper\Text;
+
 use EoC\Doc\Doc;
 
 
 /**
- * @brief This class is used to keep trace of the user subscriptions.
+ * @brief This class is used to keep trace of a member's subscriptions.
  * @nosubgrouping
  */
 class Subscription extends Doc {
 
+
   /**
-   * @brief Creates an instance of Star class.
+   * @brief Creates an instance of Subscription class.
    */
-  public static function create($userId, $itemId, $timestamp = NULL) {
+  public static function create(Subscribable $item, Member $member, $timestamp = NULL) {
     $instance = new self();
 
-    $instance->meta["userId"] = $userId;
-    $instance->meta["itemId"] = $itemId;
+    $instance->meta["userId"] = $member->id;
+    $instance->meta["itemId"] = Text::unversion($item->getId());
 
     if (is_null($timestamp))
       $instance->meta["timestamp"] = time();
