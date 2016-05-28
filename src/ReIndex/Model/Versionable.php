@@ -22,6 +22,24 @@ use ReIndex\Security\Role;
 /**
  * @brief A version of a content created by a user.
  * @nosubgrouping
+ * @cond HIDDEN_SYMBOLS
+ *
+ * @property string $state                 // The state of the document.
+ *
+ * @property string $unversionId           // [readonly] The id pruned of its version number.
+ *
+ * @property string $versionNumber         // The document version number.
+ * @property string $previousVersionNumber // The version number of the previous document revision.
+ *
+ * @property string $username              // The author username.
+ *
+ * @property string $creatorId             // The user id of whom created the content.
+ * @property string $editorId              // The user id of whom modified the content.
+ * @property string $dustmanId             // [readonly] The user id of whom moved to trash the content.
+ *
+ * @property string $editSummary           // A brief explanation of an edit to a versionable content.
+ *
+ * @endcond
  */
 abstract class Versionable extends Storable {
 
