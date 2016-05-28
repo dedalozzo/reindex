@@ -319,8 +319,10 @@ class ProfileController extends ListController {
    * @brief Let the user to update his own password.
    * @param[in] string $username A username.
    */
-  public function passwordAction() {
-    if ($this->user->isGuest()) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+  public function passwordAction($username) {
+    $user = $this->getUser($username);
+
+    if ($this->user->isGuest() or !$this->user->match($user->id)) $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     // The validation object must be created in any case.
     $validation = new Validation();
