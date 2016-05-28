@@ -30,22 +30,27 @@ use Phalcon\Di;
  * @brief This class is used to represent a generic entry, a content created by a user.
  * @details Every post is versioned into the database, has tags and also a owner, who created the entry.
  * @nosubgrouping
+ *
+ * @cond HIDDEN_SYMBOLS
+ *
+ * @property int $legacyId        // Legacy identifier, in case you import from an old password.
+ *
+ * @property string $title        // Title.
+ *
+ * @property int $publishedAt     // Publishing timestamp.
+ *
+ * @property string $protection   // [readonly] Level of protection.
+ * @property string $protectorId  // [readonly] The user ID of whom protected the content.
+ *
+ * @property $tags TagCollection  // A collection of tags.
+ *
+ * @endcond
  */
-abstract class Post extends Versionable implements Extension\ICache, Extension\ICount,
+abstract class Post extends Versionable implements Extension\ICount,
   Extension\IStar, Extension\IVote, Extension\ISubscribe {
 
   use Extension\TCount, Extension\TStar, Extension\TVote, Extension\TSubscribe;
   use Property\TExcerpt, Property\TBody, Property\TDescription;
-
-  /** @name Redis Set Names */
-  //!@{
-
-  const NEW_SET = 'new_'; //!< Newest posts Redis set.
-  const POP_SET = 'pop_'; //!< Popular posts Redis set.
-  const ACT_SET = 'act_'; //!< Active posts Redis set.
-  const OPN_SET = 'opn_'; //!< Open questions Redis set.
-
-  //!@}
 
   /** @name Protection Levels */
   //!@{
@@ -55,7 +60,7 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
 
   //!@}
 
-  // Since the user can add new tags in a second moment, we must store the original tags, otherwise the zRem methods will not work properly.
+  // Since the user can add new tags in a second moment, we must store the original tags to be able to remove the related indexes.
   private $originalTags;
 
   // Collection of tags.
@@ -182,18 +187,12 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
 
   /**
    * @brief Saves the post.
-   * @param[in] bool $deferred When `true` doesn't update the indexes.
    */
   public function save($deferred = FALSE) {
     // Since we can't use reflection inside EoC Server, we need a way to recognize every subclass of the `Post` class.
-    // This is done using a property `post`, we can test using `isset($doc->isPost)`.
+    // This is done testing `isset($doc->isPost)`.
     if (empty($this->meta['isPost']))
       $this->meta['isPost'] = TRUE;
-
-    // Same like before, but this time we use `isset($doc->useCache)` to test if the class implements the `ICache`
-    // interface.
-    if (empty($this->meta['useCache']))
-      $this->meta['useCache'] = TRUE;
 
     // After the creation the post must be visible.
     if (empty($this->meta['visible']))
@@ -201,15 +200,6 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
 
     // Now we call the parent implementation.
     parent::save();
-
-    if (!$deferred) {
-      // Marks the start of a transaction block. Subsequent commands will be queued for atomic execution using `exec()`.
-      $this->redis->multi();
-
-      $this->reindex();
-
-      $this->redis->exec();
-    }
   }
 
 
@@ -406,288 +396,13 @@ abstract class Post extends Versionable implements Extension\ICache, Extension\I
   }
 
 
-  /** @name Indexing Methods */
-  //!@{
-
   /**
-   * @brief Adds an ID, using the provided score, to multiple sets of the Redis db.
-   * @param[in] string $set The name of the base Redis set.
-   * @param[in] \DateTime $date A date.
-   * @param[in] string $id The post ID.
-   * @param[in] int $score The score.
+   * @brief Returns the original tags associated to the current post.
+   * @return array
    */
-  private function zMultipleAdd($set, \DateTime $date, $id, $score) {
-    $this->redis->zAdd($set, $score, $id);
-    $this->redis->zAdd($set . $date->format('_Ymd'), $score, $id);
-    $this->redis->zAdd($set . $date->format('_Ym'), $score, $id);
-    $this->redis->zAdd($set . $date->format('_Y'), $score, $id);
-    $this->redis->zAdd($set . $date->format('_Y_w'), $score, $id);
+  public function getOriginalTags() {
+    return $this->originalTags;
   }
-
-
-  /**
-   * @brief Removes an ID from multiple sets of the Redis db.
-   * @param[in] string $set The name of the base Redis set.
-   * @param[in] \DateTime $date A date.
-   * @param[in] string $id The post ID.
-   */
-  private function zMultipleRem($set, \DateTime $date, $id) {
-    $this->redis->zRem($set, $id);
-    $this->redis->zRem($set . $date->format('_Ymd'), $id);
-    $this->redis->zRem($set . $date->format('_Ym'), $id);
-    $this->redis->zRem($set . $date->format('_Y'), $id);
-    $this->redis->zRem($set . $date->format('_Y_w'), $id);
-  }
-
-
-  /**
-   * @brief Adds the post ID, using the provided score, to the specified Redis set.
-   * @param[in] string $set The name of the Redis set.
-   * @param[in] int $score The score.
-   */
-  protected function zAdd($set, $score) {
-    if (!$this->isVisible()) return;
-
-    $id = $this->unversionId;
-
-    // Order set with all the posts.
-    $this->redis->zAdd($set . 'post', $score, $id);
-
-    // Order set with all the posts of a specific type.
-    $this->redis->zAdd($set . $this->type, $score, $id);
-
-    if (!$this->tags->isEmpty()) {
-      $tags = $this->tags->uniqueMasters();
-
-      foreach ($tags as $tagId) {
-        // Order set with all the posts related to a specific tag.
-        $this->redis->zAdd($set . $tagId . '_' . 'post', $score, $id);
-
-        // Order set with all the posts of a specific type, related to a specific tag.
-        $this->redis->zAdd($set . $tagId . '_' . $this->type, $score, $id);
-      }
-    }
-  }
-
-
-  /**
-   * @brief Removes the post ID from the specified Redis set.
-   * @param[in] string $set The name of the Redis set.
-   */
-  protected function zRem($set) {
-    $id = $this->unversionId;
-
-    // Order set with all the posts.
-    $this->redis->zRem($set.'post', $id);
-
-    // Order set with all the posts of a specific type.
-    $this->redis->zRem($set.$this->type, $id);
-
-    foreach ($this->originalTags as $tagId) {
-      // Order set with all the posts related to a specific tag.
-      $this->redis->zRem($set . $tagId . '_' . 'post', $id);
-
-      // Order set with all the posts of a specific type, related to a specific tag.
-      $this->redis->zRem($set . $tagId . '_' . $this->type, $id);
-    }
-  }
-
-
-  /**
-   * @brief Adds the post ID, using the provided score, to the specified Redis set and its related subsets.
-   * @param[in] string $set The name of the Redis set.
-   * @param[in] \DateTime $date Use this date to create multiple subsets.
-   * @param[in] int $score The score.
-   */
-  protected function zAddSpecial($set, \DateTime $date, $score) {
-    if (!$this->isVisible()) return;
-
-    $id = $this->unversionId;
-
-    // Order set with all the posts.
-    $this->zMultipleAdd($set . 'post', $date, $id, $score);
-
-    // Order set with all the posts of a specific type: article, question, ecc.
-    $this->zMultipleAdd($set . $this->type, $date, $id, $score);
-
-    if (!$this->tags->isEmpty()) {
-      $tags = $this->tags->uniqueMasters();
-
-      foreach ($tags as $tagId) {
-        // Order set with all the posts related to a specific tag.
-        $this->zMultipleAdd($set . $tagId . '_' . 'post', $date, $id, $score);
-
-        // Order set with all the post of a specific type, related to a specific tag.
-        $this->zMultipleAdd($set . $tagId . '_' . $this->type, $date, $id, $score);
-      }
-    }
-  }
-
-
-  /**
-   * @brief Removes the post ID from the specified Redis set and its related subsets.
-   * @param[in] string $set The name of the Redis set.
-   * @param[in] \DateTime $date Use this date to create multiple subsets.
-   */
-  protected function zRemSpecial($set, \DateTime $date) {
-    $id = $this->unversionId;
-
-    // Order set with all the posts.
-    $this->zMultipleRem($set . 'post', $date, $id);
-
-    // Order set with all the posts of a specific type.
-    $this->zMultipleRem($set . $this->type, $date, $id);
-
-    foreach ($this->originalTags as $tagId) {
-      // Order set with all the posts related to a specific tag.
-      $this->zMultipleRem($set . $tagId . '_' . 'post', $date, $id);
-
-      // Order set with all the post of a specific type, related to a specific tag.
-      $this->zMultipleRem($set . $tagId . '_' . $this->type, $date, $id);
-    }
-  }
-  
-  
-  /**
-   * @brief Adds the post to the newest index.
-   */
-  public function zAddNewest() {
-    $this->zAdd(self::NEW_SET, $this->publishedAt);
-  }
-
-
-  /**
-   * @brief Removes the post from the newest index.
-   */
-  public function zRemNewest() {
-    $this->zRem(self::NEW_SET);
-  }
-
-
-  /**
-   * @brief Adds the post to the popular index.
-   */
-  public function zAddPopular() {
-    $config = $this->di['config'];
-
-    $popularity = ($this->getScore() * $config->scoring->voteCoefficient) +
-                  ($this->getRepliesCount() * $config->scoring->replyCoefficient) +
-                  ($this->getHitsCount() * $config->scoring->hitCoefficient);
-
-    $date = (new \DateTime())->setTimestamp($this->publishedAt);
-    $this->zAddSpecial(self::POP_SET, $date, $popularity);
-  }
-
-
-  /**
-   * @brief Removes the post from the popular index.
-   */
-  public function zRemPopular() {
-    $date = (new \DateTime())->setTimestamp($this->publishedAt);
-    $this->zRemSpecial(self::POP_SET, $date);
-  }
-
-
-  /**
-   * @brief Adds the post to the active index.
-   */
-  public function zAddActive() {
-    if (!$this->isVisible()) return;
-
-    $id = $this->unversionId;
-    $timestamp = $this->getLastUpdate();
-
-    // Order set with all the posts.
-    $this->redis->zAdd(self::ACT_SET . 'post', $timestamp, $id);
-
-    // Order set with all the posts of a specific type: article, question, ecc.
-    $this->redis->zAdd(self::ACT_SET . $this->type, $timestamp, $id);
-
-    if ($this->isMetadataPresent('tags')) {
-      $tags = $this->tags->uniqueMasters();
-
-      foreach ($tags as $tagId) {
-        // Filters posts which should appear on the home page.
-
-        // Order set with all the posts related to a specific tag.
-        $this->redis->zAdd(self::ACT_SET . $tagId . '_' . 'post', $timestamp, $id);
-
-        // Used to get a list of tags recently updated.
-        $this->redis->zAdd(self::ACT_SET . 'tags' . '_' . 'post', $timestamp, $tagId);
-
-        // Order set with all the posts of a specific type, related to a specific tag.
-        $this->redis->zAdd(self::ACT_SET . $tagId . '_' . $this->type, $timestamp, $id);
-
-        // Used to get a list of tags, in relation to a specific type, recently updated.
-        $this->redis->zAdd(self::ACT_SET . 'tags' . '_' . $this->type, $timestamp, $tagId);
-      }
-    }
-  }
-
-
-  /**
-   * @brief Removes the post from the active index.
-   */
-  public function zRemActive() {
-    $id = $this->unversionId;
-
-    // Order set with all the posts.
-    $this->redis->zRem(self::ACT_SET . 'post', $id);
-
-    // Order set with all the posts of a specific type: article, question, ecc.
-    $this->redis->zRem(self::ACT_SET . $this->type, $id);
-
-    foreach ($this->originalTags as $tagId) {
-      // Filters posts which should appear on the home page.
-
-      // Order set with all the posts related to a specific tag.
-      $this->redis->zRem(self::ACT_SET . $tagId . '_' . 'post', $id);
-
-      // Used to get a list of tags recently updated.
-      $this->redis->zRem(self::ACT_SET . 'tags' . '_' . 'post', $tagId);
-
-      // Order set with all the posts of a specific type, related to a specific tag.
-      $this->redis->zRem(self::ACT_SET . $tagId . '_' . $this->type, $id);
-
-      // Used to get a list of tags, in relation to a specific type, recently updated.
-      $this->redis->zRem(self::ACT_SET . 'tags' . '_' . $this->type, $tagId);
-    }
-  }
-
-
-  /**
-   * @brief Removes the post ID from the indexes.
-   */
-  public function deindex() {
-    $this->zRemNewest();
-    $this->zRemPopular();
-    $this->zRemActive();
-  }
-
-
-  /**
-   * @brief Adds the post ID to the indexes.
-   */
-  public function index() {
-    // We are only indexing current versions.
-    if (!$this->state->isCurrent())
-      return;
-
-    $this->zAddNewest();
-    $this->zAddPopular();
-    $this->zAddActive();
-  }
-
-
-  /**
-   * @brief Performs deindex then reindex.
-   */
-  public function reindex() {
-    $this->deindex();
-    $this->index();
-  }
-
-  //!@}
 
 
   /** @name Replaying Methods */
