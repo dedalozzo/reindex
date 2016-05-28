@@ -25,8 +25,6 @@ use Phalcon\Di;
  * @nosubgrouping
  */
 class IndexMemberTask implements ITask {
-  const MR_HASH = '_mr'; //!< Members Redis hash.
-
   private $member;
 
   protected $di; // Stores the default Dependency Injector.
@@ -54,13 +52,13 @@ class IndexMemberTask implements ITask {
 
   /**
    * @brief Returns a full name suitable for string comparison.
-   * @retval string
+   * @return string
    */
   private function getMemberFullName() {
     $fullName = $this->member->firstName . $this->member->lastName;
 
     // We add the ID because someone might have used a name that matches username.
-    return empty($fullName) ? $this->member->username . ':' . $this->member->id : strtolower($fullName) . ':' . $this->id;
+    return empty($fullName) ? $this->member->username . ':' . $this->member->id : strtolower($fullName) . ':' . $this->member->id;
   }
 
 
@@ -77,7 +75,7 @@ class IndexMemberTask implements ITask {
 
 
   public function execute() {
-    $key = $this->member->id . self::MR_HASH;
+    $key = $this->member->id . Member::MR_HASH;
 
     // Returns the values associated with the specified fields in the hash stored at member ID.
     // For every field that does not exist in the hash, a nil value is returned. Because a non-existing keys are treated
@@ -111,7 +109,7 @@ class IndexMemberTask implements ITask {
         $this->redis->zAdd($memberId . Collection\FriendCollection::IFN_SET, 0, $hash['invFullName'].':'.$friendId);
       }
 
-      $this->redis->hMSet($this->member->id . self::MR_HASH, ['username' => $username, 'fullName' => $fullName, 'invFullName' => $invFullName]);
+      $this->redis->hMSet($this->member->id . Member::MR_HASH, ['username' => $username, 'fullName' => $fullName, 'invFullName' => $invFullName]);
 
       $this->redis->exec();
     }
