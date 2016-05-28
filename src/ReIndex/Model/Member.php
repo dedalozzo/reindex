@@ -29,16 +29,41 @@ use Phalcon\Di;
 /**
  * @brief This class is used to represent a registered user.
  * @nosubgrouping
- */
-class Member extends Storable implements IUser, Extension\ICache, Extension\ICount {
-  use Extension\TCount;
+ * 
+ * @cond HIDDEN_SYMBOLS
+ *
+ * @property string $username;  // The username.
+ * @property string $firstName; // First name.
+ * @property string $lastName;  // Last surname.
 
-  const MR_HASH = '_mr'; //!< Members Redis hash.
+ * @property EmailCollection $emails;       // A collection of e-mails.
+ * @property LoginCollection $logins;       // A collection of consumers' logins.
+ * @property RoleCollection $roles;         // A collection of roles associated with the member.
+ * @property FriendCollection $friends;     // A collection of all member's friendships.
+ * @property FollowerCollection $followers; // A collection of all member's followers.
+ * @property Blacklist $blacklist;          // The member's blacklist.
+
+ * @property string $password;                 // Password chosen by the member.
+ * @property string $hash;                     // String hash sent via e-mail to the member to confirm that his e-mail is real.
+ * @property string $internetProtocolAddress;  // The IP address of the member.
+ * @property string $locale;                   // Member's language, ex. en_US
+ * @property int $timeOffset;                  // Time offset.
+
+ * @property string $gender; // Sex.
+ * @property int $birthday;  // Date of birth.
+ * @property string $about;  // A few words about the member.
+ *
+ * @endcond
+ * 
+ */
+class Member extends Storable implements IUser, Extension\ICount {
+  use Extension\TCount;
 
   private $emails;    // Collection of e-mails.
   private $logins;    // Collection of consumers' logins.
   private $roles;     // Collection of roles.
   private $friends;   // List of friends.
+  private $followers; // List of followers.
   private $blacklist; // Blacklist.
 
 
@@ -59,30 +84,6 @@ class Member extends Storable implements IUser, Extension\ICache, Extension\ICou
 
     $this->meta['blacklist'] = [];
     $this->blacklist = new Collection\Blacklist($this->meta);
-  }
-
-
-  /**
-   * @brief Returns a full name suitable for string comparison.
-   * @retval string
-   */
-  protected function getFullNameForIndex() {
-    $fullName = $this->firstName . $this->lastName;
-
-    // We add the ID because someone might have used a name that matches username.
-    return empty($fullName) ? $this->username . ':' . $this->id : strtolower($fullName) . ':' . $this->id;
-  }
-
-
-  /**
-   * @brief Returns an inverted full name suitable for string comparison.
-   * @retval string
-   */
-  protected function getInvFullNameForIndex() {
-    $invFullName = $this->lastName . $this->firstName;
-
-    // We add the ID because someone might have used a name that matches username.
-    return empty($invFullName) ? $this->username . ':' . $this->id : strtolower($invFullName) . ':' . $this->id;
   }
 
 
@@ -126,7 +127,7 @@ class Member extends Storable implements IUser, Extension\ICache, Extension\ICou
 
       // Friendship.
       $opts->reset();
-      $opts->doNotreduce()->setLimit(1)->setKey([$user->id, $id]);
+      $opts->doNotReduce()->setLimit(1)->setKey([$user->id, $id]);
       $member->friendshipExists = !$couch->queryView("friendships", "approvedPerMember", NULL, $opts)->isEmpty();
 
       // Hits count.
@@ -253,56 +254,6 @@ class Member extends Storable implements IUser, Extension\ICache, Extension\ICou
       $this->index();
     }
   }
-
-
-  /** @name Indexing Methods */
-  //!@{
-
-  /**
-   * @copydoc ICache::index()
-   */
-  public function index() {
-    $key = $this->id . self::MR_HASH;
-
-    // Returns the values associated with the specified fields in the hash stored at member ID.
-    // For every field that does not exist in the hash, a nil value is returned. Because a non-existing keys are treated
-    // as empty hashes, running `hMGet()` against a non-existing key will return a list of `null` values.
-    $hash = $this->redis->hMGet($key, ['username', 'fullName', 'invFullName']);
-
-    $username = $this->username;
-    $fullName = $this->getFullNameForIndex();
-    $invFullName = $this->getInvFullNameForIndex();
-
-    // Username or full name has been changed or the member has never been indexed.
-    if ($hash['username'] != $username or $hash['fullName'] != $fullName) {
-      $opts = new ViewQueryOpts();
-      $opts->doNotReduce()->setKey([$this->user->id]);
-      $rows = $this->couch->queryView("friendships", "approvedPerMember", NULL, $opts);
-
-      $this->redis->multi();
-
-      foreach ($rows as $row) {
-        $memberId = $row['id'][1];
-        $friendId = $this->id;
-
-        $this->redis->zRem($memberId . Collection\FriendCollection::TS_SET, $friendId);
-        $this->redis->zRem($memberId . Collection\FriendCollection::UN_SET, $hash['username'].':'.$friendId);
-        $this->redis->zRem($memberId . Collection\FriendCollection::FN_SET, $hash['fullName'].':'.$friendId);
-        $this->redis->zRem($memberId . Collection\FriendCollection::IFN_SET, $hash['invFullName'].':'.$friendId);
-
-        $this->redis->zAdd($memberId . Collection\FriendCollection::TS_SET, $row['value'], $friendId);
-        $this->redis->zAdd($memberId . Collection\FriendCollection::UN_SET, 0, $hash['username'].':'.$friendId);
-        $this->redis->zAdd($memberId . Collection\FriendCollection::FN_SET, 0, $hash['fullName'].':'.$friendId);
-        $this->redis->zAdd($memberId . Collection\FriendCollection::IFN_SET, 0, $hash['invFullName'].':'.$friendId);
-      }
-
-      $this->redis->hMSet($this->id . self::MR_HASH, ['username' => $username, 'fullName' => $fullName, 'invFullName' => $invFullName]);
-
-      $this->redis->exec();
-    }
-  }
-
-  //!@}
 
 
   /** @name Access Control Management Methods */
@@ -459,7 +410,7 @@ class Member extends Storable implements IUser, Extension\ICache, Extension\ICou
     if ($this->isMetadataPresent('banned')) {
 
       if ($this->isBanExpired()) {
-        $this->unban(TRUE);
+        $this->unban();
         return FALSE;
       }
       else // It's a permanent ban.
