@@ -9,7 +9,7 @@ class Storable {
   /** @name Properties */
   //!@{
 
-  string $createdAt; //!< Creation timestamp.
+  string $createdAt;  //!< Creation timestamp.
   string $modifiedAt; //!< Timestamp of the last update.
 
   //!@}
