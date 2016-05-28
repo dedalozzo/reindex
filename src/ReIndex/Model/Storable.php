@@ -24,14 +24,21 @@ use ReIndex\Helper;
 /**
  * @brief This class is used to represent a storable object and implements the Active Record patten.
  * @nosubgrouping
+ *
+ * @cond HIDDEN_SYMBOLS
+ *
+ * @property string $createdAt;  // Creation timestamp.
+ * @property string $modifiedAt; // Timestamp of the last update.
+ *
+ * @endcond
  */
 abstract class Storable extends Doc {
 
-  protected $di; // Stores the default Dependency Injector.
+  protected $di;    // Stores the default Dependency Injector.
   protected $couch; // Stores the Elephant on Couch Client instance.
   protected $redis; // Stores the Redis client instance.
-  protected $log; // Store the logger instance.
-  protected $user; // Stores the current user.
+  protected $log;   // Store the logger instance.
+  protected $user;  // Stores the current user.
 
 
   /**
