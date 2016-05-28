@@ -123,10 +123,12 @@ class ApiController extends BaseController {
    * @retval array
    */
   public function starAction() {
+    if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
+
     try {
       if ($this->request->hasPost('id')) {
         $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
-        echo json_encode([TRUE, $doc->star()]);
+        echo json_encode([TRUE, $this->user->favorites->alter($doc)]);
         $this->view->disable();
       }
       else
