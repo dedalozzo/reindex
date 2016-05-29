@@ -13,13 +13,17 @@ namespace ReIndex\Collection;
 
 use ReIndex\Feature\Starrable;
 Use ReIndex\Model\Star;
+use ReIndex\Helper\Text;
 
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
 
+/**
+ * @brief This class is used to represent a collection of the member's favorite posts.
+ * @nosubgrouping
+ */
 class FavoriteCollection extends FakeCollection {
-
 
   /** @name Starring Status */
   //!@{
@@ -43,7 +47,7 @@ class FavoriteCollection extends FakeCollection {
    */
   public function exists(Starrable $item, &$starId = NULL) {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([Text::unversion($item->id), $this->user->id]);
+    $opts->doNotReduce()->setLimit(1)->setKey([Text::unversion($item->getId()), $this->user->id]);
 
     $result = $this->couch->queryView("stars", "perItem", NULL, $opts);
 
@@ -70,7 +74,7 @@ class FavoriteCollection extends FakeCollection {
       return self::UNSTARRED;
     }
     else {
-      $doc = Star::create($this->user->id, $this);
+      $doc = Star::create($this->user, $item);
       $this->couch->saveDoc($doc);
       return self::STARRED;
     }
