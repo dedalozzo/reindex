@@ -22,9 +22,10 @@ use ReIndex\Security\Role;
 /**
  * @brief A version of a content created by a user.
  * @nosubgrouping
+ *
  * @cond HIDDEN_SYMBOLS
  *
- * @property string $state                 // The state of the document.
+ * @property VersionState $state                 // The state of the document.
  *
  * @property string $unversionId           // [readonly] The id pruned of its version number.
  *
@@ -52,8 +53,8 @@ abstract class Versionable extends Storable {
   public function __construct() {
     parent::__construct();
 
-    $this->meta['state'] = VersionState::CREATED;
     $this->state = new VersionState($this->meta);
+    $this->state->set(VersionState::CREATED);
 
     $this->meta['versionable'] = TRUE;
   }
