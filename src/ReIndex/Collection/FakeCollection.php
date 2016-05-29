@@ -12,6 +12,7 @@ namespace ReIndex\Collection;
 
 
 use ReIndex\Model\Member;
+use EoC\Couch;
 
 use Phalcon\Di;
 
@@ -23,10 +24,25 @@ use Phalcon\Di;
  */
 abstract class FakeCollection implements \Countable {
 
-  protected $di;    // Stores the default Dependency Injector.
-  protected $user;  // Stores the current user.
-  protected $couch; // Stores the CouchDB instance.
-  protected $redis; // Stores the Redis instance.
+  /**
+   * @var Di $di
+   */
+  protected $di;
+
+  /**
+   * @var Couch $couch
+   */
+  protected $couch;
+
+  /**
+   * @var \Redis $redis
+   */
+  protected $redis;
+
+  /**
+   * @var Member $user
+   */
+  protected $user;
 
 
   /**
