@@ -11,7 +11,6 @@
 namespace ReIndex\Collection;
 
 
-use ReIndex\Feature\Subscribable;
 use ReIndex\Model\Post;
 use ReIndex\Model\Member;
 use ReIndex\Model\Subscription;
@@ -25,18 +24,30 @@ use Phalcon\Di;
 
 class SubscriptionCollection implements \Countable {
 
-  protected $di;    // Stores the default Dependency Injector.
-  protected $post;  // Stores the current user.
-  protected $couch; // Stores the CouchDB instance.
+  /**
+   * @var Di $di
+   */
+  protected $di;
+
+  /**
+   * @var Couch $couch
+   */
+  protected $couch;
+
+  /**
+   * @var Post $post
+   */
+  protected $post;
 
 
   /**
    * @brief Creates a new collection of items.
    */
   public function __construct(Post $post) {
-    $this->post = $post;
     $this->di = Di::getDefault();
     $this->couch = $this->di['couchdb'];
+
+    $this->post = $post;
   }
 
 
@@ -71,7 +82,7 @@ class SubscriptionCollection implements \Countable {
 
   public function alter(Member $member) {
     if (!$this->exists($member)) {
-      $doc = Subscription::create(Text::unversion($this->post->id), $member->id);
+      $doc = Subscription::create($this->post, $member);
       $this->couch->saveDoc($doc);
     }
   }
