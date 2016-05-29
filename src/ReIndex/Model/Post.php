@@ -68,24 +68,28 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   // Collection of tags.
   private $tags;
 
-  private $subscriptions; // A collection of members who have subscribed the post.
-  private $stars; // Galaxy of stars.
+  // A collection of members who have subscribed the post.
+  private $subscriptions;
 
-  protected $markdown; // Stores the Markdown parser instance.
-  protected $log; // Stores the logger instance.
+  // Galaxy of stars.
+  private $stars;
+
+  /**
+   * @var \Hoedown $markdown
+   */
+  protected $markdown;
 
 
   public function __construct() {
     parent::__construct();
 
     $this->markdown = $this->di['markdown'];
-    $this->log = $this->di['log'];
 
     $this->meta['tags'] = [];
     $this->tags = new Collection\TagCollection($this->meta);
 
-    $this->subscriptions = new Collection\SubscriptionCollection($this);
     $this->stars = new Collection\StarGalaxy($this);
+    $this->subscriptions = new Collection\SubscriptionCollection($this);
   }
 
 
@@ -196,18 +200,20 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   /**
    * @brief Saves the post.
    */
-  public function save($deferred = FALSE) {
-    // Since we can't use reflection inside EoC Server, we need a way to recognize every subclass of the `Post` class.
-    // This is done testing `isset($doc->isPost)`.
-    if (empty($this->meta['isPost']))
-      $this->meta['isPost'] = TRUE;
+  public function save() {
+    if ($this->state->isCreated()) {
+      // Since we can't use reflection inside EoC Server, we need a way to recognize every subclass of the `Post` class.
+      // This is done testing `isset($doc->supertype) && $doc->supertype === 'post'`.
+      $this->meta['supertype'] = 'post';
 
-    // After the creation the post must be visible.
-    if (empty($this->meta['visible']))
+      // After the creation the post must be visible.
       $this->meta['visible'] = TRUE;
+    }
 
     // Now we call the parent implementation.
     parent::save();
+
+    // todo Queue the task.
   }
 
 
