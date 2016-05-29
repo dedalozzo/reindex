@@ -19,7 +19,7 @@ class Update extends Post {
 
 
   protected function needForApproval() {
-    return TRUE;
+    return FALSE;
   }
 
 
