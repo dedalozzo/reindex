@@ -22,6 +22,9 @@ use Phalcon\Mvc\View;
  */
 abstract class ListController extends BaseController {
 
+  /**
+   * @var int $resultsPerPage
+   */
   protected $resultsPerPage;
 
 
