@@ -58,6 +58,15 @@ class VersionState {
 
 
   /**
+   * @brief Returns `true` in case the provided state matches the current version state.
+   * @param[in] string $state The state to set.
+   */
+  public function set($state) {
+    $this->meta["state"] = $state;
+  }
+
+
+  /**
    * @brief Returns `true` if this document has just been created, `false` otherwise.
    * @retval bool
    */
