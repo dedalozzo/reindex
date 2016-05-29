@@ -64,9 +64,10 @@ class Member extends Storable implements IUser, Extension\ICount {
   private $emails;    // Collection of e-mails.
   private $logins;    // Collection of consumers' logins.
   private $roles;     // Collection of roles.
+  private $blacklist; // Blacklist.
   private $friends;   // List of friends.
   private $followers; // List of followers.
-  private $blacklist; // Blacklist.
+  private $favorites; // Favorite items.
 
 
   public function __construct() {
@@ -81,11 +82,12 @@ class Member extends Storable implements IUser, Extension\ICount {
     $this->meta['roles'] = [];
     $this->roles = new Collection\RoleCollection($this->meta);
 
-    // Friendships are stored outside the member scope.
-    $this->friends = new Collection\FriendCollection($this);
-
     $this->meta['blacklist'] = [];
     $this->blacklist = new Collection\Blacklist($this->meta);
+
+    $this->friends = new Collection\FriendCollection($this);
+    $this->followers = new Collection\FollowerCollection($this);
+    $this->favorites = new Collection\FavoriteCollection($this);
   }
 
 
