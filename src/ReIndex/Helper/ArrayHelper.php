@@ -67,7 +67,6 @@ class ArrayHelper extends ElephantOnCouchArrayHelper {
    * @param[in,out] array $ids An array of IDs.
    */
   public static function unversion(array &$ids) {
-    /** @noinspection PhpUnusedParameterInspection */
     array_walk($ids, function(&$value, $key) {
         $value = strtok($value, Text::SEPARATOR);
       }
