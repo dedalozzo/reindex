@@ -36,12 +36,13 @@ use Phalcon\Di;
  * @property string $firstName // First name.
  * @property string $lastName  // Last surname.
 
- * @property EmailCollection $emails       // A collection of e-mails.
- * @property LoginCollection $logins       // A collection of consumers' logins.
- * @property RoleCollection $roles         // A collection of roles associated with the member.
- * @property FriendCollection $friends     // A collection of all member's friendships.
- * @property FollowerCollection $followers // A collection of all member's followers.
- * @property Blacklist $blacklist          // The member's blacklist.
+ * @property Collection\EmailCollection $emails       // A collection of e-mails.
+ * @property Collection\LoginCollection $logins       // A collection of consumers' logins.
+ * @property Collection\RoleCollection $roles         // A collection of roles associated with the member.
+ * @property Collection\FriendCollection $friends     // A collection of all member's friendships.
+ * @property Collection\FollowerCollection $followers // A collection of all member's followers.
+ * @property Collection\Blacklist $blacklist          // The member's blacklist.
+ * @property Collection\FavoriteCollection $favorites // Starred posts.
 
  * @property string $password                 // Password chosen by the member.
  * @property string $hash                     // String hash sent via e-mail to the member to confirm that his e-mail is real.
@@ -168,7 +169,7 @@ class Member extends Storable implements IUser, Extension\ICount {
   public function getFavoriteTags() {
     $opts = new ViewQueryOpts();
     $opts->setKey($this->getId())->doNotReduce();
-    $favorites = $this->couch->queryView("favorites", "byMemberTags", NULL, $opts);
+    $favorites = $this->couch->queryView("favorites", "tagsPerMember", NULL, $opts);
 
     if ($favorites->isEmpty())
       return [];
@@ -251,9 +252,7 @@ class Member extends Storable implements IUser, Extension\ICount {
 
     parent::save();
 
-    if (!$deferred) {
-      $this->index();
-    }
+    // todo Queue the task.
   }
 
 
