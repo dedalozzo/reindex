@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * @file IndexMemberTask.php
  * @brief This file contains the IndexMemberTask class.
@@ -15,9 +14,13 @@ namespace ReIndex\Task;
 use ReIndex\Model\Member;
 use ReIndex\Collection;
 
+use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
 use Phalcon\Di;
+
+use Monolog\Logger;
+
 
 
 /**
@@ -25,13 +28,31 @@ use Phalcon\Di;
  * @nosubgrouping
  */
 class IndexMemberTask implements ITask {
-  private $member;
 
-  protected $di; // Stores the default Dependency Injector.
-  protected $couch; // Stores the Elephant on Couch Client instance.
-  protected $redis; // Stores the Redis client instance.
-  protected $log; // Store the logger instance.
-  protected $user; // Stores the current user.
+  /**
+   * @var Di $di
+   */
+  protected $di;
+
+  /**
+   * @var Couch $couch
+   */
+  protected $couch;
+
+  /**
+   * @var \Redis $redis
+   */
+  protected $redis;
+
+  /**
+   * @var Logger $log
+   */
+  protected $log;
+
+  /**
+   * @var Member $member
+   */
+  protected $member;
 
 
   /**
@@ -43,8 +64,6 @@ class IndexMemberTask implements ITask {
     $this->couch = $this->di['couchdb'];
     $this->redis = $this->di['redis'];
     $this->log = $this->di['log'];
-
-    $this->user = $this->di['guardian']->getUser();
 
     $this->member = $member;
   }
