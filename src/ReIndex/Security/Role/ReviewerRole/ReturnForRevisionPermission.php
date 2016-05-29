@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file ReturnForRevisionPermission.php
  * @brief This file contains the ReturnForRevisionPermission class.
@@ -10,7 +11,10 @@
 namespace ReIndex\Security\Role\ReviewerRole;
 
 
-class ReturnForRevisionPermission {
+use ReIndex\Security\Role\AbstractPermission;
+
+
+class ReturnForRevisionPermission extends AbstractPermission {
 
 
   public function getDescription() {
@@ -22,7 +26,7 @@ class ReturnForRevisionPermission {
    * @brief Returns `true` if the member can ask the original author to revise the document, `false` otherwise.
    * @retval bool
    */
-  public function canBeReturnedForRevision() {
+  public function check() {
     if ($this->isReturnedForRevision()) return FALSE;
 
     if (($this->user->isModerator() && $this->isSubmittedForPeerReview()) or
