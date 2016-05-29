@@ -22,11 +22,9 @@ use ReIndex\Helper\Text;
  */
 class Article extends Post {
 
-  const INDEX = TRUE; //!< An article post appears on the home page.
 
-
-  public function save($deferred = FALSE) {
-    parent::save($deferred);
+  public function save() {
+    parent::save();
   }
 
 
