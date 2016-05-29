@@ -62,7 +62,7 @@ class MemberController extends ListController {
     if ($filter === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $this->view->setVar('submenu', $this->periods);
-    $this->view->setVar('submenuIndex', $period);
+    $this->view->setVar('submenuIndex', $filter);
     $this->view->setVar('title', 'Utenti per reputazione');
   }
 
