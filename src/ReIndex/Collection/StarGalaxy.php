@@ -11,10 +11,31 @@
 namespace ReIndex\Collection;
 
 
+use ReIndex\Feature\Starrable;
+use ReIndex\Helper\Text;
+
+use EoC\Couch;
+use EoC\Opt\ViewQueryOpts;
+
+use Phalcon\Di;
+
+
+/**
+ * @brief This class is used to count the number of stars of a specific item.
+ * @details This class implements `Countable`.
+ * @nosubgrouping
+ */
 class StarGalaxy implements \Countable {
 
-  protected $item;  // Stores the item.
-  protected $couch; // Stores the CouchDB instance.
+  /**
+   * @var Couch $couch
+   */
+  protected $couch;
+
+  /**
+   * @var Starrable $item
+   */
+  protected $item;
 
 
   /**
@@ -26,9 +47,12 @@ class StarGalaxy implements \Countable {
   }
 
 
+  /**
+   * @brief Returns the number of stars for the specified item.
+   */
   public function count() {
     $opts = new ViewQueryOpts();
-    $opts->setKey([Text::unversion($this->item->id)]);
+    $opts->setKey([Text::unversion($this->item->getId())]);
 
     return $this->couch->queryView("stars", "perItem", NULL, $opts)->getReducedValue();
   }
