@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file ISubscribe.php
- * @brief This file contains the ISubscribe interface.
+ * @file Subscribable.php
+ * @brief This file contains the Subscribable interface.
  * @details
  * @author Filippo F. Fadda
  */
