@@ -12,9 +12,18 @@ namespace ReIndex\Controller;
 
 
 use Phalcon\Mvc\Controller;
+use Phalcon\Di;
+use Phalcon\Assets\Manager;
 
 use ReIndex\Helper;
 use ReIndex\Version;
+use ReIndex\Security\Guardian;
+use ReIndex\Security\User\IUser;
+
+use EoC\Couch;
+
+use Monolog\Logger;
+
 
 
 /**
@@ -23,19 +32,71 @@ use ReIndex\Version;
  * @nosubgrouping
  */
 abstract class BaseController extends Controller {
+
+  /**
+   * @var IUser $user
+   */
   protected $config;
-  protected $couch;
-  protected $redis;
-  protected $log;
+
+  /**
+   * @var Manager $assets
+   */
   protected $assets;
+
+  /**
+   * @var Guardian $guardian
+   */
   protected $guardian;
 
+  /**
+   * @var Couch $couch
+   */
+  protected $couch;
+
+  /**
+   * @var \Redis $redis
+   */
+  protected $redis;
+
+  /**
+   * @var Logger $log
+   */
+  protected $log;
+
+  /**
+   * @var IUser $user
+   */
+  protected $user;
+
+  /**
+   * @var string $domainName
+   */
   protected $domainName;
+
+  /**
+   * @var string $serverName
+   */
   protected $serverName;
+
+  /**
+   * @var string $controllerName
+   */
   protected $controllerName;
+
+  /**
+   * @var string $actionName
+   */
   protected $actionName;
 
-  protected $user;
+  /**
+   * @var string $themeName
+   */
+  protected $themeName;
+
+  /**
+   * @var string $dist
+   */
+  protected $dist;
 
 
   /**
