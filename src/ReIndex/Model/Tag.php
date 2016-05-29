@@ -140,6 +140,7 @@ class Tag extends Versionable implements Extension\ICount, Feature\Starrable  {
     $ids = array_column($result->asArray(), 'id');
     foreach ($ids as $id) {
       $post = $this->couch->getDoc(Couch::STD_DOC_PATH, $id);
+      // todo reindex the post
       $post->reindex();
     }
   }
