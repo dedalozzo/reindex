@@ -13,6 +13,7 @@ namespace ReIndex\Collection;
 
 use ReIndex\Model\Member;
 
+use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
 
@@ -25,7 +26,10 @@ class Blacklist extends MetaCollection {
 
   const NAME = "blacklist";
 
-  protected $couch; // Stores the CouchDB instance.
+  /**
+   * @var Couch $couch
+   */
+  protected $couch;
 
   protected $blacklist = NULL; // Stores the blacklist.
 
@@ -55,7 +59,10 @@ class Blacklist extends MetaCollection {
       // Assigns the members' IDs.
       $ids = array_keys($this->meta[static::NAME]);
 
-      $this->blacklist = $this->couch->queryView("members", "all", $ids, $opts)->asArray();
+      if (empty($ids))
+        $this->blacklist = [];
+      else
+        $this->blacklist = $this->couch->queryView("members", "all", $ids, $opts)->asArray();
     }
 
     return $this->blacklist;
