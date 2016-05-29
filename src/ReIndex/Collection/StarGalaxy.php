@@ -49,6 +49,7 @@ class StarGalaxy implements \Countable {
 
   /**
    * @brief Returns the number of stars for the specified item.
+   * @retval int
    */
   public function count() {
     $opts = new ViewQueryOpts();
