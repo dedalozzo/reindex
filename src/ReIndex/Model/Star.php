@@ -11,7 +11,11 @@
 namespace ReIndex\Model;
 
 
+use ReIndex\Feature\Starrable;
+
 use EoC\Doc\Doc;
+
+use ReIndex\Helper\Text;
 
 
 /**
@@ -23,20 +27,13 @@ class Star extends Doc {
   /**
    * @brief Creates an instance of Star class.
    */
-  public static function create($userId, Storable $item, $timestamp = NULL) {
+  public static function create(Member $member, Starrable $item, $timestamp = NULL) {
     $instance = new self();
 
-    $instance->meta["userId"] = $userId;
-    $instance->meta["itemId"] = $item->unversionId;
-    $instance->meta["itemType"] = $item->type;
-
-    // Articles, questions, books have a unique supertype: post.
-    if ($item->isMetadataPresent('supertype')) {
-      $instance->meta["itemSupertype"] = $item->getMetadata('supertype');
-
-      if ($item->isMetadataPresent('index'))
-        $instance->meta["index"] = $item->getMetadata('index');
-    }
+    $instance->meta["userId"] = $member->id;
+    $instance->meta["itemId"] = Text::unversion($item->getId());
+    $instance->meta["itemType"] = $item->getType();
+    $instance->meta["itemSupertype"] = $item->getSupertype();;
 
     // A post can be published or not.
     if ($item->isMetadataPresent('publishedAt'))
