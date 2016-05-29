@@ -17,7 +17,7 @@ use Phalcon\Di;
 
 
 /**
- * @brief
+ * @brief This task updates a bunch of Redis sets eventually used to sort posts in many different ways.
  * @nosubgrouping
  */
 class IndexPostTask implements ITask {
