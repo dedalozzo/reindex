@@ -10,7 +10,10 @@
 namespace ReIndex\Security\Role\ReviewerRole;
 
 
-class RejectRevisionPermission {
+use ReIndex\Security\Role\AbstractPermission;
+
+
+class RejectRevisionPermission extends AbstractPermission {
 
 
   public function getDescription() {
