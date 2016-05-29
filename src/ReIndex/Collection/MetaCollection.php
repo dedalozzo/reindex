@@ -21,10 +21,17 @@ use Phalcon\Di;
  */
 abstract class MetaCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
 
-  protected $meta;  // Stores the metadata.
-  protected $di;    // Stores the default Dependency Injector.
-
   const NAME = "collection";
+  
+  /**
+   * @var array $meta
+   */
+  protected $meta;
+
+  /**
+   * @var Di $di
+   */
+  protected $di;
 
 
   /**
