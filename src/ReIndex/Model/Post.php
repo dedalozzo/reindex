@@ -54,6 +54,16 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   use Extension\TCount, Extension\TVote;
   use Property\TExcerpt, Property\TBody, Property\TDescription;
 
+  /** @name Redis Set Names */
+  //!@{
+
+  const NEW_SET = 'new_'; //!< Newest posts Redis set.
+  const POP_SET = 'pop_'; //!< Popular posts Redis set.
+  const ACT_SET = 'act_'; //!< Active posts Redis set.
+  const OPN_SET = 'opn_'; //!< Open questions Redis set.
+
+  //!@}
+
   /** @name Protection Levels */
   //!@{
 
@@ -203,7 +213,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   public function save() {
     if ($this->state->isCreated()) {
       // Since we can't use reflection inside EoC Server, we need a way to recognize every subclass of the `Post` class.
-      // This is done testing `isset($doc->supertype) && $doc->supertype === 'post'`.
+      // This is done testing `isset($doc->supertype) && $doc->supertype == 'post'`.
       $this->meta['supertype'] = 'post';
 
       // After the creation the post must be visible.
