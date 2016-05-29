@@ -15,6 +15,10 @@ use ReIndex\Model\Post;
 
 use Phalcon\Di;
 
+use EoC\Couch;
+
+use Monolog\Logger;
+
 
 /**
  * @brief This task updates a bunch of Redis sets eventually used to sort posts in many different ways.
@@ -22,24 +26,30 @@ use Phalcon\Di;
  */
 class IndexPostTask implements ITask {
 
-  /** @name Redis Set Names */
-  //!@{
+  /**
+   * @var Di $di
+   */
+  protected $di;
 
-  const NEW_SET = 'new_'; //!< Newest posts Redis set.
-  const POP_SET = 'pop_'; //!< Popular posts Redis set.
-  const ACT_SET = 'act_'; //!< Active posts Redis set.
-  const OPN_SET = 'opn_'; //!< Open questions Redis set.
+  /**
+   * @var Couch $couch
+   */
+  protected $couch;
 
-  //!@}
+  /**
+   * @var \Redis $redis
+   */
+  protected $redis;
 
+  /**
+   * @var Logger $log
+   */
+  protected $log;
 
-  private $post;
-
-  protected $di; // Stores the default Dependency Injector.
-  protected $couch; // Stores the Elephant on Couch Client instance.
-  protected $redis; // Stores the Redis client instance.
-  protected $log; // Store the logger instance.
-  protected $user; // Stores the current user.
+  /**
+   * @var Post $post
+   */
+  protected $post;
 
 
   /**
@@ -51,8 +61,6 @@ class IndexPostTask implements ITask {
     $this->couch = $this->di['couchdb'];
     $this->redis = $this->di['redis'];
     $this->log = $this->di['log'];
-
-    $this->user = $this->di['guardian']->getUser();
 
     $this->post = $post;
   }
@@ -207,7 +215,7 @@ class IndexPostTask implements ITask {
    * @brief Adds the post to the newest index.
    */
   private function zAddNewest() {
-    $this->zAdd(self::NEW_SET, $this->post->publishedAt);
+    $this->zAdd(Post::NEW_SET, $this->post->publishedAt);
   }
 
 
@@ -215,7 +223,7 @@ class IndexPostTask implements ITask {
    * @brief Removes the post from the newest index.
    */
   private function zRemNewest() {
-    $this->zRem(self::NEW_SET);
+    $this->zRem(Post::NEW_SET);
   }
 
 
@@ -230,7 +238,7 @@ class IndexPostTask implements ITask {
       ($this->post->getHitsCount() * $config->scoring->hitCoefficient);
 
     $date = (new \DateTime())->setTimestamp($this->post->publishedAt);
-    $this->zAddSpecial(self::POP_SET, $date, $popularity);
+    $this->zAddSpecial(Post::POP_SET, $date, $popularity);
   }
 
 
@@ -239,7 +247,7 @@ class IndexPostTask implements ITask {
    */
   private function zRemPopular() {
     $date = (new \DateTime())->setTimestamp($this->post->publishedAt);
-    $this->zRemSpecial(self::POP_SET, $date);
+    $this->zRemSpecial(Post::POP_SET, $date);
   }
 
 
@@ -254,10 +262,10 @@ class IndexPostTask implements ITask {
     $timestamp = $this->post->getLastUpdate();
 
     // Order set with all the posts.
-    $this->redis->zAdd(self::ACT_SET . 'post', $timestamp, $id);
+    $this->redis->zAdd(Post::ACT_SET . 'post', $timestamp, $id);
 
     // Order set with all the posts of a specific type: article, question, ecc.
-    $this->redis->zAdd(self::ACT_SET . $type, $timestamp, $id);
+    $this->redis->zAdd(Post::ACT_SET . $type, $timestamp, $id);
 
     if (!$this->post->tags->isEmpty()) {
       $tags = $this->post->tags->uniqueMasters();
@@ -266,16 +274,16 @@ class IndexPostTask implements ITask {
         // Filters posts which should appear on the home page.
 
         // Order set with all the posts related to a specific tag.
-        $this->redis->zAdd(self::ACT_SET . $tagId . '_' . 'post', $timestamp, $id);
+        $this->redis->zAdd(Post::ACT_SET . $tagId . '_' . 'post', $timestamp, $id);
 
         // Used to get a list of tags recently updated.
-        $this->redis->zAdd(self::ACT_SET . 'tags' . '_' . 'post', $timestamp, $tagId);
+        $this->redis->zAdd(Post::ACT_SET . 'tags' . '_' . 'post', $timestamp, $tagId);
 
         // Order set with all the posts of a specific type, related to a specific tag.
-        $this->redis->zAdd(self::ACT_SET . $tagId . '_' . $type, $timestamp, $id);
+        $this->redis->zAdd(Post::ACT_SET . $tagId . '_' . $type, $timestamp, $id);
 
         // Used to get a list of tags, in relation to a specific type, recently updated.
-        $this->redis->zAdd(self::ACT_SET . 'tags' . '_' . $type, $timestamp, $tagId);
+        $this->redis->zAdd(Post::ACT_SET . 'tags' . '_' . $type, $timestamp, $tagId);
       }
     }
   }
@@ -289,26 +297,26 @@ class IndexPostTask implements ITask {
     $type = $this->post->getType();
 
     // Order set with all the posts.
-    $this->redis->zRem(self::ACT_SET . 'post', $id);
+    $this->redis->zRem(Post::ACT_SET . 'post', $id);
 
     // Order set with all the posts of a specific type: article, question, ecc.
-    $this->redis->zRem(self::ACT_SET . $type, $id);
+    $this->redis->zRem(Post::ACT_SET . $type, $id);
 
     $tags = $this->post->getOriginalTags();
     foreach ($tags as $tagId) {
       // Filters posts which should appear on the home page.
 
       // Order set with all the posts related to a specific tag.
-      $this->redis->zRem(self::ACT_SET . $tagId . '_' . 'post', $id);
+      $this->redis->zRem(Post::ACT_SET . $tagId . '_' . 'post', $id);
 
       // Used to get a list of tags recently updated.
-      $this->redis->zRem(self::ACT_SET . 'tags' . '_' . 'post', $tagId);
+      $this->redis->zRem(Post::ACT_SET . 'tags' . '_' . 'post', $tagId);
 
       // Order set with all the posts of a specific type, related to a specific tag.
-      $this->redis->zRem(self::ACT_SET . $tagId . '_' . $type, $id);
+      $this->redis->zRem(Post::ACT_SET . $tagId . '_' . $type, $id);
 
       // Used to get a list of tags, in relation to a specific type, recently updated.
-      $this->redis->zRem(self::ACT_SET . 'tags' . '_' . $type, $tagId);
+      $this->redis->zRem(Post::ACT_SET . 'tags' . '_' . $type, $tagId);
     }
   }
 
