@@ -84,7 +84,7 @@ MAP;
     function allPosts() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->isPost))
+  if (isset($doc->supertype) && $doc->supertype == 'post')
     $emit($doc->_id, [
         'type' => $doc->type,
         'state' => $doc->state,
@@ -114,7 +114,7 @@ MAP;
     function unversionPosts() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->isPost) && $doc->state == 'current')
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->state == 'current')
     $emit($doc->unversionId);
 };
 MAP;
@@ -133,7 +133,7 @@ MAP;
     function postsByUrl() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->isPost) && ($doc->state == 'current' or $doc->state == 'deleted'))
+  if (isset($doc->supertype) && $doc->supertype == 'post' && ($doc->state == 'current' or $doc->state == 'deleted'))
     $emit([$doc->year, $doc->month, $doc->day, $doc->slug]);
 };
 MAP;
@@ -151,7 +151,7 @@ MAP;
     function postsByLegacyId() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->isPost) && $doc->state == 'current')
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->state == 'current')
     $emit($doc->legacyId);
 };
 MAP;
@@ -169,7 +169,7 @@ MAP;
     function approvedRevisionsByUrl() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->isPost) && $doc->state == 'approved')
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->state == 'approved')
     $emit([$doc->year, $doc->month, $doc->day, $doc->slug]);
 };
 MAP;
@@ -186,7 +186,7 @@ MAP;
     function postsPerTag() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->isPost) && $doc->state == 'current' && isset($doc->tags))
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->state == 'current' && isset($doc->tags))
     foreach ($doc->tags as $tagId)
       $emit($tagId);
 };
@@ -554,7 +554,7 @@ MAP;
 
 
     // @params: userId
-    function favoritesByMemberTags() {
+    function favoriteTagsPerMember() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'star' && $doc->itemType == 'tag')
@@ -562,21 +562,21 @@ function($doc) use ($emit) {
 };
 MAP;
 
-      $handler = new ViewHandler("byMemberTags");
+      $handler = new ViewHandler("tagsPerMember");
       $handler->mapFn = $map;
       $handler->useBuiltInReduceFnCount();
 
       return $handler;
     }
 
-    $doc->addHandler(favoritesByMemberTags());
+    $doc->addHandler(favoriteTagsPerMember());
 
 
     // @params: userId
     function favoritesPerAddedAt() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'star' && isset($doc->itemSupertype) && $doc->itemSupertype == 'post' && $doc->index)
+  if ($doc->type == 'star' && $doc->itemSupertype == 'post')
     $emit([$doc->userId, $doc->itemAddedAt], $doc->itemId);
 };
 MAP;
@@ -614,7 +614,7 @@ MAP;
     function favoritesPerPublishedAt() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'star' && isset($doc->itemSupertype) && $doc->itemSupertype == 'post' && $doc->index)
+  if ($doc->type == 'star' && $doc->itemSupertype == 'post')
     $emit([$doc->userId, $doc->itemPublishedAt], $doc->itemId);
 };
 MAP;
@@ -633,7 +633,7 @@ MAP;
     function favoritesPerPublishedAtByType() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'star' && isset($doc->itemSupertype) && $doc->itemSupertype == 'post')
+  if ($doc->type == 'star' && $doc->itemSupertype == 'post')
     $emit([$doc->userId, $doc->itemType, $doc->itemPublishedAt], $doc->itemId);
 };
 MAP;
@@ -795,7 +795,7 @@ MAP;
     function repliesPerPost() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) and $doc->supertype == 'reply')
+  if ($doc->type == 'reply')
     $emit($doc->postId);
 };
 MAP;
@@ -814,7 +814,7 @@ MAP;
     function newestRepliesPerPost() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) and $doc->supertype == 'reply')
+  if ($doc->type == 'reply')
     $emit([$doc->postId, $doc->publishedAt]);
 };
 MAP;
@@ -833,7 +833,7 @@ MAP;
     function activeRepliesPerPost() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) and $doc->supertype == 'reply')
+  if ($doc->type == 'reply')
     $emit([$doc->postId, $doc->modifiedAt]);
 };
 MAP;
@@ -1109,14 +1109,13 @@ MAP;
     function recentTags() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->isPost))
+  if (isset(isset($doc->supertype) && $doc->supertype == 'post'))
     $emit($doc->publishedAt, $doc->points);
 };
 MAP;
 
       $handler = new ViewHandler("recentTags");
       $handler->mapFn = $map;
-      //$handler->reduceFn = $reduce;
 
       return $handler;
     }
