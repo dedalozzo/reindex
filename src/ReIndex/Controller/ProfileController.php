@@ -232,7 +232,7 @@ class ProfileController extends ListController {
 
     // Converts ISO 8601 timestamp.
     $formatDate = function (&$value, $key) {
-      $value['created_at'] = Helper\Time::when(date("U",strtotime($value['created_at'])));
+      $value['created_at'] = Helper\Time::when(date("U", strtotime($value['created_at'])));
     };
     array_walk($repos, $formatDate);
 
