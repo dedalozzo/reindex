@@ -9,7 +9,7 @@ class Versionable {
   /** @name Properties */
   //!@{
 
-  string $state;                 //!< The state of the document.
+  VersionState $state;            //!< The state of the document.
 
   string $unversionId;            //!< [readonly] The id pruned of its version number.
 
