@@ -16,6 +16,7 @@ use EoC\Couch;
 use EoC\Doc\Doc;
 use EoC\Generator\UUID;
 
+use Monolog\Logger;
 use Phalcon\Di;
 
 use ReIndex\Helper;
@@ -34,11 +35,30 @@ use ReIndex\Helper;
  */
 abstract class Storable extends Doc {
 
-  protected $di;    // Stores the default Dependency Injector.
-  protected $couch; // Stores the Elephant on Couch Client instance.
-  protected $redis; // Stores the Redis client instance.
-  protected $log;   // Store the logger instance.
-  protected $user;  // Stores the current user.
+  /**
+   * @var Di $di
+   */
+  protected $di;
+
+  /**
+   * @var Couch $couch
+   */
+  protected $couch;
+
+  /**
+   * @var \Redis $redis
+   */
+  protected $redis;
+
+  /**
+   * @var Logger $log
+   */
+  protected $log;
+
+  /**
+   * @var Member $user
+   */
+  protected $user;
 
 
   /**
