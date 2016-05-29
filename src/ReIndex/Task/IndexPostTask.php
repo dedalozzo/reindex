@@ -94,7 +94,7 @@ class IndexPostTask implements ITask {
    * @param[in] string $set The name of the Redis set.
    * @param[in] int $score The score.
    */
-  protected function zAdd($set, $score) {
+  private function zAdd($set, $score) {
     if (!$this->post->isVisible()) return;
 
     $id = $this->post->unversionId;
@@ -124,7 +124,7 @@ class IndexPostTask implements ITask {
    * @brief Removes the post ID from the specified Redis set.
    * @param[in] string $set The name of the Redis set.
    */
-  protected function zRem($set) {
+  private function zRem($set) {
     $id = $this->post->unversionId;
     $type = $this->post->getType();
 
@@ -151,7 +151,7 @@ class IndexPostTask implements ITask {
    * @param[in] \DateTime $date Use this date to create multiple subsets.
    * @param[in] int $score The score.
    */
-  protected function zAddSpecial($set, \DateTime $date, $score) {
+  private function zAddSpecial($set, \DateTime $date, $score) {
     if (!$this->post->isVisible()) return;
 
     $id = $this->post->unversionId;
@@ -182,7 +182,7 @@ class IndexPostTask implements ITask {
    * @param[in] string $set The name of the Redis set.
    * @param[in] \DateTime $date Use this date to create multiple subsets.
    */
-  protected function zRemSpecial($set, \DateTime $date) {
+  private function zRemSpecial($set, \DateTime $date) {
     $id = $this->post->unversionId;
     $type = $this->post->getType();
 
@@ -206,7 +206,7 @@ class IndexPostTask implements ITask {
   /**
    * @brief Adds the post to the newest index.
    */
-  public function zAddNewest() {
+  private function zAddNewest() {
     $this->zAdd(self::NEW_SET, $this->post->publishedAt);
   }
 
@@ -214,7 +214,7 @@ class IndexPostTask implements ITask {
   /**
    * @brief Removes the post from the newest index.
    */
-  public function zRemNewest() {
+  private function zRemNewest() {
     $this->zRem(self::NEW_SET);
   }
 
@@ -222,7 +222,7 @@ class IndexPostTask implements ITask {
   /**
    * @brief Adds the post to the popular index.
    */
-  public function zAddPopular() {
+  private function zAddPopular() {
     $config = $this->di['config'];
 
     $popularity = ($this->post->getScore() * $config->scoring->voteCoefficient) +
@@ -237,7 +237,7 @@ class IndexPostTask implements ITask {
   /**
    * @brief Removes the post from the popular index.
    */
-  public function zRemPopular() {
+  private function zRemPopular() {
     $date = (new \DateTime())->setTimestamp($this->post->publishedAt);
     $this->zRemSpecial(self::POP_SET, $date);
   }
@@ -246,7 +246,7 @@ class IndexPostTask implements ITask {
   /**
    * @brief Adds the post to the active index.
    */
-  public function zAddActive() {
+  private function zAddActive() {
     if (!$this->post->isVisible()) return;
 
     $id = $this->post->unversionId;
@@ -284,7 +284,7 @@ class IndexPostTask implements ITask {
   /**
    * @brief Removes the post from the active index.
    */
-  public function zRemActive() {
+  private function zRemActive() {
     $id = $this->post->unversionId;
     $type = $this->post->getType();
 
