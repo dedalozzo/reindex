@@ -1,15 +1,26 @@
 <?php
+
 /**
- * @file IMessage.php
- * @brief This file contains the ${CLASS_NAME} class.
+ * @file ITask.php
+ * @brief This file contains the ITask class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-namespace ReIndex\Queue\Message;
+//! Tasks
+namespace ReIndex\Queue\Task;
 
 
-interface IMessage {
+/**
+ * @brief A common interface to describe a generic task.
+ */
+interface ITask {
+
+
+  /**
+   * @brief Performs the task execution.
+   */
+  function execute();
 
 }
