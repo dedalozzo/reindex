@@ -18,6 +18,7 @@
         "ext-iconv": "*",
         "ext-mbstring": "*",
         "ext-amqp": "*",
+        "sneakybobito/phalcon-stubs": "2.0.10",
         "3f/eoc-client": "dev-master",
         "3f/pygmentize": "dev-master",
         "3f/converter": "dev-master",
