@@ -8,6 +8,7 @@
  */
 
 
+//! AMQP queue related classes
 namespace ReIndex\Queue;
 
 
@@ -16,10 +17,16 @@ use AMQPConnection;
 use Phalcon\Di;
 
 
-abstract class AbstractQueueAdapter implements IQueueAdapter {
+/**
+ * @brief An abstract AMQP queue.
+ */
+abstract class AbstractQueue {
   protected $amqp;
 
 
+  /**
+   * @brief Constructor.
+   */
   public function __construct() {
     $di = Di::getDefault();
     $config = $di['config'];
@@ -34,15 +41,11 @@ abstract class AbstractQueueAdapter implements IQueueAdapter {
   }
 
 
-  abstract public function publish($msg = NULL);
-
-
-  abstract public function consume();
-
-
+  /**
+   * @brief Destructor.
+   */
   public function __destruct() {
     $this->amqp->disconnect();
   }
-
 
 }
