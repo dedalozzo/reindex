@@ -34,6 +34,9 @@ class IndexController extends ListController {
   // Actions that aren't listing actions.
   protected static $actions = ['show', 'edit', 'new'];
 
+  // The controller name and also the document's type.
+  protected $type;
+
   // Periods of time.
   protected $periods;
 
@@ -237,7 +240,7 @@ class IndexController extends ListController {
    * @param[in] \DateTime $maxDate Maximum date.
    * @param[in] string $unversionTagId (optional) An optional unversioned tag ID.
    */
-  protected function perDate($minDate, $maxDate, $unversionTagId = NULL) {
+  protected function perDate(\DateTime $minDate, \DateTime $maxDate, $unversionTagId = NULL) {
     $this->zRevRangeByScore(Post::NEW_SET, '', $unversionTagId, $minDate->getTimestamp(), $maxDate->getTimestamp());
 
     $this->view->setVar('title', sprintf('%s by date', ucfirst($this->getLabel())));
@@ -518,20 +521,22 @@ class IndexController extends ListController {
     $startKey = isset($_GET['startkey']) ? (int)$_GET['startkey'] : Couch::WildCard();
     if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
 
+    $userId = $this->user->getId();
+
     if ($this->isSameClass()) {
-      $opts->setStartKey([$this->user->id, $startKey])->setEndKey([$this->user->id]);
+      $opts->setStartKey([$userId, $startKey])->setEndKey([$userId]);
       $rows = $this->couch->queryView("favorites", $perDate, NULL, $opts);
 
-      $opts->reduce()->setStartKey([$this->user->id, Couch::WildCard()])->unsetOpt('startkey_docid');
+      $opts->reduce()->setStartKey([$userId, Couch::WildCard()])->unsetOpt('startkey_docid');
       $count = $this->couch->queryView("favorites", $perDate, NULL, $opts)->getReducedValue();
 
       $key = 1;
     }
     else {
-      $opts->setStartKey([$this->user->id, $this->type, $startKey])->setEndKey([$this->user->id, $this->type]);
+      $opts->setStartKey([$userId, $this->type, $startKey])->setEndKey([$userId, $this->type]);
       $rows = $this->couch->queryView("favorites", $perDateByType, NULL, $opts);
 
-      $opts->reduce()->setStartKey([$this->user->id, $this->type, Couch::WildCard()])->unsetOpt('startkey_docid');
+      $opts->reduce()->setStartKey([$userId, $this->type, Couch::WildCard()])->unsetOpt('startkey_docid');
       $count = $this->couch->queryView("favorites", $perDateByType, NULL, $opts)->getReducedValue();
 
       $key = 2;
