@@ -11,7 +11,7 @@ Some of the supported features are:
 - Versioning
 - Peer reviewing
 - Tags and synonyms (merging is also supported)
-- OAuth2 with Facebook, LinkedIn, Google+ and GitHub authentication
+- OAuth2 with Facebook, LinkedIn, Google and GitHub authentication
 - Markdown
 - Syntax highlighting
 - Themes
@@ -21,7 +21,7 @@ Composer Installation
 ---------------------
 
 To install ReIndex, you first need to install [Composer](http://getcomposer.org/), a Package Manager for
-PHP, following those few [steps](http://getcomposer.org/doc/00-intro.md#installation-nix):
+PHP, following these few [steps](http://getcomposer.org/doc/00-intro.md#installation-nix):
 
 ```sh
 curl -s https://getcomposer.org/installer | php
@@ -66,7 +66,7 @@ Built With
 - [RabbitMQ](https://www.rabbitmq.com)
 - [Elephant on Couch](http://elephantoncouch.com)
 
-Plus lots of PHP extensions and libraries. See the [composer.json](https://github.com/dedalozzo/pit-press/blob/master/composer.json) 
+Plus lots of PHP extensions and libraries. See the [composer.json](https://github.com/dedalozzo/reindex/blob/master/composer.json)
 file for a complete list of dependencies.
 
 
