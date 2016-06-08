@@ -26,6 +26,7 @@ abstract class AbstractQueue {
 
   /**
    * @brief Constructor.
+   * @param[in] Phalcon\Config $config The configuration object.
    */
   public function __construct($config) {
     $this->amqp = new AMQPConnection();
