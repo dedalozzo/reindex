@@ -27,11 +27,9 @@ abstract class AbstractQueue {
   /**
    * @brief Constructor.
    */
-  public function __construct() {
-    $di = Di::getDefault();
-    $config = $di['config'];
-
+  public function __construct($config) {
     $this->amqp = new AMQPConnection();
+
     $this->amqp->setHost($config->rabbitmq->host);
     $this->amqp->setPort($config->rabbitmq->port);
     $this->amqp->setLogin($config->rabbitmq->user);
