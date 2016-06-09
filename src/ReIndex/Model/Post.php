@@ -23,6 +23,7 @@ use ReIndex\Collection;
 use ReIndex\Exception;
 use ReIndex\Security\Role;
 use ReIndex\Enum\VersionState;
+use ReIndex\Task\IndexPostTask;
 
 use Phalcon\Di;
 
@@ -78,11 +79,15 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   // Collection of tags.
   private $tags;
 
+  // Collection of tasks.
+  private $tasks;
+
   // A collection of members who have subscribed the post.
   private $subscriptions;
 
   // Galaxy of stars.
   private $stars;
+
 
   /**
    * @var Hoedown $markdown
@@ -97,6 +102,9 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
 
     $this->meta['tags'] = [];
     $this->tags = new Collection\TagCollection($this->meta);
+
+    $this->meta['tasks'] = [];
+    $this->tags = new Collection\TaskCollection($this->meta);
 
     $this->stars = new Collection\StarGalaxy($this);
     $this->subscriptions = new Collection\SubscriptionCollection($this);
@@ -223,7 +231,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     // Now we call the parent implementation.
     parent::save();
 
-    // todo Queue the task.
+    $this->tasks->add(new IndexPostTask($this));
   }
 
 
