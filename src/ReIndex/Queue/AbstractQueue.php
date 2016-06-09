@@ -21,6 +21,7 @@ use Phalcon\Di;
  * @brief An abstract AMQP queue.
  */
 abstract class AbstractQueue {
+
   protected $amqp;
 
 
