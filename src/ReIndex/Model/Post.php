@@ -85,7 +85,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
   private $stars;
 
   /**
-   * @var \Hoedown $markdown
+   * @var Hoedown $markdown
    */
   protected $markdown;
 
