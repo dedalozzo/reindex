@@ -17,6 +17,7 @@ use EoC\Doc\Doc;
 use EoC\Generator\UUID;
 
 use Monolog\Logger;
+
 use Phalcon\Di;
 
 use ReIndex\Helper;
