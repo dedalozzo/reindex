@@ -28,7 +28,7 @@ class InstallCommand extends AbstractCommand {
    */
   protected function configure() {
     $this->setName("install");
-    $this->setDescription("Executes the following commands: `create`, `init all`, `cache rebuild`.");
+    $this->setDescription("Executes the following commands: `create`, `init all`.");
   }
 
 
@@ -49,15 +49,6 @@ class InstallCommand extends AbstractCommand {
     $arguments = [
       'command' => 'init',
       'documents' => ['all']
-    ];
-    $input = new ArrayInput($arguments);
-    $command->run($input, $output);
-
-    // Rebuild cache.
-    $command = $this->getApplication()->find('cache');
-    $arguments = [
-      'command' => 'cache',
-      'subcommand' => ['rebuild']
     ];
     $input = new ArrayInput($arguments);
     $command->run($input, $output);
