@@ -15,7 +15,13 @@ namespace ReIndex\Task;
  * @brief A piece of work to be done or undertaken.
  * @nosubgrouping
  */
-interface ITask {
+interface ITask extends \Serializable {
+
+
+  /**
+   * @brief Initializes the task.
+   */
+  function init();
 
 
   /**
