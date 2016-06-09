@@ -24,7 +24,7 @@ use Monolog\Logger;
 
 
 /**
- * @brief
+ * @brief This task updates a bunch of Redis sets eventually used to sort posts in many different ways.
  * @nosubgrouping
  */
 class IndexMemberTask implements ITask {
@@ -60,12 +60,27 @@ class IndexMemberTask implements ITask {
    * @param[in] Member $member A member.
    */
   public function __construct(Member $member) {
+    $this->member = $member;
+    $this->init();
+  }
+
+
+  public function init() {
     $this->di = Di::getDefault();
     $this->couch = $this->di['couchdb'];
     $this->redis = $this->di['redis'];
     $this->log = $this->di['log'];
+  }
 
-    $this->member = $member;
+
+  public function serialize() {
+    return serialize($this->member->id);
+  }
+
+
+  public function unserialize($serialized) {
+    $this->init();
+    $this->member = $this->couch->getDoc(Couch::STD_DOC_PATH, unserialize($serialized));
   }
 
 
@@ -108,7 +123,7 @@ class IndexMemberTask implements ITask {
     // Username or full name has been changed or the member has never been indexed.
     if ($hash['username'] != $username or $hash['fullName'] != $fullName) {
       $opts = new ViewQueryOpts();
-      $opts->doNotReduce()->setKey([$this->user->id]);
+      $opts->doNotReduce()->setKey([$this->member->id]);
       $rows = $this->couch->queryView("friendships", "approvedPerMember", NULL, $opts);
 
       $this->redis->multi();
