@@ -19,6 +19,7 @@ use ReIndex\Security\User\IUser;
 use ReIndex\Security\Role;
 use ReIndex\Security\Role\IPermission;
 use ReIndex\Security\Role\MemberRole;
+use ReIndex\Task\IndexMemberTask;
 
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
@@ -61,6 +62,7 @@ class Member extends Storable implements IUser, Extension\ICount {
 
   const MR_HASH = '_mr'; //!< Members Redis hash.
 
+  private $tasks;    // Collection of tasks.
   private $emails;    // Collection of e-mails.
   private $logins;    // Collection of consumers' logins.
   private $roles;     // Collection of roles.
@@ -72,6 +74,9 @@ class Member extends Storable implements IUser, Extension\ICount {
 
   public function __construct() {
     parent::__construct();
+
+    $this->meta['tasks'] = [];
+    $this->tags = new Collection\TaskCollection($this->meta);
 
     $this->meta['emails'] = [];
     $this->emails = new Collection\EmailCollection($this->meta);
@@ -238,23 +243,17 @@ class Member extends Storable implements IUser, Extension\ICount {
 
   /**
    * @brief Saves the member.
-   * @param[in] bool $deferred When `true` doesn't update the indexes.
    */
-  public function save($deferred = FALSE) {
+  public function save() {
     $memberRole = new MemberRole();
 
     // We must grant at least the MemberRole for the current member.
     if (!$this->roles->areSuperiorThan($memberRole))
       $this->roles->grant($memberRole);
 
-    // Since we can't use reflection inside EoC Server, we need a way to recognize if a class implements the `ICache`
-    // interface. This is done using a property `useCache`, we can test using `isset($doc->useCache)`.
-    if (empty($this->meta['useCache']))
-      $this->meta['useCache'] = TRUE;
-
     parent::save();
 
-    // todo Queue the task.
+    $this->tasks->add(new IndexMemberTask($this));
   }
 
 
