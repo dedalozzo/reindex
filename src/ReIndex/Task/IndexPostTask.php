@@ -57,12 +57,27 @@ class IndexPostTask implements ITask {
    * @param[in] Post $post A post.
    */
   public function __construct(Post $post) {
+    $this->post = $post;
+    $this->init();
+  }
+
+
+  public function init() {
     $this->di = Di::getDefault();
     $this->couch = $this->di['couchdb'];
     $this->redis = $this->di['redis'];
     $this->log = $this->di['log'];
+  }
 
-    $this->post = $post;
+
+  public function serialize() {
+    return serialize($this->post->id);
+  }
+
+
+  public function unserialize($serialized) {
+    $this->init();
+    $this->post = $this->couch->getDoc(Couch::STD_DOC_PATH, unserialize($serialized));
   }
 
 
