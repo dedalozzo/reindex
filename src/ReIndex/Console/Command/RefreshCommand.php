@@ -21,9 +21,6 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 use EoC\Hook\IChunkHook;
-use Eoc\Exception\ServerErrorException;
-
-use ReIndex\Extension\ICache;
 
 
 /**
@@ -34,6 +31,7 @@ class IndexCommand extends AbstractCommand implements IChunkHook {
 
   private $redis;
   private $couch;
+  private $rabbit;
   private $progress;
 
   private $input;
@@ -49,20 +47,13 @@ class IndexCommand extends AbstractCommand implements IChunkHook {
 
 
   /**
-   * @brief Updates the database cache.
-   */
-  private function buildCache(InputInterface $input, OutputInterface $output) {
-  }
-
-
-  /**
    * @brief Configures the command.
    */
   protected function configure() {
     $this->setName("index");
     $this->setDescription("Performs database indexes maintenance activities.");
     $this->addArgument("subcommand",
-      InputArgument::REQUIRED, 'Use `clear` to clean the indexes. Use `all` to recreate the indexes. Use a document ID to index a single document.');
+      InputArgument::REQUIRED, 'Use `clear` to clean the indexes. Use `build` to recreate the indexes.');
   }
 
 
@@ -75,6 +66,7 @@ class IndexCommand extends AbstractCommand implements IChunkHook {
 
     $this->redis = $this->di['redis'];
     $this->couch = $this->di['couchdb'];
+    $this->rabbit = $this->di['rabbitmq'];
 
     $subcommand = $input->getArgument('subcommand');
 
@@ -114,24 +106,14 @@ class IndexCommand extends AbstractCommand implements IChunkHook {
         }
 
         break;
-      default:
-        $doc = $this->couch->getDoc(Couch::STD_DOC_PATH, $subcommand);
-
-        if ($doc instanceof ICache)
-          $doc->index();
-        else
-          new \RuntimeException("The document cannot be indexed.");
-
-        break;
     }
 
     parent::execute($input, $output);
   }
 
 
-
   /**
-   * @copydoc ICache::process()
+   * @brief In case a chunk represent a document, creates the corespondent task and enqueue it.
    */
   public function process($chunk) {
     $row = json_decode(trim($chunk, ',\r\n'));
@@ -142,9 +124,28 @@ class IndexCommand extends AbstractCommand implements IChunkHook {
     // In order to execute a command have have it not hang your php script while it runs, the program you run must not
     // output back to php. To do this, redirect both stdout and stderr to /dev/null, then background it.
     // @see http://stackoverflow.com/a/3819422/1889828
-    $cmd = 'nohup setsid rei index '. $row->id . '> /dev/null 2>&1 &';
+    //$cmd = 'nohup rei index '. $row->id . '> /dev/null 2>&1 &';
 
-    exec($cmd);
+    //exec($cmd);
+    $doc = $this->couch->getDoc(Couch::STD_DOC_PATH, $row->id);
+
+    $this->log->addDebug($doc->id);
+
+    if ($doc instanceof ICache) {
+      $channel = new AMQPChannel($this->rabbit);
+      $exchange = new AMQPExchange($channel);
+
+      $channel->startTransaction();
+
+      $exchange->publish($message, 'task_queue');
+
+      $channel->commitTransaction();
+
+      // Adds the task to RabbitMQ.
+      //$doc->index();
+    }
+    else
+      new \RuntimeException("The document cannot be indexed.");
 
     $this->progress->advance();
   }
