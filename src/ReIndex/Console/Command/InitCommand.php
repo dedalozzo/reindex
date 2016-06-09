@@ -32,7 +32,7 @@ class InitCommand extends AbstractCommand {
    * @brief Insert all design documents.
    */
   protected function initAll() {
-    $this->initDocs();
+    $this->initTasks();
     $this->initPosts();
     $this->initTags();
     $this->initRevisions();
@@ -47,32 +47,6 @@ class InitCommand extends AbstractCommand {
     $this->initUpdates();
     $this->initReplies();
     $this->initVarious();
-  }
-
-
-  protected function initDocs() {
-    $doc = DesignDoc::create('docs');
-
-
-    function toIndexDocs() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if (isset($doc->useCache))
-    $emit($doc->id);
-};
-MAP;
-
-      $handler = new ViewHandler("toIndex");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount();
-
-      return $handler;
-    }
-
-    $doc->addHandler(toIndexDocs());
-
-
-    $this->couch->saveDoc($doc);
   }
 
 
@@ -944,6 +918,34 @@ MAP;
     }
 
     $doc->addHandler(followingPerMember());
+
+
+    $this->couch->saveDoc($doc);
+  }
+
+
+  protected function initTasks() {
+    $doc = DesignDoc::create('tasks');
+
+
+    function allTasks() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->tasks)) {
+    foreach ($tasks as $key => $value)
+      $emit($doc->id, $key);
+  }
+};
+MAP;
+
+      $handler = new ViewHandler("all");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
+
+      return $handler;
+    }
+
+    $doc->addHandler(allTasks());
 
 
     $this->couch->saveDoc($doc);
