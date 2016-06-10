@@ -24,7 +24,7 @@ class TaskCollection extends MetaCollection {
   const NAME = "tasks";
 
   /**
-   * @var TaskQueue $taskQueue
+   * @var TaskQueue $queue
    */
   protected $queue;
 
