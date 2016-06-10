@@ -15,11 +15,13 @@ use ReIndex\Feature;
 use ReIndex\Extension;
 use ReIndex\Property;
 use ReIndex\Helper;
+use ReIndex\Queue\TaskQueue;
+use ReIndex\Task\IndexPostTask;
 
-use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
 use Phalcon\Di;
+
 
 
 /**
@@ -32,8 +34,17 @@ class Tag extends Versionable implements Extension\ICount, Feature\Starrable  {
   use Property\TExcerpt, Property\TBody, Property\TDescription;
 
 
+  /**
+   * @var TaskQueue $queue
+   */
+  protected $queue;
+
+
   public function __construct() {
     parent::__construct();
+
+    $this->queue = $this->di['taskqueue'];
+
     $this->meta['master'] = TRUE;
     $this->meta['synonyms'] = [];
   }
@@ -138,10 +149,14 @@ class Tag extends Versionable implements Extension\ICount, Feature\Starrable  {
     if ($result->isEmpty()) return;
 
     $ids = array_column($result->asArray(), 'id');
+
     foreach ($ids as $id) {
-      $post = $this->couch->getDoc(Couch::STD_DOC_PATH, $id);
-      // todo reindex the post
-      $post->reindex();
+      // We use update here but we could use article, question, etc. We don't really care, we just need a subclass
+      // of Post, since it's abstract and we can't instantiate it.
+      $task = new IndexPostTask(Update::create($id));
+
+      // Enqueues the task.
+      $this->queue->add($task);
     }
   }
 
