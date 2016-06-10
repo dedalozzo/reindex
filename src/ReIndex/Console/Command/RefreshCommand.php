@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file IndexCommand.php
- * @brief This file contains the IndexCommand class.
+ * @file RefreshCommand.php
+ * @brief This file contains the RefreshCommand class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -10,50 +10,49 @@
 
 namespace ReIndex\Console\Command;
 
+use ReIndex\Queue\TaskQueue;
+use ReIndex\Task;
 
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Helper\ProgressBar;
 
-use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 use EoC\Hook\IChunkHook;
 
+use Monolog\Logger;
+
 
 /**
- * @brief Updates Redis data.
+ * @brief Refreshes the database cache.
+ * @details This class implement the IChunkHook interface.
  * @nosubgrouping
  */
-class IndexCommand extends AbstractCommand implements IChunkHook {
-
-  private $redis;
-  private $couch;
-  private $rabbit;
-  private $progress;
-
-  private $input;
-  private $output;
-
+class RefreshCommand extends AbstractCommand implements IChunkHook {
 
   /**
-   * @brief Clears the database cache.
+   * @var TaskQueue $queue
    */
-  private function clearCache() {
-    $this->redis->flushDB();
-  }
+  protected $queue;
+
+  /**
+   * @var Logger $log
+   */
+  protected $log;
+
+  /**
+   * @var ProgressBar $progress
+   */
+  private $progress;
 
 
   /**
    * @brief Configures the command.
    */
   protected function configure() {
-    $this->setName("index");
-    $this->setDescription("Performs database indexes maintenance activities.");
-    $this->addArgument("subcommand",
-      InputArgument::REQUIRED, 'Use `clear` to clean the indexes. Use `build` to recreate the indexes.');
+    $this->setName("refresh");
+    $this->setDescription("Refreshes the application cache.");
   }
 
 
@@ -61,51 +60,30 @@ class IndexCommand extends AbstractCommand implements IChunkHook {
    * @brief Executes the command.
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $this->input = $input;
-    $this->output = $output;
+    $question = new ConfirmationQuestion('Are you sure you want refresh application cache? [Y/n]', FALSE);
 
-    $this->redis = $this->di['redis'];
-    $this->couch = $this->di['couchdb'];
-    $this->rabbit = $this->di['rabbitmq'];
+    $helper = $this->getHelper('question');
 
-    $subcommand = $input->getArgument('subcommand');
+    if ($helper->ask($input, $output, $question)) {
+      $output->writeln("Refreshing application cache...");
 
-    switch ($subcommand) {
-      case 'clear':
-        $question = new ConfirmationQuestion('Are you sure you want clear the indexes? [Y/n]', FALSE);
+      $couch = $this->di['couchdb'];
 
-        $helper = $this->getHelper('question');
+      $opts = new ViewQueryOpts();
+      $opts->reduce();
+      $docsCount = $couch->queryView("tasks", "all", NULL, $opts)->getReducedValue();
 
-        if ($helper->ask($input, $output, $question))
-          $this->clearCache();
+      $this->progress = new ProgressBar($output, $docsCount);
+      $this->progress->setRedrawFrequency(1);
+      $this->progress->setOverwrite(TRUE);
+      $this->progress->start();
 
-        break;
-      case 'all':
-        $question = new ConfirmationQuestion('Are you sure you want build database cache? [Y/n]', FALSE);
+      $opts->reset();
+      $opts->doNotReduce();
 
-        $helper = $this->getHelper('question');
+      $couch->queryView("tasks", "all", NULL, $opts, $this);
 
-        if ($helper->ask($input, $output, $question)) {
-          $output->writeln("Indexing documents...");
-
-          $opts = new ViewQueryOpts();
-          $opts->reduce();
-          $docsCount = $this->couch->queryView("docs", "toIndex", NULL, $opts)->getReducedValue();
-
-          $this->progress = new ProgressBar($output, $docsCount);
-          $this->progress->setRedrawFrequency(1);
-          $this->progress->setOverwrite(TRUE);
-          $this->progress->start();
-
-          $opts->reset();
-          $opts->doNotReduce();
-
-          $this->couch->queryView("docs", "toIndex", NULL, $opts, $this);
-
-          $this->progress->finish();
-        }
-
-        break;
+      $this->progress->finish();
     }
 
     parent::execute($input, $output);
@@ -121,33 +99,26 @@ class IndexCommand extends AbstractCommand implements IChunkHook {
     if (is_null($row))
       return;
 
+    $class = $row->class;
+
+    $post = new $class;
+    $post->id = $row->id;
+
+    $tasks = $row->tasks;
+
+    foreach ($tasks as $task) {
+      $task = new $task['class']($post);
+      $this->queue->add($task);
+    }
+
+    $this->progress->advance();
+
+    // NOTE: We no longer use this tecnique due to process spam.
     // In order to execute a command have have it not hang your php script while it runs, the program you run must not
     // output back to php. To do this, redirect both stdout and stderr to /dev/null, then background it.
     // @see http://stackoverflow.com/a/3819422/1889828
     //$cmd = 'nohup rei index '. $row->id . '> /dev/null 2>&1 &';
-
     //exec($cmd);
-    $doc = $this->couch->getDoc(Couch::STD_DOC_PATH, $row->id);
-
-    $this->log->addDebug($doc->id);
-
-    if ($doc instanceof ICache) {
-      $channel = new AMQPChannel($this->rabbit);
-      $exchange = new AMQPExchange($channel);
-
-      $channel->startTransaction();
-
-      $exchange->publish($message, 'task_queue');
-
-      $channel->commitTransaction();
-
-      // Adds the task to RabbitMQ.
-      //$doc->index();
-    }
-    else
-      new \RuntimeException("The document cannot be indexed.");
-
-    $this->progress->advance();
   }
 
 }
