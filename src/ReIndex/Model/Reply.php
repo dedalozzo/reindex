@@ -25,12 +25,8 @@ class Reply extends Versionable implements Extension\IVote {
   use Property\TBody;
 
 
-  /**
-   * @param[in] $bypass When `true` calls directly the parent method.
-   */
-  public function save($bypass = FALSE) {
-    if (!$bypass)
-      $this->meta['supertype'] = 'reply';
+  public function save() {
+    $this->meta['supertype'] = 'reply';
 
     parent::save();
   }
