@@ -56,7 +56,7 @@ class TagCollection extends MetaCollection {
    * @param[in] string $tagId The tag uuid.
    */
   public function add($tagId) {
-    $this->meta['tags'][] = Helper\Text::unversion($tagId);
+    $this->meta[static::NAME][] = Helper\Text::unversion($tagId);
   }
 
 
