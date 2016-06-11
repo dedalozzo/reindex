@@ -14,9 +14,9 @@ namespace ReIndex\Model;
 use ReIndex\Feature;
 use ReIndex\Extension;
 use ReIndex\Property;
+use ReIndex\Collection;
 use ReIndex\Helper;
 use ReIndex\Queue\TaskQueue;
-use ReIndex\Task\IndexPostTask;
 
 use EoC\Opt\ViewQueryOpts;
 
@@ -40,13 +40,20 @@ class Tag extends Versionable implements Extension\ICount, Feature\Starrable  {
   protected $queue;
 
 
+  // Collection of synonyms.
+  private $synonyms;
+
+
+
   public function __construct() {
     parent::__construct();
 
     $this->queue = $this->di['taskqueue'];
 
     $this->meta['master'] = TRUE;
+
     $this->meta['synonyms'] = [];
+    $this->synonyms = new Collection\SynonymCollection($this->meta);
   }
 
 
@@ -94,11 +101,6 @@ class Tag extends Versionable implements Extension\ICount, Feature\Starrable  {
   /** @name Synonyms Management Methods */
   //!@{
 
-  private function addMultipleSynonymsAtOnce(array $synonyms) {
-    $this->meta['synonyms'] = Helper\ArrayHelper::merge($this->meta['synonyms'], $synonyms);
-  }
-
-
   /**
    * @brief Returns `true` in case this tag is marked as synonym, `false` otherwise.
    * @retval bool
@@ -113,51 +115,15 @@ class Tag extends Versionable implements Extension\ICount, Feature\Starrable  {
    */
   public function transIntoSynonym() {
     $this->meta['master'] = FALSE;
-
-    if ($this->isMetadataPresent('synonyms'))
-      unset($this->meta['synonyms']);
+    $this->synonyms->reset();
   }
 
 
   /**
-   * @brief Returns the ids of its synonyms.
-   * @retval array An array of strings.
+   * @brief Transforms the tag into a master.
    */
-  public function getSynonyms() {
-    return (!$this->isSynonym()) ? $this->meta['synonyms'] : [];
-  }
-
-
-  /**
-   * @brief Marks the provided tag as synonym of the current tag.
-   * @param[in] Tag $tag The tag you want add as synonym to the current tag.
-   */
-  public function addSynonym(Tag $tag) {
-    // You can't add a synonym to a synonym, neither you can add a master to a synonym.
-    if ($this->isSynonym() or !$this->state->isCurrent() or $tag->isSynonym() or !$tag->state->isCurrent()) return;
-
-    array_push($this->meta['synonyms'], $tag->unversionId);
-    $this->addMultipleSynonymsAtOnce($tag->getSynonyms());
-
-    $tag->transIntoSynonym();
-    $tag->save();
-
-    $opts = new ViewQueryOpts();
-    $opts->setKey($tag->unversionId)->doNotReduce();
-    $result = $this->couch->queryView('posts', 'perTag', NULL, $opts);
-
-    if ($result->isEmpty()) return;
-
-    $ids = array_column($result->asArray(), 'id');
-
-    foreach ($ids as $id) {
-      // We use update here but we could use article, question, etc. We don't really care, we just need a subclass
-      // of Post, since it's abstract and we can't instantiate it.
-      $task = new IndexPostTask(Update::create($id));
-
-      // Enqueues the task.
-      $this->queue->add($task);
-    }
+  public function transIntoMaster() {
+    $this->meta['master'] = TRUE;
   }
 
   //!@}
@@ -207,6 +173,16 @@ class Tag extends Versionable implements Extension\ICount, Feature\Starrable  {
   public function unsetName() {
     if ($this->isMetadataPresent('name'))
       unset($this->meta['name']);
+  }
+
+
+  public function getSynonyms() {
+    return $this->synonyms;
+  }
+
+
+  public function issetSynonyms() {
+    return isset($this->synonyms);
   }
 
   //! @endcond
