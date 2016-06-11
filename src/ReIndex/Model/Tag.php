@@ -138,12 +138,6 @@ class Tag extends Versionable implements Extension\ICount, Feature\Starrable  {
       $purged = Helper\Text::purge($this->html);
       $this->excerpt = Helper\Text::truncate($purged);
     }
-    else {
-      // A synonym doesn't have a body and all that stuff, it has just a name.
-      unset($this->body);
-      unset($this->html);
-      unset($this->excerpt);
-    }
 
     parent::save();
   }
