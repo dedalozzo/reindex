@@ -26,6 +26,12 @@ use Monolog\Logger;
  */
 class IndexPostTask implements ITask {
 
+  private $oldTags; // Original tags.
+  private $newTags; // Unique master tags.
+
+  private $id;      // Post's ID.
+  private $type;    // Post's type.
+
   /**
    * @var Di $di
    */
@@ -88,12 +94,12 @@ class IndexPostTask implements ITask {
    * @param[in] string $id The post ID.
    * @param[in] int $score The score.
    */
-  private function zMultipleAdd($set, \DateTime $date, $id, $score) {
-    $this->redis->zAdd($set, $score, $id);
-    $this->redis->zAdd($set . $date->format('_Ymd'), $score, $id);
-    $this->redis->zAdd($set . $date->format('_Ym'), $score, $id);
-    $this->redis->zAdd($set . $date->format('_Y'), $score, $id);
-    $this->redis->zAdd($set . $date->format('_Y_w'), $score, $id);
+  private function zMultipleAdd($set, \DateTime $date, $score) {
+    $this->redis->zAdd($set, $score, $this->id);
+    $this->redis->zAdd($set . $date->format('_Ymd'), $score, $this->id);
+    $this->redis->zAdd($set . $date->format('_Ym'), $score, $this->id);
+    $this->redis->zAdd($set . $date->format('_Y'), $score, $this->id);
+    $this->redis->zAdd($set . $date->format('_Y_w'), $score, $this->id);
   }
 
 
@@ -103,12 +109,12 @@ class IndexPostTask implements ITask {
    * @param[in] \DateTime $date A date.
    * @param[in] string $id The post ID.
    */
-  private function zMultipleRem($set, \DateTime $date, $id) {
-    $this->redis->zRem($set, $id);
-    $this->redis->zRem($set . $date->format('_Ymd'), $id);
-    $this->redis->zRem($set . $date->format('_Ym'), $id);
-    $this->redis->zRem($set . $date->format('_Y'), $id);
-    $this->redis->zRem($set . $date->format('_Y_w'), $id);
+  private function zMultipleRem($set, \DateTime $date) {
+    $this->redis->zRem($set, $this->id);
+    $this->redis->zRem($set . $date->format('_Ymd'), $this->id);
+    $this->redis->zRem($set . $date->format('_Ym'), $this->id);
+    $this->redis->zRem($set . $date->format('_Y'), $this->id);
+    $this->redis->zRem($set . $date->format('_Y_w'), $this->id);
   }
 
 
@@ -120,25 +126,18 @@ class IndexPostTask implements ITask {
   private function zAdd($set, $score) {
     if (!$this->post->isVisible()) return;
 
-    $id = $this->post->unversionId;
-    $type = $this->post->getType();
-
     // Order set with all the posts.
-    $this->redis->zAdd($set . 'post', $score, $id);
+    $this->redis->zAdd($set . 'post', $score, $this->id);
 
     // Order set with all the posts of a specific type.
-    $this->redis->zAdd($set . $type, $score, $id);
+    $this->redis->zAdd($set . $this->type, $score, $this->id);
 
-    if (!$this->post->tags->isEmpty()) {
-      $tags = $this->post->tags->uniqueMasters();
+    foreach ($this->newTags as $tagId) {
+      // Order set with all the posts related to a specific tag.
+      $this->redis->zAdd($set . $tagId . '_' . 'post', $score, $this->id);
 
-      foreach ($tags as $tagId) {
-        // Order set with all the posts related to a specific tag.
-        $this->redis->zAdd($set . $tagId . '_' . 'post', $score, $id);
-
-        // Order set with all the posts of a specific type, related to a specific tag.
-        $this->redis->zAdd($set . $tagId . '_' . $type, $score, $id);
-      }
+      // Order set with all the posts of a specific type, related to a specific tag.
+      $this->redis->zAdd($set . $tagId . '_' . $this->type, $score, $this->id);
     }
   }
 
@@ -148,22 +147,18 @@ class IndexPostTask implements ITask {
    * @param[in] string $set The name of the Redis set.
    */
   private function zRem($set) {
-    $id = $this->post->unversionId;
-    $type = $this->post->getType();
-
     // Order set with all the posts.
-    $this->redis->zRem($set.'post', $id);
+    $this->redis->zRem($set.'post', $this->id);
 
     // Order set with all the posts of a specific type.
-    $this->redis->zRem($set . $type, $id);
+    $this->redis->zRem($set . $this->type, $this->id);
 
-    $tags = $this->post->getOriginalTags();
-    foreach ($tags as $tagId) {
+    foreach ($this->oldTags as $tagId) {
       // Order set with all the posts related to a specific tag.
-      $this->redis->zRem($set . $tagId . '_' . 'post', $id);
+      $this->redis->zRem($set . $tagId . '_' . 'post', $this->id);
 
       // Order set with all the posts of a specific type, related to a specific tag.
-      $this->redis->zRem($set . $tagId . '_' . $type, $id);
+      $this->redis->zRem($set . $tagId . '_' . $this->type, $this->id);
     }
   }
 
@@ -177,25 +172,18 @@ class IndexPostTask implements ITask {
   private function zAddSpecial($set, \DateTime $date, $score) {
     if (!$this->post->isVisible()) return;
 
-    $id = $this->post->unversionId;
-    $type = $this->post->getType();
-
     // Order set with all the posts.
-    $this->zMultipleAdd($set . 'post', $date, $id, $score);
+    $this->zMultipleAdd($set . 'post', $date, $score);
 
     // Order set with all the posts of a specific type: article, question, ecc.
-    $this->zMultipleAdd($set . $type, $date, $id, $score);
+    $this->zMultipleAdd($set . $this->type, $date, $score);
 
-    if (!$this->post->tags->isEmpty()) {
-      $tags = $this->post->tags->uniqueMasters();
+    foreach ($this->newTags as $tagId) {
+      // Order set with all the posts related to a specific tag.
+      $this->zMultipleAdd($set . $tagId . '_' . 'post', $date, $score);
 
-      foreach ($tags as $tagId) {
-        // Order set with all the posts related to a specific tag.
-        $this->zMultipleAdd($set . $tagId . '_' . 'post', $date, $id, $score);
-
-        // Order set with all the post of a specific type, related to a specific tag.
-        $this->zMultipleAdd($set . $tagId . '_' . $type, $date, $id, $score);
-      }
+      // Order set with all the post of a specific type, related to a specific tag.
+      $this->zMultipleAdd($set . $tagId . '_' . $this->type, $date, $score);
     }
   }
 
@@ -206,22 +194,18 @@ class IndexPostTask implements ITask {
    * @param[in] \DateTime $date Use this date to create multiple subsets.
    */
   private function zRemSpecial($set, \DateTime $date) {
-    $id = $this->post->unversionId;
-    $type = $this->post->getType();
-
     // Order set with all the posts.
-    $this->zMultipleRem($set . 'post', $date, $id);
+    $this->zMultipleRem($set . 'post', $date);
 
     // Order set with all the posts of a specific type.
-    $this->zMultipleRem($set . $type, $date, $id);
+    $this->zMultipleRem($set . $this->type, $date);
 
-    $tags = $this->post->getOriginalTags();
-    foreach ($tags as $tagId) {
+    foreach ($this->oldTags as $tagId) {
       // Order set with all the posts related to a specific tag.
-      $this->zMultipleRem($set . $tagId . '_' . 'post', $date, $id);
+      $this->zMultipleRem($set . $tagId . '_' . 'post', $date);
 
       // Order set with all the post of a specific type, related to a specific tag.
-      $this->zMultipleRem($set . $tagId . '_' . $type, $date, $id);
+      $this->zMultipleRem($set . $tagId . '_' . $this->type, $date);
     }
   }
 
@@ -272,34 +256,26 @@ class IndexPostTask implements ITask {
   private function zAddActive() {
     if (!$this->post->isVisible()) return;
 
-    $id = $this->post->unversionId;
-    $type = $this->post->getType();
     $timestamp = $this->post->getLastUpdate();
 
     // Order set with all the posts.
-    $this->redis->zAdd(Post::ACT_SET . 'post', $timestamp, $id);
+    $this->redis->zAdd(Post::ACT_SET . 'post', $timestamp, $this->id);
 
     // Order set with all the posts of a specific type: article, question, ecc.
-    $this->redis->zAdd(Post::ACT_SET . $type, $timestamp, $id);
+    $this->redis->zAdd(Post::ACT_SET . $this->type, $timestamp, $this->id);
 
-    if (!$this->post->tags->isEmpty()) {
-      $tags = $this->post->tags->uniqueMasters();
+    foreach ($this->newTags as $tagId) {
+      // Order set with all the posts related to a specific tag.
+      $this->redis->zAdd(Post::ACT_SET . $tagId . '_' . 'post', $timestamp, $this->id);
 
-      foreach ($tags as $tagId) {
-        // Filters posts which should appear on the home page.
+      // Used to get a list of tags recently updated.
+      $this->redis->zAdd(Post::ACT_SET . 'tags' . '_' . 'post', $timestamp, $tagId);
 
-        // Order set with all the posts related to a specific tag.
-        $this->redis->zAdd(Post::ACT_SET . $tagId . '_' . 'post', $timestamp, $id);
+      // Order set with all the posts of a specific type, related to a specific tag.
+      $this->redis->zAdd(Post::ACT_SET . $tagId . '_' . $this->type, $timestamp, $this->id);
 
-        // Used to get a list of tags recently updated.
-        $this->redis->zAdd(Post::ACT_SET . 'tags' . '_' . 'post', $timestamp, $tagId);
-
-        // Order set with all the posts of a specific type, related to a specific tag.
-        $this->redis->zAdd(Post::ACT_SET . $tagId . '_' . $type, $timestamp, $id);
-
-        // Used to get a list of tags, in relation to a specific type, recently updated.
-        $this->redis->zAdd(Post::ACT_SET . 'tags' . '_' . $type, $timestamp, $tagId);
-      }
+      // Used to get a list of tags, in relation to a specific type, recently updated.
+      $this->redis->zAdd(Post::ACT_SET . 'tags' . '_' . $this->type, $timestamp, $tagId);
     }
   }
 
@@ -308,30 +284,24 @@ class IndexPostTask implements ITask {
    * @brief Removes the post from the active index.
    */
   private function zRemActive() {
-    $id = $this->post->unversionId;
-    $type = $this->post->getType();
-
     // Order set with all the posts.
-    $this->redis->zRem(Post::ACT_SET . 'post', $id);
+    $this->redis->zRem(Post::ACT_SET . 'post', $this->id);
 
     // Order set with all the posts of a specific type: article, question, ecc.
-    $this->redis->zRem(Post::ACT_SET . $type, $id);
+    $this->redis->zRem(Post::ACT_SET . $this->type, $this->id);
 
-    $tags = $this->post->getOriginalTags();
-    foreach ($tags as $tagId) {
-      // Filters posts which should appear on the home page.
-
+    foreach ($this->oldTags as $tagId) {
       // Order set with all the posts related to a specific tag.
-      $this->redis->zRem(Post::ACT_SET . $tagId . '_' . 'post', $id);
+      $this->redis->zRem(Post::ACT_SET . $tagId . '_' . 'post', $this->id);
 
       // Used to get a list of tags recently updated.
       $this->redis->zRem(Post::ACT_SET . 'tags' . '_' . 'post', $tagId);
 
       // Order set with all the posts of a specific type, related to a specific tag.
-      $this->redis->zRem(Post::ACT_SET . $tagId . '_' . $type, $id);
+      $this->redis->zRem(Post::ACT_SET . $tagId . '_' . $this->type, $this->id);
 
       // Used to get a list of tags, in relation to a specific type, recently updated.
-      $this->redis->zRem(Post::ACT_SET . 'tags' . '_' . $type, $tagId);
+      $this->redis->zRem(Post::ACT_SET . 'tags' . '_' . $this->type, $tagId);
     }
   }
 
@@ -340,6 +310,8 @@ class IndexPostTask implements ITask {
    * @brief Removes the post ID from the indexes.
    */
   protected function deindex() {
+    $this->oldTags = $this->post->getOriginalTags();
+
     $this->zRemNewest();
     $this->zRemPopular();
     $this->zRemActive();
@@ -353,6 +325,8 @@ class IndexPostTask implements ITask {
     // We are only indexing current versions.
     if (!$this->post->state->isCurrent())
       return;
+
+    $this->newTags = $this->post->tags->uniqueMasters();
 
     $this->zAddNewest();
     $this->zAddPopular();
@@ -370,6 +344,9 @@ class IndexPostTask implements ITask {
 
 
   public function execute() {
+    $this->id = $this->post->unversionId;
+    $this->type = $this->post->getType();
+
     // Marks the start of a transaction block. Subsequent commands will be queued for atomic execution using `exec()`.
     $this->redis->multi();
 
