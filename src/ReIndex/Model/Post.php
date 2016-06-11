@@ -545,6 +545,26 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     return isset($this->tags);
   }
 
+
+  public function getTasks() {
+    return $this->tasks;
+  }
+
+
+  public function issetTasks() {
+    return isset($this->tasks);
+  }
+
+
+  public function getStars() {
+    return $this->stars;
+  }
+
+
+  public function issetStars() {
+    return isset($this->stars);
+  }
+
   //! @endcond
 
 }
