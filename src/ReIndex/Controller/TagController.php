@@ -158,7 +158,7 @@ class TagController extends ListController {
       $this->view->disable();
     }
     else {
-      throw new \RuntimeException("Non hai specificato un query per la ricerca.");
+      throw new \RuntimeException("Non hai specificato una query per la ricerca.");
     }
   }
 
