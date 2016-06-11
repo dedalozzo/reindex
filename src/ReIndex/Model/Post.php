@@ -104,7 +104,7 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     $this->tags = new Collection\TagCollection($this->meta);
 
     $this->meta['tasks'] = [];
-    $this->tags = new Collection\TaskCollection($this->meta);
+    $this->tasks = new Collection\TaskCollection($this->meta);
 
     $this->stars = new Collection\StarGalaxy($this);
     $this->subscriptions = new Collection\SubscriptionCollection($this);
