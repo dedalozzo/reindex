@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file MetaCollection.php
  * @brief This file contains the MetaCollection class.
