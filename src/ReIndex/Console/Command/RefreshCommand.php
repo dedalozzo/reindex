@@ -112,13 +112,6 @@ class RefreshCommand extends AbstractCommand implements IChunkHook {
     }
 
     $this->progress->advance();
-
-    // NOTE: We no longer use this tecnique due to process spam.
-    // In order to execute a command have have it not hang your php script while it runs, the program you run must not
-    // output back to php. To do this, redirect both stdout and stderr to /dev/null, then background it.
-    // @see http://stackoverflow.com/a/3819422/1889828
-    //$cmd = 'nohup rei index '. $row->id . '> /dev/null 2>&1 &';
-    //exec($cmd);
   }
 
 }
