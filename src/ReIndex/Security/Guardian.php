@@ -12,11 +12,14 @@
 namespace ReIndex\Security;
 
 
+Use EoC\Couch;
 use EoC\Extension;
 use EoC\Opt\ViewQueryOpts;
 
 use ReIndex\Factory\UserFactory;
 use ReIndex\Security\Role\IRole;
+
+use Monolog\Logger;
 
 
 /**
@@ -29,10 +32,17 @@ class Guardian {
   private static $initialized = FALSE;
 
   protected static $user = NULL; // Current user.
-  protected static $roles = []; // Available roles.
+  protected static $roles = [];  // Available roles.
 
-  private $log; // Monolog instance.
-  private $couch; // CouchDB client instance.
+  /**
+   * @var Couch $couch
+   */
+  protected $couch;
+
+  /**
+   * @var Logger $log
+   */
+  protected $log;
 
 
   public function __construct($config, $di) {
