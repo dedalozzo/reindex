@@ -91,7 +91,6 @@ class IndexPostTask implements ITask {
    * @brief Adds an ID, using the provided score, to multiple sets of the Redis db.
    * @param[in] string $set The name of the base Redis set.
    * @param[in] \DateTime $date A date.
-   * @param[in] string $id The post ID.
    * @param[in] int $score The score.
    */
   private function zMultipleAdd($set, \DateTime $date, $score) {
@@ -107,7 +106,6 @@ class IndexPostTask implements ITask {
    * @brief Removes an ID from multiple sets of the Redis db.
    * @param[in] string $set The name of the base Redis set.
    * @param[in] \DateTime $date A date.
-   * @param[in] string $id The post ID.
    */
   private function zMultipleRem($set, \DateTime $date) {
     $this->redis->zRem($set, $this->id);
