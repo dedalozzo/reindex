@@ -160,7 +160,7 @@ MAP;
     function postsPerTag() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->state == 'current' && isset($doc->tags))
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->state == 'current' && $doc->visible && isset($doc->tags))
     foreach ($doc->tags as $tagId)
       $emit($tagId);
 };
