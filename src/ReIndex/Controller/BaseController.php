@@ -33,9 +33,6 @@ use Monolog\Logger;
  */
 abstract class BaseController extends Controller {
 
-  /**
-   * @var IUser $user
-   */
   protected $config;
 
   /**
