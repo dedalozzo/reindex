@@ -76,7 +76,7 @@ class Member extends Storable implements IUser, Extension\ICount {
     parent::__construct();
 
     $this->meta['tasks'] = [];
-    $this->tags = new Collection\TaskCollection($this->meta);
+    $this->tasks = new Collection\TaskCollection($this->meta);
 
     $this->meta['emails'] = [];
     $this->emails = new Collection\EmailCollection($this->meta);
