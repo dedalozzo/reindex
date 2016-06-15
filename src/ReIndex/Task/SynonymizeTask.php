@@ -132,7 +132,7 @@ class SynonymizeTask implements ITask {
     $this->redis->del(Post::ACT_SET . $this->synonymId . '_' . 'post');
     $this->redis->del(Post::POP_SET . $this->synonymId . '_' . 'post');
 
-    $types = $this->di['config']->postTypes;
+    $types = explode(',', str_replace(' ', '', $this->di['config']->postTypes));
 
     foreach ($types as $type) {
       $set = Post::ACT_SET . 'tags' . '_' . $type;
