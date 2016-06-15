@@ -11,6 +11,7 @@
 namespace ReIndex\Collection;
 
 
+use ReIndex\Security\User\IUser;
 use ReIndex\Security\Role\IRole;
 use ReIndex\Security\Role\AdminRole\GrantRolePermission;
 use ReIndex\Exception\NotEnoughPrivilegesException;
@@ -24,7 +25,10 @@ class RoleCollection extends MetaCollection {
 
   const NAME = "roles";
 
-  protected $user;  // Stores the current user.
+  /**
+   * @var IUser $user
+   */
+  protected $user;
 
 
   /**
