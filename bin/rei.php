@@ -61,10 +61,13 @@ try {
   $console->add(new Command\AboutCommand());
   $console->add(new Command\CreateCommand());
   $console->add(new Command\InitCommand());
-  $console->add(new Command\GrantCommand());
-  $console->add(new Command\RevokeCommand());
-  $console->add(new Command\RefreshCommand());
   $console->add(new Command\InstallCommand());
+  $console->add(new Command\RefreshCommand());
+  $console->add(new Command\Role\GrantCommand());
+  $console->add(new Command\Role\RevokeCommand());
+  $console->add(new Command\Synonym\AddSynonymCommand());
+  $console->add(new Command\Synonym\DelSynonymCommand());
+  $console->add(new Command\Synonym\ListSynonymsCommand());
 
   $console->run();
 }
