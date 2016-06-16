@@ -11,6 +11,7 @@
 namespace ReIndex\Task;
 
 
+use ReIndex\Model\Tag;
 use ReIndex\Model\Post;
 
 use Phalcon\Di;
@@ -23,7 +24,8 @@ use Monolog\Logger;
 
 /**
  * @brief This task is queued and executed just in case a tag becomes the synonym of another tag.
- * @details Updates a bunch of Redis sets eventually used to sort posts in many different ways.
+ * @details Updates a bunch of Redis sets eventually used to sort posts in many different ways.\n
+ * This class implement the IChunkHook interface.
  * @nosubgrouping
  */
 class SynonymizeTask implements ITask {
@@ -113,6 +115,9 @@ class SynonymizeTask implements ITask {
 
 
   public function execute() {
+    $masterTag = Tag::find($this->masterId);
+    $synonymTag = Tag::find($this->synonymId);
+
     $synonymScore = $this->redis->zScore(Post::ACT_SET . 'tags' . '_' . 'post', $this->synonymId);
     $masterScore = $this->redis->zScore(Post::ACT_SET . 'tags' . '_' . 'post', $this->masterId);
 
@@ -151,6 +156,21 @@ class SynonymizeTask implements ITask {
     }
 
     $this->redis->exec();
+
+    // Creates a synonym having the (unversioned) ID used for the tag and even the same name.
+    $synonym = $synonymTag->castAsSynonym();
+
+    // Adds the newly created synonym to the master's synonyms collection.
+    $masterTag->synonyms->add($synonym);
+
+    // Saves the master tag.
+    $masterTag->save();
+
+    // Marks the synonym tag for deletion.
+    $synonymTag->delete();
+
+    // Deletes the synonym tag.
+    $synonymTag->save();
   }
 
 
