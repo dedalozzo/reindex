@@ -219,10 +219,61 @@ MAP;
     $doc->addHandler(allNames());
 
 
+    function newestTags() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'tag' && $doc->state == 'current')
+    $emit($doc->createdAt);
+};
+MAP;
+
+      $handler = new ViewHandler("newest");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(newestTags());
+
+
+    function tagsByName() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'tag' && $doc->state == 'current' && empty($doc->synonymizing))
+    $emit($doc->name);
+};
+MAP;
+
+      $handler = new ViewHandler("byName");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(tagsByName());
+
+
+    function tagsAndSynonymsByName() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (($doc->type == 'tag' && $doc->state == 'current') or $doc->type == 'synonym')
+    $emit($doc->name);
+};
+MAP;
+
+      $handler = new ViewHandler("andSynonymsByName");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(tagsAndSynonymsByName());
+
+
     function synonyms() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'tag' && $doc->master) {
+  if ($doc->type == 'tag') {
     $emit($doc->unversionId, $doc->unversionId);
 
     foreach ($doc->synonyms as $value)
@@ -238,6 +289,24 @@ MAP;
     }
 
     $doc->addHandler(synonyms());
+
+
+    function synonymsByName() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'synonym') {
+    $emit($doc->name);
+  }
+};
+MAP;
+
+      $handler = new ViewHandler("synonymsByName");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(synonymsByName());
 
 
     function substrings() {
@@ -267,57 +336,6 @@ MAP;
     }
 
     $doc->addHandler(substrings());
-
-
-    function newestTags() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'tag' && $doc->state == 'current' && $doc->master)
-    $emit($doc->createdAt);
-};
-MAP;
-
-      $handler = new ViewHandler("newest");
-      $handler->mapFn = $map;
-
-      return $handler;
-    }
-
-    $doc->addHandler(newestTags());
-
-
-    function tagsByName() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'tag' && $doc->state == 'current' && $doc->master)
-    $emit($doc->name);
-};
-MAP;
-
-      $handler = new ViewHandler("byName");
-      $handler->mapFn = $map;
-
-      return $handler;
-    }
-
-    $doc->addHandler(tagsByName());
-
-
-    function tagsByNameSpecial() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'tag' && ($doc->state == 'current' or $doc->state == 'deleted'))
-    $emit($doc->name);
-};
-MAP;
-
-      $handler = new ViewHandler("byNameSpecial");
-      $handler->mapFn = $map;
-
-      return $handler;
-    }
-
-    $doc->addHandler(tagsByNameSpecial());
 
 
     $this->couch->saveDoc($doc);
@@ -933,7 +951,7 @@ MAP;
 function($doc) use ($emit) {
   if (isset($doc->tasks)) {
     foreach ($tasks as $key => $value)
-      $emit($doc->id, $key);
+      $emit($doc->_id, $key);
   }
 };
 MAP;
