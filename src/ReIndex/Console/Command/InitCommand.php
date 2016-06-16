@@ -202,23 +202,6 @@ MAP;
     $doc->addHandler(allTags());
 
 
-    function allNames() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'tag' && $doc->state == 'current')
-    $emit($doc->unversionId, $doc->name);
-};
-MAP;
-
-      $handler = new ViewHandler("allNames");
-      $handler->mapFn = $map;
-
-      return $handler;
-    }
-
-    $doc->addHandler(allNames());
-
-
     function newestTags() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
@@ -236,6 +219,43 @@ MAP;
     $doc->addHandler(newestTags());
 
 
+    function tagsAllNames() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'tag' && $doc->state == 'current')
+    $emit($doc->unversionId, $doc->name);
+};
+MAP;
+
+      $handler = new ViewHandler("allNames");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
+
+      return $handler;
+    }
+
+    $doc->addHandler(tagsAllNames());
+
+
+    function synonymsAllNames() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'synonym') {
+    $emit($doc->_id, $doc->name);
+  }
+};
+MAP;
+
+      $handler = new ViewHandler("synonymsAllName");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
+
+      return $handler;
+    }
+
+    $doc->addHandler(synonymsAllNames());
+
+
     function tagsByName() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
@@ -251,6 +271,24 @@ MAP;
     }
 
     $doc->addHandler(tagsByName());
+
+
+    function synonymsByName() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'synonym') {
+    $emit($doc->name);
+  }
+};
+MAP;
+
+      $handler = new ViewHandler("synonymsByName");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(synonymsByName());
 
 
     function tagsAndSynonymsByName() {
@@ -289,24 +327,6 @@ MAP;
     }
 
     $doc->addHandler(synonyms());
-
-
-    function synonymsByName() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'synonym') {
-    $emit($doc->name);
-  }
-};
-MAP;
-
-      $handler = new ViewHandler("synonymsByName");
-      $handler->mapFn = $map;
-
-      return $handler;
-    }
-
-    $doc->addHandler(synonymsByName());
 
 
     function substrings() {
