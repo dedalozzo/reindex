@@ -23,7 +23,6 @@ use Monolog\Logger;
 
 /**
  * @brief Displays the synonyms of a tag or add a tag as a synonym of another one.
- * @details This class implement the IChunkHook interface.
  * @nosubgrouping
  */
 class AddSynonymCommand extends AbstractCommand {
@@ -39,7 +38,7 @@ class AddSynonymCommand extends AbstractCommand {
    */
   protected function configure() {
     $this->setName("addsynonym");
-    $this->setDescription("Displays the synonyms of a tag or add a tag as a synonym of another one or remove it.");
+    $this->setDescription("Adds a synonym to a tag.");
 
     $this->addArgument("tag",
       InputArgument::REQUIRED,
