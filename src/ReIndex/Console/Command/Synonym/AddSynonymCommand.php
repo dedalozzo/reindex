@@ -8,7 +8,7 @@
  */
 
 
-namespace ReIndex\Console\Command;
+namespace ReIndex\Console\Command\Synonym;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -16,9 +16,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
+use ReIndex\Console\Command\AbstractCommand;
 use ReIndex\Thesaurus;
-
-use Monolog\Logger;
 
 
 /**
@@ -26,11 +25,6 @@ use Monolog\Logger;
  * @nosubgrouping
  */
 class AddSynonymCommand extends AbstractCommand {
-
-  /**
-   * @var Logger $log
-   */
-  protected $log;
 
 
   /**
