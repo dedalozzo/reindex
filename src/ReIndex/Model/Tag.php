@@ -16,12 +16,11 @@ use ReIndex\Extension;
 use ReIndex\Property;
 use ReIndex\Collection;
 use ReIndex\Helper;
-use ReIndex\Queue\TaskQueue;
+use ReIndex\Task\SynonymizeTask;
 
 use EoC\Opt\ViewQueryOpts;
 
 use Phalcon\Di;
-
 
 
 /**
@@ -33,24 +32,12 @@ class Tag extends Versionable implements Extension\ICount, Feature\Starrable  {
   use Extension\TCount;
   use Property\TExcerpt, Property\TBody, Property\TDescription;
 
-
-  /**
-   * @var TaskQueue $queue
-   */
-  protected $queue;
-
-
   // Collection of synonyms.
   private $synonyms;
 
 
-
   public function __construct() {
     parent::__construct();
-
-    $this->queue = $this->di['taskqueue'];
-
-    $this->meta['master'] = TRUE;
 
     $this->meta['synonyms'] = [];
     $this->synonyms = new Collection\SynonymCollection($this->meta);
@@ -102,28 +89,39 @@ class Tag extends Versionable implements Extension\ICount, Feature\Starrable  {
   //!@{
 
   /**
-   * @brief Returns `true` in case this tag is marked as synonym, `false` otherwise.
+   * @brief Returns `true` in case this tag has been marked as synonym, `false` otherwise.
    * @retval bool
    */
-  public function isSynonym() {
-    return !$this->meta['master'];
+  public function synonimizing() {
+    return $this->isMetadataPresent('synonymizing');
   }
 
 
   /**
    * @brief Transforms the tag into a synonym.
+   * @param[in] Tag $tag The master tag.
    */
-  public function transIntoSynonym() {
-    $this->meta['master'] = FALSE;
-    $this->synonyms->reset();
+  public function markAsSynonymOf(Tag $tag) {
+    if ($this->synonimizing())
+      throw new \RuntimeException('The tag has been alreadt marked as synonym.');
+
+    $this->meta['synonymizing'] = TRUE;
+    $this->save();
+
+    $queue = $this->di['taskqueue'];
+    $queue->add(new SynonymizeTask($tag->unversionId, $this->unversionId));
   }
 
 
   /**
-   * @brief Transforms the tag into a master.
+   * @brief Returns a synonym having the (unversioned) ID used for the tag and even the same name.
+   * @retval Synonym
    */
-  public function transIntoMaster() {
-    $this->meta['master'] = TRUE;
+  public function castAsSynonym() {
+    $synonym = Synonym::create($this->unversionId);
+    $synonym->name = $this->name;
+    $synonym->setRelatesIds($this->meta['synonyms']);
+    return $synonym;
   }
 
   //!@}
@@ -132,8 +130,8 @@ class Tag extends Versionable implements Extension\ICount, Feature\Starrable  {
   /**
    * @brief Saves the tag.
    */
-  public function save() {
-    if (!$this->isSynonym()) {
+  public function save(Tag $synonym = NULL) {
+    if (!$this->synonimizing()) {
       $this->html = $this->markdown->parse($this->body);
       $purged = Helper\Text::purge($this->html);
       $this->excerpt = Helper\Text::truncate($purged);
