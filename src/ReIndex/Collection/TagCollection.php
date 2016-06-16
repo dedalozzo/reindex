@@ -42,15 +42,6 @@ class TagCollection extends MetaCollection {
 
 
   /**
-   * @brief Removes all associated tags.
-   */
-  public function reset() {
-    unset($this->meta[static::NAME]);
-    $this->meta[static::NAME] = [];
-  }
-
-
-  /**
    * @brief Adds the specified tag to the list of tags.
    * @attention Don't use this method even if it's public, unless you know what are you doing.
    * @param[in] string $tagId The tag uuid.
@@ -69,7 +60,7 @@ class TagCollection extends MetaCollection {
 
     $opts = new ViewQueryOpts();
     $opts->includeMissingKeys();
-    $rows = $this->couch->queryView("tags", "byNameSpecial", $names, $opts)->asArray();
+    $rows = $this->couch->queryView("tags", "andSynonymsByName", $names, $opts)->asArray();
 
     foreach ($rows as $row) {
 
