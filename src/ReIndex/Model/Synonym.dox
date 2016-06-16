@@ -1,0 +1,16 @@
+<?php
+
+
+namespace ReIndex\Model;
+
+
+class Synonym  {
+
+  /** @name Properties */
+  //!@{
+
+  string $name; //!< The synonym name.
+
+  //!@}
+
+}
