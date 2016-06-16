@@ -8,13 +8,14 @@
  */
 
 
-namespace ReIndex\Console\Command;
+namespace ReIndex\Console\Command\Role;
 
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use ReIndex\Console\Command\AbstractCommand;
 use ReIndex\Model\Member;
 use ReIndex\Security\Role\IRole;
 use ReIndex\Factory\UserFactory;
