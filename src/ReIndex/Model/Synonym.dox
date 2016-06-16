@@ -9,7 +9,7 @@ class Synonym  {
   /** @name Properties */
   //!@{
 
-  string $name; //!< The synonym name.
+  string $name; //!< The synonym's name.
 
   //!@}
 
