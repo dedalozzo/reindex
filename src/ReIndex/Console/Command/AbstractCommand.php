@@ -12,6 +12,7 @@
 namespace ReIndex\Console\Command;
 
 
+use Phalcon\Di;
 use Phalcon\Di\InjectionAwareInterface;
 use Phalcon\DiInterface;
 
@@ -22,6 +23,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use EoC\Helper\TimeHelper;
 
+use Monolog\Logger;
+
 
 /**
  * @brief This class represents an abstract command that implements the InjectionAwareInterface to automatic set the
@@ -30,9 +33,17 @@ use EoC\Helper\TimeHelper;
  */
 abstract class AbstractCommand extends Command implements InjectionAwareInterface {
 
+  /**
+   * @var Di $di
+   */
   protected $di;
+
+  /**
+   * @var Logger $log
+   */
   protected $log;
 
+  // A timestamp.
   protected $start;
 
 
