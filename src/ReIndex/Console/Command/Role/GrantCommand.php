@@ -8,7 +8,7 @@
  */
 
 
-namespace ReIndex\Console\Command;
+namespace ReIndex\Console\Command\Role;
 
 
 use ReIndex\Model\Member;
