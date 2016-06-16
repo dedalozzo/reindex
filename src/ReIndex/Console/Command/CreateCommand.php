@@ -30,7 +30,7 @@ class CreateCommand extends AbstractCommand {
    */
   protected function configure() {
     $this->setName("create");
-    $this->setDescription("Creates the ReIndex database.");
+    $this->setDescription("Creates the ReIndex database");
   }
 
 

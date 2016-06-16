@@ -1172,7 +1172,7 @@ MAP;
    */
   protected function configure() {
     $this->setName("init");
-    $this->setDescription("Initializes the ReIndex database, adding the required design documents.");
+    $this->setDescription("Initializes the ReIndex database, adding the required design documents");
     $this->addArgument("documents",
       InputArgument::IS_ARRAY | InputArgument::REQUIRED,
       "The documents containing the views you want create. Use 'all' if you want insert all the documents, 'members' if

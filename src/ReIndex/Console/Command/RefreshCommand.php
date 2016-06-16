@@ -52,7 +52,7 @@ class RefreshCommand extends AbstractCommand implements IChunkHook {
    */
   protected function configure() {
     $this->setName("refresh");
-    $this->setDescription("Refreshes the application cache.");
+    $this->setDescription("Refreshes the application cache");
   }
 
 
@@ -68,7 +68,7 @@ class RefreshCommand extends AbstractCommand implements IChunkHook {
       $output->writeln("Refreshing application cache...");
 
       $this->queue = $this->di['taskqueue'];
-      
+
       // We can't use this instance inside the `process()` method.
       $couch = $this->di['couchdb'];
 

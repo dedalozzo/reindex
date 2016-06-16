@@ -30,7 +30,7 @@ class AboutCommand extends AbstractCommand {
    */
   protected function configure() {
     $this->setName("about");
-    $this->setDescription("Displays information about ReIndex, like version, database, etc.");
+    $this->setDescription("Displays information about ReIndex, like version, database, etc");
   }
 
 

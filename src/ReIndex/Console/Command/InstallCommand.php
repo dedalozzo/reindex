@@ -28,7 +28,7 @@ class InstallCommand extends AbstractCommand {
    */
   protected function configure() {
     $this->setName("install");
-    $this->setDescription("Executes the following commands: `create`, `init all`.");
+    $this->setDescription("Executes the following commands: `create`, `init all`");
   }
 
 

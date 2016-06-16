@@ -32,7 +32,7 @@ abstract class AbstractRoleCommand extends AbstractCommand {
    * @brief Configures the command.
    */
   protected function configure() {
-    $this->setDescription(sprintf("%s a role to a user.", ucfirst($this->getName().'s')));
+    $this->setDescription(sprintf("%s a role to a user", ucfirst($this->getName().'s')));
 
     $this->addArgument("role",
       InputArgument::REQUIRED,

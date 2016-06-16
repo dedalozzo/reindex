@@ -30,7 +30,7 @@ class ListSynonymsCommand extends AbstractCommand {
    */
   protected function configure() {
     $this->setName("ls");
-    $this->setDescription("List all the synonyms, or the ones related to a specific tag.");
+    $this->setDescription("List all the synonyms, or the ones related to a specific tag");
 
     $this->addArgument("name",
       InputArgument::OPTIONAL,

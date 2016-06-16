@@ -32,7 +32,7 @@ class DelSynonymCommand extends AbstractCommand {
    */
   protected function configure() {
     $this->setName("delsynonym");
-    $this->setDescription("Deletes a synonym.");
+    $this->setDescription("Deletes a synonym");
 
     $this->addArgument("synonym",
       InputArgument::REQUIRED,

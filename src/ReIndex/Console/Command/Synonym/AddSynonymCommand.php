@@ -32,7 +32,7 @@ class AddSynonymCommand extends AbstractCommand {
    */
   protected function configure() {
     $this->setName("addsynonym");
-    $this->setDescription("Adds a synonym to a tag.");
+    $this->setDescription("Adds a synonym to a tag");
 
     $this->addArgument("tag",
       InputArgument::REQUIRED,
