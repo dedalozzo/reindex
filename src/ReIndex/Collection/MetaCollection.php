@@ -46,6 +46,15 @@ abstract class MetaCollection implements \IteratorAggregate, \Countable, \ArrayA
 
 
   /**
+   * @brief Removes all items from the collection.
+   */
+  public function reset() {
+    unset($this->meta[static::NAME]);
+    $this->meta[static::NAME] = [];
+  }
+
+
+  /**
    * @brief Returns the collection as a real array.
    * @retval array An associative array using as keys the e-mail addresses, and as values if the address are verified or
    * not.
