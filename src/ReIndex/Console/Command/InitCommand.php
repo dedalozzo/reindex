@@ -14,6 +14,7 @@ namespace ReIndex\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Input\InputOption;
 
 use EoC\Doc\DesignDoc;
 use EoC\Handler\ViewHandler;
@@ -28,25 +29,55 @@ class InitCommand extends AbstractCommand {
   protected $couch;
 
 
+  private function printDone($name) {
+    echo sprintf("%s... done", $name).PHP_EOL;
+  }
+
+
+  /**
+   * @brief Returns a list of all the available design documents.
+   * @return string
+   */
+  protected function listDocs() {
+    return <<<'DOCS'
+favorites
+followers
+friendships
+members
+posts
+replies
+reputation
+revisions
+stars
+subscriptions
+tags
+tasks
+updates
+various
+votes
+DOCS;
+  }
+
+
   /**
    * @brief Insert all design documents.
    */
   protected function initAll() {
-    $this->initTasks();
+    $this->initFavorites();
+    $this->initFollowers();
+    $this->initFriendships();
+    $this->initMembers();
     $this->initPosts();
-    $this->initTags();
+    $this->initReplies();
+    $this->initReputation();
     $this->initRevisions();
-    $this->initVotes();
     $this->initStars();
     $this->initSubscriptions();
-    $this->initReputation();
-    $this->initFavorites();
-    $this->initMembers();
-    $this->initFriendships();
-    $this->initFollowers();
+    $this->initTags();
+    $this->initTasks();
     $this->initUpdates();
-    $this->initReplies();
     $this->initVarious();
+    $this->initVotes();
   }
 
 
@@ -177,6 +208,8 @@ MAP;
 
 
     $this->couch->saveDoc($doc);
+
+    $this->printDone('posts');
   }
 
 
@@ -359,6 +392,8 @@ MAP;
 
 
     $this->couch->saveDoc($doc);
+
+    $this->printDone('tags');
   }
 
 
@@ -393,6 +428,8 @@ MAP;
 
 
     $this->couch->saveDoc($doc);
+
+    $this->printDone('revisions');
   }
 
 
@@ -476,6 +513,8 @@ MAP;
 
 
     $this->couch->saveDoc($doc);
+
+    $this->printDone('votes');
   }
 
 
@@ -504,6 +543,8 @@ MAP;
 
 
     $this->couch->saveDoc($doc);
+
+    $this->printDone('stars');
   }
 
 
@@ -530,6 +571,8 @@ MAP;
 
 
     $this->couch->saveDoc($doc);
+
+    $this->printDone('subscriptions');
   }
 
 
@@ -558,6 +601,8 @@ MAP;
 
 
     $this->couch->saveDoc($doc);
+
+    $this->printDone('reputation');
   }
 
 
@@ -661,6 +706,8 @@ MAP;
 
 
     $this->couch->saveDoc($doc);
+
+    $this->printDone('favorites');
   }
 
 
@@ -796,6 +843,8 @@ MAP;
 
 
     $this->couch->saveDoc($doc);
+
+    $this->printDone('members');
   }
 
 
@@ -861,6 +910,8 @@ MAP;
 
 
     $this->couch->saveDoc($doc);
+
+    $this->printDone('replies');
   }
 
 
@@ -911,6 +962,8 @@ MAP;
 
 
     $this->couch->saveDoc($doc);
+
+    $this->printDone('friendships');
   }
 
 
@@ -959,6 +1012,8 @@ MAP;
 
 
     $this->couch->saveDoc($doc);
+
+    $this->printDone('followers');
   }
 
 
@@ -987,6 +1042,8 @@ MAP;
 
 
     $this->couch->saveDoc($doc);
+
+    $this->printDone('tasks');
   }
 
 
@@ -1015,6 +1072,8 @@ MAP;
 
 
     $this->couch->saveDoc($doc);
+
+    $this->printDone('updates');
   }
 
 
@@ -1139,6 +1198,8 @@ MAP;
 
 
     $this->couch->saveDoc($doc);
+
+    $this->printDone('various');
   }
 
 
@@ -1173,12 +1234,19 @@ MAP;
   protected function configure() {
     $this->setName("init");
     $this->setDescription("Initializes the ReIndex database, adding the required design documents");
+
     $this->addArgument("documents",
-      InputArgument::IS_ARRAY | InputArgument::REQUIRED,
-      "The documents containing the views you want create. Use 'all' if you want insert all the documents, 'members' if
-      you want just init the members or separate multiple documents with a space. The available documents are: docs, posts,
-      tags, revisions, votes, scores, stars, subscriptions, favorites, members, friendships, followers, reputation, replies,
-      updates, various.");
+      InputArgument::IS_ARRAY,
+      <<<'DESC'
+The design documents containing the views you want create
+Separate multiple documents with a space. To obtain the complete list of available documents run the command with the option `--list`.
+DESC
+    );
+
+    $this->addOption("list",
+      "l",
+      InputOption::VALUE_NONE,
+      "Returns a list of available documents");
   }
 
 
@@ -1190,31 +1258,46 @@ MAP;
 
     $documents = $input->getArgument('documents');
 
-    // Checks if the argument 'all' is provided.
-    $index = array_search("all", $documents);
-
-    if ($index === FALSE) {
-
-      foreach ($documents as $name)
+    if (empty($documents)) {
+      if ($input->getOption('list'))
+        print $this->listDocs() . PHP_EOL;
+      else
+        $this->initAll();
+    }
+    else {
+      foreach ($documents as $name) {
         switch ($name) {
-          case 'docs':
-            $this->initDocs();
+          case 'favorites':
+            $this->initFavorites();
+            echo sprintf("%s saved", $name) . PHP_EOL;
+            break;
+
+          case 'followers':
+            $this->initFollowers();
+            break;
+
+          case 'friendships':
+            $this->initFriendships();
+            break;
+
+          case 'members':
+            $this->initMembers();
             break;
 
           case 'posts':
             $this->initPosts();
             break;
 
-          case 'tags':
-            $this->initTags();
+          case 'replies':
+            $this->initReplies();
+            break;
+
+          case 'reputation':
+            $this->initReputation();
             break;
 
           case 'revisions':
             $this->initRevisions();
-            break;
-
-          case 'votes':
-            $this->initVotes();
             break;
 
           case 'stars':
@@ -1225,28 +1308,12 @@ MAP;
             $this->initSubscriptions();
             break;
 
-          case 'favorites':
-            $this->initFavorites();
+          case 'tags':
+            $this->initTags();
             break;
 
-          case 'members':
-            $this->initMembers();
-            break;
-
-          case 'friendships':
-            $this->initFriendships();
-            break;
-
-          case 'followers':
-            $this->initFollowers();
-            break;
-
-          case 'reputation':
-            $this->initReputation();
-            break;
-
-          case 'replies':
-            $this->initReplies();
+          case 'tests':
+            $this->initTest();
             break;
 
           case 'updates':
@@ -1257,14 +1324,15 @@ MAP;
             $this->initVarious();
             break;
 
-          case 'tests':
-            $this->initTest();
+          case 'votes':
+            $this->initVotes();
             break;
-        }
 
+          default:
+            echo sprintf("%s not found", $name) . PHP_EOL;
+        }
+      }
     }
-    else
-      $this->initAll();
 
     parent::execute($input, $output);
   }
