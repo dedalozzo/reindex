@@ -36,11 +36,11 @@ abstract class AbstractRoleCommand extends AbstractCommand {
 
     $this->addArgument("role",
       InputArgument::REQUIRED,
-      sprintf("The role's name you intend to %s to the specified user.", $this->getName()));
+      sprintf("The role's name you intend to %s to the specified user", $this->getName()));
 
     $this->addArgument("username",
       InputArgument::REQUIRED,
-      "The username.");
+      "The username");
   }
 
 

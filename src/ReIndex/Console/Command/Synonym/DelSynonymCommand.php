@@ -36,12 +36,12 @@ class DelSynonymCommand extends AbstractCommand {
 
     $this->addArgument("synonym",
       InputArgument::REQUIRED,
-      "A synonym.");
+      "A synonym");
 
     $this->addOption("force",
       'f',
       InputOption::VALUE_NONE,
-      "Attempts to add the synonym without prompting for confirmation.");
+      "Attempts to add the synonym without prompting for confirmation");
   }
 
 

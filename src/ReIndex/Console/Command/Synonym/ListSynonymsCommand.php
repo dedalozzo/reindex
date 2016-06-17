@@ -34,7 +34,7 @@ class ListSynonymsCommand extends AbstractCommand {
 
     $this->addArgument("name",
       InputArgument::OPTIONAL,
-      "A tag's name.");
+      "A tag's name");
   }
 
 

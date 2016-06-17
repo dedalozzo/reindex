@@ -28,7 +28,7 @@ class InstallCommand extends AbstractCommand {
    */
   protected function configure() {
     $this->setName("install");
-    $this->setDescription("Executes the following commands: `create`, `init all`");
+    $this->setDescription("Executes the following commands: `create`, `init`");
   }
 
 
@@ -48,7 +48,6 @@ class InstallCommand extends AbstractCommand {
     $command = $this->getApplication()->find('init');
     $arguments = [
       'command' => 'init',
-      'documents' => ['all']
     ];
     $input = new ArrayInput($arguments);
     $command->run($input, $output);
