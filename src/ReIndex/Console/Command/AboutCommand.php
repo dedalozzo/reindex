@@ -74,9 +74,6 @@ class AboutCommand extends AbstractCommand {
     echo "Total Connections Received: ".$redisInfo['total_connections_received'].PHP_EOL;
     echo "Total Commands Processed: ".$redisInfo['total_commands_processed'].PHP_EOL;
     echo "Role: ".$redisInfo['role'].PHP_EOL;
-    echo PHP_EOL;
-
-    parent::execute($input, $output);
   }
 
 }

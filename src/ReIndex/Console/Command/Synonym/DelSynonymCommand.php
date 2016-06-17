@@ -63,8 +63,6 @@ class DelSynonymCommand extends AbstractCommand {
       $thesaurus = new Thesaurus();
       $thesaurus->delSynonym($synonym);
     }
-
-    parent::execute($input, $output);
   }
 
 }

@@ -46,8 +46,6 @@ class ListSynonymsCommand extends AbstractCommand {
       $thesaurus = new Thesaurus();
       print_r($thesaurus->listSynonyms($name));
     }
-
-    parent::execute($input, $output);
   }
 
 }

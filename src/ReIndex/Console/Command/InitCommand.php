@@ -1333,8 +1333,6 @@ DESC
         }
       }
     }
-
-    parent::execute($input, $output);
   }
 
 }

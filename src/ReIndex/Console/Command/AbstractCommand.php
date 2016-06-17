@@ -68,7 +68,7 @@ abstract class AbstractCommand extends Command implements InjectionAwareInterfac
 
   /**
    * @brief Overrides this method to set the Dependency Injector.
-   * @param[in] Symfony::Component::Console::Application $application Symfony console application instance.
+   * @param[in] Console $application Application instance.
    */
   public function setApplication(Application $application = NULL) {
     parent::setApplication($application);

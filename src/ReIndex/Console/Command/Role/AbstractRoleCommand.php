@@ -72,8 +72,6 @@ abstract class AbstractRoleCommand extends AbstractCommand {
     }
     else
       $output->writeln("A member with the username `$username` doesn't exist.");
-
-    parent::execute($input, $output);
   }
 
 }

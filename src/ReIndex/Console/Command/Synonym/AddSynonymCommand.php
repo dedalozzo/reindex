@@ -68,8 +68,6 @@ class AddSynonymCommand extends AbstractCommand {
       $thesaurus = new Thesaurus();
       $thesaurus->addSynonym($tagName, $synonymName);
     }
-
-    parent::execute($input, $output);
   }
 
 }
