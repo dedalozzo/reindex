@@ -13,7 +13,7 @@ namespace ReIndex\Feature;
 
 
 /**
- * @brief Defines a common interface for all the objects supporting a subsciption mechanism.
+ * @brief Defines a common interface for all the objects supporting a subscription mechanism.
  * @nosubgrouping
  */
 interface Subscribable {
