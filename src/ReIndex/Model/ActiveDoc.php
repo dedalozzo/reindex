@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file Storable.php
- * @brief This file contains the Storable class.
+ * @file ActiveDoc.php
+ * @brief This file contains the ActiveDoc class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -34,7 +34,7 @@ use ReIndex\Helper;
  *
  * @endcond
  */
-abstract class Storable extends Doc {
+abstract class ActiveDoc extends Doc {
 
   /**
    * @var Di $di
