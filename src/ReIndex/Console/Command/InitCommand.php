@@ -63,7 +63,6 @@ DOCS;
    * @brief Insert all design documents.
    */
   protected function initAll() {
-    $this->initFavorites();
     $this->initFollowers();
     $this->initFriendships();
     $this->initMembers();
@@ -523,23 +522,98 @@ MAP;
 
 
     // @params postId, [userId]
-    // @methods: VersionedItem.isStarred(), VersionedItem.getStarsCount()
-    function starsPerItem() {
+    function starsPerPost() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'star')
-    $emit([$doc->itemId, $doc->userId]);
+    $emit([$doc->postId, $doc->userId]);
 };
 MAP;
 
-      $handler = new ViewHandler("perItem");
+      $handler = new ViewHandler("perPost");
       $handler->mapFn = $map;
       $handler->useBuiltInReduceFnCount();
 
       return $handler;
     }
 
-    $doc->addHandler(starsPerItem());
+    $doc->addHandler(starsPerPost());
+
+
+    // @params: userId
+    function starsPerAddedAt() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'star')
+    $emit([$doc->memberId, $doc->postAddedAt], $doc->postId);
+};
+MAP;
+
+      $handler = new ViewHandler("perAddedAt");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
+
+      return $handler;
+    }
+
+    $doc->addHandler(starsPerAddedAt());
+
+
+    // @params: userId, type
+    function starsPerAddedAtByType() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'star')
+    $emit([$doc->memberId, $doc->postType, $doc->postAddedAt], $doc->postId);
+};
+MAP;
+
+      $handler = new ViewHandler("perAddedAtByType");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
+
+      return $handler;
+    }
+
+    $doc->addHandler(starsPerAddedAtByType());
+
+
+    // @params: userId
+    function starsPerPublishedAt() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'star')
+    $emit([$doc->memberId, $doc->postPublishedAt], $doc->postId);
+};
+MAP;
+
+      $handler = new ViewHandler("perPublishedAt");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
+
+      return $handler;
+    }
+
+    $doc->addHandler(starsPerPublishedAt());
+
+
+    // @params: userId, type
+    function starsPerPublishedAtByType() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'star')
+    $emit([$doc->memberId, $doc->postType, $doc->postPublishedAt], $doc->postId);
+};
+MAP;
+
+      $handler = new ViewHandler("perPublishedAtByType");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
+
+      return $handler;
+    }
+
+    $doc->addHandler(starsPerPublishedAtByType());
 
 
     $this->couch->saveDoc($doc);
@@ -603,111 +677,6 @@ MAP;
     $this->couch->saveDoc($doc);
 
     $this->printDone('reputation');
-  }
-
-
-  protected function initFavorites() {
-    $doc = DesignDoc::create('favorites');
-
-
-    // @params: userId
-    function favoriteTagsPerMember() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'star' && $doc->itemType == 'tag')
-    $emit($doc->userId, $doc->itemId);
-};
-MAP;
-
-      $handler = new ViewHandler("tagsPerMember");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount();
-
-      return $handler;
-    }
-
-    $doc->addHandler(favoriteTagsPerMember());
-
-
-    // @params: userId
-    function favoritesPerAddedAt() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'star' && $doc->itemSupertype == 'post')
-    $emit([$doc->userId, $doc->itemAddedAt], $doc->itemId);
-};
-MAP;
-
-      $handler = new ViewHandler("perAddedAt");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount();
-
-      return $handler;
-    }
-
-    $doc->addHandler(favoritesPerAddedAt());
-
-
-    // @params: userId, type
-    function favoritesPerAddedAtByType() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'star' && isset($doc->itemSupertype) && $doc->itemSupertype == 'post')
-    $emit([$doc->userId, $doc->itemType, $doc->itemAddedAt], $doc->itemId);
-};
-MAP;
-
-      $handler = new ViewHandler("perAddedAtByType");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
-
-      return $handler;
-    }
-
-    $doc->addHandler(favoritesPerAddedAtByType());
-
-
-    // @params: userId
-    function favoritesPerPublishedAt() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'star' && $doc->itemSupertype == 'post')
-    $emit([$doc->userId, $doc->itemPublishedAt], $doc->itemId);
-};
-MAP;
-
-      $handler = new ViewHandler("perPublishedAt");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount();
-
-      return $handler;
-    }
-
-    $doc->addHandler(favoritesPerPublishedAt());
-
-
-    // @params: userId, type
-    function favoritesPerPublishedAtByType() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'star' && $doc->itemSupertype == 'post')
-    $emit([$doc->userId, $doc->itemType, $doc->itemPublishedAt], $doc->itemId);
-};
-MAP;
-
-      $handler = new ViewHandler("perPublishedAtByType");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
-
-      return $handler;
-    }
-
-    $doc->addHandler(favoritesPerPublishedAtByType());
-
-
-    $this->couch->saveDoc($doc);
-
-    $this->printDone('favorites');
   }
 
 
@@ -1026,7 +995,7 @@ MAP;
 function($doc) use ($emit) {
   if (isset($doc->tasks)) {
     foreach ($tasks as $key => $value)
-      $emit($doc->_id, $key);
+      $emit($doc->_id, ['docClass' => $doc->class, 'taskClass' => $key);
   }
 };
 MAP;
@@ -1267,11 +1236,6 @@ DESC
     else {
       foreach ($documents as $name) {
         switch ($name) {
-          case 'favorites':
-            $this->initFavorites();
-            echo sprintf("%s saved", $name) . PHP_EOL;
-            break;
-
           case 'followers':
             $this->initFollowers();
             break;
