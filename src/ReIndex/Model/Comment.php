@@ -17,7 +17,7 @@ namespace ReIndex\Model;
  * the answer) before any answers is showed.
  * @nosubgrouping
  */
-class Comment extends Storable {
+class Comment extends ActiveDoc {
 
 
   //! @cond HIDDEN_SYMBOLS
