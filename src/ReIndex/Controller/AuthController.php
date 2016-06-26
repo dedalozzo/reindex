@@ -22,7 +22,7 @@ use EoC\Opt\ViewQueryOpts;
 use ReIndex\Exception;
 use ReIndex\Validation;
 use ReIndex\Helper\Cookie;
-use ReIndex\Model\Member;
+use ReIndex\Doc\Member;
 use ReIndex\Security\Consumer;
 use ReIndex\Validator\Password;
 use ReIndex\Validator\Username;
