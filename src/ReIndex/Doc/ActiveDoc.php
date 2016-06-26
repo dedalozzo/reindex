@@ -8,8 +8,8 @@
  */
 
 
-//! Models
-namespace ReIndex\Model;
+//! CouchDB's documents
+namespace ReIndex\Doc;
 
 
 use EoC\Couch;
