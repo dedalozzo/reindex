@@ -9,9 +9,8 @@ class Vote {
   /** @name Properties */
   //!@{
 
-  public string $itemId; //!< Item ID.
-  public string $userId; //!< User ID.
   public string $value; //!< Value.
+  public int $timestamp; //!< The vote's timestamp.
 
   //!@}
 
