@@ -12,7 +12,7 @@ namespace ReIndex\Security\Role\ModeratorRole;
 
 
 use ReIndex\Security\Role\AbstractPermission;
-use ReIndex\Model\Member;
+use ReIndex\Doc\Member;
 
 
 /**
@@ -25,7 +25,7 @@ class BanMemberPermission extends AbstractPermission {
 
   /**
    * @brief Constructor.
-   * @param[in] Model::Member $context
+   * @param[in] Doc::Member $context
    */
   public function __construct(Member $context = NULL) {
     parent::__construct($context);
