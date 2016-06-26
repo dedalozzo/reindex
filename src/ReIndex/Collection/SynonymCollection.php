@@ -11,7 +11,7 @@
 namespace ReIndex\Collection;
 
 
-use ReIndex\Model\Synonym;
+use ReIndex\Doc\Synonym;
 use ReIndex\Helper;
 
 
