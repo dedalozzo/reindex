@@ -12,9 +12,9 @@ namespace ReIndex\Collection;
 
 
 use ReIndex\Exception;
-use ReIndex\Model\Member;
-use ReIndex\Model\Friendship;
-use ReIndex\Model\Follower;
+use ReIndex\Doc\Member;
+use ReIndex\Doc\Friendship;
+use ReIndex\Doc\Follower;
 
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
@@ -26,7 +26,7 @@ use Phalcon\Di;
  * @brief This class is used to represent a collection of friends.
  * @nosubgrouping
  */
-class FriendCollection extends FakeCollection {
+class FriendCollection extends MemberCollection {
 
   /** @name Redis Names */
   //!@{
@@ -72,7 +72,7 @@ class FriendCollection extends FakeCollection {
 
 
   protected function getCount() {
-    return $this->redis->zCount($this->user->id . self::TS_SET, 0, '+inf');
+    return $this->redis->zCount($this->member->id . self::TS_SET, 0, '+inf');
   }
 
 
@@ -83,10 +83,10 @@ class FriendCollection extends FakeCollection {
    */
   public function add(Member $member) {
     // Of course, you can't add yourself to the collection.
-    if ($member->match($this->user->id))
+    if ($member->match($this->member->id))
       throw new Exception\UserMismatchException("You are nut.");
 
-    if ($member->blacklist->exists($this->user))
+    if ($member->blacklist->exists($this->member))
       throw new Exception\UserMismatchException("Unfortunately you have been blacklisted from the user you are trying to add as a friend.");
 
     if ($this->exists($member))
@@ -96,12 +96,12 @@ class FriendCollection extends FakeCollection {
       throw new Exception\UserMismatchException("You have already sent a friend request to this user.");
 
     // Creates and stores the friendship.
-    $friendship = Friendship::request($this->user->id, $member->id);
+    $friendship = Friendship::request($this->member->id, $member->id);
     $this->couch->saveDoc($friendship);
 
     // Follows the member.
-    if (!$member->followers->exists($this->user)) {
-      $follower = Follower::create($member->id, $this->user->id);
+    if (!$member->followers->exists($this->member)) {
+      $follower = Follower::create($member->id, $this->member->id);
       $this->couch->saveDoc($follower);
     }
   }
@@ -118,13 +118,13 @@ class FriendCollection extends FakeCollection {
 
       $this->redis->multi();
 
-      $this->deindexFriendship($this->user->id, $member->id);
-      $this->deindexFriendship($member->id, $this->user->id);
+      $this->deindexFriendship($this->member->id, $member->id);
+      $this->deindexFriendship($member->id, $this->member->id);
 
       $this->redis->exec();
 
       // If you remove the member from your friends, you don't follow it anymore.
-      if ($follower = $member->followers->exists($this->user))
+      if ($follower = $member->followers->exists($this->member))
         $this->couch->deleteDoc(Couch::STD_DOC_PATH, $follower->id, $follower->rev);
     }
     else
@@ -135,11 +135,11 @@ class FriendCollection extends FakeCollection {
   /**
    * @brief Returns `true` if there is an established friendship relation with the specified member, `false` otherwise.
    * @param[in] Member $member A member.
-   * @retval Model::Friendship or `false` in case the member is not a friend.
+   * @retval Doc::Friendship or `false` in case the member is not a friend.
    */
   public function exists(Member $member) {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([$this->user->id, $member->id]);
+    $opts->doNotReduce()->setLimit(1)->setKey([$this->member->id, $member->id]);
 
     $result = $this->couch->queryView("friendships", "approvedPerMember", NULL, $opts);
 
@@ -153,11 +153,11 @@ class FriendCollection extends FakeCollection {
   /**
    * @brief Returns a friendship object if a friendship request exists, `false` otherwise.
    * @param[in] Member $member A member.
-   * @retval Model::Friendship
+   * @retval Doc::Friendship
    */
   public function pendingRequest(Member $member) {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([$member->id, $this->user->id]);
+    $opts->doNotReduce()->setLimit(1)->setKey([$member->id, $this->member->id]);
 
     $result = $this->couch->queryView("friendships", "pendingRequest", NULL, $opts);
 
@@ -175,7 +175,7 @@ class FriendCollection extends FakeCollection {
   public function approve(Member $member) {
     if ($friendship = $this->pendingRequest($member)) {
 
-      if (!$this->user->match($friendship->receiverId))
+      if (!$this->member->match($friendship->receiverId))
         throw new Exception\UserMismatchException("It's not up to you approve someone else's friendship.");
 
       $friendship->approve();
@@ -183,14 +183,14 @@ class FriendCollection extends FakeCollection {
 
       $this->redis->multi();
 
-      $this->indexFrienship($this->user->id, $member->id);
-      $this->indexFrienship($member->id, $this->user->id);
+      $this->indexFrienship($this->member->id, $member->id);
+      $this->indexFrienship($member->id, $this->member->id);
 
       $this->redis->exec();
 
       // Follows the member.
-      if (!$member->followers->exists($this->user)) {
-        $follower = Follower::create($member->id, $this->user->id);
+      if (!$member->followers->exists($this->member)) {
+        $follower = Follower::create($member->id, $this->member->id);
         $this->couch->saveDoc($follower);
       }
     }
@@ -207,7 +207,7 @@ class FriendCollection extends FakeCollection {
   public function reject(Member $member) {
     if ($friendship = $this->pendingRequest($member)) {
 
-      if (!$this->user->match($friendship->receiverId))
+      if (!$this->member->match($friendship->receiverId))
         throw new Exception\UserMismatchException("It's not up to you reject someone else's friendship.");
 
       $this->couch->deleteDoc(Couch::STD_DOC_PATH, $friendship->id, $friendship->rev);
