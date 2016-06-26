@@ -92,7 +92,7 @@ class VoteCollection implements \Countable {
       $vote = $this->couch->getDoc(Couch::STD_DOC_PATH, $voteId);
 
       // Calculates difference in seconds.
-      $seconds = time() - $vote->modifiedAt;
+      $seconds = time() - $vote->timestamp;
 
       $votingGracePeriod = $this->di['config']['application']['votingGracePeriod'];
 
@@ -106,6 +106,7 @@ class VoteCollection implements \Countable {
         }
         else {
           $vote->value = $value;
+          $vote->timestamp = time();
           $this->couch->saveDoc($vote);
           return static::REPLACED;
         }
