@@ -8,7 +8,7 @@
  */
 
 
-namespace ReIndex\Model;
+namespace ReIndex\Doc;
 
 
 /**
