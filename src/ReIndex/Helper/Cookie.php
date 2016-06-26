@@ -13,7 +13,7 @@ namespace ReIndex\Helper;
 
 use Phalcon\Di;
 
-use ReIndex\Model\Member;
+use ReIndex\Doc\Member;
 
 
 /**
