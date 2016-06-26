@@ -18,7 +18,7 @@ use ReIndex\Security\Role;
 use ReIndex\Validation;
 use ReIndex\Helper;
 use ReIndex\Exception\InvalidFieldException;
-use ReIndex\Model\Post;
+use ReIndex\Doc\Post;
 
 use Phalcon\Mvc\View;
 use Phalcon\Validation\Validator\PresenceOf;
@@ -590,7 +590,6 @@ class IndexController extends ListController {
     if (!$this->user->has(new Role\GuestRole\ViewPostPermission($post)))
       return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
-    $post->incHits($post->creatorId);
     //$post->html = $this->markdown->parse($post->body);
 
     $this->view->setVar('post', $post);
