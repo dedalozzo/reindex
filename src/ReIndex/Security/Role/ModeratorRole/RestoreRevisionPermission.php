@@ -11,7 +11,7 @@
 namespace ReIndex\Security\Role\ModeratorRole;
 
 
-use ReIndex\Model\Versionable;
+use ReIndex\Doc\Versionable;
 use ReIndex\Security\Role\AbstractPermission;
 use EoC\Couch;
 
@@ -24,7 +24,7 @@ class RestoreRevisionPermission extends AbstractPermission {
 
   /**
    * @brief Constructor.
-   * @param[in] Model::Versionable $context
+   * @param[in] Doc::Versionable $context
    */
   public function __construct(Versionable $context = NULL) {
     parent::__construct($context);
