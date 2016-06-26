@@ -14,11 +14,8 @@ namespace ReIndex\Doc;
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
-use ReIndex\Feature;
-use ReIndex\Extension;
 use ReIndex\Property;
 use ReIndex\Helper;
-use ReIndex\Enum;
 use ReIndex\Collection;
 use ReIndex\Exception;
 use ReIndex\Security\Role;
@@ -45,13 +42,13 @@ use Phalcon\Di;
  * @property string $protectorId  // [readonly] The user ID of whom protected the content.
  *
  * @property Collection\TagCollection $tags  // A collection of tags.
- * @property Collection\SubscriptionCollection $subscriptions  // A collection of members who have subscribed the post.
+ * @property Collection\TaskCollection $tasks // A collection of tasks.
+ * @property Collection\SubscriptionCollection $subscriptions // A collection of members who have subscribed the post.
+ * @property Collection\VoteCollection $votes // Casted votes.
  *
  * @endcond
  */
 abstract class Post extends Versionable {
-
-  use Extension\TVote;
   use Property\TExcerpt, Property\TBody, Property\TDescription;
 
   /** @name Redis Set Names */
@@ -84,8 +81,8 @@ abstract class Post extends Versionable {
   // A collection of members who have subscribed the post.
   private $subscriptions;
 
-  // Galaxy of stars.
-  private $stars;
+  // Casted votes.
+  private $votes;
 
 
   /**
@@ -105,9 +102,9 @@ abstract class Post extends Versionable {
     $this->meta['tasks'] = [];
     $this->tasks = new Collection\TaskCollection($this->meta);
 
-    $this->votes = new Collection\VoteCollection($this);
-
     $this->subscriptions = new Collection\SubscriptionCollection($this);
+
+    $this->votes = new Collection\VoteCollection($this);
   }
 
 
@@ -564,13 +561,23 @@ abstract class Post extends Versionable {
   }
 
 
-  public function getStars() {
-    return $this->stars;
+  public function getSubscriptions() {
+    return $this->subscriptions;
   }
 
 
-  public function issetStars() {
-    return isset($this->stars);
+  public function issetSubscriptions() {
+    return isset($this->subscriptions);
+  }
+
+
+  public function getVotes() {
+    return $this->votes;
+  }
+
+
+  public function issetVotes() {
+    return isset($this->votes);
   }
 
   //! @endcond
