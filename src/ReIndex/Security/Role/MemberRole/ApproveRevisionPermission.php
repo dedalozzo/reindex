@@ -12,7 +12,7 @@ namespace ReIndex\Security\Role\MemberRole;
 
 
 use ReIndex\Security\Role\AbstractPermission;
-use ReIndex\Model\Versionable;
+use ReIndex\Doc\Versionable;
 
 
 /**
@@ -23,7 +23,7 @@ class ApproveRevisionPermission extends AbstractPermission {
 
   /**
    * @brief Constructor.
-   * @param[in] Model::Versionable $context.
+   * @param[in] Doc::Versionable $context.
    */
   public function __construct(Versionable $context) {
     parent::__construct($context);
