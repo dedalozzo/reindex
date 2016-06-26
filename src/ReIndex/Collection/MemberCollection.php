@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file FakeCollection.php
- * @brief This file contains the FakeCollection class.
+ * @file MemberCollection.php
+ * @brief This file contains the MemberCollection class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -11,18 +11,19 @@
 namespace ReIndex\Collection;
 
 
-use ReIndex\Model\Member;
+use ReIndex\Doc\Member;
 use EoC\Couch;
 
 use Phalcon\Di;
 
 
 /**
- * @brief This class is used to represent a collection who doesn't store any real data but relay instead on a database.
+ * @brief This class is used to represent a collection of members.
+ * @details This class is abstract, cannot be instantiated. It doesn't store any real data but relay instead on a database.
  * @details This class implements `Countable`.
  * @nosubgrouping
  */
-abstract class FakeCollection implements \Countable {
+abstract class MemberCollection implements \Countable {
 
   /**
    * @var Di $di
@@ -40,16 +41,17 @@ abstract class FakeCollection implements \Countable {
   protected $redis;
 
   /**
-   * @var Member $user
+   * @var Member $member
    */
-  protected $user;
+  protected $member;
 
 
   /**
    * @brief Creates a new collection of items.
+   * @param[in] Member $member
    */
-  public function __construct(Member $user) {
-    $this->user = $user;
+  public function __construct(Member $member) {
+    $this->member = $member;
     $this->di = Di::getDefault();
     $this->couch = $this->di['couchdb'];
     $this->redis = $this->di['redis'];
