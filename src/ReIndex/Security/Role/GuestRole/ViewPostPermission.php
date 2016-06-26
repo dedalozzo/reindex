@@ -13,7 +13,7 @@ namespace ReIndex\Security\Role\GuestRole;
 
 
 use ReIndex\Security\Role\AbstractPermission;
-use ReIndex\Model\Post;
+use ReIndex\Doc\Post;
 
 
 /**
@@ -24,7 +24,7 @@ class ViewPostPermission extends AbstractPermission {
 
   /**
    * @brief Constructor.
-   * @param[in] Model::Post $context.
+   * @param[in] Doc::Post $context.
    */
   public function __construct(Post $context = NULL) {
     parent::__construct($context);
