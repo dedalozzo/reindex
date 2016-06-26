@@ -27,7 +27,7 @@ interface IConsumer {
 
   /**
    * @brief The authenticated user joins the ReIndex social network.
-   * @retval Model::Member An user instance.
+   * @retval Doc::Member An user instance.
    */
   function join();
 
