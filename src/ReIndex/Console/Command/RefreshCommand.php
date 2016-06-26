@@ -94,7 +94,7 @@ class RefreshCommand extends AbstractCommand implements IChunkHook {
 
 
   /**
-   * @brief In case a chunk represent a document, creates the corespondent task and enqueue it.
+   * @brief Extracts from the chunk the document's ID which the task belongs, along with the task's class, creates the corespondent task and enqueue it.
    */
   public function process($chunk) {
     $row = json_decode(trim($chunk, ',\r\n'));
@@ -102,17 +102,14 @@ class RefreshCommand extends AbstractCommand implements IChunkHook {
     if (is_null($row))
       return;
 
-    $class = $row->class;
+    $docClass = $row->value->docClass;
+    $taskClass = $row->value->taskClass;
 
-    $post = new $class;
-    $post->id = $row->id;
+    $doc = new $docClass;
+    $doc->id = $row->id;
 
-    $tasks = $row->tasks;
-
-    foreach ($tasks as $task) {
-      $task = new $task['class']($post);
-      $this->queue->add($task);
-    }
+    $task = new $taskClass($doc);
+    $this->queue->add($task);
 
     $this->progress->advance();
   }
