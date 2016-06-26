@@ -11,7 +11,7 @@
 namespace ReIndex\Task;
 
 
-use ReIndex\Model\Member;
+use ReIndex\Doc\Member;
 use ReIndex\Collection;
 
 use EoC\Couch;
