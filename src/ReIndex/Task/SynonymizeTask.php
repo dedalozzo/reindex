@@ -11,8 +11,8 @@
 namespace ReIndex\Task;
 
 
-use ReIndex\Model\Tag;
-use ReIndex\Model\Post;
+use ReIndex\Doc\Tag;
+use ReIndex\Doc\Post;
 
 use Phalcon\Di;
 
