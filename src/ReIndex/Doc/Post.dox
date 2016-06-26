@@ -18,7 +18,10 @@ class Post {
   string $protection;           //!< [readonly] Level of protection.
   string $protectorId;          //!< [readonly] The user ID of whom protected the content.
 
-  TagCollection $tags;          //!< A collection of tags.
+  TagCollection $tags;                   //!< A collection of tags.
+  TaskCollection $tasks;                 //!< A collection of tasks.
+  SubscriptionCollection $subscriptions; //!< All the subscribers.
+  VoteCollection $votes;                 //!< Casted votes.
 
   //!@}
 
