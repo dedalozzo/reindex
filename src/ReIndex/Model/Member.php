@@ -11,7 +11,6 @@
 namespace ReIndex\Model;
 
 
-use ReIndex\Extension;
 use ReIndex\Collection;
 use ReIndex\Exception;
 use ReIndex\Helper;
@@ -37,13 +36,14 @@ use Phalcon\Di;
  * @property string $firstName // First name.
  * @property string $lastName  // Last surname.
 
+ * @property Collection\TaskCollection $tasks         // A collection of tasks.
  * @property Collection\EmailCollection $emails       // A collection of e-mails.
  * @property Collection\LoginCollection $logins       // A collection of consumers' logins.
  * @property Collection\RoleCollection $roles         // A collection of roles associated with the member.
+ * @property Collection\TagCollection $tags           // Member's favorite tags.
+ * @property Collection\Blacklist $blacklist          // The member's blacklist.
  * @property Collection\FriendCollection $friends     // A collection of all member's friendships.
  * @property Collection\FollowerCollection $followers // A collection of all member's followers.
- * @property Collection\Blacklist $blacklist          // The member's blacklist.
- * @property Collection\FavoriteCollection $favorites // Starred posts.
 
  * @property string $password                 // Password chosen by the member.
  * @property string $hash                     // String hash sent via e-mail to the member to confirm that his e-mail is real.
@@ -57,19 +57,18 @@ use Phalcon\Di;
  *
  * @endcond
  */
-class Member extends Storable implements IUser, Extension\ICount {
-  use Extension\TCount;
+class Member extends ActiveDoc implements IUser {
 
   const MR_HASH = '_mr'; //!< Members Redis hash.
 
-  private $tasks;    // Collection of tasks.
+  private $tasks;     // Collection of tasks.
   private $emails;    // Collection of e-mails.
   private $logins;    // Collection of consumers' logins.
   private $roles;     // Collection of roles.
+  private $tags;      // Favorite tags.
   private $blacklist; // Blacklist.
   private $friends;   // List of friends.
   private $followers; // List of followers.
-  private $favorites; // Favorite items.
 
 
   public function __construct() {
@@ -87,12 +86,15 @@ class Member extends Storable implements IUser, Extension\ICount {
     $this->meta['roles'] = [];
     $this->roles = new Collection\RoleCollection($this->meta);
 
+    $this->meta['tags'] = [];
+    $this->tags = new Collection\TagCollection($this->meta);
+
     $this->meta['blacklist'] = [];
     $this->blacklist = new Collection\Blacklist($this->meta);
 
     $this->friends = new Collection\FriendCollection($this);
+
     $this->followers = new Collection\FollowerCollection($this);
-    $this->favorites = new Collection\FavoriteCollection($this);
   }
 
 
@@ -138,9 +140,6 @@ class Member extends Storable implements IUser, Extension\ICount {
       $opts->reset();
       $opts->doNotReduce()->setLimit(1)->setKey([$user->id, $id]);
       $member->friendshipExists = !$couch->queryView("friendships", "approvedPerMember", NULL, $opts)->isEmpty();
-
-      // Hits count.
-      $member->hitsCount = Helper\Text::formatNumber($redis->hGet($id, 'hits'));
 
       // Friends count.
       $opts->reset();
