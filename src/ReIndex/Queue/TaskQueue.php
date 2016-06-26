@@ -18,11 +18,9 @@ use AMQPExchange;
 use AMQPQueue;
 use AMQPEnvelope;
 
-use Phalcon\Di;
-
 
 /**
- * @brief A special queue to  interface to describe a generic task.
+ * @brief A special queue to handle tasks.
  */
 class TaskQueue extends AbstractQueue {
 
