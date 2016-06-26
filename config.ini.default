@@ -43,7 +43,6 @@ reviewerVoteValue = 1
 ; The following values must be set once and never changed.
 voteCoefficient = 1,5
 replyCoefficient = 1,0
-hitCoefficient = 0,0005
 
 [assets]
 codeMirrorVersion = "5.2.0"
