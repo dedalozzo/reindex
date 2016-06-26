@@ -26,7 +26,7 @@ class UnprotectPostPermission extends AbstractPermission {
 
   /**
    * @brief Constructor.
-   * @param[in] Model::Post $context
+   * @param[in] Doc::Post $context
    */
   public function __construct($context = NULL) {
     parent::__construct($context);
