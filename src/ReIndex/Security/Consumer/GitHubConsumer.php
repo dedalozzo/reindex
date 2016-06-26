@@ -11,7 +11,7 @@
 namespace ReIndex\Security\Consumer;
 
 
-use ReIndex\Model\Member;
+use ReIndex\Doc\Member;
 use ReIndex\Helper\Text;
 
 
