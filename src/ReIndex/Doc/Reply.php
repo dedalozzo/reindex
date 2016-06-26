@@ -11,18 +11,29 @@
 namespace ReIndex\Doc;
 
 
-use ReIndex\Extension;
 use ReIndex\Property;
+use ReIndex\Collection;
 
 
 /**
  * @brief A generic reply. It can be an answer, a comment to a question (or to an answer) or a reply to a post (an
  * article, a book review, etc.).
  * @nosubgrouping
+ *
+ * @cond HIDDEN_SYMBOLS
+ *
+ * @property Collection\VoteCollection $votes // Casted votes.
+ *
+ * @endcond
  */
-class Reply extends Versionable implements Extension\IVote {
-  use Extension\TVote;
+class Reply extends Versionable {
   use Property\TBody;
+
+
+  public function __construct() {
+    parent::__construct();
+    $this->votes = new Collection\VoteCollection($this);
+  }
 
 
   public function save() {
@@ -52,6 +63,16 @@ class Reply extends Versionable implements Extension\IVote {
   public function unsetPostId() {
     if ($this->isMetadataPresent('postId'))
       unset($this->meta['postId']);
+  }
+
+
+  public function getVotes() {
+    return $this->votes;
+  }
+
+
+  public function issetVotes() {
+    return isset($this->votes);
   }
 
   //! @endcond
