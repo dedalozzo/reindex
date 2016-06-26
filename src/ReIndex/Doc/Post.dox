@@ -1,7 +1,7 @@
 <?php
 
 
-namespace ReIndex\Model;
+namespace ReIndex\Doc;
 
 
 class Post {
