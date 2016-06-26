@@ -11,9 +11,9 @@
 namespace ReIndex\Collection;
 
 
-use ReIndex\Model\Post;
-use ReIndex\Model\Member;
-use ReIndex\Model\Subscription;
+use ReIndex\Doc\Post;
+use ReIndex\Doc\Member;
+use ReIndex\Doc\Subscription;
 use ReIndex\Helper\Text;
 
 use EoC\Couch;
