@@ -11,21 +11,19 @@
 namespace ReIndex\Collection;
 
 
-use ReIndex\Model\Member;
+use ReIndex\Doc\Member;
 use ReIndex\Exception;
-use ReIndex\Model\Follower;
+use ReIndex\Doc\Follower;
 
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
-
-use Phalcon\Di;
 
 
 /**
  * @brief This class is used to represent a collection of followers.
  * @nosubgrouping
  */
-class FollowerCollection extends FakeCollection {
+class FollowerCollection extends MemberCollection {
 
   protected $followersCount = NULL; // Stores the number of followers in the collection.
 
@@ -34,7 +32,7 @@ class FollowerCollection extends FakeCollection {
     // Test is made using `is_null()` instead of `empty()` because a member may have no followers at all.
     if (is_null($this->followersCount)) {
       $opts = new ViewQueryOpts();
-      $opts->reduce()->setKey([$this->user->id]);
+      $opts->reduce()->setKey([$this->member->id]);
 
       $this->followersCount = $this->couch->queryView("followers", "perMember", NULL, $opts)->getReducedValue();
     }
@@ -50,15 +48,15 @@ class FollowerCollection extends FakeCollection {
    */
   public function follow(Member $member) {
     // Of course, you can't add yourself to the collection.
-    if ($member->match($this->user->id))
+    if ($member->match($this->member->id))
       throw new Exception\UserMismatchException("You are nut.");
 
     // You are already following the member.
-    if ($member->followers->exists($this->user))
+    if ($member->followers->exists($this->member))
       throw new Exception\UserMismatchException("You are already following him.");
 
     // Creates and stores the relation.
-    $follower = Follower::create($member->id, $this->user->id);
+    $follower = Follower::create($member->id, $this->member->id);
     $this->couch->save($follower);
   }
 
@@ -69,7 +67,7 @@ class FollowerCollection extends FakeCollection {
    * @retval bool Returns `true` in case of success, `false` otherwise.
    */
   public function unfollow(Member $member) {
-    if ($follower = $member->followers->exists($this->user))
+    if ($follower = $member->followers->exists($this->member))
       $this->couch->deleteDoc(Couch::STD_DOC_PATH, $follower->id, $follower->rev);
     else
       throw new Exception\UserMismatchException("You are not following him.");
@@ -79,11 +77,11 @@ class FollowerCollection extends FakeCollection {
   /**
    * @brief Returns `true` in case the current user is following the specified member, `false` otherwise.
    * @param[in] Member $member A member.
-   * @retval Model::Follower or `false` in case the member is not a follower.
+   * @retval Doc::Follower or `false` in case the member is not a follower.
    */
   public function exists(Member $member) {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([$this->user->id, $member->id]);
+    $opts->doNotReduce()->setLimit(1)->setKey([$this->member->id, $member->id]);
 
     $result = $this->couch->queryView("followers", "perMember", NULL, $opts);
 
