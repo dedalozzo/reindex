@@ -16,6 +16,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
 
+use EoC\Couch;
 use EoC\Doc\DesignDoc;
 use EoC\Handler\ViewHandler;
 
@@ -26,6 +27,9 @@ use EoC\Handler\ViewHandler;
  */
 class InitCommand extends AbstractCommand {
 
+  /**
+   * @var Couch $couch
+   */
   protected $couch;
 
 
