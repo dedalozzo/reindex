@@ -524,7 +524,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'subscription')
-    $emit([$doc->itemId, $doc->userId]);
+    $emit([$doc->itemId, $doc->memberId]);
 };
 MAP;
 
