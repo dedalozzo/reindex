@@ -42,7 +42,7 @@ use ReIndex\Security\Role;
  *
  * @endcond
  */
-abstract class Versionable extends Storable {
+abstract class Versionable extends ActiveDoc {
 
   protected $state;
 
@@ -171,7 +171,7 @@ abstract class Versionable extends Storable {
 
 
   /**
-   * @copydoc Storable::save()
+   * @copydoc ActiveDoc::save()
    */
   public function save() {
     // We force the document state in case it hasn't been changed.
