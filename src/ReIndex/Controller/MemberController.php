@@ -13,7 +13,7 @@ namespace ReIndex\Controller;
 use EoC\Opt\ViewQueryOpts;
 use EoC\Couch;
 
-use ReIndex\Model\Member;
+use ReIndex\Doc\Member;
 use ReIndex\Helper\Time;
 
 use Phalcon\Mvc\View;
