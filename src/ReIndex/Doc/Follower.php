@@ -8,10 +8,8 @@
  */
 
 
-namespace ReIndex\Model;
+namespace ReIndex\Doc;
 
-
-use ReIndex\Exception;
 
 use EoC\Doc\Doc;
 
