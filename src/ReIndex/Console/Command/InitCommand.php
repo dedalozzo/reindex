@@ -48,7 +48,6 @@ posts
 replies
 reputation
 revisions
-stars
 subscriptions
 tags
 tasks
@@ -70,7 +69,6 @@ DOCS;
     $this->initReplies();
     $this->initReputation();
     $this->initRevisions();
-    $this->initStars();
     $this->initSubscriptions();
     $this->initTags();
     $this->initTasks();
@@ -478,7 +476,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'vote')
-    $emit([$doc->itemId, $doc->userId], $doc->value);
+    $emit([$doc->itemId, $doc->voterId], $doc->value);
 };
 MAP;
 
@@ -497,7 +495,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if ($doc->type == 'vote')
-    $emit($doc->userId);
+    $emit($doc->voterId);
 };
 MAP;
 
@@ -514,111 +512,6 @@ MAP;
     $this->couch->saveDoc($doc);
 
     $this->printDone('votes');
-  }
-
-
-  protected function initStars() {
-    $doc = DesignDoc::create('stars');
-
-
-    // @params postId, [userId]
-    function starsPerPost() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'star')
-    $emit([$doc->postId, $doc->userId]);
-};
-MAP;
-
-      $handler = new ViewHandler("perPost");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount();
-
-      return $handler;
-    }
-
-    $doc->addHandler(starsPerPost());
-
-
-    // @params: userId
-    function starsPerAddedAt() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'star')
-    $emit([$doc->memberId, $doc->postAddedAt], $doc->postId);
-};
-MAP;
-
-      $handler = new ViewHandler("perAddedAt");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount();
-
-      return $handler;
-    }
-
-    $doc->addHandler(starsPerAddedAt());
-
-
-    // @params: userId, type
-    function starsPerAddedAtByType() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'star')
-    $emit([$doc->memberId, $doc->postType, $doc->postAddedAt], $doc->postId);
-};
-MAP;
-
-      $handler = new ViewHandler("perAddedAtByType");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
-
-      return $handler;
-    }
-
-    $doc->addHandler(starsPerAddedAtByType());
-
-
-    // @params: userId
-    function starsPerPublishedAt() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'star')
-    $emit([$doc->memberId, $doc->postPublishedAt], $doc->postId);
-};
-MAP;
-
-      $handler = new ViewHandler("perPublishedAt");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount();
-
-      return $handler;
-    }
-
-    $doc->addHandler(starsPerPublishedAt());
-
-
-    // @params: userId, type
-    function starsPerPublishedAtByType() {
-      $map = <<<'MAP'
-function($doc) use ($emit) {
-  if ($doc->type == 'star')
-    $emit([$doc->memberId, $doc->postType, $doc->postPublishedAt], $doc->postId);
-};
-MAP;
-
-      $handler = new ViewHandler("perPublishedAtByType");
-      $handler->mapFn = $map;
-      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
-
-      return $handler;
-    }
-
-    $doc->addHandler(starsPerPublishedAtByType());
-
-
-    $this->couch->saveDoc($doc);
-
-    $this->printDone('stars');
   }
 
 
@@ -1262,10 +1155,6 @@ DESC
 
           case 'revisions':
             $this->initRevisions();
-            break;
-
-          case 'stars':
-            $this->initStars();
             break;
 
           case 'subscriptions':
