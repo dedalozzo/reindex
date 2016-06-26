@@ -11,7 +11,7 @@
 namespace ReIndex\Console\Command\Role;
 
 
-use ReIndex\Model\Member;
+use ReIndex\Doc\Member;
 use ReIndex\Security\Role\IRole;
 
 use Symfony\Component\Console\Output\OutputInterface;
