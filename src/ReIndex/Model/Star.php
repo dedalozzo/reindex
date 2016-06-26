@@ -11,15 +11,13 @@
 namespace ReIndex\Model;
 
 
-use ReIndex\Feature\Starrable;
-
 use EoC\Doc\Doc;
 
 use ReIndex\Helper\Text;
 
 
 /**
- * @brief This class is used to keep trace of the user favourites.
+ * @brief This class is used to keep trace of the member's favorites.
  * @nosubgrouping
  */
 class Star extends Doc {
@@ -27,22 +25,21 @@ class Star extends Doc {
   /**
    * @brief Creates an instance of Star class.
    */
-  public static function create(Member $member, Starrable $item, $timestamp = NULL) {
+  public static function create(Member $member, Post $post, $timestamp = NULL) {
     $instance = new self();
 
     $instance->meta["userId"] = $member->id;
-    $instance->meta["itemId"] = Text::unversion($item->getId());
-    $instance->meta["itemType"] = $item->getType();
-    $instance->meta["itemSupertype"] = $item->getSupertype();;
+    $instance->meta["postId"] = Text::unversion($post->getId());
+    $instance->meta["postType"] = $post->getType();
 
     // A post can be published or not.
-    if ($item->isMetadataPresent('publishedAt'))
-      $instance->meta["itemPublishedAt"] = $item->publishedAt;
+    if ($post->isMetadataPresent('publishedAt'))
+      $instance->meta["postPublishedAt"] = $post->publishedAt;
 
     if (is_null($timestamp))
-      $instance->meta["itemAddedAt"] = time();
+      $instance->meta["postAddedAt"] = time();
     else
-      $instance->meta["itemAddedAt"] = $timestamp;
+      $instance->meta["postAddedAt"] = $timestamp;
 
     return $instance;
   }
