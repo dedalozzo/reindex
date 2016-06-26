@@ -8,58 +8,38 @@
  */
 
 
-namespace ReIndex\Model;
+namespace ReIndex\Doc;
+
+
+use EoC\Doc\Doc;
 
 
 /**
  * @brief This class is used to keep trace of the user votes.
  * @nosubgrouping
  */
-class Vote extends ActiveDoc {
+class Vote extends Doc {
+
+
+  /**
+   * @brief Creates an instance of Vote class.
+   * @param[in] string $itemId The ID of the document the vote refers.
+   * @param[in] string $voterId The ID of the member who has voted.
+   * @param[in] int $value The vote's value.
+   */
+  public static function cast($itemId, $voterId, $value = 1) {
+    $instance = new self();
+
+    $instance->meta["itemId"] = $itemId;
+    $instance->meta["voterId"] = $voterId;
+    $instance->meta["value"] = $value;
+    $instance->meta["timestamp"] = time();
+
+    return $instance;
+  }
+
 
   //! @cond HIDDEN_SYMBOLS
-
-  public function getItemId() {
-    return $this->meta['itemId'];
-  }
-
-
-  public function issetItemId() {
-    return isset($this->meta['itemId']);
-  }
-
-
-  public function setItemId($value) {
-    $this->meta['itemId'] = $value;
-  }
-
-
-  public function unsetItemId() {
-    if ($this->isMetadataPresent('itemId'))
-      unset($this->meta['itemId']);
-  }
-
-
-  public function getUserId() {
-    return $this->meta['userId'];
-  }
-
-
-  public function issetUserId() {
-    return isset($this->meta['userId']);
-  }
-
-
-  public function setUserId($value) {
-    $this->meta['userId'] = $value;
-  }
-
-
-  public function unsetUserId() {
-    if ($this->isMetadataPresent('userId'))
-      unset($this->meta['userId']);
-  }
-
 
   public function getValue() {
     return $this->meta['value'];
@@ -79,6 +59,27 @@ class Vote extends ActiveDoc {
   public function unsetValue() {
     if ($this->isMetadataPresent('value'))
       unset($this->meta['value']);
+  }
+
+
+  public function getTimestamp() {
+    return $this->meta['timestamp'];
+  }
+
+
+  public function issetTimestamp() {
+    return isset($this->meta['timestamp']);
+  }
+
+
+  public function setTimestamp($timestamp) {
+    $this->meta['timestamp'] = $timestamp;
+  }
+
+
+  public function unsetTimestamp() {
+    if ($this->isMetadataPresent('timestamp'))
+      unset($this->meta['timestamp']);
   }
 
   //! @endcond
