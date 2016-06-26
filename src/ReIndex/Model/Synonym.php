@@ -15,7 +15,7 @@ namespace ReIndex\Model;
  * @brief A synonym of a tag.
  * @nosubgrouping
  */
-class Synonym extends Storable {
+class Synonym extends ActiveDoc {
 
   private $relatedIds;
 
