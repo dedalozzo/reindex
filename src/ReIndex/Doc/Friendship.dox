@@ -9,10 +9,10 @@ class Friendship {
   /** @name Properties */
   //!@{
 
-  public string $senderId; //!< Who requested the friendship.
-  public string $receiverId; //!< Who received the request.
-  public int $requestedAt; //!< A timestamp of the friendship request.
-  public int $approvedAt; //!< A timestamp of the friendship approval.
+  public string $senderId; //!< [readonly] Who requested the friendship.
+  public string $receiverId; //!< [readonly] Who received the request.
+  public int $requestedAt; //!< [readonly] A timestamp of the friendship request.
+  public int $approvedAt; //!< [readonly] A timestamp of the friendship approval.
 
   //!@}
 
