@@ -11,7 +11,7 @@
 namespace ReIndex\Collection;
 
 
-use ReIndex\Model\Tag;
+use ReIndex\Doc\Tag;
 use ReIndex\Helper;
 
 use EoC\Opt\ViewQueryOpts;

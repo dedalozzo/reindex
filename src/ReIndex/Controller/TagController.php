@@ -15,7 +15,7 @@ use EoC\Opt\ViewQueryOpts;
 use EoC\Couch;
 
 use ReIndex\Helper;
-use ReIndex\Model\Tag;
+use ReIndex\Doc\Tag;
 
 
 /**
