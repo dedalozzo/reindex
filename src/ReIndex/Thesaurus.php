@@ -11,8 +11,8 @@
 namespace ReIndex;
 
 
-use ReIndex\Model\Tag;
-use ReIndex\Model\Synonym;
+use ReIndex\Doc\Tag;
+use ReIndex\Doc\Synonym;
 
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
