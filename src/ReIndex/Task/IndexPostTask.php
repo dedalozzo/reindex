@@ -11,7 +11,7 @@
 namespace ReIndex\Task;
 
 
-use ReIndex\Model\Post;
+use ReIndex\Doc\Post;
 
 use Phalcon\Di;
 
@@ -230,9 +230,8 @@ class IndexPostTask implements ITask {
   private function zAddPopular() {
     $config = $this->di['config'];
 
-    $popularity = ($this->post->getScore() * $config->scoring->voteCoefficient) +
-      ($this->post->getRepliesCount() * $config->scoring->replyCoefficient) +
-      ($this->post->getHitsCount() * $config->scoring->hitCoefficient);
+    $popularity = ($this->post->score * $config->scoring->voteCoefficient) +
+      ($this->post->getRepliesCount() * $config->scoring->replyCoefficient);
 
     $date = (new \DateTime())->setTimestamp($this->post->publishedAt);
     $this->zAddSpecial(Post::POP_SET, $date, $popularity);
