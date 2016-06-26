@@ -14,7 +14,7 @@ namespace ReIndex\Controller;
 use ReIndex\Validation;
 use ReIndex\Helper;
 use ReIndex\Exception\InvalidFieldException;
-use ReIndex\Model\Article;
+use ReIndex\Doc\Article;
 
 use Phalcon\Validation\Validator\PresenceOf;
 use Phalcon\Mvc\View;
