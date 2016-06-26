@@ -11,7 +11,6 @@
 namespace ReIndex\Doc;
 
 
-use ReIndex\Feature\Subscribable;
 use ReIndex\Helper\Text;
 
 use EoC\Doc\Doc;
@@ -27,11 +26,11 @@ class Subscription extends Doc {
   /**
    * @brief Creates an instance of Subscription class.
    */
-  public static function create(Subscribable $item, Member $member, $timestamp = NULL) {
+  public static function create($itemId, $memberId, $timestamp = NULL) {
     $instance = new self();
 
-    $instance->meta["userId"] = $member->id;
-    $instance->meta["itemId"] = Text::unversion($item->getId());
+    $instance->meta["itemId"] = Text::unversion($itemId);
+    $instance->meta["memberId"] = $memberId;
 
     if (is_null($timestamp))
       $instance->meta["timestamp"] = time();
