@@ -11,6 +11,8 @@ class Reply {
 
   public string $postId; //!< The post id the replay is related.
 
+  VoteCollection $votes; //!< Casted votes.
+
   //!@}
 
 }
