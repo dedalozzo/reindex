@@ -19,7 +19,7 @@ use OAuth\ServiceFactory;
 use Phalcon\Di;
 use Phalcon\Validation\Validator\PresenceOf;
 
-use ReIndex\Model\Member;
+use ReIndex\Doc\Member;
 use ReIndex\Factory\UserFactory;
 use ReIndex\Helper;
 use ReIndex\Validation;
@@ -171,7 +171,7 @@ abstract class OAuth2Consumer implements IConsumer {
   /**
    * @brief Tries to perform the standard user logon.
    * @param[in] array $userData An associative array with the user information.
-   * @retval Model::Member An user instance or `false`.
+   * @retval Doc::Member An user instance or `false`.
    */
   private function execStdLogon(array $userData) {
     if ($this->user->isGuest()) {
