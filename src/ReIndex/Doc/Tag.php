@@ -11,8 +11,6 @@
 namespace ReIndex\Model;
 
 
-use ReIndex\Feature;
-use ReIndex\Extension;
 use ReIndex\Property;
 use ReIndex\Collection;
 use ReIndex\Helper;
@@ -28,8 +26,7 @@ use Phalcon\Di;
  * @details Every post must be tagged with a maximun of five tags.
  * @nosubgrouping
  */
-class Tag extends Versionable implements Extension\ICount, Feature\Starrable  {
-  use Extension\TCount;
+class Tag extends Versionable {
   use Property\TExcerpt, Property\TBody, Property\TDescription;
 
   // Collection of synonyms.

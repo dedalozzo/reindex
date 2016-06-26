@@ -32,6 +32,9 @@ use ReIndex\Helper;
  * @property string $createdAt;  // Creation timestamp.
  * @property string $modifiedAt; // Timestamp of the last update.
  *
+ * @property string $creatorId             // The user id of whom created the content.
+ * @property string $editorId              // The user id of whom modified the content.
+ *
  * @endcond
  */
 abstract class ActiveDoc extends Doc {
@@ -109,6 +112,15 @@ abstract class ActiveDoc extends Doc {
    * @brief Saves the item to the database.
    */
   public function save() {
+    // The document has been edited.
+    if (isset($this->rev))
+      $this->editorId = $this->user->id;
+
+    // Creator ID has not been provided.
+    if (!isset($this->creatorId))
+      $this->creatorId = $this->user->id;
+
+    // Sets the editing timestamp.
     $this->modifiedAt = time();
 
     // Creation timestamp has not been provided.
@@ -191,6 +203,48 @@ abstract class ActiveDoc extends Doc {
   public function unsetModifiedAt() {
     if ($this->isMetadataPresent('modifiedAt'))
       unset($this->meta['modifiedAt']);
+  }
+
+
+  public function getCreatorId() {
+    return $this->meta["creatorId"];
+  }
+
+
+  public function issetCreatorId() {
+    return isset($this->meta['creatorId']);
+  }
+
+
+  public function setCreatorId($value) {
+    $this->meta["creatorId"] = $value;
+  }
+
+
+  public function unsetCreatorId() {
+    if ($this->isMetadataPresent('creatorId'))
+      unset($this->meta['creatorId']);
+  }
+
+
+  public function getEditorId() {
+    return $this->meta["editorId"];
+  }
+
+
+  public function issetEditorId() {
+    return isset($this->meta['editorId']);
+  }
+
+
+  public function setEditorId($value) {
+    $this->meta["editorId"] = $value;
+  }
+
+
+  public function unsetEditorId() {
+    if ($this->isMetadataPresent('editorId'))
+      unset($this->meta['editorId']);
   }
 
   //! @endcond

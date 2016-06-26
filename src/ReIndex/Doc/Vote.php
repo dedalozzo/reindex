@@ -15,7 +15,7 @@ namespace ReIndex\Model;
  * @brief This class is used to keep trace of the user votes.
  * @nosubgrouping
  */
-class Vote extends ActiveDoc { //implements ISubject {
+class Vote extends ActiveDoc {
 
   //! @cond HIDDEN_SYMBOLS
 

@@ -49,10 +49,9 @@ use Phalcon\Di;
  *
  * @endcond
  */
-abstract class Post extends Versionable implements Extension\ICount, Extension\IVote,
-  Feature\Starrable, Feature\Subscribable {
+abstract class Post extends Versionable {
 
-  use Extension\TCount, Extension\TVote;
+  use Extension\TVote;
   use Property\TExcerpt, Property\TBody, Property\TDescription;
 
   /** @name Redis Set Names */
@@ -106,7 +105,8 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     $this->meta['tasks'] = [];
     $this->tasks = new Collection\TaskCollection($this->meta);
 
-    $this->stars = new Collection\StarGalaxy($this);
+    $this->votes = new Collection\VoteCollection($this);
+
     $this->subscriptions = new Collection\SubscriptionCollection($this);
   }
 
@@ -212,6 +212,14 @@ abstract class Post extends Versionable implements Extension\ICount, Extension\I
     }
 
     return $entries;
+  }
+
+
+  /**
+   * @brief Likes the post.
+   */
+  public function like() {
+    return $this->votes->cast(1);
   }
 
 

@@ -34,8 +34,6 @@ use ReIndex\Security\Role;
  *
  * @property string $username              // The author username.
  *
- * @property string $creatorId             // The user id of whom created the content.
- * @property string $editorId              // The user id of whom modified the content.
  * @property string $dustmanId             // [readonly] The user id of whom moved to trash the content.
  *
  * @property string $editSummary           // A brief explanation of an edit to a versionable content.
@@ -252,48 +250,6 @@ abstract class Versionable extends ActiveDoc {
 
   public function issetPreviousVersionNumber() {
     return isset($this->meta['previousVersionNumber']);
-  }
-
-
-  public function getCreatorId() {
-    return $this->meta["creatorId"];
-  }
-
-
-  public function issetCreatorId() {
-    return isset($this->meta['creatorId']);
-  }
-
-
-  public function setCreatorId($value) {
-    $this->meta["creatorId"] = $value;
-  }
-
-
-  public function unsetCreatorId() {
-    if ($this->isMetadataPresent('creatorId'))
-      unset($this->meta['creatorId']);
-  }
-
-
-  public function getEditorId() {
-    return $this->meta["editorId"];
-  }
-
-
-  public function issetEditorId() {
-    return isset($this->meta['editorId']);
-  }
-
-
-  public function setEditorId($value) {
-    $this->meta["editorId"] = $value;
-  }
-
-
-  public function unsetEditorId() {
-    if ($this->isMetadataPresent('editorId'))
-      unset($this->meta['editorId']);
   }
 
 
