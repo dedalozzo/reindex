@@ -41,7 +41,7 @@ use Phalcon\Di;
  * @property string $protection   // [readonly] Level of protection.
  * @property string $protectorId  // [readonly] The user ID of whom protected the content.
  *
- * @property Collection\TagCollection $tags  // A collection of tags.
+ * @property Collection\TagCollection $tags // A collection of tags.
  * @property Collection\TaskCollection $tasks // A collection of tasks.
  * @property Collection\SubscriptionCollection $subscriptions // A collection of members who have subscribed the post.
  * @property Collection\VoteCollection $votes // Casted votes.
