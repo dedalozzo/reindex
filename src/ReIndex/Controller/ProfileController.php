@@ -10,8 +10,8 @@
 
 namespace ReIndex\Controller;
 
-use ReIndex\Model\Post;
-use ReIndex\Model\Member;
+use ReIndex\Doc\Post;
+use ReIndex\Doc\Member;
 use ReIndex\Factory\UserFactory;
 use ReIndex\Helper;
 use ReIndex\Exception;
@@ -46,7 +46,8 @@ class ProfileController extends ListController {
     $user = UserFactory::fromUsername($username);
 
     if ($user->isMember()) {
-      $user->incHits($user->id);
+      // todo: Generates a view for the current user.
+      //$user->hits->inc($user->id);
       $this->view->setVar('profile', $user);
     }
 
