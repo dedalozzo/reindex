@@ -30,7 +30,7 @@ class TaskCollection extends MetaCollection {
 
 
   /**
-   * @brief Creates a new collection of tags.
+   * @brief Creates a new collection of tasks.
    * @param[in] array $meta Post's array of metadata.
    */
   public function __construct(array &$meta) {
