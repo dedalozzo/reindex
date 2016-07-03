@@ -51,18 +51,13 @@ use Phalcon\Di;
 abstract class Post extends Versionable {
   use Property\TExcerpt, Property\TBody, Property\TDescription;
 
-  /** @name Redis Set Names */
+  /** @name Constants */
   //!@{
 
   const NEW_SET = 'new_'; //!< Newest posts Redis set.
   const POP_SET = 'pop_'; //!< Popular posts Redis set.
   const ACT_SET = 'act_'; //!< Active posts Redis set.
   const OPN_SET = 'opn_'; //!< Open questions Redis set.
-
-  //!@}
-
-  /** @name Protection Levels */
-  //!@{
 
   const CLOSED_PL = 'closed'; //!< The post is closed.
   const LOCKED_PL = 'locked'; //!< The post is locked.
