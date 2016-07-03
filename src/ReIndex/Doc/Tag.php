@@ -116,6 +116,7 @@ class Tag extends Versionable {
    */
   public function castAsSynonym() {
     $synonym = Synonym::create($this->unversionId);
+    $synonym->rev = $this->rev;
     $synonym->name = $this->name;
     $synonym->setRelatesIds($this->meta['synonyms']);
     return $synonym;
@@ -127,7 +128,7 @@ class Tag extends Versionable {
   /**
    * @brief Saves the tag.
    */
-  public function save(Tag $synonym = NULL) {
+  public function save() {
     if (!$this->synonimizing()) {
       $this->html = $this->markdown->parse($this->body);
       $purged = Helper\Text::purge($this->html);
