@@ -166,11 +166,11 @@ class SynonymizeTask implements ITask {
     // Saves the master tag.
     $masterTag->save();
 
-    // Marks the synonym tag for deletion.
-    $synonymTag->delete();
+    // Saves the synonym. This will rewrite a document using the same `_id` and `_rev`of the tag casted as synonym.
+    $synonym->save();
 
-    // Deletes the synonym tag.
-    $synonymTag->save();
+    // We must now delete all the related versions still into the database.
+    // todo cancellare tutte le revisioni del tag sinonimizzato
   }
 
 
