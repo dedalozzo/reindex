@@ -88,8 +88,8 @@ class TagCollection extends MetaCollection {
   public function uniqueMasters() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce();
-    $masters = $this->couch->queryView("tags", "synonyms", $this->meta[static::NAME], $opts);
-    return array_unique(array_column($masters->asArray(), 'value'));
+    $masters = $this->couch->queryView("tags", "synonyms", $this->meta[static::NAME], $opts)->asArray();
+    return array_unique(array_column($masters, 'value'));
   }
 
 
