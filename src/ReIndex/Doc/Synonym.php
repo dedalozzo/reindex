@@ -38,7 +38,7 @@ class Synonym extends ActiveDoc {
 
   /**
    * @brief Assigns a list of synonyms' related IDs.
-   * @param[in] array An array of IDs.
+   * @param[in] array $ids An array of IDs.
    * @nosubgrouping
    */
   public function setRelatesIds(array $ids) {
