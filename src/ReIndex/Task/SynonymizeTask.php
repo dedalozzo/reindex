@@ -170,7 +170,13 @@ class SynonymizeTask implements ITask {
     $synonym->save();
 
     // We must now delete all the related versions still into the database.
-    // todo cancellare tutte le revisioni del tag sinonimizzato
+    $opts->reset();
+    $opts->setKey($this->synonymId)->doNotReduce();
+    $rows = $this->couch->queryView("revisions", "perItem", NULL, $opts);
+
+    foreach ($rows as $row) {
+      $this->couch->deleteDoc(Couch::STD_DOC_PATH, $row['_id'], $row['_rev']);
+    }
   }
 
 
