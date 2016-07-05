@@ -72,11 +72,6 @@ key = "123456789101234"
 secret = "h32gh4gh32f4h23f4hg23f4hg2f3"
 name = "Facebook"
 
-[google]
-key = "123456789102.apps.googleusercontent.com"
-secret = "lksdhfkjhsdjfjhsgdjhgajhdgs"
-name = "Google"
-
 [linkedin]
 key = "3hgjh432g4jh2gjsd"
 secret = "ewuiry43ui53hfsa"
@@ -86,3 +81,8 @@ name = "LinkedIn"
 key = "ksdjkfskhakjhdjkasu4"
 secret = "345jkhsdkjjhfdjkahdjewg5y34u5y3hg54jh3g5"
 name = "GitHub"
+
+[google]
+key = "123456789102.apps.googleusercontent.com"
+secret = "lksdhfkjhsdjfjhsgdjhgajhdgs"
+name = "Google"
