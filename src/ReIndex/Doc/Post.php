@@ -98,7 +98,6 @@ abstract class Post extends Versionable {
     $this->tasks = new Collection\TaskCollection($this->meta);
 
     $this->subscriptions = new Collection\SubscriptionCollection($this);
-
     $this->votes = new Collection\VoteCollection($this);
   }
 
