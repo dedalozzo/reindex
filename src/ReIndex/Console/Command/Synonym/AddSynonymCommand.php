@@ -24,7 +24,7 @@ use ReIndex\Thesaurus;
  * @brief Displays the synonyms of a tag or add a tag as a synonym of another one.
  * @nosubgrouping
  */
-class AddSynonymCommand extends AbstractCommand {
+final class AddSynonymCommand extends AbstractCommand {
 
 
   /**
