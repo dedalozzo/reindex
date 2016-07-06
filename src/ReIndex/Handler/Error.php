@@ -25,7 +25,7 @@ use ReIndex\Version;
  * @brief A monolog error handler that redirects the user to an error page.
  * @nosubgrouping
  */
-class Error extends AbstractProcessingHandler {
+final class Error extends AbstractProcessingHandler {
   protected $di; // Stores the default Dependency Injector.
   protected $dispatcher;
   protected $user; // Stores the current user.
