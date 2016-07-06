@@ -26,7 +26,7 @@ use Monolog\Logger;
  * @brief This class is responsible to ensure an user has the ability to perform any operation.
  * @nosubgrouping
  */
-class Guardian {
+final class Guardian {
   use Extension\TProperty;
 
   private static $initialized = FALSE;
