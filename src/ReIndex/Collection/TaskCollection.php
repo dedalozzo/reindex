@@ -19,9 +19,7 @@ use ReIndex\Queue\TaskQueue;
  * @brief This class is used to represent a collection of tasks.
  * @nosubgrouping
  */
-class TaskCollection extends MetaCollection {
-
-  const NAME = "tasks";
+final class TaskCollection extends MetaCollection {
 
   /**
    * @var TaskQueue $queue
@@ -31,10 +29,11 @@ class TaskCollection extends MetaCollection {
 
   /**
    * @brief Creates a new collection of tasks.
-   * @param[in] array $meta Post's array of metadata.
+   * @param[in] string $name Collection's name.
+   * @param[in] array $meta Array of metadata.
    */
-  public function __construct(array &$meta) {
-    parent::__construct($meta);
+  public function __construct($name, array &$meta) {
+    parent::__construct($name, $meta);
 
     $this->queue = $this->di['taskqueue'];
   }
@@ -51,7 +50,7 @@ class TaskCollection extends MetaCollection {
     if ($this->exists($task))
       return;
     else
-      $this->meta[static::NAME][get_class($task)] = NULL;
+      $this->meta[$this->name][get_class($task)] = NULL;
   }
 
 
@@ -61,7 +60,7 @@ class TaskCollection extends MetaCollection {
    */
   public function remove(ITask $task) {
     if ($this->exists($task))
-      unset($this->meta[static::NAME][get_class($task)]);
+      unset($this->meta[$this->name][get_class($task)]);
   }
 
 
@@ -71,7 +70,7 @@ class TaskCollection extends MetaCollection {
    * @retval bool
    */
   public function exists(ITask $task) {
-    return isset($this->meta[static::NAME][get_class($task)]);
+    return isset($this->meta[$this->name][get_class($task)]);
   }
 
 
