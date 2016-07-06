@@ -26,7 +26,7 @@ use Phalcon\Di;
  * @brief This class is used to represent a collection of friends.
  * @nosubgrouping
  */
-class FriendCollection extends MemberCollection {
+final class FriendCollection extends MemberCollection {
 
   /** @name Redis Names */
   //!@{
