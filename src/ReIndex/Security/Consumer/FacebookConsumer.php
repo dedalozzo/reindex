@@ -18,7 +18,7 @@ use ReIndex\Exception;
  * @brief Facebook consumer implementation.
  * @nosubgrouping
  */
-class FacebookConsumer extends OAuth2Consumer {
+final class FacebookConsumer extends OAuth2Consumer {
 
   /** @name Field Names */
   //!@{
