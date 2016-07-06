@@ -18,7 +18,7 @@ use EoC\Doc\Doc;
  * @brief This class is used to keep trace of the user votes.
  * @nosubgrouping
  */
-class Vote extends Doc {
+final class Vote extends Doc {
 
 
   /**
