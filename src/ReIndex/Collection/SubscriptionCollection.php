@@ -22,7 +22,7 @@ use EoC\Opt\ViewQueryOpts;
 use Phalcon\Di;
 
 
-class SubscriptionCollection implements \Countable {
+final class SubscriptionCollection implements \Countable {
 
   /**
    * @var Di $di
