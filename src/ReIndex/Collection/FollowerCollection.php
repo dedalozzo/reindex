@@ -23,7 +23,7 @@ use EoC\Opt\ViewQueryOpts;
  * @brief This class is used to represent a collection of followers.
  * @nosubgrouping
  */
-class FollowerCollection extends MemberCollection {
+final class FollowerCollection extends MemberCollection {
 
   protected $followersCount = NULL; // Stores the number of followers in the collection.
 
