@@ -20,7 +20,7 @@ use ReIndex\Security\Role;
  * @brief Controller of Footer actions.
  * @nosubgrouping
  */
-class FooterController extends BaseController {
+final class FooterController extends BaseController {
 
   /**
    * @brief Displays the tour page.
