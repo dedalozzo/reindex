@@ -25,7 +25,7 @@ use ReIndex\Helper\Cookie;
  * @brief This class implements the factory pattern and it's used to creates users.
  * @nosubgrouping
  */
-class UserFactory {
+final class UserFactory {
 
 
   /**
