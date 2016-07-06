@@ -24,7 +24,7 @@ use Phalcon\Mvc\View;
  * @brief Controller of Article actions.
  * @nosubgrouping
  */
-class ArticleController extends IndexController {
+final class ArticleController extends IndexController {
 
 
   /**
