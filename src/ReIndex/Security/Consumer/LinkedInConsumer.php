@@ -19,7 +19,7 @@ use ReIndex\Exception\InvalidFieldException;
  * @brief LinkedIn consumer implementation.
  * @nosubgrouping
  */
-class LinkedInConsumer extends OAuth2Consumer {
+final class LinkedInConsumer extends OAuth2Consumer {
 
   /** @name Field Names */
   //!@{
