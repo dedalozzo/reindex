@@ -11,11 +11,6 @@
 namespace ReIndex\Controller;
 
 
-use ReIndex\Helper;
-
-use Phalcon\Mvc\View;
-
-
 /*
  * @brief Ancestor controller for any controller displaying list of entries: posts, members, etc..
  * @nosubgrouping
