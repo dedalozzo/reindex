@@ -19,9 +19,7 @@ use ReIndex\Helper;
  * @brief This class is used to represent a collection of synonyms. It's used to manage the synonyms of any tag.
  * @nosubgrouping
  */
-class SynonymCollection extends MetaCollection {
-
-  const NAME = "synonyms";
+final class SynonymCollection extends MetaCollection {
 
 
   /**
@@ -29,7 +27,7 @@ class SynonymCollection extends MetaCollection {
    * @param[in] array $synonyms An array of IDs.
    */
   protected function addMultipleAtOnce(array $synonyms) {
-    $this->meta[static::NAME] = Helper\ArrayHelper::merge($this->meta[static::NAME], $synonyms);
+    $this->meta[$this->name] = Helper\ArrayHelper::merge($this->meta[$this->name], $synonyms);
   }
 
 
@@ -38,7 +36,7 @@ class SynonymCollection extends MetaCollection {
    * @param[in] Synonym $synonym A synonym object.
    */
   public function add(Synonym $synonym) {
-    array_push($this->meta[static::NAME], $synonym->id);
+    array_push($this->meta[$this->name], $synonym->id);
     $this->addMultipleAtOnce($synonym->getRelatedIds());
   }
 
@@ -48,9 +46,9 @@ class SynonymCollection extends MetaCollection {
    * @param[in] Synonym $synonym A synonym object.
    */
   public function remove(Synonym $synonym) {
-    $key = array_search($synonym->name, $this->meta[static::NAME]);
+    $key = array_search($synonym->name, $this->meta[$this->name]);
     if ($key !== FALSE)
-      unset($this->meta[static::NAME][$key]);
+      unset($this->meta[$this->name][$key]);
   }
 
 
@@ -60,7 +58,7 @@ class SynonymCollection extends MetaCollection {
    * @retval bool
    */
   public function exists(Synonym $synonym) {
-    return in_array($synonym->name, $this->meta[static::NAME]);
+    return in_array($synonym->name, $this->meta[$this->name]);
   }
 
 }
