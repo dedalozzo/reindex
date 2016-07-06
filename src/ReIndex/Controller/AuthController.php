@@ -33,7 +33,7 @@ use ReIndex\Validator\Username;
  * @nosubgrouping
  * @todo Add the support for a stronger password encryption.
  */
-class AuthController extends BaseController {
+final class AuthController extends BaseController {
 
 
   /**
