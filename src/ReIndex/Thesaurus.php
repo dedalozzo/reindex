@@ -23,7 +23,7 @@ use EoC\Opt\ViewQueryOpts;
  * synonyms.
  * @nosubgrouping
  */
-class Thesaurus {
+final class Thesaurus {
 
   /**
    * @var Couch $couch
