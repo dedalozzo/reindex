@@ -15,7 +15,7 @@ namespace ReIndex\Doc;
  * @brief A synonym of a tag.
  * @nosubgrouping
  */
-class Synonym extends ActiveDoc {
+final class Synonym extends ActiveDoc {
 
   private $relatedIds;
 
