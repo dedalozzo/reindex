@@ -23,7 +23,7 @@ use Phalcon\Mvc\View;
  * @brief Controller of Member actions.
  * @nosubgrouping
  */
-class MemberController extends ListController {
+final class MemberController extends ListController {
 
 
   public function initialize() {
