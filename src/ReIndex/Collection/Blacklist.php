@@ -22,9 +22,7 @@ use EoC\Opt\ViewQueryOpts;
  * @details This class uses the Lazy loading pattern.
  * @nosubgrouping
  */
-class Blacklist extends MetaCollection {
-
-  const NAME = "blacklist";
+final class Blacklist extends MetaCollection {
 
   /**
    * @var Couch $couch
@@ -35,11 +33,12 @@ class Blacklist extends MetaCollection {
 
 
   /**
-   * @brief Creates a new collection of e-mails.
-   * @param[in] array $meta Member's array of metadata.
+   * @brief Creates a new blacklist.
+   * @param[in] string $name Collection's name.
+   * @param[in] array $meta Array of metadata.
    */
-  public function __construct(array &$meta) {
-    parent::__construct($meta);
+  public function __construct($name, array &$meta) {
+    parent::__construct($name, $meta);
     $this->couch = $this->di['couchdb'];
   }
 
@@ -57,7 +56,7 @@ class Blacklist extends MetaCollection {
       $opts->doNotReduce();
 
       // Assigns the members' IDs.
-      $ids = array_keys($this->meta[static::NAME]);
+      $ids = array_keys($this->meta[$this->name]);
 
       if (empty($ids))
         $this->blacklist = [];
@@ -75,7 +74,7 @@ class Blacklist extends MetaCollection {
    */
   public function add(Member $member) {
     // Stores just the member ID.
-    $this->meta[static::NAME][$member->id] = NULL;
+    $this->meta[$this->name][$member->id] = NULL;
   }
 
 
@@ -84,7 +83,7 @@ class Blacklist extends MetaCollection {
    * @param[in] Member $member A member.
    */
   public function remove(Member $member) {
-    unset($this->meta[static::NAME][$member->id]);
+    unset($this->meta[$this->name][$member->id]);
   }
 
 
@@ -94,7 +93,7 @@ class Blacklist extends MetaCollection {
    * @retval bool
    */
   public function exists(Member $member) {
-    return array_key_exists($member->id, $this->meta[static::NAME]);
+    return array_key_exists($member->id, $this->meta[$this->name]);
   }
 
 
