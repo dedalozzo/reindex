@@ -28,7 +28,7 @@ use Phalcon\Di;
  * @brief This class is used to represent a collection of votes.
  * @nosubgrouping
  */
-class VoteCollection implements \Countable {
+final class VoteCollection implements \Countable {
 
   /** @name Voting Status */
   //!@{
