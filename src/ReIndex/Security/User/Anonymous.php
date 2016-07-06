@@ -20,7 +20,7 @@ use ReIndex\Helper\ClassHelper;
  * @brief This class represents an anonymous user.
  * @nosubgrouping
  */
-class Anonymous implements IUser {
+final class Anonymous implements IUser {
 
 
   /**
