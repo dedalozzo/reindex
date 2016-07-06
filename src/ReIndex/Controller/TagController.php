@@ -22,7 +22,7 @@ use ReIndex\Doc\Tag;
  * @brief Controller of Tag actions.
  * @nosubgrouping
  */
-class TagController extends ListController {
+final class TagController extends ListController {
 
 
   public function initialize() {
