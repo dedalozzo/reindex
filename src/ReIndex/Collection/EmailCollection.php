@@ -14,9 +14,7 @@ namespace ReIndex\Collection;
  * @brief This class is used to represent a collection of e-mails.
  * @nosubgrouping
  */
-class EmailCollection extends MetaCollection {
-
-  const NAME = "emails";
+final class EmailCollection extends MetaCollection {
 
 
   /**
@@ -25,9 +23,9 @@ class EmailCollection extends MetaCollection {
    * @param[in] bool $verified The e-mail address has been verified.
    */
   public function add($email, $verified = FALSE) {
-    $this->meta[static::NAME][$email] = $verified;
+    $this->meta[$this->name][$email] = $verified;
 
-    if (count($this->meta[static::NAME]) == 1)
+    if (count($this->meta[$this->name]) == 1)
       $this->meta['primaryEmail'] = $email;
   }
 
@@ -39,7 +37,7 @@ class EmailCollection extends MetaCollection {
    */
   public function remove($email) {
     if ($this->canRemove($email))
-      unset($this->meta[static::NAME][$email]);
+      unset($this->meta[$this->name][$email]);
   }
 
 
@@ -51,9 +49,9 @@ class EmailCollection extends MetaCollection {
    * @retval bool
    */
   public function canRemove($email) {
-    if (array_key_exists($email, $this->meta[static::NAME]) && count($this->meta[static::NAME]) > 1
+    if (array_key_exists($email, $this->meta[$this->name]) && count($this->meta[$this->name]) > 1
       && $email != $this->meta['primaryEmail']
-      && (!$this->meta[static::NAME][$email] or count(array_filter($this->meta[static::NAME])) > 1))
+      && (!$this->meta[$this->name][$email] or count(array_filter($this->meta[$this->name])) > 1))
       return TRUE;
     else
       return FALSE;
@@ -66,7 +64,7 @@ class EmailCollection extends MetaCollection {
    * @retval bool
    */
   public function exists($email) {
-    return isset($this->meta[static::NAME][$email]);
+    return isset($this->meta[$this->name][$email]);
   }
 
 
