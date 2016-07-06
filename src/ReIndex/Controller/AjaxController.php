@@ -25,7 +25,7 @@ use ReIndex\Security\Role\ModeratorRole\RestoreRevisionPermission;
  * @brief Controller for the AJAX requests.
  * @nosubgrouping
  */
-class AjaxController extends BaseController {
+final class AjaxController extends BaseController {
 
 
   /**
