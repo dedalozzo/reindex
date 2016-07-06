@@ -34,7 +34,7 @@ use EoC\Opt\ViewQueryOpts;
  * @brief Member's profile controller.
  * @nosubgrouping
  */
-class ProfileController extends ListController {
+final class ProfileController extends ListController {
 
 
   /**
