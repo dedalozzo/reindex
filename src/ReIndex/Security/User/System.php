@@ -18,7 +18,7 @@ use ReIndex\Security\Role\IPermission;
  * @brief A special user used to perform special task.
  * @nosubgrouping
  */
-class System implements IUser {
+final class System implements IUser {
 
 
   /**
