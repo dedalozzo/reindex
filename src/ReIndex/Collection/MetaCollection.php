@@ -22,8 +22,6 @@ use Phalcon\Di;
  */
 abstract class MetaCollection implements \IteratorAggregate, \Countable, \ArrayAccess {
 
-  const NAME = "collection";
-  
   /**
    * @var array $meta
    */
@@ -36,11 +34,20 @@ abstract class MetaCollection implements \IteratorAggregate, \Countable, \ArrayA
 
 
   /**
-   * @brief Creates a new collection of e-mails.
-   * @param[in] array $meta Member's array of metadata.
+   * @var string $name
    */
-  public function __construct(array &$meta) {
+  protected $name;
+
+
+  /**
+   * @brief Creates a new collection of items.
+   * @param[in] string $name Collection's name.
+   * @param[in] array $meta Array of metadata.
+   */
+  public function __construct($name, array &$meta) {
+    $this->name = $name;
     $this->meta = &$meta;
+    $this->meta[$name] = [];
     $this->di = Di::getDefault();
   }
 
@@ -49,8 +56,8 @@ abstract class MetaCollection implements \IteratorAggregate, \Countable, \ArrayA
    * @brief Removes all items from the collection.
    */
   public function reset() {
-    unset($this->meta[static::NAME]);
-    $this->meta[static::NAME] = [];
+    unset($this->meta[$this->name]);
+    $this->meta[$this->name] = [];
   }
 
 
@@ -60,7 +67,7 @@ abstract class MetaCollection implements \IteratorAggregate, \Countable, \ArrayA
    * not.
    */
   public function asArray() {
-    return $this->meta[static::NAME];
+    return $this->meta[$this->name];
   }
 
 
@@ -69,7 +76,7 @@ abstract class MetaCollection implements \IteratorAggregate, \Countable, \ArrayA
    * @retval [ArrayIterator](http://php.net/manual/en/class.arrayiterator.php).
    */
   public function getIterator() {
-    return new \ArrayIterator($this->meta[static::NAME]);
+    return new \ArrayIterator($this->meta[$this->name]);
   }
 
 
@@ -78,7 +85,7 @@ abstract class MetaCollection implements \IteratorAggregate, \Countable, \ArrayA
    * @retval integer Number of documents.
    */
   public function count() {
-    return count($this->meta[static::NAME]);
+    return count($this->meta[$this->name]);
   }
 
 
@@ -89,7 +96,7 @@ abstract class MetaCollection implements \IteratorAggregate, \Countable, \ArrayA
    * @retval bool
    */
   public function isEmpty() {
-    return empty($this->meta[static::NAME]) ? TRUE : FALSE;
+    return empty($this->meta[$this->name]) ? TRUE : FALSE;
   }
 
 
@@ -100,7 +107,7 @@ abstract class MetaCollection implements \IteratorAggregate, \Countable, \ArrayA
    * @retval bool Returns `true` on success or `false` on failure.
    */
   public function offsetExists($offset) {
-    return isset($this->meta[static::NAME][$offset]);
+    return isset($this->meta[$this->name][$offset]);
   }
 
 
@@ -111,7 +118,7 @@ abstract class MetaCollection implements \IteratorAggregate, \Countable, \ArrayA
    * @retval mixed Can return all value types.
    */
   public function offsetGet($offset)  {
-    return $this->meta[static::NAME][$offset];
+    return $this->meta[$this->name][$offset];
   }
 
 
