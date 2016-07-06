@@ -26,18 +26,16 @@ use Phalcon\Di;
  * @details Every post must be tagged with a maximun of five tags.
  * @nosubgrouping
  */
-class Tag extends Versionable {
+final class Tag extends Versionable {
   use Property\TExcerpt, Property\TBody, Property\TDescription;
 
-  // Collection of synonyms.
-  private $synonyms;
+  private $synonyms; // Collection of synonyms.
 
 
   public function __construct() {
     parent::__construct();
 
-    $this->meta['synonyms'] = [];
-    $this->synonyms = new Collection\SynonymCollection($this->meta);
+    $this->synonyms = new Collection\SynonymCollection('synonyms', $this->meta);
   }
 
 
