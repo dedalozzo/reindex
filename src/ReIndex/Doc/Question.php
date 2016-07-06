@@ -15,6 +15,6 @@ namespace ReIndex\Doc;
  * @brief A question asked by a user.
  * @nosubgrouping
  */
-class Question extends Post {
+final class Question extends Post {
 
 }
