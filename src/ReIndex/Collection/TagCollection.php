@@ -21,20 +21,26 @@ use EoC\Opt\ViewQueryOpts;
  * @brief This class is used to represent a collection of tags.
  * @nosubgrouping
  */
-class TagCollection extends MetaCollection {
+final class TagCollection extends MetaCollection {
 
-  const NAME = "tags";
+  /**
+   * @var Couch $couch
+   */
+  protected $couch;
 
-  protected $couch; // Stores the CouchDB instance.
-  protected $redis; // Stores the Redis instance.
+  /**
+   * @var \Redis $redis
+   */
+  protected $redis;
 
 
   /**
    * @brief Creates a new collection of tags.
-   * @param[in] array $meta Post's array of metadata.
+   * @param[in] string $name Collection's name.
+   * @param[in] array $meta Array of metadata.
    */
-  public function __construct(array &$meta) {
-    parent::__construct($meta);
+  public function __construct($name, array &$meta) {
+    parent::__construct($name, $meta);
 
     $this->couch = $this->di['couchdb'];
     $this->redis = $this->di['redis'];
@@ -47,7 +53,7 @@ class TagCollection extends MetaCollection {
    * @param[in] string $tagId The tag uuid.
    */
   public function add($tagId) {
-    $this->meta[static::NAME][] = Helper\Text::unversion($tagId);
+    $this->meta[$this->name][] = Helper\Text::unversion($tagId);
   }
 
 
@@ -88,7 +94,7 @@ class TagCollection extends MetaCollection {
   public function uniqueMasters() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce();
-    $masters = $this->couch->queryView("tags", "synonyms", $this->meta[static::NAME], $opts)->asArray();
+    $masters = $this->couch->queryView("tags", "synonyms", $this->meta[$this->name], $opts)->asArray();
     return array_unique(array_column($masters, 'value'));
   }
 
