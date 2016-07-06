@@ -18,7 +18,7 @@ use ReIndex\Helper;
  * @brief Controller of Update actions.
  * @nosubgrouping
  */
-class UpdateController extends IndexController {
+final class UpdateController extends IndexController {
 
 
   /**
