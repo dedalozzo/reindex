@@ -21,7 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @brief Revokes a privilege to a user.
  * @nosubgrouping
  */
-class RevokeCommand extends AbstractRoleCommand {
+final class RevokeCommand extends AbstractRoleCommand {
 
 
   protected function perform(IRole $role, Member $member, OutputInterface $output) {
