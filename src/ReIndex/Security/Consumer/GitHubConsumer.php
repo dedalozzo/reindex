@@ -19,7 +19,7 @@ use ReIndex\Helper\Text;
  * @brief GitHub consumer implementation.
  * @nosubgrouping
  */
-class GitHubConsumer extends OAuth2Consumer {
+final class GitHubConsumer extends OAuth2Consumer {
 
   /** @name Field Names */
   //!@{
