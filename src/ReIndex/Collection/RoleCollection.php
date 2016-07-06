@@ -21,9 +21,7 @@ use ReIndex\Exception\NotEnoughPrivilegesException;
  * @brief This class is used to represent a collection of roles.
  * @nosubgrouping
  */
-class RoleCollection extends MetaCollection {
-
-  const NAME = "roles";
+final class RoleCollection extends MetaCollection {
 
   /**
    * @var IUser $user
@@ -33,10 +31,11 @@ class RoleCollection extends MetaCollection {
 
   /**
    * @brief Creates a new collection of roles.
-   * @param[in] array $meta Member's array of metadata.
+   * @param[in] string $name Collection's name.
+   * @param[in] array $meta Array of metadata.
    */
-  public function __construct(array &$meta) {
-    parent::__construct($meta);
+  public function __construct($name, array &$meta) {
+    parent::__construct($name, $meta);
     $this->user = $this->di['guardian']->getUser();
   }
 
@@ -56,7 +55,7 @@ class RoleCollection extends MetaCollection {
     if ($this->exists($role))
       return;
 
-    $roles = $this->meta[static::NAME];
+    $roles = $this->meta[$this->name];
 
     foreach ($roles as $name => $class) {
 
@@ -68,13 +67,13 @@ class RoleCollection extends MetaCollection {
       elseif (is_subclass_of($role, $class, FALSE)) {
         // If `$role` is an instance of a subclass of any role previously assigned to the member that means the new role
         // is more important and the one already assigned must be removed.
-        unset($this->meta[static::NAME][$name]);
+        unset($this->meta[$this->name][$name]);
       }
 
     }
 
     // Uses as key the role's name and as value its class.
-    $this->meta[static::NAME][$role->getName()] = get_class($role);
+    $this->meta[$this->name][$role->getName()] = get_class($role);
   }
 
 
@@ -87,7 +86,7 @@ class RoleCollection extends MetaCollection {
       throw new NotEnoughPrivilegesException('Not enough privileges to revoke the role.');
 
     if ($this->exists($role))
-      unset($this->meta[static::NAME][$role->getName()]);
+      unset($this->meta[$this->name][$role->getName()]);
   }
 
 
@@ -97,7 +96,7 @@ class RoleCollection extends MetaCollection {
    * @retval bool
    */
   public function exists(IRole $role) {
-    return isset($this->meta[static::NAME][$role->getName()]);
+    return isset($this->meta[$this->name][$role->getName()]);
   }
 
 
@@ -110,7 +109,7 @@ class RoleCollection extends MetaCollection {
   public function areSuperiorThan(IRole $role, $orEqual = TRUE) {
     $result = FALSE;
 
-    $roles = $this->meta[static::NAME];
+    $roles = $this->meta[$this->name];
 
     $roleClass = get_class($role);
 
