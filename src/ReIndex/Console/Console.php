@@ -21,7 +21,7 @@ use Phalcon\DiInterface;
  * @brief This class extends the Application class of Symfony framework, with methods aim to set the Phalcon Dependency
  * Injector.
  */
-class Console extends Application {
+final class Console extends Application {
 
   protected $_di;
 
