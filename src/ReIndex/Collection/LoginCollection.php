@@ -15,9 +15,7 @@ namespace ReIndex\Collection;
  * @brief This class is used to represent a collection of consumers' logins.
  * @nosubgrouping
  */
-class LoginCollection extends MetaCollection {
-
-  const NAME = "logins";
+final class LoginCollection extends MetaCollection {
 
 
   /**
@@ -42,7 +40,7 @@ class LoginCollection extends MetaCollection {
    */
   public function add($consumerName, $userId, $profileUrl, $email, $username, $verified) {
     $login = $this->buildLoginName($userId, $consumerName);
-    $this->meta[self::NAME][$login] = [$consumerName, (string)$userId, $email, $profileUrl, $username];
+    $this->meta[$this->name][$login] = [$consumerName, (string)$userId, $email, $profileUrl, $username];
 
     // Adds the e-mail and eventually set its address as primary.
     $this->meta['emails'][$email] = $verified;
@@ -58,7 +56,7 @@ class LoginCollection extends MetaCollection {
    * @attention The e-mail associated to the login is never removed from the list of e-mails.
    */
   public function remove($login) {
-    unset($this->meta[static::NAME][$login]);
+    unset($this->meta[$this->name][$login]);
   }
 
 
@@ -68,7 +66,7 @@ class LoginCollection extends MetaCollection {
    * @retval bool
    */
   public function exists($login) {
-    return isset($this->meta[static::NAME][$login]);
+    return isset($this->meta[$this->name][$login]);
   }
 
 
