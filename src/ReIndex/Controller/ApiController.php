@@ -20,7 +20,7 @@ use ReIndex\Exception;
  * @brief Controller for the API requests.
  * @nosubgrouping
  */
-class ApiController extends BaseController {
+final class ApiController extends BaseController {
 
 
   /**
