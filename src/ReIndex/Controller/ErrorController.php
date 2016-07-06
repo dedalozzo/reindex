@@ -18,7 +18,7 @@ use Phalcon\Mvc\View;
  * @brief Controller of Error actions.
  * @nosubgrouping
  */
-class ErrorController extends BaseController {
+final class ErrorController extends BaseController {
 
 
   /**
