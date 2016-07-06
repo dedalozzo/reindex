@@ -22,7 +22,7 @@ use ReIndex\Thesaurus;
  * @brief Displays all the synonyms or the ones related to a specific tag.
  * @nosubgrouping
  */
-class ListSynonymsCommand extends AbstractCommand {
+final class ListSynonymsCommand extends AbstractCommand {
 
 
   /**
