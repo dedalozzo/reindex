@@ -29,7 +29,7 @@ use Monolog\Logger;
  * @details This class implement the IChunkHook interface.
  * @nosubgrouping
  */
-class RefreshCommand extends AbstractCommand implements IChunkHook {
+final class RefreshCommand extends AbstractCommand implements IChunkHook {
 
   /**
    * @var TaskQueue $queue
