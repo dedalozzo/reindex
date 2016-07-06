@@ -21,7 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @brief Grants a privilege to a user.
  * @nosubgrouping
  */
-class GrantCommand extends AbstractRoleCommand {
+final class GrantCommand extends AbstractRoleCommand {
 
 
   protected function perform(IRole $role, Member $member, OutputInterface $output) {
