@@ -28,7 +28,7 @@ use Monolog\Logger;
  * This class implement the IChunkHook interface.
  * @nosubgrouping
  */
-class SynonymizeTask implements ITask {
+final class SynonymizeTask implements ITask {
 
   private $masterId;  // Tag's ID.
   private $synonymId; // Synonym's ID.
