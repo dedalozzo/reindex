@@ -18,7 +18,7 @@ use ReIndex\Helper;
  * @brief Controller of Question actions.
  * @nosubgrouping
  */
-class QuestionController extends IndexController {
+final class QuestionController extends IndexController {
 
 
   /**
