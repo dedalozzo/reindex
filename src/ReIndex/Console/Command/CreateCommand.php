@@ -22,7 +22,7 @@ use EoC\Adapter\NativeAdapter;
  * @brief Creates the ReIndex database.
  * @nosubgrouping
  */
-class CreateCommand extends AbstractCommand {
+final class CreateCommand extends AbstractCommand {
 
 
   /**
