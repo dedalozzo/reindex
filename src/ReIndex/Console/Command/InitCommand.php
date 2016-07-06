@@ -25,7 +25,7 @@ use EoC\Handler\ViewHandler;
  * @brief Initializes the ReIndex database, adding the required design documents.
  * @nosubgrouping
  */
-class InitCommand extends AbstractCommand {
+final class InitCommand extends AbstractCommand {
 
   /**
    * @var Couch $couch
