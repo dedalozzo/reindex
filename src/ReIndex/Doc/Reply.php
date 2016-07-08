@@ -29,6 +29,8 @@ use ReIndex\Collection;
 class Reply extends Versionable {
   use Property\TBody;
 
+  private $votes; // Casted votes.
+
 
   public function __construct() {
     parent::__construct();
