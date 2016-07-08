@@ -80,26 +80,13 @@ final class Member extends ActiveDoc implements IUser {
   public function __construct() {
     parent::__construct();
 
-    $this->meta['tasks'] = [];
     $this->tasks = new Collection\TaskCollection('tasks', $this->meta);
-
-    $this->meta['emails'] = [];
     $this->emails = new Collection\EmailCollection('emails', $this->meta);
-
-    $this->meta['logins'] = [];
     $this->logins = new Collection\LoginCollection('logins', $this->meta);
-
-    $this->meta['roles'] = [];
     $this->roles = new Collection\RoleCollection('roles', $this->meta);
-
-    $this->meta['tags'] = [];
     $this->tags = new Collection\TagCollection('tags', $this->meta);
-
-    $this->meta['blacklist'] = [];
     $this->blacklist = new Collection\Blacklist('blacklist', $this->meta);
-
     $this->friends = new Collection\FriendCollection($this);
-
     $this->followers = new Collection\FollowerCollection($this);
   }
 

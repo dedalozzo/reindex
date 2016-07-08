@@ -93,14 +93,9 @@ abstract class Post extends Versionable {
 
     $this->markdown = $this->di['markdown'];
 
-    $this->meta['tags'] = [];
     $this->tags = new Collection\TagCollection('tags', $this->meta);
-
-    $this->meta['tasks'] = [];
     $this->tasks = new Collection\TaskCollection('tasks', $this->meta);
-
     $this->subscriptions = new Collection\SubscriptionCollection($this);
-
     $this->votes = new Collection\VoteCollection($this);
   }
 
