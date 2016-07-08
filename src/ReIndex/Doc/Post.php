@@ -89,11 +89,6 @@ abstract class Post extends Versionable {
   }
 
 
-  public function assignArray(array $array) {
-    parent::assignArray($array);
-  }
-
-
   /**
    * @brief Given a list of IDs, returns the correspondent objects.
    * @retval array
