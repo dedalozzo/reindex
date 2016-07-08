@@ -68,7 +68,7 @@ abstract class Versionable extends ActiveDoc {
     if (!$this->user->has(new Role\MemberRole\SubmitRevisionPermission($this)))
       throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
 
-    $this->meta['state'] = VersionState::SUBMITTED;
+    $this->state->set(VersionState::SUBMITTED);
   }
 
 
@@ -79,7 +79,7 @@ abstract class Versionable extends ActiveDoc {
     if (!$this->user->has(new Role\ReviewerRole\ApproveRevisionPermission($this)))
       throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
 
-    $this->meta['state'] = VersionState::CURRENT;
+    $this->state->set(VersionState::CURRENT);
   }
 
 
@@ -91,7 +91,7 @@ abstract class Versionable extends ActiveDoc {
     if (!$this->user->has(new Role\ReviewerRole\ReturnForRevisionPermission($this)))
       throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
 
-    $this->meta['state'] = VersionState::RETURNED;
+    $this->state->set(VersionState::RETURNED);
     $this->meta['rejectReason'] = $reason;
     $this->meta['moderatorId'] = $this->user->id;
     // todo: send a notification to the user
@@ -107,7 +107,7 @@ abstract class Versionable extends ActiveDoc {
     if (!$this->user->has(new Role\ReviewerRole\RejectRevisionPermission($this)))
       throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
 
-    $this->meta['state'] = VersionState::REJECTED;
+    $this->state->set(VersionState::REJECTED);
     $this->meta['rejectReason'] = $reason;
     $this->meta['moderatorId'] = $this->user->id;
     // todo: send a notification to the user
@@ -124,7 +124,7 @@ abstract class Versionable extends ActiveDoc {
     if (!$this->user->has(new Role\ModeratorRole\RevertToVersionPermission()))
       throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
 
-    $this->meta['state'] = VersionState::APPROVED;
+    $this->state->set(VersionState::APPROVED);
   }
 
 
@@ -135,8 +135,8 @@ abstract class Versionable extends ActiveDoc {
     if (!$this->user->has(new Role\MemberRole\MoveRevisionToTrashPermission($this)))
       throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
 
-    $this->meta['prevstate'] = $this->meta['state'];
-    $this->meta['state'] = VersionState::DELETED;
+    $this->meta['prevstate'] = $this->state->get();
+    $this->state->set(VersionState::DELETED);
     $this->meta['dustmanId'] = $this->user->id;
     $this->meta['deletedAt'] = time();
   }
@@ -150,7 +150,7 @@ abstract class Versionable extends ActiveDoc {
       throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
 
     // In case the document has been deleted, restore it to its previous state.
-    $this->meta['state'] = $this->meta['prevstate'];
+    $this->state->set($this->meta['prevstate']);
     unset($this->meta['prevstate']);
     unset($this->meta['dustmanId']);
     unset($this->meta['deletedAt']);
@@ -174,7 +174,7 @@ abstract class Versionable extends ActiveDoc {
   public function save() {
     // We force the document state in case it hasn't been changed.
     if ($this->state->isCreated())
-      $this->meta["state"] = VersionState::SUBMITTED;
+      $this->state->set(VersionState::SUBMITTED);
 
     // Put your code here.
     parent::save();
