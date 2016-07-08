@@ -209,9 +209,6 @@ abstract class Post extends Versionable {
     // Now we call the parent implementation.
     parent::save();
 
-    $tags = sort(implode(',', $this->originalTags), SORT_STRING);
-    $this->redis->hMSet($this->post->unversionId . Post::PT_HASH, ['tags' => $tags]);
-
     $this->tasks->add(new IndexPostTask($this));
   }
 
