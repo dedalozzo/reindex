@@ -12,10 +12,13 @@ namespace ReIndex\Task;
 
 
 use ReIndex\Doc\Post;
+use ReIndex\Doc\Member;
 
 use Phalcon\Di;
 
 use EoC\Couch;
+use EoC\Opt\ViewQueryOpts;
+use EoC\Hook\IChunkHook;
 
 use Monolog\Logger;
 
@@ -24,10 +27,11 @@ use Monolog\Logger;
  * @brief This task updates a bunch of Redis sets eventually used to sort posts in many different ways.
  * @nosubgrouping
  */
-class IndexPostTask implements ITask {
+final class IndexPostTask implements ITask, IChunkHook {
 
-  private $oldTags; // Original tags.
-  private $newTags; // Unique master tags.
+  private $remTags; // Tags to be removed from index.
+  private $addTags; // Tags to be added to the index.
+  private $uniqueMasters; // Tags associated to the post (excluding synonyms).
 
   private $id;      // Post's ID.
   private $type;    // Post's type.
@@ -130,7 +134,7 @@ class IndexPostTask implements ITask {
     // Order set with all the posts of a specific type.
     $this->redis->zAdd($set . $this->type, $score, $this->id);
 
-    foreach ($this->newTags as $tagId) {
+    foreach ($this->addTags as $tagId) {
       // Order set with all the posts related to a specific tag.
       $this->redis->zAdd($set . $tagId . '_' . 'post', $score, $this->id);
 
@@ -151,7 +155,7 @@ class IndexPostTask implements ITask {
     // Order set with all the posts of a specific type.
     $this->redis->zRem($set . $this->type, $this->id);
 
-    foreach ($this->oldTags as $tagId) {
+    foreach ($this->remTags as $tagId) {
       // Order set with all the posts related to a specific tag.
       $this->redis->zRem($set . $tagId . '_' . 'post', $this->id);
 
@@ -176,7 +180,7 @@ class IndexPostTask implements ITask {
     // Order set with all the posts of a specific type: article, question, ecc.
     $this->zMultipleAdd($set . $this->type, $date, $score);
 
-    foreach ($this->newTags as $tagId) {
+    foreach ($this->addTags as $tagId) {
       // Order set with all the posts related to a specific tag.
       $this->zMultipleAdd($set . $tagId . '_' . 'post', $date, $score);
 
@@ -198,7 +202,7 @@ class IndexPostTask implements ITask {
     // Order set with all the posts of a specific type.
     $this->zMultipleRem($set . $this->type, $date);
 
-    foreach ($this->oldTags as $tagId) {
+    foreach ($this->remTags as $tagId) {
       // Order set with all the posts related to a specific tag.
       $this->zMultipleRem($set . $tagId . '_' . 'post', $date);
 
@@ -261,7 +265,7 @@ class IndexPostTask implements ITask {
     // Order set with all the posts of a specific type: article, question, ecc.
     $this->redis->zAdd(Post::ACT_SET . $this->type, $timestamp, $this->id);
 
-    foreach ($this->newTags as $tagId) {
+    foreach ($this->addTags as $tagId) {
       // Order set with all the posts related to a specific tag.
       $this->redis->zAdd(Post::ACT_SET . $tagId . '_' . 'post', $timestamp, $this->id);
 
@@ -287,7 +291,7 @@ class IndexPostTask implements ITask {
     // Order set with all the posts of a specific type: article, question, ecc.
     $this->redis->zRem(Post::ACT_SET . $this->type, $this->id);
 
-    foreach ($this->oldTags as $tagId) {
+    foreach ($this->remTags as $tagId) {
       // Order set with all the posts related to a specific tag.
       $this->redis->zRem(Post::ACT_SET . $tagId . '_' . 'post', $this->id);
 
@@ -307,11 +311,11 @@ class IndexPostTask implements ITask {
    * @brief Removes the post ID from the indexes.
    */
   protected function deindex() {
-    $this->oldTags = $this->post->getOriginalTags();
-
     $this->zRemNewest();
     $this->zRemPopular();
     $this->zRemActive();
+
+    $this->redis->del($this->post->unversionId . Post::PT_HASH);
   }
 
 
@@ -323,11 +327,12 @@ class IndexPostTask implements ITask {
     if (!$this->post->state->isCurrent())
       return;
 
-    $this->newTags = $this->post->tags->uniqueMasters();
-
     $this->zAddNewest();
     $this->zAddPopular();
     $this->zAddActive();
+
+    $tags = sort(implode(',', $this->uniqueMasters), SORT_STRING);
+    $this->redis->hMSet($this->id . Post::PT_HASH, ['createdAt' => $this->post->createdAt, 'modifiedAt' => $this->post->modifiedAt, 'publishedAt' => $this->post->publishedAt, 'tags' => $tags]);
   }
 
 
@@ -335,6 +340,16 @@ class IndexPostTask implements ITask {
    * @brief Performs deindex then reindex.
    */
   protected function reindex() {
+    $hash = $this->redis->hMGet($this->id . Post::PT_HASH, ['createdAt', 'modifiedAt', 'publishedAt']);
+
+    $this->uniqueMasters = $this->post->tags->uniqueMasters();
+
+    $oldTags = is_array($hash) ? sort(explode(',', $hash['tags']), SORT_STRING) : [];
+    $newTags = $this->uniqueMasters;
+
+    $this->remTags = array_diff($oldTags, $newTags);
+    $this->addTags = array_diff($newTags, $oldTags);
+
     $this->deindex();
     $this->index();
   }
@@ -350,6 +365,43 @@ class IndexPostTask implements ITask {
     $this->reindex();
 
     $this->redis->exec();
+
+
+    // We are only indexing current versions.
+    if (!$this->post->state->isCurrent())
+      return;
+
+    // todo: fare una insert per ogni follower che abbia aggiunto ai preferiti uno qualunque dei tag associati al post,
+    // utilizzando un timestamp, così mostro il post unicamente nella timeline degli starrer che hanno seguito il tag
+    // successivamente all'ultima modifica al posto stesso (modifiedAt)
+
+    // todo: utilizzare un timestamp, così mostro il post unicamente nella timeline dei follower che hanno seguito
+    // l'autore del post successivamente all'ultima modifica al post stesso (modifiedAt).
+
+    // Searches for all the followers of the member who created the post.
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->reverseOrderOfResults();
+    $opts->setStartKey([$this->post->creatorId, Couch::WildCard()])->setEndKey([$this->post->creatorId]);
+
+    $this->couch->queryView("followers", "perMember", NULL, $opts, $this);
+  }
+
+
+  public function process($chunk) {
+    $row = json_decode(trim($chunk, ',\r\n'));
+
+    if (is_null($row))
+      return;
+
+    $set = Member::TL_SET . $row->key[1];
+
+    if ($this->post->state->isCurrent()) {
+      // todo: Add option NX when phpredis will support it.
+      $this->redis->zAdd($set, $this->post->modifiedAt, $this->post->unversionId);
+    }
+    else {
+      $this->redis->zRem($set, $this->post->unversionId);
+    }
   }
 
 }
