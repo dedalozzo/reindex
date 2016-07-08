@@ -57,9 +57,15 @@ use Phalcon\Di;
  *
  * @endcond
  */
-class Member extends ActiveDoc implements IUser {
+final class Member extends ActiveDoc implements IUser {
 
-  const MR_HASH = '_mr'; //!< Members Redis hash.
+  /** @name Constants */
+  //!@{
+
+  const MR_HASH = '_mr'; //!< Member's Redis hash postfix.
+  const TL_SET = 'tl_'; //!< Member's timeline Redis set prefix.
+
+  //!@}
 
   private $tasks;     // Collection of tasks.
   private $emails;    // Collection of e-mails.
@@ -75,22 +81,22 @@ class Member extends ActiveDoc implements IUser {
     parent::__construct();
 
     $this->meta['tasks'] = [];
-    $this->tasks = new Collection\TaskCollection($this->meta);
+    $this->tasks = new Collection\TaskCollection('tasks', $this->meta);
 
     $this->meta['emails'] = [];
-    $this->emails = new Collection\EmailCollection($this->meta);
+    $this->emails = new Collection\EmailCollection('emails', $this->meta);
 
     $this->meta['logins'] = [];
-    $this->logins = new Collection\LoginCollection($this->meta);
+    $this->logins = new Collection\LoginCollection('logins', $this->meta);
 
     $this->meta['roles'] = [];
-    $this->roles = new Collection\RoleCollection($this->meta);
+    $this->roles = new Collection\RoleCollection('roles', $this->meta);
 
     $this->meta['tags'] = [];
-    $this->tags = new Collection\TagCollection($this->meta);
+    $this->tags = new Collection\TagCollection('tags', $this->meta);
 
     $this->meta['blacklist'] = [];
-    $this->blacklist = new Collection\Blacklist($this->meta);
+    $this->blacklist = new Collection\Blacklist('blacklist', $this->meta);
 
     $this->friends = new Collection\FriendCollection($this);
 
@@ -108,7 +114,7 @@ class Member extends ActiveDoc implements IUser {
 
     $di = Di::getDefault();
     $couch = $di['couchdb'];
-    $redis = $di['redis'];
+    //$redis = $di['redis'];
     $user = $di['guardian']->getUser();
 
     $opts = new ViewQueryOpts();
