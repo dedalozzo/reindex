@@ -66,21 +66,10 @@ abstract class Post extends Versionable {
 
   //!@}
 
-  // Since the user can add new tags in a second moment, we must store the original tags to be able to remove the related indexes.
-  private $originalTags;
-
-  // Collection of tags.
-  private $tags;
-
-  // Collection of tasks.
-  private $tasks;
-
-  // A collection of members who have subscribed the post.
-  private $subscriptions;
-
-  // Casted votes.
-  private $votes;
-
+  private $tags; // Collection of tags.
+  private $tasks; // Collection of tasks.
+  private $votes; // Casted votes.
+  private $subscriptions; // A collection of members who have subscribed the post.
 
   /**
    * @var Hoedown $markdown
@@ -95,16 +84,13 @@ abstract class Post extends Versionable {
 
     $this->tags = new Collection\TagCollection('tags', $this->meta);
     $this->tasks = new Collection\TaskCollection('tasks', $this->meta);
-    $this->subscriptions = new Collection\SubscriptionCollection($this);
     $this->votes = new Collection\VoteCollection($this);
+    $this->subscriptions = new Collection\SubscriptionCollection($this);
   }
 
 
   public function assignArray(array $array) {
     parent::assignArray($array);
-
-    // We can't do this inside the constructor since the metadata are assigned just after the object creation.
-    $this->originalTags = !$this->tags->isEmpty() ? Helper\ArrayHelper::merge($this->meta['tags'], $this->tags->uniqueMasters()) : [];
   }
 
 
@@ -556,16 +542,6 @@ abstract class Post extends Versionable {
   }
 
 
-  public function getSubscriptions() {
-    return $this->subscriptions;
-  }
-
-
-  public function issetSubscriptions() {
-    return isset($this->subscriptions);
-  }
-
-
   public function getVotes() {
     return $this->votes;
   }
@@ -573,6 +549,16 @@ abstract class Post extends Versionable {
 
   public function issetVotes() {
     return isset($this->votes);
+  }
+
+
+  public function getSubscriptions() {
+    return $this->subscriptions;
+  }
+
+
+  public function issetSubscriptions() {
+    return isset($this->subscriptions);
   }
 
   //! @endcond
