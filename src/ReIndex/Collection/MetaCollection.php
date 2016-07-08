@@ -47,6 +47,7 @@ abstract class MetaCollection implements \IteratorAggregate, \Countable, \ArrayA
   public function __construct($name, array &$meta) {
     $this->name = $name;
     $this->meta = &$meta;
+    $this->meta[$name] = [];
     $this->di = Di::getDefault();
   }
 
