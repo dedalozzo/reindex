@@ -54,6 +54,8 @@ abstract class Post extends Versionable {
   /** @name Constants */
   //!@{
 
+  const PT_HASH = '_pt'; //!< Post's Redis hash postfix.
+
   const NEW_SET = 'new_'; //!< Newest posts Redis set.
   const POP_SET = 'pop_'; //!< Popular posts Redis set.
   const ACT_SET = 'act_'; //!< Active posts Redis set.
@@ -92,12 +94,13 @@ abstract class Post extends Versionable {
     $this->markdown = $this->di['markdown'];
 
     $this->meta['tags'] = [];
-    $this->tags = new Collection\TagCollection($this->meta);
+    $this->tags = new Collection\TagCollection('tags', $this->meta);
 
     $this->meta['tasks'] = [];
-    $this->tasks = new Collection\TaskCollection($this->meta);
+    $this->tasks = new Collection\TaskCollection('tasks', $this->meta);
 
     $this->subscriptions = new Collection\SubscriptionCollection($this);
+
     $this->votes = new Collection\VoteCollection($this);
   }
 
@@ -229,6 +232,9 @@ abstract class Post extends Versionable {
 
     // Now we call the parent implementation.
     parent::save();
+
+    $tags = sort(implode(',', $this->originalTags), SORT_STRING);
+    $this->redis->hMSet($this->post->unversionId . Post::PT_HASH, ['tags' => $tags]);
 
     $this->tasks->add(new IndexPostTask($this));
   }
