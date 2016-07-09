@@ -13,7 +13,7 @@ namespace ReIndex\Security;
 
 
 Use EoC\Couch;
-use EoC\Extension;
+use EoC\Extension\TProperty;
 use EoC\Opt\ViewQueryOpts;
 
 use ReIndex\Factory\UserFactory;
@@ -27,7 +27,7 @@ use Monolog\Logger;
  * @nosubgrouping
  */
 final class Guardian {
-  use Extension\TProperty;
+  use TProperty;
 
   private static $initialized = FALSE;
 
