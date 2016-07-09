@@ -21,7 +21,6 @@ class Post {
   TagCollection $tags;                   //!< A collection of tags.
   TaskCollection $tasks;                 //!< A collection of tasks.
   SubscriptionCollection $subscriptions; //!< All the subscribers.
-  VoteCollection $votes;                 //!< Casted votes.
 
   //!@}
 
