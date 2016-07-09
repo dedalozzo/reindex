@@ -19,15 +19,15 @@ class State {
 
   protected $meta;
 
-  const CREATED = "created"; //!< A document's revision has been created.
-  const CURRENT = "current"; //!< The current document's revision.
-  const DRAFT = "draft"; //!< The document's revision can eventually be saved as draft.
-  const APPROVED = "approved"; //!< The document's revision has been approved by peers.
-  const SUBMITTED = "submitted"; //!< The document's revision has been submitted for peer review.
-  const REJECTED = "rejected"; //!< The document's revision has been rejected.
-  const DELETED = "deleted"; //!< The document's revision has been deleted.
-  const INDEXING = "indexing"; //!< The document's revision needs to be indexed.
-  const DELETING = "deleting"; //!< The document's revision needs to be deindexed.
+  const CREATED = "created";      //!< A document's revision has been created.
+  const CURRENT = "current";      //!< Indicates this is the current document's revision.
+  const DRAFT = "draft";          //!< The document's revision can eventually be saved as draft.
+  const APPROVED = "approved";    //!< The document's revision has been approved by peers.
+  const SUBMITTED = "submitted";  //!< The document's revision has been submitted for peer review.
+  const REJECTED = "rejected";    //!< The document's revision has been rejected.
+  const DELETED = "deleted";      //!< The document's revision has been deleted.
+  const INDEXING = "indexing";    //!< The document's revision needs to be indexed.
+  const DELETING = "deleting";    //!< The document's revision needs to be deindexed.
 
 
   /**
