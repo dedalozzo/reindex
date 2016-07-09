@@ -9,7 +9,8 @@ class Vote {
   /** @name Properties */
   //!@{
 
-  public string $value; //!< Value.
+  public int $value; //!< The vote's value.
+  public string $reason; //!< The reason for the vote's preference.
   public int $timestamp; //!< The vote's timestamp.
 
   //!@}
