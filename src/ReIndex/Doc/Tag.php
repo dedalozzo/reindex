@@ -14,6 +14,7 @@ namespace ReIndex\Doc;
 use ReIndex\Property;
 use ReIndex\Collection;
 use ReIndex\Helper;
+use Reindex\Exception;
 use ReIndex\Task\SynonymizeTask;
 
 use EoC\Opt\ViewQueryOpts;
@@ -97,8 +98,11 @@ final class Tag extends Versionable {
    * @param[in] Tag $tag The master tag.
    */
   public function markAsSynonymOf(Tag $tag) {
+    if (!$this->state->isCurrent())
+      throw new Exception\InvalidStateException('Only the current version of a tag can be synonymized.');
+
     if ($this->synonimizing())
-      throw new \RuntimeException('The tag has been alreadt marked as synonym.');
+      throw new Exception\InvalidStateException('The tag has been already marked as synonym.');
 
     $this->meta['synonymizing'] = TRUE;
     $this->save();
