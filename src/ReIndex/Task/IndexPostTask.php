@@ -13,6 +13,7 @@ namespace ReIndex\Task;
 
 use ReIndex\Doc\Post;
 use ReIndex\Doc\Member;
+use ReIndex\Enum\State;
 
 use Phalcon\Di;
 
@@ -311,6 +312,9 @@ final class IndexPostTask implements ITask, IChunkHook {
    * @brief Removes the post ID from the indexes.
    */
   protected function deindex() {
+    if (!$this->post->state->is(State::INDEXING) || !$this->post->state->is(State::DELETING))
+      return;
+
     $this->zRemNewest();
     $this->zRemPopular();
     $this->zRemActive();
@@ -323,8 +327,7 @@ final class IndexPostTask implements ITask, IChunkHook {
    * @brief Adds the post ID to the indexes.
    */
   protected function index() {
-    // We are only indexing current versions.
-    if (!$this->post->state->isCurrent())
+    if (!$this->post->state->is(State::INDEXING) || !$this->post->state->is(State::CURRENT))
       return;
 
     $this->zAddNewest();
@@ -366,9 +369,7 @@ final class IndexPostTask implements ITask, IChunkHook {
 
     $this->redis->exec();
 
-
-    // We are only indexing current versions.
-    if (!$this->post->state->isCurrent())
+    if (!$this->post->state->is(State::INDEXING) || !$this->post->state->is(State::CURRENT))
       return;
 
     // todo: fare una insert per ogni follower che abbia aggiunto ai preferiti uno qualunque dei tag associati al post,
