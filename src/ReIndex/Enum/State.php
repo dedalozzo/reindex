@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file VersionState.php
- * @brief This file contains the VersionState enumerator.
+ * @file State.php
+ * @brief This file contains the State enumerator.
  * @details
  * @author Filippo F. Fadda
  */
@@ -15,7 +15,7 @@ namespace ReIndex\Enum;
 /**
  * @brief Different states a post may assume.
  */
-class VersionState {
+class State {
 
   protected $meta;
 
@@ -39,17 +39,17 @@ class VersionState {
 
 
   /**
-   * @brief Returns `true` in case the provided state matches the current version state.
-   * @param[in] string $state The state to check.
+   * @brief Returns `true` in case the provided value matches the current version's state.
+   * @param[in] string $value The value to check.
    * @retval bool
    */
-  public function is($state) {
-    return ($this->meta["state"] === $state) ? TRUE : FALSE;
+  public function is($value) {
+    return ($this->meta["state"] === $value) ? TRUE : FALSE;
   }
 
 
   /**
-   * @brief Returns the version state.
+   * @brief Returns the version's state.
    * @retval string
    */
   public function get() {
@@ -59,10 +59,10 @@ class VersionState {
 
   /**
    * @brief Returns `true` in case the provided state matches the current version state.
-   * @param[in] string $state The state to set.
+   * @param[in] string $value The value to set.
    */
-  public function set($state) {
-    $this->meta["state"] = $state;
+  public function set($value) {
+    $this->meta["state"] = $value;
   }
 
 }
