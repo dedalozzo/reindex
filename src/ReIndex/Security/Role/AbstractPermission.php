@@ -11,6 +11,8 @@
 namespace ReIndex\Security\Role;
 
 
+use ReIndex\Security\User\IUser;
+
 use Phalcon\Di;
 
 
@@ -19,11 +21,31 @@ use Phalcon\Di;
  * @nosubgrouping
  */
 abstract class AbstractPermission implements IPermission {
-  protected $role;    // Stores the execution role.
-  protected $context; // Stores the execution context.
-  protected $di;      // Stores the default Dependency Injector.
-  protected $user;    // Stores the current user.
-  protected $name;    // Stores the permission's name.
+
+  /**
+   * @var IRole $role The execution role.
+   */
+  protected $role;
+
+  /**
+   * @var mixed $context The execution context.
+   */
+  protected $context;
+
+  /**
+   * @var Di $di
+   */
+  protected $di;
+
+  /**
+   * @var IUser $user
+   */
+  protected $user;
+
+  /**
+   * @var string $name
+   */
+  protected $name;
 
 
   public function __construct($context = NULL) {
