@@ -14,6 +14,7 @@ namespace ReIndex\Security\Role\ModeratorRole;
 
 use ReIndex\Security\Role\AbstractPermission;
 use ReIndex\Doc\Post;
+use ReIndex\Enum\State;
 
 
 /**
@@ -40,7 +41,7 @@ class ProtectPostPermission extends AbstractPermission {
 
 
   public function check() {
-    return (!$this->context->isProtected() && $this->context->state->isCurrent()) ? TRUE : FALSE;
+    return (!$this->context->isProtected() && $this->context->state->is(State::CURRENT)) ? TRUE : FALSE;
   }
 
 }
