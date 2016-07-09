@@ -19,7 +19,7 @@ use ReIndex\Helper;
 use ReIndex\Collection;
 use ReIndex\Exception;
 use ReIndex\Security\Role;
-use ReIndex\Enum\VersionState;
+use ReIndex\Enum\State;
 use ReIndex\Task\IndexPostTask;
 
 use Phalcon\Di;
@@ -44,7 +44,6 @@ use Phalcon\Di;
  * @property Collection\TagCollection $tags // A collection of tags.
  * @property Collection\TaskCollection $tasks // A collection of tasks.
  * @property Collection\SubscriptionCollection $subscriptions // A collection of members who have subscribed the post.
- * @property Collection\VoteCollection $votes // Casted votes.
  *
  * @endcond
  */
@@ -68,7 +67,6 @@ abstract class Post extends Versionable {
 
   private $tags; // Collection of tags.
   private $tasks; // Collection of tasks.
-  private $votes; // Casted votes.
   private $subscriptions; // A collection of members who have subscribed the post.
 
   /**
@@ -84,7 +82,6 @@ abstract class Post extends Versionable {
 
     $this->tags = new Collection\TagCollection('tags', $this->meta);
     $this->tasks = new Collection\TaskCollection('tasks', $this->meta);
-    $this->votes = new Collection\VoteCollection($this);
     $this->subscriptions = new Collection\SubscriptionCollection($this);
   }
 
@@ -146,7 +143,7 @@ abstract class Post extends Versionable {
       $entry = (object)($posts[$i]['value']);
       $entry->id = $posts[$i]['id'];
 
-      if ($entry->state == VersionState::CURRENT) {
+      if ($entry->state == State::CURRENT) {
         $entry->url = Helper\Url::build($entry->publishedAt, $entry->slug);
         $entry->timestamp = Helper\Time::when($entry->publishedAt);
       }
