@@ -79,13 +79,14 @@ final class VoteCollection implements \Countable {
    * @param[in] int $value The vote.
    * @param[in] bool $unversion When `true` removes the version from the ID. Use `false` to cast a vote for revision
    * approval.
+   * @param[in] string $reason (optional) The reason for the vote's preference.
    * @retval int The voting status.
    */
-  public function cast($value, $unversion = TRUE) {
+  public function cast($value, $unversion = TRUE, $reason = '') {
     if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
     if ($this->user->match($this->doc->creatorId)) throw new Exception\CannotVoteYourOwnPostException('Non puoi votare il tuo stesso post.');
 
-    $voted = $this->exists($voteId);
+    $voted = $this->exists($voteId, $unversion);
 
     if ($voted) {
       // Gets the vote.
@@ -106,6 +107,7 @@ final class VoteCollection implements \Countable {
         }
         else {
           $vote->value = $value;
+          $vote->reason = $reason;
           $vote->timestamp = time();
           $this->couch->saveDoc($vote);
           return static::REPLACED;
@@ -117,7 +119,7 @@ final class VoteCollection implements \Countable {
     }
     else {
       $itemId = $unversion ? Text::unversion($this->doc->id) : $this->doc->id;
-      $vote = Vote::cast($itemId, $this->user->getId(), $value);
+      $vote = Vote::cast($itemId, $this->user->getId(), $value, $reason);
       $this->couch->saveDoc($vote);
       return static::REGISTERED;
     }
