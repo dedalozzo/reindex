@@ -13,6 +13,7 @@ namespace ReIndex\Security\Role\MemberRole;
 
 use ReIndex\Security\Role\AbstractPermission;
 use ReIndex\Doc\Versionable;
+use ReIndex\Enum\State;
 
 
 /**
@@ -31,12 +32,12 @@ class SubmitRevisionPermission extends AbstractPermission {
 
 
   public function getDescription() {
-    return "Submit the revision to the Peer Review Committee.";
+    return "Permission to submit the document's revision to the Peer Review Committee.";
   }
 
 
   public function check() {
-    // todo Implement this method.
+    return $this->context->state->is(State::CREATED) or $this->context->state->is(State::DRAFT);
   }
 
 }
