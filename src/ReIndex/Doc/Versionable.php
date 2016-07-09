@@ -15,8 +15,10 @@ use EoC\Opt\ViewQueryOpts;
 
 use ReIndex\Helper;
 use ReIndex\Exception;
-use ReIndex\Enum\VersionState;
+use ReIndex\Enum\State;
 use ReIndex\Security\Role;
+use ReIndex\Collection;
+use ReIndex\Security\User\System;
 
 
 /**
@@ -25,9 +27,9 @@ use ReIndex\Security\Role;
  *
  * @cond HIDDEN_SYMBOLS
  *
- * @property VersionState $state                 // The state of the document.
- *
  * @property string $unversionId           // [readonly] The id pruned of its version number.
+ *
+ * @property State $state                   // The state of the document.
  *
  * @property string $versionNumber         // The document version number.
  * @property string $previousVersionNumber // The version number of the previous document revision.
@@ -38,11 +40,14 @@ use ReIndex\Security\Role;
  *
  * @property string $editSummary           // A brief explanation of an edit to a versionable content.
  *
+ * @property Collection\VoteCollection $votes // Casted votes.
+ *
  * @endcond
  */
 abstract class Versionable extends ActiveDoc {
 
-  protected $state;
+  private $votes; // Casted votes.
+  private $state; // State of the document.
 
 
   /**
@@ -51,10 +56,10 @@ abstract class Versionable extends ActiveDoc {
   public function __construct() {
     parent::__construct();
 
-    $this->state = new VersionState($this->meta);
-    $this->state->set(VersionState::CREATED);
+    $this->votes = new Collection\VoteCollection($this);
 
-    $this->meta['versionable'] = TRUE;
+    $this->state = new Version($this->meta);
+    $this->state->set(State::CREATED);
   }
 
 
@@ -62,55 +67,53 @@ abstract class Versionable extends ActiveDoc {
   //!@{
 
   /**
-   * @brief Submits the document for peer review.
+   * @brief Submits the document's revision for peer review.
    */
   public function submit() {
     if (!$this->user->has(new Role\MemberRole\SubmitRevisionPermission($this)))
       throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
 
-    $this->state->set(VersionState::SUBMITTED);
+    $this->state->set(State::SUBMITTED);
   }
 
 
   /**
-   * @brief Approves the document revision, making of it the current version.
+   * @brief Casts a vote to approve this document's revision.
    */
   public function approve() {
-    if (!$this->user->has(new Role\ReviewerRole\ApproveRevisionPermission($this)))
+    if (!$value = $this->user->has(new Role\ReviewerRole\ApproveRevisionPermission($this)))
       throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
 
-    $this->state->set(VersionState::CURRENT);
+    if ($this->user instanceof Member)
+      $this->votes->cast($value, FALSE);
+
+    if ($this->user instanceof System ||
+        $this->votes->count(FALSE) >= $this->di['config']->review->scoreToApproveRevision) {
+      $this->state->set(State::INDEXING);
+      $this->save();
+      // todo: send a notification to the user
+    }
   }
 
 
   /**
-   * @brief Asks the author to revise the document, because it's not ready for publishing.
-   * @param[in] $reason The reason why the document has been returned for revision.
-   */
-  public function returnForRevision($reason) {
-    if (!$this->user->has(new Role\ReviewerRole\ReturnForRevisionPermission($this)))
-      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
-
-    $this->state->set(VersionState::RETURNED);
-    $this->meta['rejectReason'] = $reason;
-    $this->meta['moderatorId'] = $this->user->id;
-    // todo: send a notification to the user
-  }
-
-
-  /**
-   * @brief Rejects this document revision.
+   * @brief Casts a vote to rejects this document's revision.
    * @details The post will be automatically deleted in 10 days.
    * @param[in] $reason The reason why the revision has been rejected.
    */
   public function reject($reason) {
-    if (!$this->user->has(new Role\ReviewerRole\RejectRevisionPermission($this)))
+    if (!$value = $this->user->has(new Role\ReviewerRole\RejectRevisionPermission($this)))
       throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
 
-    $this->state->set(VersionState::REJECTED);
-    $this->meta['rejectReason'] = $reason;
-    $this->meta['moderatorId'] = $this->user->id;
-    // todo: send a notification to the user
+    if ($this->user instanceof Member)
+      $this->votes->cast($value, FALSE, $reason);
+
+    if ($this->user instanceof System ||
+        $this->votes->count(FALSE) >= $this->di['config']->review->scoreToRejectRevision) {
+      $this->state->set(State::REJECTED);
+      $this->save();
+      // todo: send a notification to the user
+    }
   }
 
 
@@ -124,7 +127,7 @@ abstract class Versionable extends ActiveDoc {
     if (!$this->user->has(new Role\ModeratorRole\RevertToVersionPermission()))
       throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
 
-    $this->state->set(VersionState::APPROVED);
+    $this->state->set(State::APPROVED);
   }
 
 
@@ -136,7 +139,7 @@ abstract class Versionable extends ActiveDoc {
       throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
 
     $this->meta['prevstate'] = $this->state->get();
-    $this->state->set(VersionState::DELETED);
+    $this->state->set(State::DELETED);
     $this->meta['dustmanId'] = $this->user->id;
     $this->meta['deletedAt'] = time();
   }
@@ -174,7 +177,7 @@ abstract class Versionable extends ActiveDoc {
   public function save() {
     // We force the document state in case it hasn't been changed.
     if ($this->state->isCreated())
-      $this->state->set(VersionState::SUBMITTED);
+      $this->state->set(State::SUBMITTED);
 
     // Put your code here.
     parent::save();
