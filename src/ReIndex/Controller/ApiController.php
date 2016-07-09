@@ -119,10 +119,10 @@ final class ApiController extends BaseController {
 
 
   /**
-   * @brief Stars an item.
+   * @brief Adds a tag to the user's favorites.
    * @retval array
    */
-  public function starAction() {
+  public function starTagAction() {
     if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
 
     try {
@@ -141,41 +141,24 @@ final class ApiController extends BaseController {
 
 
   /**
-   * @brief Submits a versionable document.
+   * @brief Submits a new document's revision.
    * @retval array
    */
-  public function submitAction() {
+  public function submitDocRevAction() {
 
   }
 
 
   /**
-   * @brief Approves a versionable document.
+   * @brief Casts a vote to approve a document's revision.
    * @retval array
    */
-  public function approveAction() {
+  public function approveDocRevAction() {
     try {
       if ($this->request->hasPost('id')) {
         $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
-
-        if ($doc->isCurrent() or $doc->isSubmittedForPeerReview()) {
-
-          if ($this->user->isAdmin)
-            $value = isset($this->config->review->votesNeededToPassRevision) ? $this->config->review->votesNeededToPassRevision : 2;
-          elseif ($this->user->match($doc->creatorId))
-            $value = isset($this->config->review->creatorVoteValue) ? $this->config->review->creatorVoteValue : 2;
-          elseif ($this->user->isModerator())
-            $value = isset($this->config->review->moderatorVoteValue) ? $this->config->review->moderatorVoteValue : 2;
-          elseif ($this->user->isReviewer())
-            $value = isset($this->config->review->reviewerVoteValue) ? $this->config->review->reviewerVoteValue : 1;
-          else
-            throw new \RuntimeException("Privilegi insufficienti.");
-
-          echo json_encode([TRUE, $doc->vote($value, FALSE)]);
-          $this->view->disable();
-        }
-        else
-          throw new \RuntimeException("Lo stato è incompatibile.");
+        echo json_encode([TRUE, $doc->approve()]);
+        $this->view->disable();
       }
       else
         throw new \RuntimeException("La risorsa non è più disponibile.");
@@ -187,20 +170,22 @@ final class ApiController extends BaseController {
 
 
   /**
-   * @brief Returns for revision a versionable document.
+   * @brief Casts a vote to reject a document's revision.
    * @retval array
    */
-  public function returnForRevisionAction() {
-
-  }
-
-
-  /**
-   * @brief Rejects a versionable document.
-   * @retval array
-   */
-  public function rejectAction() {
-
+  public function rejectDocRevAction() {
+    try {
+      if ($this->request->hasPost('id')) {
+        $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
+        echo json_encode([TRUE, $doc->reject($this->request->getPost('reason'))]);
+        $this->view->disable();
+      }
+      else
+        throw new \RuntimeException("La risorsa non è più disponibile.");
+    }
+    catch (\Exception $e) {
+      echo json_encode([FALSE, $e->getMessage()]);
+    }
   }
 
 
