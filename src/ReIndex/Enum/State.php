@@ -27,6 +27,7 @@ class State {
   const REJECTED = "rejected"; //!< The document's revision has been rejected.
   const DELETED = "deleted"; //!< The document's revision has been deleted.
   const INDEXING = "indexing"; //!< The document's revision needs to be indexed.
+  const DELETING = "deleting"; //!< The document's revision needs to be deindexed.
 
 
   /**
