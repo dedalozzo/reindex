@@ -12,6 +12,7 @@ namespace ReIndex\Security\Role\ModeratorRole;
 
 
 use ReIndex\Security\Role\MemberRole\MoveRevisionToTrashPermission as Superclass;
+use ReIndex\Enum\State;
 
 
 /**
@@ -22,7 +23,7 @@ class MoveRevisionToTrashPermission extends Superclass {
 
 
   public function check() {
-    if ($this->context->state->isMovedToTrash())
+    if ($this->context->state->is(State::DELETED))
       return FALSE;
     else
       return !$this->context->isProtected() ? TRUE : FALSE;
