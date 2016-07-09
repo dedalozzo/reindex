@@ -162,24 +162,6 @@ final class Member extends ActiveDoc implements IUser {
 
 
   /**
-   * @brief Returns the user's favorite tags if any.
-   * @retval array
-   */
-  public function getFavoriteTags() {
-    $opts = new ViewQueryOpts();
-    $opts->setKey($this->getId())->doNotReduce();
-    $favorites = $this->couch->queryView("favorites", "tagsPerMember", NULL, $opts);
-
-    if ($favorites->isEmpty())
-      return [];
-
-    $opts->reset();
-    $opts->doNotReduce();
-    return $this->couch->queryView("tags", "allNames", array_column($favorites->asArray(), 'value'), $opts)->asArray();
-  }
-
-
-  /**
    * @brief Returns the actual user's age based on his birthday, `null`in case a the user's birthday is not available.
    * @retval int|null
    */
