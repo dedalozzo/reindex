@@ -26,13 +26,15 @@ final class Vote extends Doc {
    * @param[in] string $itemId The ID of the document the vote refers.
    * @param[in] string $voterId The ID of the member who has voted.
    * @param[in] int $value The vote's value.
+   * @param[in] string $reason The reason for the vote's preference.
    */
-  public static function cast($itemId, $voterId, $value = 1) {
+  public static function cast($itemId, $voterId, $value = 1, $reason = '') {
     $instance = new self();
 
     $instance->meta["itemId"] = $itemId;
     $instance->meta["voterId"] = $voterId;
     $instance->meta["value"] = $value;
+    $instance->meta["reason"] = $reason;
     $instance->meta["timestamp"] = time();
 
     return $instance;
@@ -59,6 +61,27 @@ final class Vote extends Doc {
   public function unsetValue() {
     if ($this->isMetadataPresent('value'))
       unset($this->meta['value']);
+  }
+
+
+  public function getReason() {
+    return $this->meta['reason'];
+  }
+
+
+  public function issetReason() {
+    return isset($this->meta['reason']);
+  }
+
+
+  public function setReason($reason) {
+    $this->meta['reason'] = $reason;
+  }
+
+
+  public function unsetReason() {
+    if ($this->isMetadataPresent('reason'))
+      unset($this->meta['reason']);
   }
 
 
