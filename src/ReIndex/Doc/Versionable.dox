@@ -9,9 +9,9 @@ class Versionable {
   /** @name Properties */
   //!@{
 
-  VersionState $state;            //!< The state of the document.
-
   string $unversionId;            //!< [readonly] The id pruned of its version number.
+
+  State $state;                   //!< The state of the document.
 
   string $versionNumber;          //!< The document version number.
   string $previousVersionNumber;  //!< The version number of the previous document revision.
@@ -21,6 +21,8 @@ class Versionable {
   string $dustmanId;              //!< [readonly] The user id of whom moved to trash the content.
 
   string $editSummary;            //!< A brief explanation of an edit to a versionable content.
+
+  VoteCollection $votes           //!< Casted votes.
 
   //!@}
 
