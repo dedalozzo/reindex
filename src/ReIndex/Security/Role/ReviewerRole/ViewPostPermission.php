@@ -13,6 +13,7 @@ namespace ReIndex\Security\Role\ReviewerRole;
 
 
 use ReIndex\Security\Role\MemberRole\ViewPostPermission as Superclass;
+use ReIndex\Enum\State;
 
 
 /**
@@ -26,7 +27,7 @@ class ViewPostPermission extends Superclass {
     if (parent::check())
       return TRUE;
     else
-      return $this->context->state->isSubmittedForPeerReview() ? TRUE : FALSE;
+      return $this->context->state->is(State::SUBMITTED) ? TRUE : FALSE;
   }
 
 }
