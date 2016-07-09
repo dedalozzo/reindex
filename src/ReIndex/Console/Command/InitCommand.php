@@ -406,7 +406,7 @@ MAP;
     function revisionsPerItem() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->versionable)) {
+  if (isset($doc->state)) {
     $editorId = isset($doc->editorId) ? $doc->editorId : $doc->creatorId;
     $editSummary = isset($doc->editSummary) ? $doc->editSummary : '';
 
