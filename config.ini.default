@@ -32,7 +32,8 @@ maxEmailsPerUser = 10
 
 [review]
 ; Number of votes needed to pass a peer revision.
-votesNeededToPassRevision = 2
+scoreToApproveRevision = 2
+scoreToRejectRevision = -2
 
 ; A vote can assume a different value in relation to the member.
 creatorVoteValue = 2
