@@ -11,8 +11,10 @@
 namespace ReIndex\Security\Role\ModeratorRole;
 
 
-use ReIndex\Doc\Versionable;
 use ReIndex\Security\Role\AbstractPermission;
+use ReIndex\Doc\Versionable;
+use ReIndex\Enum\State;
+
 use EoC\Couch;
 
 
@@ -44,7 +46,7 @@ class RestoreRevisionPermission extends AbstractPermission {
    * deleted by a member with an inferior role or by himself.
    */
   public function check() {
-    if (!$this->context->state->isMovedToTrash())
+    if (!$this->context->state->is(State::DELETED))
       return FALSE;
     elseif ($this->context->dustmanId == $this->user->id)
       return TRUE;
