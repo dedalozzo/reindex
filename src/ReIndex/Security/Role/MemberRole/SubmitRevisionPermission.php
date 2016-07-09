@@ -24,7 +24,7 @@ class SubmitRevisionPermission extends AbstractPermission {
 
   /**
    * @brief Constructor.
-   * param[in] Doc::Versionable $context
+   * @param[in] Doc::Versionable $context
    */
   public function __construct(Versionable $context) {
     parent::__construct($context);
