@@ -37,6 +37,9 @@ final class IndexPostTask implements ITask, IChunkHook {
   private $id;      // Post's ID.
   private $type;    // Post's type.
 
+  private $toIndex;   // The indexing procedure must be performed.
+  private $toDeindex; // The post must be removed from the indexes.
+
   /**
    * @var Di $di
    */
@@ -78,6 +81,9 @@ final class IndexPostTask implements ITask, IChunkHook {
     $this->couch = $this->di['couchdb'];
     $this->redis = $this->di['redis'];
     $this->log = $this->di['log'];
+
+    $this->toDeindex = $this->toDeindex();
+    $this->toIndex = $this->toIndex();
   }
 
 
@@ -309,10 +315,34 @@ final class IndexPostTask implements ITask, IChunkHook {
 
 
   /**
+   * @brief Returns `true` if the post must be removed from the indexes.
+   * @return bool
+   */
+  private function toDeindex() {
+    if ($this->post->state->is(State::INDEXING) || $this->post->state->is(State::DELETING))
+      return TRUE;
+    else
+      return FALSE;
+  }
+
+
+  /**
+   * @brief Returns `true` if the indexing procedure must be performed.
+   * @return bool
+   */
+  private function toIndex() {
+    if ($this->post->state->is(State::INDEXING) || $this->post->state->is(State::CURRENT))
+      return TRUE;
+    else
+      return FALSE;
+  }
+
+
+  /**
    * @brief Removes the post ID from the indexes.
    */
   protected function deindex() {
-    if (!$this->post->state->is(State::INDEXING) || !$this->post->state->is(State::DELETING))
+    if ($this->toDeindex)
       return;
 
     $this->zRemNewest();
@@ -327,7 +357,7 @@ final class IndexPostTask implements ITask, IChunkHook {
    * @brief Adds the post ID to the indexes.
    */
   protected function index() {
-    if (!$this->post->state->is(State::INDEXING) || !$this->post->state->is(State::CURRENT))
+    if ($this->toIndex)
       return;
 
     $this->zAddNewest();
@@ -362,14 +392,26 @@ final class IndexPostTask implements ITask, IChunkHook {
     $this->id = $this->post->unversionId;
     $this->type = $this->post->getType();
 
+    // Sets the state of the current revision to `approved`.
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->setKey($this->id);
+    $rows = $this->couch->queryView("posts", "unversion", NULL, $opts);
+
+    if (!$rows->isEmpty()) {
+      $current = $this->couch->getDoc(Couch::STD_DOC_PATH, $rows[0]['id']);
+      $current->state->set(State::APPROVED);
+      $current->save();
+    }
+
     // Marks the start of a transaction block. Subsequent commands will be queued for atomic execution using `exec()`.
     $this->redis->multi();
 
     $this->reindex();
 
+    // Marks the end of the transaction block.
     $this->redis->exec();
 
-    if (!$this->post->state->is(State::INDEXING) || !$this->post->state->is(State::CURRENT))
+    if ($this->toIndex)
       return;
 
     // todo: fare una insert per ogni follower che abbia aggiunto ai preferiti uno qualunque dei tag associati al post,
@@ -380,11 +422,15 @@ final class IndexPostTask implements ITask, IChunkHook {
     // l'autore del post successivamente all'ultima modifica al post stesso (modifiedAt).
 
     // Searches for all the followers of the member who created the post.
-    $opts = new ViewQueryOpts();
+    $opts->reset();
     $opts->doNotReduce()->reverseOrderOfResults();
     $opts->setStartKey([$this->post->creatorId, Couch::WildCard()])->setEndKey([$this->post->creatorId]);
 
     $this->couch->queryView("followers", "perMember", NULL, $opts, $this);
+
+    // Finally marks as current the document's revision.
+    $this->post->state->set(State::CURRENT);
+    $this->post->save();
   }
 
 
@@ -396,7 +442,7 @@ final class IndexPostTask implements ITask, IChunkHook {
 
     $set = Member::TL_SET . $row->key[1];
 
-    if ($this->post->state->isCurrent()) {
+    if ($this->toIndex) {
       // todo: Add option NX when phpredis will support it.
       $this->redis->zAdd($set, $this->post->modifiedAt, $this->post->unversionId);
     }
