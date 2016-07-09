@@ -12,6 +12,7 @@ namespace ReIndex\Security\Role\ModeratorRole;
 
 
 use ReIndex\Security\Role\MemberRole\ViewPostPermission as Superclass;
+use ReIndex\Enum\State;
 
 
 /**
@@ -25,11 +26,10 @@ class ViewPostPermission extends Superclass {
     if (parent::check())
       return TRUE;
     else
-      return ($this->context->state->isCurrent() or
-        $this->context->state->isSubmittedForPeerReview() or
-        $this->context->state->isReturnedForRevision() or
-        $this->context->state->isRejected() or
-        $this->context->state->isMovedToTrash()) ? TRUE : FALSE;
+      return ($this->context->state->is(State::CURRENT) or
+        $this->context->state->is(State::SUBMITTED) or
+        $this->context->state->is(State::REJECTED) or
+        $this->context->state->is(State::DELETED)) ? TRUE : FALSE;
   }
 
 }
