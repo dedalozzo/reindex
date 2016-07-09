@@ -16,6 +16,7 @@ use ReIndex\Collection;
 use ReIndex\Helper;
 use Reindex\Exception;
 use ReIndex\Task\SynonymizeTask;
+use ReIndex\Enum\State;
 
 use EoC\Opt\ViewQueryOpts;
 
@@ -29,6 +30,8 @@ use Phalcon\Di;
  */
 final class Tag extends Versionable {
   use Property\TExcerpt, Property\TBody, Property\TDescription;
+
+  const SYNONYMIZING = "synonymizing"; //!< The tag has been marked as synonym.
 
   private $synonyms; // Collection of synonyms.
 
@@ -85,26 +88,17 @@ final class Tag extends Versionable {
   //!@{
 
   /**
-   * @brief Returns `true` in case this tag has been marked as synonym, `false` otherwise.
-   * @retval bool
-   */
-  public function synonimizing() {
-    return $this->isMetadataPresent('synonymizing');
-  }
-
-
-  /**
-   * @brief Transforms the tag into a synonym.
+   * @brief Transforms the current tag into a synonym.
    * @param[in] Tag $tag The master tag.
    */
   public function markAsSynonymOf(Tag $tag) {
-    if (!$this->state->isCurrent())
+    if (!$this->state->is(State::CURRENT))
       throw new Exception\InvalidStateException('Only the current version of a tag can be synonymized.');
 
-    if ($this->synonimizing())
+    if ($this->state->is(Tag::SYNONYMIZING))
       throw new Exception\InvalidStateException('The tag has been already marked as synonym.');
 
-    $this->meta['synonymizing'] = TRUE;
+    $this->state->set(Tag::SYNONYMIZING);
     $this->save();
 
     $queue = $this->di['taskqueue'];
@@ -131,7 +125,7 @@ final class Tag extends Versionable {
    * @brief Saves the tag.
    */
   public function save() {
-    if (!$this->synonimizing()) {
+    if (!$this->state->is(Tag::SYNONYMIZING)) {
       $this->html = $this->markdown->parse($this->body);
       $purged = Helper\Text::purge($this->html);
       $this->excerpt = Helper\Text::truncate($purged);
@@ -155,7 +149,7 @@ final class Tag extends Versionable {
 
   public function setName($value) {
     // A tag name can't be changed unless the tag has never been approved.
-    if ($this->state->isCreated())
+    if ($this->state->is(State::CREATED))
       $this->meta['name'] = $value;
     else
       throw new \RuntimeException("Il nome di un tag non può essere cambiato.");
