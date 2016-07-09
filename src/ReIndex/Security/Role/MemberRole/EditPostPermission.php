@@ -12,6 +12,7 @@ namespace ReIndex\Security\Role\MemberRole;
 
 
 use ReIndex\Security\Role\AbstractPermission;
+use ReIndex\Enum\State;
 
 
 /**
@@ -41,7 +42,7 @@ class EditPostPermission extends AbstractPermission {
   public function check() {
     if ($this->user->match($this->context->creatorId) &&
       !$this->context->isLocked() &&
-      ($this->context->state->isCurrent() or $this->context->state->isDraft()))
+      ($this->context->state->is(State::CURRENT) or $this->context->state->is(State::DRAFT)))
       return TRUE;
     else
       return FALSE;
