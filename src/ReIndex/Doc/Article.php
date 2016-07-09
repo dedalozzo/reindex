@@ -11,8 +11,7 @@
 namespace ReIndex\Doc;
 
 
-use ReIndex\Enum;
-use ReIndex\Exception;
+use ReIndex\Enum\State;
 use ReIndex\Helper\Text;
 
 
@@ -47,7 +46,7 @@ class Article extends Post {
    * @details When a user works on an article, he wants save many time the item before submit it for peer revision.
    */
   public function markAsDraft() {
-    $this->meta['status'] = Enum\VersionState::DRAFT;
+    $this->state->set(State::DRAFT);
 
     // Used to group by year, month and day.
     $this->meta['year'] = date("Y", $this->createdAt);
