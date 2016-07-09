@@ -98,8 +98,8 @@ abstract class Versionable extends ActiveDoc {
 
   /**
    * @brief Casts a vote to rejects this document's revision.
-   * @details The post will be automatically deleted in 10 days.
-   * @param[in] $reason The reason why the revision has been rejected.
+   * @details The document's revision will be automatically deleted in 10 days.
+   * @param[in] $reason The reason why the document's revision has been rejected.
    */
   public function reject($reason) {
     if (!$value = $this->user->has(new Role\ReviewerRole\RejectRevisionPermission($this)))
@@ -127,7 +127,7 @@ abstract class Versionable extends ActiveDoc {
     if (!$this->user->has(new Role\ModeratorRole\RevertToVersionPermission()))
       throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
 
-    $this->state->set(State::APPROVED);
+    // cerca se la revisione specificata è approved e la marca come current.
   }
 
 
