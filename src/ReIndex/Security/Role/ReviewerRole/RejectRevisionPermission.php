@@ -1,7 +1,8 @@
 <?php
+
 /**
- * @file RejectRevisionPermission.php
- * @brief This file contains the ${CLASS_NAME} class.
+ * @file ReviewerRole/RejectRevisionPermission.php
+ * @brief This file contains the RejectRevisionPermission class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -11,23 +12,37 @@ namespace ReIndex\Security\Role\ReviewerRole;
 
 
 use ReIndex\Security\Role\AbstractPermission;
+use ReIndex\Doc\Versionable;
+use ReIndex\Enum\State;
 
 
+/**
+ * @brief Permission to vote for the rejection of a document's revision.
+ */
 class RejectRevisionPermission extends AbstractPermission {
 
 
+  /**
+   * @brief Constructor.
+   * @param[in] Doc::Versionable $context
+   */
+  public function __construct(Versionable $context) {
+    parent::__construct($context);
+  }
+
+
   public function getDescription() {
-    //! @todo: Implement getDescription() method.
+    return "Permission to vote for the rejection of a document's revision.";
   }
 
 
   /**
-   * @brief Returns `true` if the document revision can be rejected, `false` otherwise.
-   * @retval bool
+   * @brief Returns the value for the vote if the document revision can be rejected, `false` otherwise.
+   * @retval mixed
    */
   public function check() {
-    if ($this->user->isModerator() && $this->isSubmittedForPeerReview())
-      return TRUE;
+    if ($this->context->state->is(State::SUBMITTED))
+      return -$this->di['config']->review->reviewerVoteValue;
     else
       return FALSE;
   }
