@@ -25,7 +25,7 @@ class EditPostPermission extends Superclass {
     if (parent::check())
       return TRUE;
     else
-     return (!$this->context->isLocked() && $this->context->state->isCurrent()) ? TRUE : FALSE;
+     return (!$this->context->isLocked() && $this->context->state->is(State::CURRENT)) ? TRUE : FALSE;
   }
 
 }
