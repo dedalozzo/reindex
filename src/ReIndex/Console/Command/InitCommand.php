@@ -293,7 +293,7 @@ MAP;
     function tagsByName() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'tag' && $doc->state == 'current' && empty($doc->synonymizing))
+  if ($doc->type == 'tag' && $doc->state == 'current')
     $emit($doc->name);
 };
 MAP;
