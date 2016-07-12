@@ -13,6 +13,7 @@ namespace ReIndex\Security\Role\MemberRole;
 
 use ReIndex\Security\Role\AbstractPermission;
 use ReIndex\Doc\Versionable;
+use ReIndex\Enum\State;
 
 
 /**
@@ -36,10 +37,7 @@ class MoveRevisionToTrashPermission extends AbstractPermission {
 
 
   public function check() {
-    if ($this->context->state->isMovedToTrash())
-      return FALSE;
-
-    return ($this->user->match($this->context->creatorId) && $this->context->state->isDraft()) ? TRUE : FALSE;
+    return ($this->user->match($this->context->creatorId) && $this->context->state->is(State::DRAFT)) ? TRUE : FALSE;
   }
 
 }
