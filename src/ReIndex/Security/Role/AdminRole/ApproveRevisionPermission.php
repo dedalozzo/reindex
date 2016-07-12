@@ -17,13 +17,12 @@ use ReIndex\Security\Role\ModeratorRole\ApproveRevisionPermission as Superclass;
 /**
  * @copydoc ModeratorRole::ApproveRevisionPermission
  */
-class MoveVersionToTrashPermission extends Superclass {
+class ApproveRevisionPermission extends Superclass {
 
 
   public function check() {
-    if ($this->user->isModerator() &&
-      ($this->context->state->isCreated() or $this->context->state->isDraft() or $this->context->state->isSubmittedForPeerReview()))
-      return TRUE;
+    if ($this->context->state->is(State::SUBMITTED))
+      return $this->di['config']->review->scoreToApproveRevision;
     else
       return FALSE;
   }
