@@ -75,14 +75,31 @@ final class VoteCollection implements \Countable {
 
 
   /**
+   * @brief Given the parameters returns the item ID.
+   * @param[in] bool $unversion When `true` removes the version from the ID. Use `false` to cast a vote for revision
+   * approval.
+   * @param[in] string $action A member can vote for a specific action, like approve a revision or delete it.
+   * @retval string
+   */
+  private function getItemId($unversion, $action) {
+    // Unversion the ID just in case `$unversion` is `true`.
+    $id = $unversion ? Text::unversion($this->doc->id) : $this->doc->id;
+
+    // Appends the `$action` when provided.
+    return empty($action) ? $id : $id . '::' . $action;
+  }
+
+
+  /**
    * @brief Registers, replaces or deletes the vote.
    * @param[in] int $value The vote.
    * @param[in] bool $unversion When `true` removes the version from the ID. Use `false` to cast a vote for revision
    * approval.
+   * @param[in] string $action (optional) A member can vote for a specific action, like approve a revision or delete it.
    * @param[in] string $reason (optional) The reason for the vote's preference.
    * @retval int The voting status.
    */
-  public function cast($value, $unversion = TRUE, $reason = '') {
+  public function cast($value, $unversion = TRUE, $action = '', $reason = '') {
     if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
     if ($this->user->match($this->doc->creatorId)) throw new Exception\CannotVoteYourOwnPostException('Non puoi votare il tuo stesso post.');
 
@@ -100,7 +117,7 @@ final class VoteCollection implements \Countable {
       // The user has a grace period to change or undo his vote.
       if ($seconds <= $votingGracePeriod) {
 
-        // The user clicked twice on the same button to undo his vote (or like).
+        // The user clicked twice on the same button to undo his vote.
         if ($vote->value === $value) {
           $this->couch->deleteDoc(Couch::STD_DOC_PATH, $voteId, $vote->rev);
           return static::DELETED;
@@ -118,7 +135,7 @@ final class VoteCollection implements \Countable {
         throw new Exception\GracePeriodExpiredException("Non puoi cambiare il tuo voto perché è trascorso il tempo massimo.");
     }
     else {
-      $itemId = $unversion ? Text::unversion($this->doc->id) : $this->doc->id;
+      $itemId = $this->getItemId($unversion, $action);
       $vote = Vote::cast($itemId, $this->user->getId(), $value, $reason);
       $this->couch->saveDoc($vote);
       return static::REGISTERED;
@@ -129,15 +146,16 @@ final class VoteCollection implements \Countable {
   /**
    * @brief Returns `true` if the member has voted else otherwise.
    * @param[out] string $voteId (optional) The vote ID.
-   * @param[in] bool $unversion When `true` removes the version from the ID. Use `false` to know if the member casted a
-   * vote for revision approval.
+   * @param[in] bool $unversion (optional) When `true` removes the version from the ID. Use `false` to know if the member
+   * casted a vote for revision approval.
+   * @param[in] string $action (optional) A member can vote for a specific action, like approve a revision or delete it.
    * @retval bool
    */
-  public function exists(&$voteId = NULL, $unversion = TRUE) {
+  public function exists(&$voteId = NULL, $unversion = TRUE, $action = '') {
     // In case there is no user logged in returns false.
     if ($this->user->isGuest()) return FALSE;
 
-    $itemId = $unversion ? Text::unversion($this->doc->id) : $this->doc->id;
+    $itemId = $this->getItemId($unversion, $action);
 
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(1)->setKey([$itemId, $this->user->getId()]);
@@ -155,12 +173,13 @@ final class VoteCollection implements \Countable {
 
   /**
    * @brief Returns the arithmetic sum of each each vote.
-   * @param[in] bool $unversion When `true` removes the version from the ID. Use `false` to cast a vote for revision
-   * approval.
+   * @param[in] bool $unversion (optional) When `true` removes the version from the ID. Use `false` to cast a vote for
+   * revision approval.
+   * @param[in] string $action (optional) A member can vote for a specific action, like approve a revision or delete it.
    * @retval int
    */
-  public function count($unversion = TRUE) {
-    $itemId = $unversion ? Text::unversion($this->doc->id) : $this->doc->id;
+  public function count($unversion = TRUE, $action = '') {
+    $itemId = $this->getItemId($unversion, $action);
 
     $opts = new ViewQueryOpts();
     $opts->setKey($itemId);
@@ -173,10 +192,11 @@ final class VoteCollection implements \Countable {
    * @brief Returns the list of members have voted.
    * @param[in] bool $unversion When `true` removes the version from the ID. Use `false` to get the members voted for
    * revision approval.
+   * @param[in] string $action (optional) A member can vote for a specific action, like approve a revision or delete it.
    * @retval array An associative array.
    */
-  public function getVoters($unversion = TRUE) {
-    $itemId = $unversion ? Text::unversion($this->doc->id) : $this->doc->id;
+  public function getVoters($unversion = TRUE, $action = '') {
+    $itemId = $this->getItemId($unversion, $action);
 
     // Gets the members have voted the item.
     $opts = new ViewQueryOpts();
