@@ -14,6 +14,7 @@ namespace ReIndex\Security\Role\GuestRole;
 
 use ReIndex\Security\Role\AbstractPermission;
 use ReIndex\Doc\Post;
+use ReIndex\Enum\State;
 
 
 /**
@@ -37,7 +38,7 @@ class ViewPostPermission extends AbstractPermission {
 
 
   public function check() {
-    return ($this->context->state->isCurrent() && $this->context->isVisible()) ? TRUE : FALSE;
+    return $this->context->state->is(State::CURRENT) ? TRUE : FALSE;
   }
 
 }
