@@ -11,29 +11,13 @@
 namespace ReIndex\Security\Role\ReviewerRole;
 
 
-use ReIndex\Security\Role\AbstractPermission;
-use ReIndex\Doc\Versionable;
-use ReIndex\Enum\State;
+use ReIndex\Security\Role\MemberRole\RejectRevisionPermission as Superclass;
 
 
 /**
- * @brief Permission to vote for the rejection of a document's revision.
+ * @copydoc MemberRole::RejectRevisionPermission
  */
-class RejectRevisionPermission extends AbstractPermission {
-
-
-  /**
-   * @brief Constructor.
-   * @param[in] Doc::Versionable $context
-   */
-  public function __construct(Versionable $context) {
-    parent::__construct($context);
-  }
-
-
-  public function getDescription() {
-    return "Permission to vote for the rejection of a document's revision.";
-  }
+class RejectRevisionPermission extends Superclass {
 
 
   /**
