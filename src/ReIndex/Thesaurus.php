@@ -80,7 +80,7 @@ final class Thesaurus {
     if ($rows->isEmpty())
       throw new \RuntimeException('Synonym not found.');
 
-    $synonym = Tag::find(current($rows->getIterator())['id']);
+    $synonym = Synonym::find(current($rows->getIterator())['id']);
 
     $opts->setKey($synonym->id);
     $rows = $this->couch->queryView("tags", "synonyms", NULL, $opts);
