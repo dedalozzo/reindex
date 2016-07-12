@@ -26,7 +26,7 @@ final class Vote extends Doc {
    * @param[in] string $itemId The ID of the document the vote refers.
    * @param[in] string $voterId The ID of the member who has voted.
    * @param[in] int $value The vote's value.
-   * @param[in] string $reason The reason for the vote's preference.
+   * @param[in] string $reason (optional) The reason for the vote's preference.
    */
   public static function cast($itemId, $voterId, $value = 1, $reason = '') {
     $instance = new self();
