@@ -13,10 +13,11 @@ namespace ReIndex\Security\Role\MemberRole;
 
 use ReIndex\Security\Role\AbstractPermission;
 use ReIndex\Doc\Versionable;
+use ReIndex\Enum\State;
 
 
 /**
- * @brief Permission to approve a revision.
+ * @brief Permission to vote for the approval of a document's revision.
  */
 class ApproveRevisionPermission extends AbstractPermission {
 
@@ -40,8 +41,8 @@ class ApproveRevisionPermission extends AbstractPermission {
    * @retval bool
    */
   public function check() {
-    if ($this->user->isModerator() && ($this->context->state->isCreated() or $this->context->state->isDraft() or $this->context->state->isSubmittedForPeerReview()))
-      return TRUE;
+    if ($this->user->match($this->context->creatorId) && $this->context->state->is(State::SUBMITTED))
+      return $this->di['config']->review->creatorVoteValue;
     else
       return FALSE;
   }

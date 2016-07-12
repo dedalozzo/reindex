@@ -12,6 +12,7 @@ namespace ReIndex\Security\Role\ModeratorRole;
 
 
 use ReIndex\Security\Role\ReviewerRole\ApproveRevisionPermission as Superclass;
+use ReIndex\Enum\State;
 
 
 /**
@@ -21,8 +22,8 @@ class ApproveRevisionPermission extends Superclass {
 
 
   public function check() {
-    if  ($this->context->state->isCreated() or $this->context->state->isDraft() or $this->context->state->isSubmittedForPeerReview())
-      return TRUE;
+    if ($this->context->state->is(State::SUBMITTED))
+      return $this->di['config']->review->moderatorVoteValue;
     else
       return FALSE;
   }
