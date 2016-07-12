@@ -23,10 +23,10 @@ class MoveRevisionToTrashPermission extends Superclass {
 
 
   public function check() {
-    if ($this->context->state->is(State::DELETED))
-      return FALSE;
+    if (parent::check())
+      return TRUE;
     else
-      return !$this->context->isProtected() ? TRUE : FALSE;
+      return $this->context->state->is(State::CURRENT) && !$this->context->isProtected() ? TRUE : FALSE;
   }
 
 }
