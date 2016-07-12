@@ -133,8 +133,6 @@ final class IndexPostTask implements ITask, IChunkHook {
    * @param[in] int $score The score.
    */
   private function zAdd($set, $score) {
-    if (!$this->post->isVisible()) return;
-
     // Order set with all the posts.
     $this->redis->zAdd($set . 'post', $score, $this->id);
 
@@ -179,8 +177,6 @@ final class IndexPostTask implements ITask, IChunkHook {
    * @param[in] int $score The score.
    */
   private function zAddSpecial($set, \DateTime $date, $score) {
-    if (!$this->post->isVisible()) return;
-
     // Order set with all the posts.
     $this->zMultipleAdd($set . 'post', $date, $score);
 
@@ -262,8 +258,6 @@ final class IndexPostTask implements ITask, IChunkHook {
    * @brief Adds the post to the active index.
    */
   private function zAddActive() {
-    if (!$this->post->isVisible()) return;
-
     $timestamp = $this->post->getLastUpdate();
 
     // Order set with all the posts.
