@@ -274,7 +274,7 @@ MAP;
     function synonymsAllNames() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'synonym') {
+  if ($doc->type == 'synonym' && $doc->state == 'current') {
     $emit($doc->_id, $doc->name);
   }
 };
@@ -310,7 +310,7 @@ MAP;
     function synonymsByName() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'synonym') {
+  if ($doc->type == 'synonym' && $doc->state == 'current') {
     $emit($doc->name);
   }
 };
@@ -328,7 +328,7 @@ MAP;
     function tagsAndSynonymsByName() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (($doc->type == 'tag' && $doc->state == 'current') or $doc->type == 'synonym')
+  if (($doc->type == 'tag' or $doc->type == 'synonym') && $doc->state == 'current')
     $emit($doc->name);
 };
 MAP;
@@ -366,7 +366,7 @@ MAP;
     function substrings() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if ($doc->type == 'tag' && $doc->state == 'current') {
+  if (($doc->type == 'tag' or $doc->type == 'synonym') && $doc->state == 'current') or {
     $str = preg_replace('/-/su', '', $doc->name);
     $length = mb_strlen($str, 'UTF-8');
 
