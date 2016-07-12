@@ -40,7 +40,6 @@ final class AjaxController extends BaseController {
 
         $this->view->setVar('canProtect', $this->user->has(new ProtectPostPermission($post)));
         $this->view->setVar('canUnprotect', $this->user->has(new UnprotectPostPermission($post)));
-        $this->view->setVar('canChangeVisibility', $this->user->has(new ChangeVisibilityPermission($post)));
         $this->view->setVar('canMoveToTrash', $this->user->has(new MoveRevisionToTrashPermission($post)));
         $this->view->setVar('canRestore', $this->user->has(new RestoreRevisionPermission($post)));
 
