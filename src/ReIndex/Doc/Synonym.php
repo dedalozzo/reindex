@@ -70,11 +70,7 @@ final class Synonym extends ActiveDoc {
 
 
   public function setName($value) {
-    // A tag name can't be changed unless the tag has never been approved.
-    if ($this->state->isCreated())
-      $this->meta['name'] = $value;
-    else
-      throw new \RuntimeException("Il nome di un tag non può essere cambiato.");
+    $this->meta['name'] = $value;
   }
 
 
