@@ -15,14 +15,9 @@ use ReIndex\Security\Role\ReviewerRole\RejectRevisionPermission as Superclass;
 
 
 /**
- * @brief Permission to vote for the rejection of a document's revision.
+ * @copydoc ReviewerRole::RejectRevisionPermission
  */
 class RejectRevisionPermission extends Superclass {
-
-
-  public function getDescription() {
-    return "Permission to vote for the rejection of a document's revision.";
-  }
 
 
   /**
