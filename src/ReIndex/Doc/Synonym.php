@@ -11,18 +11,24 @@
 namespace ReIndex\Doc;
 
 
+use ReIndex\Enum\State;
+
+
 /**
  * @brief A synonym of a tag.
  * @nosubgrouping
  */
 final class Synonym extends ActiveDoc {
 
+  private $state;
   private $relatedIds;
 
 
   public function __construct() {
-    $this->relatedIds = [];
     parent::__construct();
+    $this->relatedIds = [];
+    $this->state = new State($this->meta);
+    $this->state->set(State::CURRENT);
   }
 
 
@@ -43,6 +49,11 @@ final class Synonym extends ActiveDoc {
    */
   public function setRelatesIds(array $ids) {
     $this->relatedIds = $ids;
+  }
+
+
+  public function delete() {
+    $this->state->set(State::DELETED);
   }
 
 
