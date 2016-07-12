@@ -168,15 +168,6 @@ final class SynonymizeTask implements ITask {
 
     // Saves the synonym. This will rewrite a document using the same `_id` and `_rev`of the tag casted as synonym.
     $synonym->save();
-
-    // We must now delete all the related versions still into the database.
-    $opts->reset();
-    $opts->setKey($this->synonymId)->doNotReduce();
-    $rows = $this->couch->queryView("revisions", "perItem", NULL, $opts);
-
-    foreach ($rows as $row) {
-      $this->couch->deleteDoc(Couch::STD_DOC_PATH, $row['_id'], $row['_rev']);
-    }
   }
 
 
