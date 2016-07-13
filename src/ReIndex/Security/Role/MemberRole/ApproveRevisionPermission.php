@@ -41,7 +41,9 @@ class ApproveRevisionPermission extends AbstractPermission {
    * @retval bool
    */
   public function check() {
-    if ($this->user->match($this->context->creatorId) && !$this->user->match($this->context->editorId) && $this->context->state->is(State::SUBMITTED))
+    if ($this->context->state->is(State::SUBMITTED) &&
+        $this->user->match($this->context->creatorId) &&
+        !$this->user->match($this->context->editorId))
       return $this->di['config']->review->creatorVoteValue;
     else
       return FALSE;
