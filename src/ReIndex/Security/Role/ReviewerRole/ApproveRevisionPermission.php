@@ -22,7 +22,8 @@ class ApproveRevisionPermission extends Superclass {
 
 
   public function check() {
-    if (!$this->user->match($this->context->editorId) && $this->context->state->is(State::SUBMITTED))
+    if ($this->context->state->is(State::SUBMITTED) &&
+        !$this->user->match($this->context->editorId))
       return $this->di['config']->review->reviewerVoteValue;
     else
       return FALSE;
