@@ -93,7 +93,6 @@ final class Thesaurus {
     }
 
     $synonym->delete();
-    $synonym->save();
   }
 
 
