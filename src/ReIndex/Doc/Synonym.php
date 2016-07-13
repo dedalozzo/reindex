@@ -54,6 +54,7 @@ final class Synonym extends ActiveDoc {
 
   public function delete() {
     $this->state->set(State::DELETED);
+    $this->save();
   }
 
 
