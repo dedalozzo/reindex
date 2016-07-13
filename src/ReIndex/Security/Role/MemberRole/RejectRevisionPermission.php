@@ -41,7 +41,9 @@ class RejectRevisionPermission extends AbstractPermission {
    * @retval mixed
    */
   public function check() {
-    if ($this->user->match($this->context->creatorId) && $this->context->state->is(State::SUBMITTED))
+    if ($this->context->state->is(State::SUBMITTED) &&
+      $this->user->match($this->context->creatorId) &&
+      !$this->user->match($this->context->editorId))
       return -$this->di['config']->review->creatorVoteValue;
     else
       return FALSE;
