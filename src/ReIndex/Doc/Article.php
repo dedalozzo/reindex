@@ -13,6 +13,9 @@ namespace ReIndex\Doc;
 
 use ReIndex\Enum\State;
 use ReIndex\Helper\Text;
+use ReIndex\Security\Role;
+use Reindex\Exception;
+use ReIndex\Task\IndexPostTask;
 
 
 /**
@@ -28,16 +31,15 @@ class Article extends Post {
 
 
   /**
-   * @brief Returns `true` if the post can be marked as draft, `false` otherwise.
-   * @retval bool
+   * @copydoc Versionable::submit()
+   * @details Any modification, even by the same author who wrote the article, must go through the peer review procedure.
    */
-  public function canBeMarkedAsDraft() {
-    if ($this->state->isDraft()) return FALSE;
+  public function submit() {
+    if (!$this->user->has(new Role\MemberRole\SubmitRevisionPermission($this)))
+      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
 
-    if ($this->state->isCreated() && $this->user->match($this->creatorId))
-      return TRUE;
-    else
-      return FALSE;
+    $this->state->set(State::SUBMITTED);
+    $this->save();
   }
 
 
@@ -45,7 +47,10 @@ class Article extends Post {
    * @brief Marks the document as draft.
    * @details When a user works on an article, he wants save many time the item before submit it for peer revision.
    */
-  public function markAsDraft() {
+  public function saveAsDraft() {
+    if (!$this->user->has(new Role\MemberRole\MarkArticleAsDraftPermission($this)))
+      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
+
     $this->state->set(State::DRAFT);
 
     // Used to group by year, month and day.
@@ -53,7 +58,7 @@ class Article extends Post {
     $this->meta['month'] = date("m", $this->createdAt);
     $this->meta['day'] = date("d", $this->createdAt);
 
-    $this->meta['slug'] = Text::slug($this->title);
+    $this->save();
   }
 
 }
