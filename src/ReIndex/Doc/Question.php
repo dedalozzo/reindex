@@ -12,7 +12,7 @@ namespace ReIndex\Doc;
 
 
 /**
- * @brief A question asked by a user.
+ * @brief A question asked by a member.
  * @nosubgrouping
  */
 final class Question extends Post {
