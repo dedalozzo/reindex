@@ -593,7 +593,7 @@ class IndexController extends ListController {
     //$post->html = $this->markdown->parse($post->body);
 
     $this->view->setVar('post', $post);
-    $this->view->setVar('canEdit', $this->user->has(new Role\MemberRole\EditPostPermission($post)));
+    $this->view->setVar('canEdit', $this->user->has(new Role\MemberRole\EditRevisionPermission($post)));
     $this->view->setVar('replies', $post->getReplies());
     $this->view->setVar('title', $post->title);
 
@@ -655,7 +655,7 @@ class IndexController extends ListController {
     else {
       $post = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $id);
 
-      if (!$this->user->has(new Role\MemberRole\EditPostPermission($post)))
+      if (!$this->user->has(new Role\MemberRole\EditRevisionPermission($post)))
         return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
       $opts = new ViewQueryOpts();
