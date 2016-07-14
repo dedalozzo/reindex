@@ -65,8 +65,8 @@ abstract class Post extends Versionable {
 
   //!@}
 
-  private $tags; // Collection of tags.
-  private $tasks; // Collection of tasks.
+  private $tags;          // Collection of tags.
+  private $tasks;         // Collection of tasks.
   private $subscriptions; // A collection of members who have subscribed the post.
 
   /**
@@ -83,6 +83,10 @@ abstract class Post extends Versionable {
     $this->tags = new Collection\TagCollection('tags', $this->meta);
     $this->tasks = new Collection\TaskCollection('tasks', $this->meta);
     $this->subscriptions = new Collection\SubscriptionCollection($this);
+
+    // Since we can't use reflection inside EoC Server, we need a way to recognize every subclass of the `Post` class.
+    // This is done testing `isset($doc->supertype) && $doc->supertype == 'post'`.
+    $this->meta['supertype'] = 'post';
   }
 
 
@@ -194,19 +198,12 @@ abstract class Post extends Versionable {
    * @brief Saves the post.
    */
   public function save() {
-    if ($this->state->isCreated()) {
-      // Since we can't use reflection inside EoC Server, we need a way to recognize every subclass of the `Post` class.
-      // This is done testing `isset($doc->supertype) && $doc->supertype == 'post'`.
-      $this->meta['supertype'] = 'post';
+    if (!isset($this->publishedAt))
+      $this->publishedAt = time();
 
-      // After the creation the post must be visible.
-      $this->meta['visible'] = TRUE;
-    }
+    $this->meta['slug'] = Helper\Text::slug($this->title);
 
-    // Now we call the parent implementation.
     parent::save();
-
-    $this->tasks->add(new IndexPostTask($this));
   }
 
 
@@ -284,64 +281,71 @@ abstract class Post extends Versionable {
    * @brief Returns `true` if the post is closed.
    */
   public function isClosed() {
-    return ($this->isProtected() && $this->meta['protection'] == self::CLOSED_PL) ? TRUE : FALSE;
+    return ($this->isProtected() && $this->protection === self::CLOSED_PL) ? TRUE : FALSE;
   }
 
   /**
    * @brief Returns `true` if the post is locked.
    */
   public function isLocked() {
-    return ($this->isProtected() && $this->protection == self::LOCKED_PL) ? TRUE : FALSE;
+    return ($this->isProtected() && $this->protection === self::LOCKED_PL) ? TRUE : FALSE;
   }
 
   //!@}
 
 
-  /** @name Visibility Methods */
-  //!@{
-
   /**
-   * @brief Makes the post to be listed.
-   * @retval bool
+   * @copydoc Versionable::submit()
    */
-  public function isVisible() {
-    return $this->meta['visible'];
+  public function submit () {
+    if (!$this->user->has(new Role\MemberRole\SubmitRevisionPermission($this)))
+      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
+
+    // In case this is a revision of a published version, we must update the editor identifier.
+    if ($this->state->is(State::CURRENT))
+      $this->editorId = $this->user->id;
+
+    if ($this->user->match($this->creatorId))
+      $this->state->set(State::INDEXING);
+    else
+      $this->state->set(State::SUBMITTED);
+
+    parent::submit();
+
+    if ($this->state->is(State::INDEXING))
+      $this->tasks->add(new IndexPostTask($this));
   }
-
-
-  /**
-   * @brief Hides the post.
-   */
-  public function hide() {
-    $this->meta['visible'] = FALSE;
-  }
-
-
-  /**
-   * @brief Makes the post to be listed.
-   */
-  public function show() {
-    $this->meta['visible'] = TRUE;
-  }
-
-  //!@}
 
 
   /**
    * @copydoc Versionable::approve()
    */
-  public function approve($update = FALSE) {
+  public function approve() {
     parent::approve();
 
-    if (!isset($this->publishedAt) or $update)
-      $this->publishedAt = time();
+    if ($this->state->is(State::INDEXING))
+      $this->tasks->add(new IndexPostTask($this));
+  }
 
-    // Used to group by year, month and day.
-    $this->meta['year'] = date("Y", $this->publishedAt);
-    $this->meta['month'] = date("m", $this->publishedAt);
-    $this->meta['day'] = date("d", $this->publishedAt);
 
-    $this->meta['slug'] = Helper\Text::slug($this->title);
+  /**
+   * @copydoc Versionable::delete()
+   */
+  public function delete() {
+    parent::delete();
+
+    $this->tasks->add(new IndexPostTask($this));
+  }
+
+
+  /**
+   * @copydoc Versionable::restore()
+   */
+  public function restore() {
+    parent::restore();
+
+    if ($this->state->is(State::DELETING))
+      $this->tasks->add(new IndexPostTask($this));
   }
 
 
@@ -502,6 +506,11 @@ abstract class Post extends Versionable {
 
   public function setPublishedAt($value) {
     $this->meta['publishedAt'] = $value;
+
+    // Used to group by year, month and day.
+    $this->meta['year'] = date("Y", $value);
+    $this->meta['month'] = date("m", $value);
+    $this->meta['day'] = date("d", $value);
   }
 
 
