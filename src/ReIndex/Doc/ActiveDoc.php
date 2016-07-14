@@ -112,10 +112,6 @@ abstract class ActiveDoc extends Doc {
    * @brief Saves the item to the database.
    */
   public function save() {
-    // The document has been edited.
-    if (isset($this->rev))
-      $this->editorId = $this->user->id;
-
     // Creator ID has not been provided.
     if (!isset($this->creatorId))
       $this->creatorId = $this->user->id;
