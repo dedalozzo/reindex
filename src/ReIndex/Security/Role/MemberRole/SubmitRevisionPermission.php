@@ -37,7 +37,9 @@ class SubmitRevisionPermission extends AbstractPermission {
 
 
   public function check() {
-    return $this->context->state->is(State::CREATED) or $this->context->state->is(State::DRAFT);
+    return $this->user->match($this->context->creatorId) && ($this->context->state->is(State::CREATED) or
+           $this->context->state->is(State::DRAFT) or
+           $this->context->state->is(State::CURRENT));
   }
 
 }
