@@ -21,13 +21,7 @@ class SubmitRevisionPermission extends Superclass {
 
 
   public function check() {
-    if ($this->context->state->isSubmittedForPeerReview()) return FALSE;
-
-    if ($this->user->match($this->creatorId) && ($this->context->state->isCreated() or $this->context->state->isDraft()))
-      return TRUE;
-    else
-      return FALSE;
+    return $this->context->state->is(State::CURRENT);
   }
-
 
 }
