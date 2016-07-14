@@ -12,10 +12,8 @@ namespace ReIndex\Doc;
 
 
 use ReIndex\Enum\State;
-use ReIndex\Helper\Text;
 use ReIndex\Security\Role;
 use Reindex\Exception;
-use ReIndex\Task\IndexPostTask;
 
 
 /**
@@ -38,8 +36,13 @@ class Article extends Post {
     if (!$this->user->has(new Role\MemberRole\SubmitRevisionPermission($this)))
       throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
 
+    // In case this is a revision of a published version, we must update the editor identifier.
+    if ($this->state->is(State::CURRENT))
+      $this->editorId = $this->user->id;
+
     $this->state->set(State::SUBMITTED);
-    $this->save();
+
+    Versionable::submit();
   }
 
 
@@ -48,7 +51,7 @@ class Article extends Post {
    * @details When a user works on an article, he wants save many time the item before submit it for peer revision.
    */
   public function saveAsDraft() {
-    if (!$this->user->has(new Role\MemberRole\MarkArticleAsDraftPermission($this)))
+    if (!$this->user->has(new Role\MemberRole\SaveAsDraftPermission($this)))
       throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
 
     $this->state->set(State::DRAFT);
