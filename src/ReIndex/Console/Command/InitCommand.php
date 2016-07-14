@@ -406,7 +406,7 @@ MAP;
     function revisionsPerItem() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->state)) {
+  if (isset($doc->state) && $doc->state == 'approved') {
     $editorId = isset($doc->editorId) ? $doc->editorId : $doc->creatorId;
     $editSummary = isset($doc->editSummary) ? $doc->editSummary : '';
 
@@ -426,6 +426,25 @@ MAP;
     }
 
     $doc->addHandler(revisionsPerItem());
+
+
+    // @params: itemId
+    function revisionsInProgress() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->state) && ($doc->state == 'indexing' || $doc->state == 'deleting') {
+    $emit($doc->unversionId);
+  }
+};
+MAP;
+
+      $handler = new ViewHandler("inProgress");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(revisionsInProgress());
 
 
     $this->couch->saveDoc($doc);
