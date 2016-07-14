@@ -21,7 +21,7 @@ class SubmitRevisionPermission extends Superclass {
 
 
   public function check() {
-    return $this->context->state->is(State::CURRENT);
+    return $this->context->state->is(State::CURRENT) or $this->context->state->is(State::SUBMITTED);
   }
 
 }
