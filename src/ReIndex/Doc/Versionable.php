@@ -106,8 +106,8 @@ abstract class Versionable extends ActiveDoc {
 
     if ($this->user instanceof Member)
       $this->votes->cast($value, FALSE);
-
-    if (!$this->indexingInProgress() || $this->user instanceof System || $this->votes->count(FALSE) >= $this->di['config']->review->scoreToApproveRevision) {
+    
+    if ($this->user instanceof System || !$this->indexingInProgress() || $this->votes->count(FALSE) >= $this->di['config']->review->scoreToApproveRevision) {
       $this->state->set(State::INDEXING);
       $this->save();
     }
