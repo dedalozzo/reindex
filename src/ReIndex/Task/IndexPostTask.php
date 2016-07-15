@@ -386,6 +386,9 @@ final class IndexPostTask implements ITask, IChunkHook {
     $this->id = $this->post->unversionId;
     $this->type = $this->post->getType();
 
+    if (!isset($this->post->publishedAt))
+      $this->post->publishedAt = time();
+
     // Sets the state of the current revision to `approved`.
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setKey($this->id);
@@ -405,7 +408,7 @@ final class IndexPostTask implements ITask, IChunkHook {
     // Marks the end of the transaction block.
     $this->redis->exec();
 
-    if ($this->toIndex)
+    if (!$this->toIndex)
       return;
 
     // todo: fare una insert per ogni follower che abbia aggiunto ai preferiti uno qualunque dei tag associati al post,
