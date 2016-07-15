@@ -49,12 +49,19 @@ abstract class Versionable extends ActiveDoc {
   private $state; // State of the document.
   private $votes; // Casted votes.
 
+  /**
+   * @var Hoedown $markdown
+   */
+  protected $markdown;
+
 
   /**
    * @brief Constructor.
    */
   public function __construct() {
     parent::__construct();
+
+    $this->markdown = $this->di['markdown'];
 
     $this->votes = new Collection\VoteCollection($this);
 
@@ -106,7 +113,7 @@ abstract class Versionable extends ActiveDoc {
 
     if ($this->user instanceof Member)
       $this->votes->cast($value, FALSE);
-    
+
     if ($this->user instanceof System || !$this->indexingInProgress() || $this->votes->count(FALSE) >= $this->di['config']->review->scoreToApproveRevision) {
       $this->state->set(State::INDEXING);
       $this->save();

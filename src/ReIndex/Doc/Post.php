@@ -69,16 +69,9 @@ abstract class Post extends Versionable {
   private $tasks;         // Collection of tasks.
   private $subscriptions; // A collection of members who have subscribed the post.
 
-  /**
-   * @var Hoedown $markdown
-   */
-  protected $markdown;
-
 
   public function __construct() {
     parent::__construct();
-
-    $this->markdown = $this->di['markdown'];
 
     $this->tags = new Collection\TagCollection('tags', $this->meta);
     $this->tasks = new Collection\TaskCollection('tasks', $this->meta);
