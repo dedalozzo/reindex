@@ -125,7 +125,7 @@ final class Tag extends Versionable {
    * @brief Saves the tag.
    */
   public function save() {
-    if (!$this->state->is(Tag::SYNONYMIZING)) {
+    if (!$this->state->is(Tag::SYNONYMIZING) && isset($this->body)) {
       $this->html = $this->markdown->parse($this->body);
       $purged = Helper\Text::purge($this->html);
       $this->excerpt = Helper\Text::truncate($purged);
