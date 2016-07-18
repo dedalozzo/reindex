@@ -1048,7 +1048,7 @@ MAP;
     function postsPerDateByUser() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && doc->state == 'current')
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->state == 'current')
     $emit([$doc->creatorId, $doc->publishedAt]);
 };
 MAP;
