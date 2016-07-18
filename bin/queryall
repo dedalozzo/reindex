@@ -1,14 +1,12 @@
-couch query docs/toIndex &
 couch query posts/all &
 couch query tags/all &
 couch query revisions/perItem --limit=1 &
 couch query votes/perItem &
-couch query stars/perItem &
 couch query subscriptions/perItem --limit=1 &
 couch query reputation/perMember &
-couch query favorites/perAddedAt --limit=1 &
 couch query members/allNames --limit=1 &
 couch query friendships/approvedPerMember --limit=1 &
 couch query followers/perMember --limit=1 &
 couch query replies/newestPerPost &
 couch query updates/perDateByPostId --limit=1 &
+couch query tasks/all --limit=1 &
