@@ -366,7 +366,7 @@ MAP;
     function substrings() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (($doc->type == 'tag' or $doc->type == 'synonym') && $doc->state == 'current') or {
+  if (($doc->type == 'tag' or $doc->type == 'synonym') && $doc->state == 'current') {
     $str = preg_replace('/-/su', '', $doc->name);
     $length = mb_strlen($str, 'UTF-8');
 
@@ -432,7 +432,7 @@ MAP;
     function revisionsInProgress() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->state) && ($doc->state == 'indexing' || $doc->state == 'deleting') {
+  if (isset($doc->state) && ($doc->state == 'indexing' || $doc->state == 'deleting')) {
     $emit($doc->unversionId);
   }
 };
@@ -911,7 +911,7 @@ MAP;
 function($doc) use ($emit) {
   if (isset($doc->tasks)) {
     foreach ($tasks as $key => $value)
-      $emit($doc->_id, ['docClass' => $doc->class, 'taskClass' => $key);
+      $emit($doc->_id, ['docClass' => $doc->class, 'taskClass' => $key]);
   }
 };
 MAP;
@@ -1028,7 +1028,7 @@ MAP;
     function postsPerDateByTagAndType() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset($doc->supertype) && $doc->supertype == 'post' && && $doc->state == 'current' && isset($doc->tags))
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->state == 'current' && isset($doc->tags))
     foreach ($doc->tags as $tagId)
       $emit([$tagId, $doc->type, $doc->publishedAt]);
 };
@@ -1095,7 +1095,7 @@ MAP;
     function recentTags() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
-  if (isset(isset($doc->supertype) && $doc->supertype == 'post'))
+  if (isset($doc->supertype) && $doc->supertype == 'post')
     $emit($doc->publishedAt, $doc->points);
 };
 MAP;
@@ -1186,6 +1186,10 @@ DESC
 
           case 'tags':
             $this->initTags();
+            break;
+
+          case 'tasks':
+            $this->initTasks();
             break;
 
           case 'tests':
