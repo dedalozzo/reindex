@@ -15,7 +15,7 @@ namespace ReIndex\Security\Role;
  * @brief The community's supervisor.
  * @details A supervisor represent the most important role inside the community. A supervisor is above every other
  * member, included the admins.
-  * @nosubgrouping
+ * @nosubgrouping
  */
 class SupervisorRole extends AdminRole {
 
