@@ -61,8 +61,11 @@ final class MemberController extends ListController {
     $filter = Helper\Time::period($filter);
     if ($filter === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    $this->view->setVar('submenu', $this->periods);
-    $this->view->setVar('submenuIndex', $filter);
+    $this->dispatcher->setParam('filter', $filter);
+
+    // todo implementation goes here
+
+    $this->view->setVar('filters', $this->periods);
     $this->view->setVar('title', 'Utenti per reputazione');
   }
 
