@@ -691,6 +691,15 @@ final class Member extends ActiveDoc implements IUser {
       unset($this->meta['timeOffset']);
   }
 
+  public function getTags() {
+    return $this->tags;
+  }
+
+
+  public function issetTags() {
+    return isset($this->tags);
+  }
+
   //! @endcond
 
 }
