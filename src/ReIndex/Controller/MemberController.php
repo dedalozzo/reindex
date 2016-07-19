@@ -14,7 +14,7 @@ use EoC\Opt\ViewQueryOpts;
 use EoC\Couch;
 
 use ReIndex\Doc\Member;
-use ReIndex\Helper\Time;
+use ReIndex\Helper;
 
 use Phalcon\Mvc\View;
 
@@ -58,7 +58,7 @@ final class MemberController extends ListController {
    * @param[in] string $filter (optional) Human readable representation of a period.
    */
   public function reputationAction($filter = NULL) {
-    $filter = Time::period($filter);
+    $filter = Helper\Time::period($filter);
     if ($filter === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $this->view->setVar('submenu', $this->periods);
@@ -120,10 +120,40 @@ final class MemberController extends ListController {
 
 
   /**
-   * @brief Displays the list of moderators.
+   * @brief Displays the list of members filtered by role.
+   * @param[in] string $filter (optional) A role name.
    */
-  public function moderatorsAction() {
-    $this->view->setVar('title', 'Moderatori');
+  public function byRoleAction($filter = 'member') {
+    $roles = $this->guardian->allRoles();
+
+    $filters = [];
+    foreach ($roles as $role) {
+      $filters[$role->getName()] = NULL;
+    }
+
+    $filter = Helper\ArrayHelper::key($filter, $filters);
+    if ($filter === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+
+    $opts = new ViewQueryOpts();
+    $opts->setLimit($this->resultsPerPage+1);
+
+    // Paginates results.
+    $startKey = isset($_GET['startkey']) ? $_GET['startkey'] : chr(0);
+    $opts->setStartKey([$filter, $startKey]);
+    if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
+
+    $rows = $this->couch->queryView("members", "byRole", NULL, $opts)->asArray();
+
+    $members = Member::collect(array_column($rows, 'id'));
+
+    if (count($members) > $this->resultsPerPage) {
+      $last = array_pop($members);
+      $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->username, $last->id));
+    }
+
+    $this->view->setVar('entries', $members);
+    $this->view->setVar('filters', $this->filters);
+    $this->view->setVar('title', 'Utenti per ruolo');
   }
 
 }
