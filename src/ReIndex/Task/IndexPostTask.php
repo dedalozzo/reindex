@@ -270,14 +270,17 @@ final class IndexPostTask implements ITask, IChunkHook {
       // Order set with all the posts related to a specific tag.
       $this->redis->zAdd(Post::ACT_SET . $tagId . '_' . 'post', $timestamp, $this->id);
 
-      // Used to get a list of tags recently updated.
-      $this->redis->zAdd(Post::ACT_SET . 'tags' . '_' . 'post', $timestamp, $tagId);
-
       // Order set with all the posts of a specific type, related to a specific tag.
       $this->redis->zAdd(Post::ACT_SET . $tagId . '_' . $this->type, $timestamp, $this->id);
 
+      // Used to get a list of tags recently updated.
+      $this->redis->zAdd(Post::ACT_SET . 'tags' . '_' . 'post', $timestamp, $tagId);
+
       // Used to get a list of tags, in relation to a specific type, recently updated.
       $this->redis->zAdd(Post::ACT_SET . 'tags' . '_' . $this->type, $timestamp, $tagId);
+
+      // Increments the tag's popularity.
+      $this->redis->zIncrBy(Post::POP_SET . 'tags', +1, $tagId);
     }
   }
 
@@ -296,14 +299,11 @@ final class IndexPostTask implements ITask, IChunkHook {
       // Order set with all the posts related to a specific tag.
       $this->redis->zRem(Post::ACT_SET . $tagId . '_' . 'post', $this->id);
 
-      // Used to get a list of tags recently updated.
-      $this->redis->zRem(Post::ACT_SET . 'tags' . '_' . 'post', $tagId);
-
       // Order set with all the posts of a specific type, related to a specific tag.
       $this->redis->zRem(Post::ACT_SET . $tagId . '_' . $this->type, $this->id);
 
-      // Used to get a list of tags, in relation to a specific type, recently updated.
-      $this->redis->zRem(Post::ACT_SET . 'tags' . '_' . $this->type, $tagId);
+      // Decrements the tag's popularity.
+      $this->redis->zIncrBy(Post::POP_SET . 'tags', -1, $tagId);
     }
   }
 
