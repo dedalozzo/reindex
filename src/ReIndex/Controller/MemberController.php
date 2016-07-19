@@ -134,12 +134,14 @@ final class MemberController extends ListController {
     $filter = Helper\ArrayHelper::key($filter, $filters);
     if ($filter === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
+    $this->dispatcher->setParam('filter', $filter);
+
     $opts = new ViewQueryOpts();
     $opts->setLimit($this->resultsPerPage+1);
 
     // Paginates results.
     $startKey = isset($_GET['startkey']) ? $_GET['startkey'] : chr(0);
-    $opts->setStartKey([$filter, $startKey]);
+    $opts->setStartKey([$filter, $startKey])->setEndKey([$filter,Couch::WildCard()]);
     if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
 
     $rows = $this->couch->queryView("members", "byRole", NULL, $opts)->asArray();
@@ -152,7 +154,7 @@ final class MemberController extends ListController {
     }
 
     $this->view->setVar('entries', $members);
-    $this->view->setVar('filters', $this->filters);
+    $this->view->setVar('filters', $filters);
     $this->view->setVar('title', 'Utenti per ruolo');
   }
 
