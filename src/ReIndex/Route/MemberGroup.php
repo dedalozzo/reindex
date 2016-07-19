@@ -38,7 +38,8 @@ class MemberGroup extends Group {
     $this->addGet('/reputation/{filter}/', ['action' => 'reputation']);
     $this->addGet('/new/', ['action' => 'newest']);
     $this->addGet('/name/', ['action' => 'byName']);
-    $this->addGet('/moderators/', ['action' => 'moderators']);
+    $this->addGet('/role/', ['action' => 'byRole']);
+    $this->addGet('/role/{filter}/', ['action' => 'byRole']);
   }
 
 }
