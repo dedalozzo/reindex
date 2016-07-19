@@ -14,8 +14,8 @@ namespace ReIndex\Controller;
 use EoC\Opt\ViewQueryOpts;
 use EoC\Couch;
 
-use ReIndex\Helper;
 use ReIndex\Doc\Tag;
+use ReIndex\Doc\Post;
 
 
 /**
@@ -50,6 +50,25 @@ final class TagController extends ListController {
    * @brief Displays the most popular tags.
    */
   public function popularAction() {
+    $set = Post::POP_SET . 'tags';
+
+    $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
+    $keys = $this->redis->zRevRangeByScore($set, '+inf', 0, ['limit' => [$offset, $this->resultsPerPage-1]]);
+    $count = $this->redis->zCount($set, 0, '+inf');
+
+    if ($count > $this->resultsPerPage)
+      $this->view->setVar('nextPage', $this->buildPaginationUrlForRedis($offset + $this->resultsPerPage));
+
+    if (!empty($keys)) {
+      $opts = new ViewQueryOpts();
+      $opts->doNotReduce();
+      $rows = $this->couch->queryView("tags", "allNames", $keys, $opts);
+      $tags = Tag::collect(array_column($rows->asArray(), 'id'));
+    }
+    else
+      $tags = [];
+
+    $this->view->setVar('entries', $tags);
     $this->view->setVar('title', 'Tags popolari');
   }
 
@@ -58,7 +77,7 @@ final class TagController extends ListController {
    * @brief Displays the last updated tags.
    */
   public function activeAction() {
-    $set = "tmp_tags".'_'.'post';
+    $set = Post::ACT_SET . 'tags' . '_' . 'post';
 
     $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
     $keys = $this->redis->zRevRangeByScore($set, '+inf', 0, ['limit' => [$offset, $this->resultsPerPage-1]]);
@@ -93,9 +112,9 @@ final class TagController extends ListController {
     $opts->setStartKey($startKey);
     if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
 
-    $rows = $this->couch->queryView("tags", "byName", NULL, $opts)->asArray();
+    $rows = $this->couch->queryView("tags", "byName", NULL, $opts);
 
-    $tags = Tag::collect(array_column($rows, 'id'));
+    $tags = Tag::collect(array_column($rows->asArray(), 'id'));
 
     if (count($tags) > $this->resultsPerPage) {
       $last = array_pop($tags);
