@@ -714,7 +714,7 @@ MAP;
 function($doc) use ($emit) {
   if ($doc->type == 'member') {
     foreach ($doc->roles as $name => $class)
-      $emit($name);
+      $emit([$name, $doc->username]);
   }
 };
 MAP;
