@@ -31,7 +31,12 @@ use Phalcon\Di;
 final class Tag extends Versionable {
   use Property\TExcerpt, Property\TBody, Property\TDescription;
 
+  /** @name Constants */
+  //!@{
+
   const SYNONYMIZING = "synonymizing"; //!< The tag has been marked as synonym.
+
+  //!@}
 
   private $synonyms; // Collection of synonyms.
 
