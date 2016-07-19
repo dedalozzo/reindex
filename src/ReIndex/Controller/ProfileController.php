@@ -178,14 +178,13 @@ final class ProfileController extends ListController {
    * @param[in] string $username A username.
    * @param[in] string $filter (optional) Filter between personal projects and forks.
    */
-  public function repositoriesAction($username, $filter = NULL) {
+  public function repositoriesAction($username, $filter = 'personal-projects') {
     $user = $this->getUser($username);
 
     // If the user doesn't exist, forward to 404.
     if (!$user->isMember()) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $filters = ['personal-projects' => NULL, 'forks' => NULL];
-    if (is_null($filter)) $filter = 'personal-projects';
 
     $filter = Helper\ArrayHelper::key($filter, $filters);
     if ($filter === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
