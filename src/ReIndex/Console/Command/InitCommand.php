@@ -709,6 +709,25 @@ MAP;
     $doc->addHandler(membersByConsumer());
 
 
+    function membersByRole() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'member') {
+    foreach ($doc->roles as $name => $class)
+      $emit($name);
+  }
+};
+MAP;
+
+      $handler = new ViewHandler("byRole");
+      $handler->mapFn = $map;
+
+      return $handler;
+    }
+
+    $doc->addHandler(membersByRole());
+
+
     // @params: [postId]
     function membersHaveVoted() {
       $map = <<<'MAP'
