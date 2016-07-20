@@ -233,23 +233,23 @@ final class IndexPostTask implements ITask, IChunkHook {
 
   /**
    * @brief Adds the post to the popular index.
+   * @param[in] \DateTime $date A date time conversion of the publishing timestamp.
    */
-  private function zAddPopular() {
+  private function zAddPopular(\DateTime $date) {
     $config = $this->di['config'];
 
     $popularity = ($this->post->score * $config->scoring->voteCoefficient) +
       ($this->post->getRepliesCount() * $config->scoring->replyCoefficient);
 
-    $date = (new \DateTime())->setTimestamp($this->post->publishedAt);
     $this->zAddSpecial(Post::POP_SET, $date, $popularity);
   }
 
 
   /**
    * @brief Removes the post from the popular index.
+   * @param[in] \DateTime $date A date time conversion of the publishing timestamp.
    */
-  private function zRemPopular() {
-    $date = (new \DateTime())->setTimestamp($this->post->publishedAt);
+  private function zRemPopular(\DateTime $date) {
     $this->zRemSpecial(Post::POP_SET, $date);
   }
 
@@ -334,13 +334,16 @@ final class IndexPostTask implements ITask, IChunkHook {
 
   /**
    * @brief Removes the post ID from the indexes.
+   * @param[in] \DateTime $date A date time conversion of the publishing timestamp.
    */
-  protected function deindex() {
-    if ($this->toDeindex)
+  protected function deindex(\DateTime $date) {
+    if (!$this->toDeindex)
       return;
 
+    $this->redis->zRem(Member::TL_SET . $this->post->creatorId . $date->format('_Y'), $this->id);
+
     $this->zRemNewest();
-    $this->zRemPopular();
+    $this->zRemPopular($date);
     $this->zRemActive();
 
     $this->redis->del($this->post->unversionId . Post::PT_HASH);
@@ -349,13 +352,16 @@ final class IndexPostTask implements ITask, IChunkHook {
 
   /**
    * @brief Adds the post ID to the indexes.
+   * @param[in] \DateTime $date A date time conversion of the publishing timestamp.
    */
-  protected function index() {
+  protected function index(\DateTime $date) {
     if ($this->toIndex)
       return;
 
+    $this->redis->zAdd(Member::TL_SET . $this->post->creatorId . $date->format('_Y'), $this->post->publishedAt, $this->id);
+
     $this->zAddNewest();
-    $this->zAddPopular();
+    $this->zAddPopular($date);
     $this->zAddActive();
 
     $tags = sort(implode(',', $this->uniqueMasters), SORT_STRING);
@@ -367,6 +373,8 @@ final class IndexPostTask implements ITask, IChunkHook {
    * @brief Performs deindex then reindex.
    */
   protected function reindex() {
+    $date = (new \DateTime())->setTimestamp($this->post->publishedAt);
+
     $hash = $this->redis->hMGet($this->id . Post::PT_HASH, ['createdAt', 'modifiedAt', 'publishedAt']);
 
     $this->uniqueMasters = $this->post->tags->uniqueMasters();
@@ -377,8 +385,8 @@ final class IndexPostTask implements ITask, IChunkHook {
     $this->remTags = array_diff($oldTags, $newTags);
     $this->addTags = array_diff($newTags, $oldTags);
 
-    $this->deindex();
-    $this->index();
+    $this->deindex($date);
+    $this->index($date);
   }
 
 
@@ -437,7 +445,7 @@ final class IndexPostTask implements ITask, IChunkHook {
     if (is_null($row))
       return;
 
-    $set = Member::TL_SET . $row->key[1];
+    $set = Member::HP_SET . $row->key[1];
 
     if ($this->toIndex) {
       // todo: Add option NX when phpredis will support it.
