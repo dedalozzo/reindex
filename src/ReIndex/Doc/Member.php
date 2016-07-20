@@ -63,6 +63,7 @@ final class Member extends ActiveDoc implements IUser {
   //!@{
 
   const MR_HASH = '_mr'; //!< Member's Redis hash postfix.
+  const HP_SET = 'hp_'; //!< Member's homepage Redis set prefix.
   const TL_SET = 'tl_'; //!< Member's timeline Redis set prefix.
 
   //!@}
