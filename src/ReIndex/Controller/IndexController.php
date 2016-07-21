@@ -145,7 +145,7 @@ class IndexController extends ListController {
     else
       $set = Post::ACT_SET.'tags'.'_'.$this->type;
 
-    $ids = $this->redis->zRevRangeByScore($set, '+inf', 0, ['limit' => [0, $count-1]]);
+    $ids = $this->redis->zRevRangeByScore($set, '+inf', 0, ['limit' => [0, $count]]);
 
     if (!empty($ids)) {
       $opts = new ViewQueryOpts();
@@ -516,8 +516,6 @@ class IndexController extends ListController {
     if (!$this->user->has(new Role\GuestRole\ViewPostPermission($post)))
       return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
-    //$post->html = $this->markdown->parse($post->body);
-
     $this->view->setVar('post', $post);
     $this->view->setVar('canEdit', $this->user->has(new Role\MemberRole\EditRevisionPermission($post)));
     $this->view->setVar('replies', $post->getReplies());
@@ -568,9 +566,6 @@ class IndexController extends ListController {
 
         $title = $this->request->getPost('email');
         $body = $this->request->getPost('body');
-
-        //$article->html = $this->markdown->parse($this->body);
-        //$article->excerpt = Helper\Text::truncate(Helper\Text::purge($this->html));
       }
       catch (\Exception $e) {
         // Displays the error message.
