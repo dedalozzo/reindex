@@ -14,6 +14,7 @@ namespace ReIndex\Task;
 use ReIndex\Doc\Post;
 use ReIndex\Doc\Member;
 use ReIndex\Enum\State;
+use ReIndex\Helper;
 
 use Phalcon\Di;
 
@@ -56,6 +57,11 @@ final class IndexPostTask implements ITask, IChunkHook {
   protected $redis;
 
   /**
+   * @var Hoedown $markdown
+   */
+  protected $markdown;
+
+  /**
    * @var Logger $log
    */
   protected $log;
@@ -80,6 +86,7 @@ final class IndexPostTask implements ITask, IChunkHook {
     $this->di = Di::getDefault();
     $this->couch = $this->di['couchdb'];
     $this->redis = $this->di['redis'];
+    $this->markdown = $this->di['markdown'];
     $this->log = $this->di['log'];
   }
 
@@ -437,6 +444,18 @@ final class IndexPostTask implements ITask, IChunkHook {
 
     // Finally marks as current the document's revision.
     $this->post->state->set(State::CURRENT);
+
+    if (isset($this->post->title))
+      $this->post->slug = Helper\Text::slug($this->post->title);
+    else
+      $this->post->slug = $this->post->unversionId;
+
+    if (isset($this->body)) {
+      $this->html = $this->markdown->parse($this->body);
+      $purged = Helper\Text::purge($this->html);
+      $this->excerpt = Helper\Text::truncate($purged);
+    }
+
     $this->post->save();
   }
 
