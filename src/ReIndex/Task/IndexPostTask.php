@@ -244,12 +244,7 @@ final class IndexPostTask implements ITask, IChunkHook {
    * @param[in] \DateTime $date A date time conversion of the publishing timestamp.
    */
   private function zAddPopular(\DateTime $date) {
-    $config = $this->di['config'];
-
-    $popularity = (count($this->post->votes) * $config->scoring->voteCoefficient) +
-      ($this->post->getRepliesCount() * $config->scoring->replyCoefficient);
-
-    $this->zAddSpecial(Post::POP_SET, $date, $popularity);
+    $this->zAddSpecial(Post::POP_SET, $date, count($this->post->votes));
   }
 
 
