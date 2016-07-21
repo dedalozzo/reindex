@@ -17,6 +17,7 @@ use ReIndex\Helper;
 use Reindex\Exception;
 use ReIndex\Task\SynonymizeTask;
 use ReIndex\Enum\State;
+use ReIndex\Security\Role;
 
 use EoC\Opt\ViewQueryOpts;
 
@@ -127,16 +128,50 @@ final class Tag extends Versionable {
 
 
   /**
-   * @brief Saves the tag.
+   * @copydoc Versionable::approve()
    */
-  public function save() {
-    if (!$this->state->is(Tag::SYNONYMIZING) && isset($this->body)) {
-      $this->html = $this->markdown->parse($this->body);
-      $purged = Helper\Text::purge($this->html);
-      $this->excerpt = Helper\Text::truncate($purged);
-    }
+  public function approve() {
+    if (!$value = $this->user->has(new Role\MemberRole\ApproveRevisionPermission($this)))
+      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
 
-    parent::save();
+    if ($this->user instanceof Member)
+      $this->votes->cast($value, FALSE);
+
+    if ($this->user instanceof System || $this->votes->count(FALSE) >= $this->di['config']->review->scoreToApproveRevision) {
+      // Sets the state of the current revision (if any) to `approved`.
+      $opts = new ViewQueryOpts();
+      $opts->doNotReduce()->setKey($this->unversionId);
+      $rows = $this->couch->queryView("tags", "unversion", NULL, $opts);
+
+      if (!$rows->isEmpty()) {
+        $current = $this->couch->getDoc(Couch::STD_DOC_PATH, $rows[0]['id']);
+        $current->state->set(State::APPROVED);
+        $current->save();
+      }
+
+      // This revision becomes the current one.
+      $this->state->set(State::CURRENT);
+
+      if (isset($this->body)) {
+        $this->html = $this->markdown->parse($this->body);
+        $purged = Helper\Text::purge($this->html);
+        $this->excerpt = Helper\Text::truncate($purged);
+      }
+
+      $this->save();
+    }
+  }
+
+
+  /**
+   * @copydoc Versionable::delete()
+   */
+  public function delete() {
+    parent::delete();
+
+    $this->state->set(State::DELETED);
+
+    $this->save();
   }
 
 
