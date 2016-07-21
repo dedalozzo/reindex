@@ -327,6 +327,16 @@ abstract class Versionable extends ActiveDoc {
       unset($this->meta['editSummary']);
   }
 
+
+  public function getVotes() {
+    return $this->votes;
+  }
+
+
+  public function issetVotes() {
+    return isset($this->votes);
+  }
+
   //! @endcond
 
 }

@@ -524,16 +524,6 @@ abstract class Post extends Versionable {
   }
 
 
-  public function getVotes() {
-    return $this->votes;
-  }
-
-
-  public function issetVotes() {
-    return isset($this->votes);
-  }
-
-
   public function getSubscriptions() {
     return $this->subscriptions;
   }
