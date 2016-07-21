@@ -187,19 +187,6 @@ abstract class Post extends Versionable {
   }
 
 
-  /**
-   * @brief Saves the post.
-   */
-  public function save() {
-    if (!isset($this->publishedAt))
-      $this->publishedAt = time();
-
-    $this->meta['slug'] = Helper\Text::slug($this->title);
-
-    parent::save();
-  }
-
-
   /** @name Protection Methods */
   //!@{
 
@@ -326,6 +313,10 @@ abstract class Post extends Versionable {
    */
   public function delete() {
     parent::delete();
+
+    $this->state->set(State::DELETING);
+
+    $this->save();
 
     $this->tasks->add(new IndexPostTask($this));
   }
