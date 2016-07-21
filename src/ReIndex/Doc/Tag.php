@@ -18,6 +18,7 @@ use Reindex\Exception;
 use ReIndex\Task\SynonymizeTask;
 use ReIndex\Enum\State;
 use ReIndex\Security\Role;
+use ReIndex\Security\User\System;
 
 use EoC\Opt\ViewQueryOpts;
 
