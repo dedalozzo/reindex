@@ -49,19 +49,12 @@ abstract class Versionable extends ActiveDoc {
   private $state; // State of the document.
   private $votes; // Casted votes.
 
-  /**
-   * @var Hoedown $markdown
-   */
-  protected $markdown;
-
 
   /**
    * @brief Constructor.
    */
   public function __construct() {
     parent::__construct();
-
-    $this->markdown = $this->di['markdown'];
 
     $this->votes = new Collection\VoteCollection($this);
 
@@ -121,7 +114,6 @@ abstract class Versionable extends ActiveDoc {
   }
 
 
-
   /**
    * @brief Casts a vote to rejects this document's revision.
    * @details The document's revision will be automatically deleted in 10 days.
@@ -168,10 +160,6 @@ abstract class Versionable extends ActiveDoc {
     $this->meta['prevState'] = $this->state->get();
     $this->meta['dustmanId'] = $this->user->id;
     $this->meta['deletedAt'] = time();
-
-    $this->state->set(State::DELETING);
-
-    $this->save();
   }
 
 
