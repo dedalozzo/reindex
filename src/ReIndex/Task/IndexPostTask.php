@@ -81,9 +81,6 @@ final class IndexPostTask implements ITask, IChunkHook {
     $this->couch = $this->di['couchdb'];
     $this->redis = $this->di['redis'];
     $this->log = $this->di['log'];
-
-    $this->toDeindex = $this->toDeindex();
-    $this->toIndex = $this->toIndex();
   }
 
 
@@ -94,7 +91,11 @@ final class IndexPostTask implements ITask, IChunkHook {
 
   public function unserialize($serialized) {
     $this->init();
+
     $this->post = $this->couch->getDoc(Couch::STD_DOC_PATH, unserialize($serialized));
+
+    $this->toDeindex = $this->toDeindex();
+    $this->toIndex = $this->toIndex();
   }
 
 
@@ -238,7 +239,7 @@ final class IndexPostTask implements ITask, IChunkHook {
   private function zAddPopular(\DateTime $date) {
     $config = $this->di['config'];
 
-    $popularity = ($this->post->score * $config->scoring->voteCoefficient) +
+    $popularity = (count($this->post->votes) * $config->scoring->voteCoefficient) +
       ($this->post->getRepliesCount() * $config->scoring->replyCoefficient);
 
     $this->zAddSpecial(Post::POP_SET, $date, $popularity);
@@ -355,7 +356,7 @@ final class IndexPostTask implements ITask, IChunkHook {
    * @param[in] \DateTime $date A date time conversion of the publishing timestamp.
    */
   protected function index(\DateTime $date) {
-    if ($this->toIndex)
+    if (!$this->toIndex)
       return;
 
     $this->redis->zAdd(Member::TL_SET . $this->post->creatorId . $date->format('_Y'), $this->post->publishedAt, $this->id);
@@ -364,7 +365,7 @@ final class IndexPostTask implements ITask, IChunkHook {
     $this->zAddPopular($date);
     $this->zAddActive();
 
-    $tags = sort(implode(',', $this->uniqueMasters), SORT_STRING);
+    $tags = implode(',', $this->uniqueMasters);
     $this->redis->hMSet($this->id . Post::PT_HASH, ['createdAt' => $this->post->createdAt, 'modifiedAt' => $this->post->modifiedAt, 'publishedAt' => $this->post->publishedAt, 'tags' => $tags]);
   }
 
@@ -381,6 +382,7 @@ final class IndexPostTask implements ITask, IChunkHook {
 
     $oldTags = is_array($hash) ? sort(explode(',', $hash['tags']), SORT_STRING) : [];
     $newTags = $this->uniqueMasters;
+    sort($newTags, SORT_STRING);
 
     $this->remTags = array_diff($oldTags, $newTags);
     $this->addTags = array_diff($newTags, $oldTags);
