@@ -236,6 +236,25 @@ MAP;
     $doc->addHandler(allTags());
 
 
+    // @params: NONE
+    function unversionTags() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'tag' && $doc->state == 'current')
+    $emit($doc->unversionId);
+};
+MAP;
+
+      $handler = new ViewHandler("unversion");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the tags.
+
+      return $handler;
+    }
+
+    $doc->addHandler(unversionTags());
+
+
     function newestTags() {
       $map = <<<'MAP'
 function($doc) use ($emit) {
