@@ -35,6 +35,7 @@ use Phalcon\Di;
  * @property int $legacyId        // Legacy identifier, in case you import from an old password.
  *
  * @property string $title        // Title.
+ * @property string $slug         // A short name given to an article that is in production.
  *
  * @property int $publishedAt     // Publishing timestamp.
  *
@@ -89,7 +90,7 @@ abstract class Post extends Versionable {
    * @brief Calls zIncrBy() many times to update different sets.
    * @param[in] string $set The name of the base Redis set.
    * @param[in] \DateTime $date A date.
-   * @param[in] int $score The score.
+   * @param[in] int $value A integer value.
    */
   private function zMultipleIncrBy($set, \DateTime $date, $value) {
     $id = $this->unversionId;
@@ -394,15 +395,6 @@ abstract class Post extends Versionable {
 
 
   /**
-   * @brief Gets the post slug.
-   * @retval string
-   */
-  public function getSlug() {
-    return $this->meta['slug'];
-  }
-
-
-  /**
    * @brief Gets the resource permanent link.
    * @retval string
    */
@@ -525,6 +517,27 @@ abstract class Post extends Versionable {
   public function unsetTitle() {
     if ($this->isMetadataPresent('title'))
       unset($this->meta['title']);
+  }
+
+
+  public function getSlug() {
+    return $this->meta['slug'];
+  }
+
+  
+  public function issetSlug() {
+    return isset($this->meta['slug']);
+  }
+
+
+  public function setSlug($value) {
+    $this->meta['slug'] = trim($value);
+  }
+
+
+  public function unsetSlug() {
+    if ($this->isMetadataPresent('slug'))
+      unset($this->meta['slug']);
   }
 
 
