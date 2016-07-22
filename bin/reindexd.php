@@ -48,6 +48,10 @@ try {
   require $root . "/services/markdown.php";
   require $root . "/services/guardian.php";
 
+  $taskQueue = $di['taskqueue'];
+
+  // We finally save the book.
+  $taskQueue->perform();
 }
 catch (Exception $e) {
   echo $e;
