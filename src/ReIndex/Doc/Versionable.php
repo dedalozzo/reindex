@@ -29,7 +29,7 @@ use ReIndex\Security\User\System;
  *
  * @property string $unversionId           // [readonly] The id pruned of its version number.
  *
- * @property State $state                   // The state of the document.
+ * @property State $state                  // The state of the document.
  *
  * @property string $versionNumber         // The document version number.
  * @property string $previousVersionNumber // The version number of the previous document revision.
