@@ -109,7 +109,7 @@ abstract class Post extends Versionable {
    * @param[in] int $vote The vote.
    */
   public function zRegisterVote($vote) {
-    $date = (new \DateTime())->setTimestamp($this->post->publishedAt);
+    $date = (new \DateTime())->setTimestamp($this->publishedAt);
 
     // Marks the start of a transaction block. Subsequent commands will be queued for atomic execution using `exec()`.
     $this->redis->multi();
