@@ -27,19 +27,26 @@ use Phalcon\Di;
 /**
  * @brief This class is used to represent a collection of votes.
  * @nosubgrouping
+ *
+ * @cond HIDDEN_SYMBOLS
+ *
+ * @property string $onCastVote // Stores the name of the event handler function fired just after a vote has been casted.
+ *
+ * @endcond
  */
 final class VoteCollection implements \Countable {
 
-  /** @name Voting Status */
+  /** @name Constants */
   //!@{
 
   const REGISTERED = 1; //!< The vote has been registered. You never voted before, so there is nothing to undo or replace.
-  const DELETED = 2; //!< The vote has been deleted. For example you do a like then you unlike.
-  const REPLACED = 3; //!< The vote has been replaced. For example you do a vote up, then you vote down.
+  const DELETED = 2;    //!< The vote has been deleted. For example you do a like then you unlike.
+  const REPLACED = 3;   //!< The vote has been replaced. For example you do a vote up, then you vote down.
 
   //!@}
-
-
+  
+  private $fnOnCastVote;
+  
   /**
    * @var Di $di
    */
@@ -92,25 +99,27 @@ final class VoteCollection implements \Countable {
 
   /**
    * @brief Registers, replaces or deletes the vote.
-   * @param[in] int $value The vote.
-   * @param[in] bool $unversion When `true` removes the version from the ID. Use `false` to cast a vote for revision
-   * approval.
+   * @param[in] int $vote The vote.
+   * @param[in] bool $unversion (optional) When `true` removes the version from the ID. Use `false` to cast a vote for
+   * revision approval.
    * @param[in] string $action (optional) A member can vote for a specific action, like approve a revision or delete it.
    * @param[in] string $reason (optional) The reason for the vote's preference.
    * @retval int The voting status.
    */
-  public function cast($value, $unversion = TRUE, $action = '', $reason = '') {
+  public function cast($vote, $unversion = TRUE, $action = '', $reason = '') {
     if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
     if ($this->user->match($this->doc->creatorId)) throw new Exception\CannotVoteYourOwnPostException('Non puoi votare il tuo stesso post.');
+
+    $fire = $unversion && empty($action) && isset($this->fnOnCastVote);
 
     $voted = $this->exists($voteId, $unversion);
 
     if ($voted) {
       // Gets the vote.
-      $vote = $this->couch->getDoc(Couch::STD_DOC_PATH, $voteId);
+      $voteObj = $this->couch->getDoc(Couch::STD_DOC_PATH, $voteId);
 
       // Calculates difference in seconds.
-      $seconds = time() - $vote->timestamp;
+      $seconds = time() - $voteObj->timestamp;
 
       $votingGracePeriod = $this->di['config']['application']['votingGracePeriod'];
 
@@ -118,15 +127,23 @@ final class VoteCollection implements \Countable {
       if ($seconds <= $votingGracePeriod) {
 
         // The user clicked twice on the same button to undo his vote.
-        if ($vote->value === $value) {
-          $this->couch->deleteDoc(Couch::STD_DOC_PATH, $voteId, $vote->rev);
+        if ($voteObj->value === $vote) {
+          $this->couch->deleteDoc(Couch::STD_DOC_PATH, $voteId, $voteObj->rev);
+
+          if ($fire)
+            $this->doc->{$this->fnOnCastVote}(-$vote);
+
           return static::DELETED;
         }
         else {
-          $vote->value = $value;
-          $vote->reason = $reason;
-          $vote->timestamp = time();
-          $this->couch->saveDoc($vote);
+          $voteObj->value = $vote;
+          $voteObj->reason = $reason;
+          $voteObj->timestamp = time();
+          $this->couch->saveDoc($voteObj);
+
+          if ($fire)
+            $this->doc->{$this->fnOnCastVote}($voteObj->value - $vote);
+
           return static::REPLACED;
         }
 
@@ -136,15 +153,19 @@ final class VoteCollection implements \Countable {
     }
     else {
       $itemId = $this->getItemId($unversion, $action);
-      $vote = Vote::cast($itemId, $this->user->getId(), $value, $reason);
-      $this->couch->saveDoc($vote);
+      $voteObj = Vote::cast($itemId, $this->user->getId(), $vote, $reason);
+      $this->couch->saveDoc($voteObj);
+
+      if ($fire)
+        $this->doc->{$this->fnOnCastVote}($vote);
+
       return static::REGISTERED;
     }
   }
 
 
   /**
-   * @brief Returns `true` if the member has voted else otherwise.
+   * @brief Returns `true` if the member has voted, `false` otherwise.
    * @param[out] string $voteId (optional) The vote ID.
    * @param[in] bool $unversion (optional) When `true` removes the version from the ID. Use `false` to know if the member
    * casted a vote for revision approval.
@@ -242,5 +263,29 @@ final class VoteCollection implements \Countable {
 
     return (!$result->isEmpty()) ? $result[0]['key'][1] : 0;
   }
+
+  
+  //! @cond HIDDEN_SYMBOLS
+
+  public function getOnCastVote() {
+    return $this->fnOnCastVote;
+  }
+
+
+  public function issetOnCastVote() {
+    return isset($this->fnOnCastVote);
+  }
+
+
+  public function setOnCastVote(callable $callable) {
+    $this->fnOnCastVote = $callable;
+  }
+
+
+  public function unsetOnCastVote() {
+    unset($this->fnOnCastVote);
+  }
+
+  //! @endcond
 
 }
