@@ -1,0 +1,28 @@
+<?php
+
+
+namespace ReIndex\Doc;
+
+
+class VoteCollection {
+
+  /** @name Event Properties */
+  //!@{
+
+  /**
+   * @brief Stores the event handler function triggered just after a vote has been casted.
+   * @details The handler is fired only if the vote has been casted with no `$action` using `$unversion = TRUE`.\n
+   * The event handler (a function or a method) must be declared like:
+   @code
+     function myEventHandler($vote) {
+       ...
+
+     };
+   @endcode
+   * Remember that `$vote` is an integer.
+   */
+  string $onCastVote;
+
+  //!@}
+
+}
