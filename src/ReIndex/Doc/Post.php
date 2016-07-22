@@ -77,9 +77,59 @@ abstract class Post extends Versionable {
     $this->tasks = new Collection\TaskCollection('tasks', $this->meta);
     $this->subscriptions = new Collection\SubscriptionCollection($this);
 
+    $this->votes->onCastVote = 'zRegisterVote';
+
     // Since we can't use reflection inside EoC Server, we need a way to recognize every subclass of the `Post` class.
     // This is done testing `isset($doc->supertype) && $doc->supertype == 'post'`.
     $this->meta['supertype'] = 'post';
+  }
+
+
+  /**
+   * @brief Calls zIncrBy() many times to update different sets.
+   * @param[in] string $set The name of the base Redis set.
+   * @param[in] \DateTime $date A date.
+   * @param[in] int $score The score.
+   */
+  private function zMultipleIncrBy($set, \DateTime $date, $value) {
+    $id = $this->unversionId;
+
+    $this->redis->zIncrBy($set, $value, $this->id);
+    $this->redis->zIncrBy($set . $date->format('_Ymd'), $value, $id);
+    $this->redis->zIncrBy($set . $date->format('_Ym'), $value, $id);
+    $this->redis->zIncrBy($set . $date->format('_Y'), $value, $id);
+    $this->redis->zIncrBy($set . $date->format('_Y_w'), $value, $id);
+  }
+
+
+  /**
+   * @brief Registers the vote into Redis database.
+   * @warning Don't call this function unless you know what are you doing.
+   * @param[in] int $vote The vote.
+   */
+  public function zRegisterVote($vote) {
+    $date = (new \DateTime())->setTimestamp($this->post->publishedAt);
+
+    // Marks the start of a transaction block. Subsequent commands will be queued for atomic execution using `exec()`.
+    $this->redis->multi();
+
+    // Order set with all the posts.
+    $this->zMultipleIncrBy(self::POP_SET . 'post', $date, $vote);
+
+    // Order set with all the posts of a specific type: article, question, ecc.
+    $this->zMultipleIncrBy(self::POP_SET . $this->type, $date, $vote);
+
+    $uniqueMasters = $this->tags->uniqueMasters();
+    foreach ($uniqueMasters as $tagId) {
+      // Order set with all the posts related to a specific tag.
+      $this->zMultipleIncrBy(self::POP_SET . $tagId . '_' . 'post', $date, $vote);
+
+      // Order set with all the post of a specific type, related to a specific tag.
+      $this->zMultipleIncrBy(self::POP_SET . $tagId . '_' . $this->type, $date, $vote);
+    }
+
+    // Marks the end of the transaction block.
+    $this->redis->exec();
   }
 
 
