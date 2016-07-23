@@ -36,7 +36,9 @@ class TaskQueue extends AbstractQueue {
 
     // Creates the channel.
     $this->channel = new AMQPChannel($this->amqp);
-    $this->channel->setPrefetchCount(1);
+
+    // It doesn't prefetch messages, since the tasks can be time consuming we want execute them sequentially.
+    $this->channel->qos(0, 1);
 
     // Declares the queue.
     $this->queue = new AMQPQueue($this->channel);
@@ -66,11 +68,39 @@ class TaskQueue extends AbstractQueue {
    * @brief Performs the execution of the next task in the queue.
    */
   public function perform() {
+    $jobsCounter = $this->config->application->maxJobs;
 
-    $callback = function(AMQPEnvelope $msg, AMQPQueue $queue) use (&$max_jobs) {
+    $callback = function(AMQPEnvelope $msg, AMQPQueue $queue) use (&$jobsCounter) {
+      // Creates a new task.
       $task = unserialize($msg->getBody());
-      $task->execute();
-      $queue->ack($msg->getDeliveryTag());
+
+      try {
+        // Executes the task.
+        $task->execute();
+
+        // Acknowledges the receipt of the message.
+        $queue->ack($msg->getDeliveryTag());
+      }
+      catch (\Exception $e) {
+        $queue->nack($msg->getDeliveryTag());
+      }
+
+      // The worker consumes at most N messages, then exit.
+      // This is done to avoid long running processes and consequently memory leaks.
+      if ($jobsCounter > 1) {
+        $jobsCounter--;
+
+        // Sleep for one ms.
+        usleep(1);
+
+        // Returns `true` to consume the next message.
+        return TRUE;
+      }
+      else {
+        // Forces the consume() method to exit.
+        return FALSE;
+      }
+
     };
 
     $this->queue->consume($callback);
