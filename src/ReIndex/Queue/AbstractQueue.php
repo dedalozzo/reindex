@@ -14,26 +14,34 @@ namespace ReIndex\Queue;
 
 use AMQPConnection;
 
-use Phalcon\Di;
-
 
 /**
  * @brief An abstract AMQP queue.
  */
 abstract class AbstractQueue {
 
+  /**
+   * @var AMQPConnection $amqp
+   */
   protected $amqp;
+
+  /**
+   * @var \Phalcon\Config $config
+   */
+  protected $config;
 
 
   /**
    * @brief Constructor.
-   * @param[in] Phalcon\Config $config The configuration object.
+   * @param[in] \Phalcon\Config $config The configuration object.
    */
   public function __construct($config) {
+    $this->config = $config;
+
     $this->amqp = new AMQPConnection();
 
     $this->amqp->setHost($config->rabbitmq->host);
-    $this->amqp->setPort($config->rabbitmq->port);
+    $this->amqp->setPort((int)$config->rabbitmq->port);
     $this->amqp->setLogin($config->rabbitmq->user);
     $this->amqp->setPassword($config->rabbitmq->password);
 
