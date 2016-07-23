@@ -94,7 +94,16 @@ abstract class Versionable extends ActiveDoc {
   /**
    * @brief Submits the document's revision for peer review.
    */
-  abstract public function submit();
+  public function submit() {
+    if (!$this->user->has(new Role\MemberRole\SubmitRevisionPermission($this)))
+      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
+
+    // In case this is a revision of a published version, we must update the editor identifier.
+    if ($this->state->is(State::CURRENT)) {
+      $this->editorId = $this->user->id;
+      $this->reset();
+    }
+  }
 
 
   /**
