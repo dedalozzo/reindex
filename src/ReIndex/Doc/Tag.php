@@ -129,6 +129,16 @@ final class Tag extends Versionable {
 
 
   /**
+   * @copydoc Versionable::submit()
+   */
+  public function submit () {
+    parent::submit();
+    $this->state->set(State::SUBMITTED);
+    $this->save();
+  }
+
+
+  /**
    * @copydoc Versionable::approve()
    */
   public function approve() {
