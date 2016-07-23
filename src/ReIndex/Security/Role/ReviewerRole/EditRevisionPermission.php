@@ -15,7 +15,7 @@ use ReIndex\Security\Role\EditorRole\EditRevisionPermission as Superclass;
 
 
 /**
- * @copydoc ReviewerRole::EditRevisionPermission
+ * @copydoc EditorRole::EditRevisionPermission
  */
 class EditRevisionPermission extends Superclass {
 
