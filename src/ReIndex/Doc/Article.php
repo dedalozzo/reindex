@@ -42,7 +42,7 @@ class Article extends Post {
 
     $this->state->set(State::SUBMITTED);
 
-    Versionable::submit();
+    $this->save();
   }
 
 

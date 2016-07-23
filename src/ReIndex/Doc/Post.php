@@ -333,18 +333,20 @@ abstract class Post extends Versionable {
       throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
 
     // In case this is a revision of a published version, we must update the editor identifier.
-    if ($this->state->is(State::CURRENT))
+    if ($this->state->is(State::CURRENT)) {
       $this->editorId = $this->user->id;
+      $this->reset();
+    }
 
-    if ($this->user->match($this->creatorId))
+    if ($this->user->match($this->creatorId)) {
       $this->state->set(State::INDEXING);
+      $this->tasks->add(new IndexPostTask($this));
+    }
     else
       $this->state->set(State::SUBMITTED);
 
-    parent::submit();
-
-    if ($this->state->is(State::INDEXING))
-      $this->tasks->add(new IndexPostTask($this));
+    // Finally saves the document itself.
+    $this->save();
   }
 
 
@@ -354,8 +356,11 @@ abstract class Post extends Versionable {
   public function approve() {
     parent::approve();
 
-    if ($this->state->is(State::INDEXING))
+    if ($this->user instanceof System || !$this->indexingInProgress() || $this->votes->count(FALSE) >= $this->di['config']->review->scoreToApproveRevision) {
+      $this->state->set(State::INDEXING);
       $this->tasks->add(new IndexPostTask($this));
+      $this->save();
+    }
   }
 
 
@@ -364,12 +369,9 @@ abstract class Post extends Versionable {
    */
   public function delete() {
     parent::delete();
-
     $this->state->set(State::DELETING);
-
-    $this->save();
-
     $this->tasks->add(new IndexPostTask($this));
+    $this->save();
   }
 
 
@@ -381,6 +383,8 @@ abstract class Post extends Versionable {
 
     if ($this->state->is(State::DELETING))
       $this->tasks->add(new IndexPostTask($this));
+
+    $this->save();
   }
 
 

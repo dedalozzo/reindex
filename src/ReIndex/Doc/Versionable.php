@@ -80,21 +80,21 @@ abstract class Versionable extends ActiveDoc {
   //!@{
 
   /**
+   * @brief Resets the document's identifier and unset its revision.
+   */
+  protected function reset() {
+    // Appends a new version number to the ID.
+    $this->setId($this->unversionId);
+
+    // This is a new CouchDB document, so we needs to reset the rev number.
+    $this->unsetRev();
+  }
+
+
+  /**
    * @brief Submits the document's revision for peer review.
    */
-  public function submit() {
-    // Just in case the user is submitting a new revision for the current document, we need to create a new document.
-    if ($this->state->is(State::CURRENT)) {
-      // Appends a new version number to the ID.
-      $this->setId($this->unversionId);
-
-      // This is a new CouchDB document, so we needs to reset the rev number.
-      $this->unsetRev();
-    }
-
-    // Finally saves the document itself.
-    $this->save();
-  }
+  abstract public function submit();
 
 
   /**
@@ -106,11 +106,6 @@ abstract class Versionable extends ActiveDoc {
 
     if ($this->user instanceof Member)
       $this->votes->cast($value, FALSE);
-
-    if ($this->user instanceof System || !$this->indexingInProgress() || $this->votes->count(FALSE) >= $this->di['config']->review->scoreToApproveRevision) {
-      $this->state->set(State::INDEXING);
-      $this->save();
-    }
   }
 
 
@@ -187,8 +182,6 @@ abstract class Versionable extends ActiveDoc {
     unset($this->meta['prevState']);
     unset($this->meta['dustmanId']);
     unset($this->meta['deletedAt']);
-
-    $this->save();
   }
 
 
