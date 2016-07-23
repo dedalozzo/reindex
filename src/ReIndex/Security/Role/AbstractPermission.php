@@ -12,6 +12,7 @@ namespace ReIndex\Security\Role;
 
 
 use ReIndex\Security\User\IUser;
+use ReIndex\Security\Role\IRole;
 
 use Phalcon\Di;
 
@@ -23,12 +24,12 @@ use Phalcon\Di;
 abstract class AbstractPermission implements IPermission {
 
   /**
-   * @var IRole $role The execution role.
+   * @var IRole $role
    */
   protected $role;
 
   /**
-   * @var mixed $context The execution context.
+   * @var mixed $context
    */
   protected $context;
 
