@@ -316,7 +316,7 @@ final class IndexPostTask implements ITask, IChunkHook {
    * @return bool
    */
   private function toDeindex() {
-    if ($this->post->state->is(State::INDEXING) || $this->post->state->is(State::DELETING))
+    if ($this->post->state->is(State::DELETING) || ($this->post->state->is(State::INDEXING) && isset($this->post->publishedAt)))
       return TRUE;
     else
       return FALSE;
@@ -343,7 +343,8 @@ final class IndexPostTask implements ITask, IChunkHook {
     if (!$this->toDeindex)
       return;
 
-    $this->redis->zRem(Member::TL_SET . $this->post->creatorId . $date->format('_Y'), $this->id);
+    $set = Member::TL_SET . $this->post->creatorId . $date->format('_Y');
+    $this->redis->zRem($set, $this->id);
 
     $this->zRemNewest();
     $this->zRemPopular($date);
@@ -361,36 +362,15 @@ final class IndexPostTask implements ITask, IChunkHook {
     if (!$this->toIndex)
       return;
 
-    $this->redis->zAdd(Member::TL_SET . $this->post->creatorId . $date->format('_Y'), $this->post->publishedAt, $this->id);
+    $set = Member::TL_SET . $this->post->creatorId . $date->format('_Y');
+    $this->redis->zAdd($set, $this->post->publishedAt, $this->id);
 
     $this->zAddNewest();
     $this->zAddPopular($date);
     $this->zAddActive();
 
     $tags = implode(',', $this->uniqueMasters);
-    $this->redis->hMSet($this->id . Post::PT_HASH, ['createdAt' => $this->post->createdAt, 'modifiedAt' => $this->post->modifiedAt, 'publishedAt' => $this->post->publishedAt, 'tags' => $tags]);
-  }
-
-
-  /**
-   * @brief Performs deindex then reindex.
-   */
-  protected function reindex() {
-    $date = (new \DateTime())->setTimestamp($this->post->publishedAt);
-
-    $hash = $this->redis->hMGet($this->id . Post::PT_HASH, ['createdAt', 'modifiedAt', 'publishedAt']);
-
-    $this->uniqueMasters = $this->post->tags->uniqueMasters();
-
-    $oldTags = is_array($hash) ? sort(explode(',', $hash['tags']), SORT_STRING) : [];
-    $newTags = $this->uniqueMasters;
-    sort($newTags, SORT_STRING);
-
-    $this->remTags = array_diff($oldTags, $newTags);
-    $this->addTags = array_diff($newTags, $oldTags);
-
-    $this->deindex($date);
-    $this->index($date);
+    $this->redis->hMSet($this->id . Post::PT_HASH, ['tags' => $tags]);
   }
 
 
@@ -398,30 +378,60 @@ final class IndexPostTask implements ITask, IChunkHook {
     $this->id = $this->post->unversionId;
     $this->type = $this->post->getType();
 
-    if (!isset($this->post->publishedAt))
-      $this->post->publishedAt = time();
+    $date = new \DateTime();
 
-    // Sets the state of the current revision to `approved`.
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setKey($this->id);
-    $rows = $this->couch->queryView("posts", "unversion", NULL, $opts);
+    $this->log->addDebug(sprintf('%s - %s', $this->post->id, $this->post->title));
 
-    if (!$rows->isEmpty()) {
-      $current = $this->couch->getDoc(Couch::STD_DOC_PATH, $rows[0]['id']);
-      $current->state->set(State::APPROVED);
-      $current->save();
+    if ($this->post->state->is(State::INDEXING)) {
+      // Sets the state of the current revision to `approved`.
+      $opts = new ViewQueryOpts();
+      $opts->doNotReduce()->setKey($this->id);
+      $rows = $this->couch->queryView("posts", "unversion", NULL, $opts);
+
+      if (!$rows->isEmpty()) {
+        $current = $this->couch->getDoc(Couch::STD_DOC_PATH, $rows[0]['id']);
+        $current->state->set(State::APPROVED);
+        $current->save();
+      }
+
+      if (isset($this->post->title))
+        $this->post->slug = Helper\Text::slug($this->post->title);
+      else
+        $this->post->slug = $this->post->unversionId;
+
+      if (isset($this->post->body)) {
+        $this->post->html = $this->markdown->parse($this->post->body);
+        $purged = Helper\Text::purge($this->post->html);
+        $this->post->excerpt = Helper\Text::truncate($purged);
+      }
+
+      if (!isset($this->post->publishedAt))
+        $this->post->publishedAt = time();
+
+      $this->post->state->set(State::CURRENT);
+      $this->post->save();
+
+      $date->setTimestamp($this->post->publishedAt);
     }
+
+
+    $hash = $this->redis->hMGet($this->id . Post::PT_HASH, ['tags']);
+    $this->uniqueMasters = $this->post->tags->uniqueMasters();
+
+    $oldTags = is_array($hash) ? sort(explode(',', $hash['tags']), SORT_STRING) : [];
+    $newTags = $this->uniqueMasters;
+
+    $this->remTags = array_diff($oldTags, $newTags);
+    $this->addTags = array_diff($newTags, $oldTags);
 
     // Marks the start of a transaction block. Subsequent commands will be queued for atomic execution using `exec()`.
     $this->redis->multi();
 
-    $this->reindex();
+    $this->deindex($date);
+    $this->index($date);
 
     // Marks the end of the transaction block.
     $this->redis->exec();
-
-    if (!$this->toIndex)
-      return;
 
     // todo: fare una insert per ogni follower che abbia aggiunto ai preferiti uno qualunque dei tag associati al post,
     // utilizzando un timestamp, così mostro il post unicamente nella timeline degli starrer che hanno seguito il tag
@@ -431,27 +441,13 @@ final class IndexPostTask implements ITask, IChunkHook {
     // l'autore del post successivamente all'ultima modifica al post stesso (modifiedAt).
 
     // Searches for all the followers of the member who created the post.
+    /*
     $opts->reset();
     $opts->doNotReduce()->reverseOrderOfResults();
     $opts->setStartKey([$this->post->creatorId, Couch::WildCard()])->setEndKey([$this->post->creatorId]);
 
     $this->couch->queryView("followers", "perMember", NULL, $opts, $this);
-
-    // Finally marks as current the document's revision.
-    $this->post->state->set(State::CURRENT);
-
-    if (isset($this->post->title))
-      $this->post->slug = Helper\Text::slug($this->post->title);
-    else
-      $this->post->slug = $this->post->unversionId;
-
-    if (isset($this->body)) {
-      $this->html = $this->markdown->parse($this->body);
-      $purged = Helper\Text::purge($this->html);
-      $this->excerpt = Helper\Text::truncate($purged);
-    }
-
-    $this->post->save();
+    */
   }
 
 
