@@ -37,7 +37,8 @@ final class LinkedInConsumer extends OAuth2Consumer {
 
 
   /**
-   * @brief LinkedIn, like Facebook, doesn't provide a username, but ReIndex needs one. So we guess the username using
+   * @brief Guesses the username using the public profile url.
+   * @details LinkedIn, like Facebook, doesn't provide a username, but ReIndex needs one. So we guess the username using
    * the user public profile url. In case the username has already been taken, adds a sequence number to the end.
    * @param[in] array $userData Member data.
    * @retval string
@@ -108,14 +109,13 @@ final class LinkedInConsumer extends OAuth2Consumer {
 
   /**
    * @copydoc OAuth2Consumer::getScope()
+   * @attention As of May 15, LinkedIn locked down the API and restricted the usage to an extremely limited set of
+   * access points. So we cannot longer ask for the full profile or the network.
+   * @see http://stackoverflow.com/a/30364596/1889828
+   * @see https://developer.linkedin.com/support/developer-program-transition#troubleshooting
    */
   public function getScope() {
-    // As of May 15, LinkedIn locked down the API and restricted the usage to an extremely limited set of access points.
-    // @see http://stackoverflow.com/a/30364596/1889828
-    // @see https://developer.linkedin.com/support/developer-program-transition#troubleshooting
-    // So we cannot longer ask for the full profile or the network.
     //return ['r_fullprofile', 'r_emailaddress', 'r_contactinfo', 'r_network'];
-
     return ['r_basicprofile', 'r_emailaddress'];
   }
 
