@@ -329,14 +329,7 @@ abstract class Post extends Versionable {
    * @copydoc Versionable::submit()
    */
   public function submit () {
-    if (!$this->user->has(new Role\MemberRole\SubmitRevisionPermission($this)))
-      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
-
-    // In case this is a revision of a published version, we must update the editor identifier.
-    if ($this->state->is(State::CURRENT)) {
-      $this->editorId = $this->user->id;
-      $this->reset();
-    }
+    parent::submit();
 
     if ($this->user->match($this->creatorId)) {
       $this->state->set(State::INDEXING);
