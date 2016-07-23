@@ -226,9 +226,9 @@ final class Member extends ActiveDoc implements IUser {
     if (!$this->roles->areSuperiorThan($memberRole))
       $this->roles->grant($memberRole);
 
-    parent::save();
-
     $this->tasks->add(new IndexMemberTask($this));
+
+    parent::save();
   }
 
 
