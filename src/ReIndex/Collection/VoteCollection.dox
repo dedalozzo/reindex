@@ -1,7 +1,7 @@
 <?php
 
 
-namespace ReIndex\Doc;
+namespace ReIndex\Collection;
 
 
 class VoteCollection {
