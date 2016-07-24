@@ -286,7 +286,8 @@ final class IndexPostTask implements ITask, IChunkHook {
       $this->redis->zAdd(Post::ACT_SET . 'tags' . '_' . $this->type, $timestamp, $tagId);
 
       // Increments the tag's popularity.
-      $this->redis->zIncrBy(Post::POP_SET . 'tags', +1, $tagId);
+      $this->redis->zIncrBy(Post::POP_SET . 'tags' . '_' . 'post', +1, $tagId);
+      $this->redis->zIncrBy(Post::POP_SET . 'tags' . '_' . $this->type, +1, $tagId);
     }
   }
 
@@ -309,7 +310,8 @@ final class IndexPostTask implements ITask, IChunkHook {
       $this->redis->zRem(Post::ACT_SET . $tagId . '_' . $this->type, $this->id);
 
       // Decrements the tag's popularity.
-      $this->redis->zIncrBy(Post::POP_SET . 'tags', -1, $tagId);
+      $this->redis->zIncrBy(Post::POP_SET . 'tags' .'_' . 'post', -1, $tagId);
+      $this->redis->zIncrBy(Post::POP_SET . 'tags' .'_' . $this->type, -1, $tagId);
     }
   }
 
@@ -319,7 +321,7 @@ final class IndexPostTask implements ITask, IChunkHook {
    * @return bool
    */
   private function toDeindex() {
-    if ($this->post->state->is(State::DELETING) || $this->post->state->is(State::CURRENT) || ($this->post->state->is(State::INDEXING) && isset($this->post->publishedAt)))
+    if ($this->post->state->is(State::DELETING) || ($this->post->state->is(State::INDEXING) && isset($this->post->publishedAt)))
       return TRUE;
     else
       return FALSE;
@@ -392,7 +394,12 @@ final class IndexPostTask implements ITask, IChunkHook {
       if (!$rows->isEmpty()) {
         $current = $this->couch->getDoc(Couch::STD_DOC_PATH, $rows[0]['id']);
         $current->state->set(State::APPROVED);
+        $current->tasks->rem(new IndexPostTask($current));
         $current->save();
+      }
+      else {
+        // If a current version doesn't exist, it means we don't need to deindex the post.
+        $this->toDeindex = FALSE;
       }
 
       if (isset($this->post->title))
@@ -411,15 +418,14 @@ final class IndexPostTask implements ITask, IChunkHook {
 
       $this->post->state->set(State::CURRENT);
       $this->post->save();
-
-      $date->setTimestamp($this->post->publishedAt);
     }
 
+    $date->setTimestamp($this->post->publishedAt);
 
     $hash = $this->redis->hMGet($this->id . Post::PT_HASH, ['tags']);
     $this->uniqueMasters = $this->post->tags->uniqueMasters();
 
-    $oldTags = is_array($hash) ? sort(explode(',', $hash['tags']), SORT_STRING) : [];
+    $oldTags = is_array($hash['tags']) ? sort(explode(',', $hash['tags']), SORT_STRING) : [];
     $newTags = $this->uniqueMasters;
 
     $this->remTags = array_diff($oldTags, $newTags);
