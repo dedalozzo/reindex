@@ -11,11 +11,11 @@
 namespace ReIndex\Console\Command;
 
 use ReIndex\Queue\TaskQueue;
-use ReIndex\Task;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Helper\ProgressBar;
 
 use EoC\Opt\ViewQueryOpts;
@@ -53,6 +53,11 @@ final class RefreshCommand extends AbstractCommand implements IChunkHook {
   protected function configure() {
     $this->setName("refresh");
     $this->setDescription("Refreshes the application cache");
+
+    $this->addOption("id",
+      NULL,
+      InputOption::VALUE_REQUIRED,
+      "When provided, executes the tasks associated to the related document, if any");
   }
 
 
@@ -60,39 +65,62 @@ final class RefreshCommand extends AbstractCommand implements IChunkHook {
    * @brief Executes the command.
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $question = new ConfirmationQuestion('Are you sure you want refresh application cache? [Y/n]', FALSE);
+    $this->queue = $this->di['taskqueue'];
 
-    $helper = $this->getHelper('question');
+    // We can't use this instance inside the `process()` method.
+    $couch = $this->di['couchdb'];
 
-    if ($helper->ask($input, $output, $question)) {
-      $output->writeln("Refreshing application cache...");
+    $opts = new ViewQueryOpts();
 
-      $redis = $this->di['redis'];
-      $redis->flushAll();
+    if ($id = $input->getOption('id')) {
+      $opts->doNotReduce()->setKey($id);
+      $rows = $couch->queryView("tasks", "all", NULL, $opts);
 
-      $this->queue = $this->di['taskqueue'];
+      if (!$rows->isEmpty()) {
+        foreach($rows as $row) {
+          $docClass = $row['value']['docClass'];
+          $taskClass = $row['value']['taskClass'];
 
-      // We can't use this instance inside the `process()` method.
-      $couch = $this->di['couchdb'];
+          $doc = new $docClass;
+          $doc->id = $row['id'];
 
-      $opts = new ViewQueryOpts();
-      $opts->reduce();
-      $docsCount = $couch->queryView("tasks", "all", NULL, $opts)->getReducedValue();
-
-      $this->progress = new ProgressBar($output, $docsCount);
-      $this->progress->setRedrawFrequency(1);
-      $this->progress->setOverwrite(TRUE);
-      $this->progress->start();
-
-      $opts->reset();
-      $opts->doNotReduce();
-
-      $couch->queryView("tasks", "all", NULL, $opts, $this);
-
-      $this->progress->finish();
+          $task = new $taskClass($doc);
+          $this->queue->add($task);
+        }
+      }
+      else {
+        $output->writeln("There aren't tasks associated to the document");
+      }
     }
+    else {
+      $question = new ConfirmationQuestion('Are you sure you want refresh application cache? [Y/n]', FALSE);
 
-    parent::execute($input, $output);
+      $helper = $this->getHelper('question');
+
+      if ($helper->ask($input, $output, $question)) {
+        $output->writeln("Refreshing application cache...");
+
+        $redis = $this->di['redis'];
+        $redis->flushAll();
+
+        $opts->reduce();
+        $docsCount = $couch->queryView("tasks", "all", NULL, $opts)->getReducedValue();
+
+        $this->progress = new ProgressBar($output, $docsCount);
+        $this->progress->setRedrawFrequency(1);
+        $this->progress->setOverwrite(TRUE);
+        $this->progress->start();
+
+        $opts->reset();
+        $opts->doNotReduce();
+
+        $couch->queryView("tasks", "all", NULL, $opts, $this);
+
+        $this->progress->finish();
+
+        parent::execute($input, $output);
+      }
+    }
   }
 
 
