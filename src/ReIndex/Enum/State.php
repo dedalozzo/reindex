@@ -50,6 +50,14 @@ class State {
 
 
   /**
+   * @brief Alias of `is()` used inside a Volt template, because of a bug.
+   */
+  public function equal($value) {
+    return $this->is($value);
+  }
+
+
+  /**
    * @brief Returns the version's state.
    * @retval string
    */
