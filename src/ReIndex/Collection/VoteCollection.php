@@ -76,6 +76,7 @@ final class VoteCollection implements \Countable {
   public function __construct(ActiveDoc $doc) {
     $this->doc = $doc;
     $this->di = Di::getDefault();
+    $this->user = $this->di['guardian']->getUser();
     $this->couch = $this->di['couchdb'];
     $this->redis = $this->di['redis'];
   }
