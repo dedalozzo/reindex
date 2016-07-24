@@ -67,6 +67,9 @@ final class RefreshCommand extends AbstractCommand implements IChunkHook {
     if ($helper->ask($input, $output, $question)) {
       $output->writeln("Refreshing application cache...");
 
+      $redis = $this->di['redis'];
+      $redis->flushAll();
+
       $this->queue = $this->di['taskqueue'];
 
       // We can't use this instance inside the `process()` method.
