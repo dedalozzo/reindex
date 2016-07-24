@@ -244,7 +244,10 @@ final class IndexPostTask implements ITask, IChunkHook {
    * @param[in] \DateTime $date A date time conversion of the publishing timestamp.
    */
   private function zAddPopular(\DateTime $date) {
-    $this->zAddSpecial(Post::POP_SET, $date, count($this->post->votes));
+    $score = count($this->post->votes);
+    // Let's index only the posts with a score > 0.
+    if ($score > 0)
+      $this->zAddSpecial(Post::POP_SET, $date, $score);
   }
 
 
@@ -316,7 +319,7 @@ final class IndexPostTask implements ITask, IChunkHook {
    * @return bool
    */
   private function toDeindex() {
-    if ($this->post->state->is(State::DELETING) || ($this->post->state->is(State::INDEXING) && isset($this->post->publishedAt)))
+    if ($this->post->state->is(State::DELETING) || $this->post->state->is(State::CURRENT) || ($this->post->state->is(State::INDEXING) && isset($this->post->publishedAt)))
       return TRUE;
     else
       return FALSE;
@@ -379,8 +382,6 @@ final class IndexPostTask implements ITask, IChunkHook {
     $this->type = $this->post->getType();
 
     $date = new \DateTime();
-
-    $this->log->addDebug(sprintf('%s - %s', $this->post->id, $this->post->title));
 
     if ($this->post->state->is(State::INDEXING)) {
       // Sets the state of the current revision to `approved`.
