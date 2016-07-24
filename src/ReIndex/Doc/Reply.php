@@ -11,7 +11,7 @@
 namespace ReIndex\Doc;
 
 
-use ReIndex\Property;
+use ReIndex\Property\TBody;
 use ReIndex\Collection;
 
 
@@ -27,19 +27,15 @@ use ReIndex\Collection;
  * @endcond
  */
 class Reply extends Versionable {
-  use Property\TBody;
+  use TBody;
 
 
   public function __construct() {
     parent::__construct();
-    $this->votes = new Collection\VoteCollection($this);
-  }
 
-
-  public function save() {
+    // Since we can't use reflection inside EoC Server, we need a way to recognize every subclass of the `Reply` class.
+    // This is done testing `isset($doc->supertype) && $doc->supertype == 'reply'`.
     $this->meta['supertype'] = 'reply';
-
-    parent::save();
   }
 
 
