@@ -135,6 +135,25 @@ MAP;
     $doc->addHandler(unversionPosts());
 
 
+    // @params: NONE
+    function indexingPosts() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->state == 'indexing')
+    $emit($doc->unversionId);
+};
+MAP;
+
+      $handler = new ViewHandler("indexing");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount(); // Used to count the posts.
+
+      return $handler;
+    }
+
+    $doc->addHandler(indexingPosts());
+
+
     // @params: year, month, day, slug
     function postsByUrl() {
       $map = <<<'MAP'
@@ -950,7 +969,7 @@ function($doc) use ($emit) {
   if (isset($doc->tasks)) {
     $tasks = $doc->tasks;
     foreach ($tasks as $key => $value)
-      $emit($doc->_id, ['docClass' => $doc->class, 'taskClass' => $key]);
+      $emit($doc->type, ['docClass' => $doc->class, 'taskClass' => $key]);
   }
 };
 MAP;
