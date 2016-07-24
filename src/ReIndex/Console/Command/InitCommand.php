@@ -948,6 +948,7 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if (isset($doc->tasks)) {
+    $tasks = $doc->tasks;
     foreach ($tasks as $key => $value)
       $emit($doc->_id, ['docClass' => $doc->class, 'taskClass' => $key]);
   }
