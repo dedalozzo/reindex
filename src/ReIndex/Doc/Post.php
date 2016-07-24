@@ -375,7 +375,7 @@ abstract class Post extends Versionable {
   public function restore() {
     parent::restore();
 
-    if ($this->state->is(State::DELETING))
+    if ($this->state->is(State::INDEXING))
       $this->tasks->add(new IndexPostTask($this));
 
     $this->save();
