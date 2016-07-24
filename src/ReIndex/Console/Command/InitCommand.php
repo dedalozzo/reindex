@@ -969,7 +969,7 @@ function($doc) use ($emit) {
   if (isset($doc->tasks)) {
     $tasks = $doc->tasks;
     foreach ($tasks as $key => $value)
-      $emit($doc->type, ['docClass' => $doc->class, 'taskClass' => $key]);
+      $emit($doc->_id, ['docClass' => $doc->class, 'taskClass' => $key]);
   }
 };
 MAP;
