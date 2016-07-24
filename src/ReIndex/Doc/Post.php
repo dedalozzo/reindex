@@ -21,6 +21,7 @@ use ReIndex\Exception;
 use ReIndex\Security\Role;
 use ReIndex\Enum\State;
 use ReIndex\Task\IndexPostTask;
+use ReIndex\Security\User\System;
 
 use Phalcon\Di;
 
