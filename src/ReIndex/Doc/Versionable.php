@@ -183,7 +183,7 @@ abstract class Versionable extends ActiveDoc {
       throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
 
     if ($this->meta['prevState'] === State::CURRENT)
-      $this->state->set(State::DELETING);
+      $this->state->set(State::INDEXING);
     else
       $this->state->set($this->meta['prevState']);
 
