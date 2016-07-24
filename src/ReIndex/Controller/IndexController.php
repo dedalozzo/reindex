@@ -141,9 +141,9 @@ class IndexController extends ListController {
     $recentTags = [];
 
     if ($this->isSameClass())
-      $set = Post::ACT_SET.'tags'.'_'.'post';
+      $set = Post::POP_SET . 'tags' . '_' . 'post';
     else
-      $set = Post::ACT_SET.'tags'.'_'.$this->type;
+      $set = Post::POP_SET . 'tags' . '_' . $this->type;
 
     $ids = $this->redis->zRevRangeByScore($set, '+inf', 0, ['limit' => [0, $count]]);
 
