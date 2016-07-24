@@ -29,8 +29,6 @@ use ReIndex\Collection;
 class Reply extends Versionable {
   use Property\TBody;
 
-  private $votes; // Casted votes.
-
 
   public function __construct() {
     parent::__construct();
@@ -65,16 +63,6 @@ class Reply extends Versionable {
   public function unsetPostId() {
     if ($this->isMetadataPresent('postId'))
       unset($this->meta['postId']);
-  }
-
-
-  public function getVotes() {
-    return $this->votes;
-  }
-
-
-  public function issetVotes() {
-    return isset($this->votes);
   }
 
   //! @endcond
