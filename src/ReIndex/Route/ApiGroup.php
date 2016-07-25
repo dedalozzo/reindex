@@ -37,7 +37,6 @@ class ApiGroup extends Group {
     $this->addPost('/star/', ['action' => 'star']);
     $this->addPost('/submit/', ['action' => 'submit']);
     $this->addPost('/approve/', ['action' => 'approve']);
-    $this->addPost('/return-for-revision/', ['action' => 'returnForRevision']);
     $this->addPost('/reject/', ['action' => 'reject']);
     $this->addPost('/revert/', ['action' => 'revert']);
     $this->addPost('/move-to-trash/', ['action' => 'moveToTrash']);
