@@ -49,7 +49,8 @@ final class TagCollection extends MetaCollection {
 
   /**
    * @brief Adds the specified tag to the list of tags.
-   * @attention Don't use this method even if it's public, unless you know what are you doing.
+   * @attention Don't use this method even if it's public, unless you know what are you doing.\n
+   * This method is public just because it's used by a legacy script to import data from an existence database.
    * @param[in] string $tagId The tag uuid.
    */
   public function add($tagId) {
