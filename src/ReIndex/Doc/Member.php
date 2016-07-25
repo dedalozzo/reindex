@@ -32,28 +32,28 @@ use Phalcon\Di;
  * 
  * @cond HIDDEN_SYMBOLS
  *
- * @property string $username  // The username.
- * @property string $firstName // First name.
- * @property string $lastName  // Last surname.
+ * @property string $username
+ * @property string $firstName
+ * @property string $lastName
 
- * @property Collection\TaskCollection $tasks         // A collection of tasks.
- * @property Collection\EmailCollection $emails       // A collection of e-mails.
- * @property Collection\LoginCollection $logins       // A collection of consumers' logins.
- * @property Collection\RoleCollection $roles         // A collection of roles associated with the member.
- * @property Collection\TagCollection $tags           // Member's favorite tags.
- * @property Collection\Blacklist $blacklist          // The member's blacklist.
- * @property Collection\FriendCollection $friends     // A collection of all member's friendships.
- * @property Collection\FollowerCollection $followers // A collection of all member's followers.
+ * @property Collection\TaskCollection $tasks
+ * @property Collection\EmailCollection $emails
+ * @property Collection\LoginCollection $logins
+ * @property Collection\RoleCollection $roles
+ * @property Collection\OrderedCollection $tags
+ * @property Collection\Blacklist $blacklist
+ * @property Collection\FriendCollection $friends
+ * @property Collection\FollowerCollection $followers
 
- * @property string $password                 // Password chosen by the member.
- * @property string $hash                     // String hash sent via e-mail to the member to confirm that his e-mail is real.
- * @property string $internetProtocolAddress  // The IP address of the member.
- * @property string $locale                   // Member's language, ex. en_US
- * @property int $timeOffset                  // Time offset.
+ * @property string $password
+ * @property string $hash
+ * @property string $internetProtocolAddress
+ * @property string $locale
+ * @property int $timeOffset
 
- * @property string $gender // Sex.
- * @property int $birthday  // Date of birth.
- * @property string $about  // A few words about the member.
+ * @property string $gender
+ * @property int $birthday
+ * @property string $about
  *
  * @endcond
  */
@@ -85,7 +85,7 @@ final class Member extends ActiveDoc implements IUser {
     $this->emails = new Collection\EmailCollection('emails', $this->meta);
     $this->logins = new Collection\LoginCollection('logins', $this->meta);
     $this->roles = new Collection\RoleCollection('roles', $this->meta);
-    $this->tags = new Collection\TagCollection('tags', $this->meta);
+    $this->tags = new Collection\OrderedCollection('tags', $this->meta);
     $this->blacklist = new Collection\Blacklist('blacklist', $this->meta);
     $this->friends = new Collection\FriendCollection($this);
     $this->followers = new Collection\FollowerCollection($this);
