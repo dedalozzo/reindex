@@ -91,6 +91,34 @@ final class Tag extends Versionable {
   }
 
 
+  /** @name Starring Methods */
+  //!@{
+
+  /**
+   * @brief Adds to the user's favorite the current tag.
+   * @param[in] Tag $tag The master tag.
+   */
+  public function star() {
+    if ($this->user->has(new Role\MemberRole\StarTagPermission($this)))
+      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
+
+    return $this->user->tags->alter($this->unversionId);
+  }
+
+
+  /**
+   * @brief Counts the members who have starred the post.
+   * @return int
+   */
+  public function getStarsCount() {
+    $opts = new ViewQueryOpts();
+    $opts->setKey($this->unversionId);
+    return $this->couch->queryView("members", "byTag", NULL, $opts)->getReducedValue();
+  }
+
+  //!@}
+
+
   /** @name Synonyms Management Methods */
   //!@{
 
