@@ -38,6 +38,23 @@ class OrderedCollection extends MetaCollection {
 
 
   /**
+   * @brief Adds or removes the provided key.
+   * @param[in] string $key A key.
+   * @return int Returns `1` in case of addition and `-1` in case of removal.
+   */
+  public function alter($key) {
+    if ($this->exists($key)) {
+      unset($this->meta[$this->name][$key]);
+      return -1;
+    }
+    else {
+      $this->add($key);
+      return 1;
+    }
+  }
+
+
+  /**
    * @brief Returns `true` if the key is already present, `false` otherwise.
    * @param[in] string $key A key.
    * @retval bool
