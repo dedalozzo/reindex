@@ -766,6 +766,26 @@ MAP;
     $doc->addHandler(membersByRole());
 
 
+    function membersByTag() {
+      $map = <<<'MAP'
+function($doc) use ($emit) {
+  if ($doc->type == 'member') {
+    foreach ($doc->tags as $key => $value)
+      $emit($key);
+  }
+};
+MAP;
+
+      $handler = new ViewHandler("byTag");
+      $handler->mapFn = $map;
+      $handler->useBuiltInReduceFnCount();
+
+      return $handler;
+    }
+
+    $doc->addHandler(membersByTag());
+
+
     // @params: [postId]
     function membersHaveVoted() {
       $map = <<<'MAP'
