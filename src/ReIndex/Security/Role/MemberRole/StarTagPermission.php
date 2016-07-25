@@ -26,7 +26,7 @@ class StarTagPermission extends AbstractPermission {
    * @brief Constructor.
    * @param[in] Tag $context.
    */
-  public function __construct(Tag $context) {
+  public function __construct(Tag $context = NULL) {
     parent::__construct($context);
   }
 
