@@ -99,10 +99,12 @@ final class Tag extends Versionable {
    * @param[in] Tag $tag The master tag.
    */
   public function star() {
-    if ($this->user->has(new Role\MemberRole\StarTagPermission($this)))
+    if (!$this->user->has(new Role\MemberRole\StarTagPermission($this)))
       throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
 
-    return $this->user->tags->alter($this->unversionId);
+    $result = $this->user->tags->alter($this->unversionId);
+    $this->user->save();
+    return $result;
   }
 
 
