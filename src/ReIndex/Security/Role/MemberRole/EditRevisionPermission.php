@@ -12,6 +12,7 @@ namespace ReIndex\Security\Role\MemberRole;
 
 
 use ReIndex\Security\Role\AbstractPermission;
+use ReIndex\Doc\Versionable;
 use ReIndex\Enum\State;
 
 
@@ -25,7 +26,7 @@ class EditRevisionPermission extends AbstractPermission {
    * @brief Constructor.
    * @param[in] Doc::Post $context
    */
-  public function __construct($context = NULL) {
+  public function __construct(Versionable $context = NULL) {
     parent::__construct($context);
   }
 
