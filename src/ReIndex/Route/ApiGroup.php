@@ -34,7 +34,7 @@ class ApiGroup extends Group {
     $this->setPrefix('/api');
 
     $this->addPost('/like/', ['action' => 'like']);
-    $this->addPost('/star/', ['action' => 'star']);
+    $this->addPost('/star/', ['action' => 'starTag']);
     $this->addPost('/submit/', ['action' => 'submit']);
     $this->addPost('/approve/', ['action' => 'approve']);
     $this->addPost('/reject/', ['action' => 'reject']);
