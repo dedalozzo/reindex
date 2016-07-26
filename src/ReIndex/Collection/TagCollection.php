@@ -51,10 +51,41 @@ final class TagCollection extends MetaCollection {
    * @brief Adds the specified tag to the list of tags.
    * @attention Don't use this method even if it's public, unless you know what are you doing.\n
    * This method is public just because it's used by a legacy script to import data from an existence database.
-   * @param[in] string $tagId The tag uuid.
+   * @param[in] string $unversionId The unversion tag's uuid.
    */
-  public function add($tagId) {
-    $this->meta[$this->name][] = Helper\Text::unversion($tagId);
+  public function add($unversionId) {
+    $this->meta[$this->name][$unversionId] = NULL;
+  }
+
+
+  /**
+   * @brief Adds or removes the tag.
+   * @attention Don't use this method even if it's public, unless you know what are you doing.\n
+   * @param[in] string $unversionId The unversion tag's uuid.
+   * @return int Returns `+1` in case the tag has been added, `-1` otherwise.
+   */
+  public function alter($unversionId) {
+    if ($this->exists($unversionId)) {
+      unset($this->meta[$this->name][$unversionId]);
+      return -1;
+    }
+    else {
+      $this->add($unversionId);
+      return +1;
+    }
+  }
+
+
+  /**
+   * @brief Returns `true` if the tag is already present, `false` otherwise.
+   * @param[in] string $unversionId The unversion tag's uuid.
+   * @return bool
+   */
+  public function exists($unversionId) {
+    if (array_key_exists($unversionId, $this->meta[$this->name]))
+      return TRUE;
+    else
+      return FALSE;
   }
 
 
@@ -79,10 +110,10 @@ final class TagCollection extends MetaCollection {
         $tag->approve();
         $tag->save();
 
-        $this->add($tag->id);
+        $this->add(Helper\Text::unversion($tag->id));
       }
       else
-        $this->add($row['id']);
+        $this->add(Helper\Text::unversion($row['id']));
 
     }
   }
@@ -95,7 +126,7 @@ final class TagCollection extends MetaCollection {
   public function uniqueMasters() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce();
-    $masters = $this->couch->queryView("tags", "synonyms", $this->meta[$this->name], $opts)->asArray();
+    $masters = $this->couch->queryView("tags", "synonyms", array_keys($this->meta[$this->name]), $opts)->asArray();
     return array_unique(array_column($masters, 'value'));
   }
 
