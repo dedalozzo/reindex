@@ -17,7 +17,7 @@ class Member  {
   EmailCollection $emails;       //!< A collection of e-mails.
   LoginCollection $logins;       //!< A collection of consumers' logins.
   RoleCollection $roles;         //!< A collection of roles associated with the member.
-  OrderedCollection $tags;       //!< Member's favorite tags.
+  TagCollection $tags;           //!< Member's favorite tags.
   FriendCollection $friends;     //!< A collection of all member's friendships.
   Blacklist $blacklist;          //!< The member's blacklist.
   FollowerCollection $followers; //!< A collection of all member's followers.
