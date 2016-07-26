@@ -40,7 +40,7 @@ use Phalcon\Di;
  * @property Collection\EmailCollection $emails
  * @property Collection\LoginCollection $logins
  * @property Collection\RoleCollection $roles
- * @property Collection\OrderedCollection $tags
+ * @property Collection\TagCollection $tags
  * @property Collection\Blacklist $blacklist
  * @property Collection\FriendCollection $friends
  * @property Collection\FollowerCollection $followers
@@ -85,7 +85,7 @@ final class Member extends ActiveDoc implements IUser {
     $this->emails = new Collection\EmailCollection('emails', $this->meta);
     $this->logins = new Collection\LoginCollection('logins', $this->meta);
     $this->roles = new Collection\RoleCollection('roles', $this->meta);
-    $this->tags = new Collection\OrderedCollection('tags', $this->meta);
+    $this->tags = new Collection\TagCollection('tags', $this->meta);
     $this->blacklist = new Collection\Blacklist('blacklist', $this->meta);
     $this->friends = new Collection\FriendCollection($this);
     $this->followers = new Collection\FollowerCollection($this);
