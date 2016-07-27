@@ -54,6 +54,22 @@ final class MemberController extends ListController {
 
 
   /**
+   * @brief Returns all defined roles' names.
+   * @return array of strings
+   */
+  protected function getRoles() {
+    $roles = $this->guardian->allRoles();
+
+    $names['all'] = NULL;
+    foreach ($roles as $role) {
+      $names[$role->getName()] = NULL;
+    }
+
+    return $names;
+  }
+
+
+  /**
    * @brief Displays the members with the highest reputation.
    * @param[in] string $filter (optional) Human readable representation of a period.
    */
@@ -71,18 +87,42 @@ final class MemberController extends ListController {
 
 
   /**
-   * @brief Displays the newest members.
+   * @brief Displays the members from the most popular to the lowest.
    */
-  public function newestAction() {
+  public function popularAction() {
+    // todo
+  }
+
+
+  /**
+   * @brief Displays the newest members, even filtered by role.
+   * @param[in] string $role (optional) A role name.
+   * @param[in] string $period A human readable period of time.
+   */
+  public function newestAction($role = 'all', $period = NULL) {
+    $roles = $this->getRoles();
+    $periods = Helper\ArrayHelper::slice(Helper\Time::$periods, 7);
+
+    $role = Helper\ArrayHelper::key($role, $roles);
+    $period = Helper\Time::period($period);
+
     $opts = new ViewQueryOpts();
     $opts->reverseOrderOfResults()->setLimit($this->resultsPerPage+1);
 
-    // Paginates results.
     $startKey = isset($_GET['startkey']) ? (int)$_GET['startkey'] : Couch::WildCard();
-    $opts->setStartKey($startKey);
     if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
 
-    $rows = $this->couch->queryView("members", "newest", NULL, $opts)->asArray();
+    if ($role === 'all') {
+      $opts->setStartKey($startKey);
+      $rows = $this->couch->queryView("members", "newest", NULL, $opts)->asArray();
+    }
+    else {
+      if ($role === FALSE || $period === FALSE)
+        return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+
+      $opts->setStartKey([$role, $startKey])->setEndKey([$role]);
+      $rows = $this->couch->queryView("members", "byRole", NULL, $opts)->asArray();
+    }
 
     $members = Member::collect(array_column($rows, 'id'));
 
@@ -91,74 +131,13 @@ final class MemberController extends ListController {
       $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->createdAt, $last->id));
     }
 
+    $this->dispatcher->setParam('role', $role);
+    $this->dispatcher->setParam('period', $period);
+
     $this->view->setVar('entries', $members);
+    $this->view->setVar('roles', $roles);
+    $this->view->setVar('periods', $periods);
     $this->view->setVar('title', 'Nuovi utenti');
-  }
-
-
-  /**
-   * @brief Displays the members in alphabetic order.
-   */
-  public function byNameAction() {
-    $opts = new ViewQueryOpts();
-    $opts->setLimit($this->resultsPerPage+1);
-
-    // Paginates results.
-    $startKey = isset($_GET['startkey']) ? $_GET['startkey'] : chr(0);
-    $opts->setStartKey($startKey);
-    if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
-
-    $rows = $this->couch->queryView("members", "byUsername", NULL, $opts)->asArray();
-
-    $members = Member::collect(array_column($rows, 'id'));
-
-    if (count($members) > $this->resultsPerPage) {
-      $last = array_pop($members);
-      $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->username, $last->id));
-    }
-
-    $this->view->setVar('entries', $members);
-    $this->view->setVar('title', 'Utenti per nome');
-  }
-
-
-  /**
-   * @brief Displays the list of members filtered by role.
-   * @param[in] string $filter (optional) A role name.
-   */
-  public function byRoleAction($filter = 'member') {
-    $roles = $this->guardian->allRoles();
-
-    $filters = [];
-    foreach ($roles as $role) {
-      $filters[$role->getName()] = NULL;
-    }
-
-    $filter = Helper\ArrayHelper::key($filter, $filters);
-    if ($filter === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
-
-    $this->dispatcher->setParam('filter', $filter);
-
-    $opts = new ViewQueryOpts();
-    $opts->setLimit($this->resultsPerPage+1);
-
-    // Paginates results.
-    $startKey = isset($_GET['startkey']) ? $_GET['startkey'] : chr(0);
-    $opts->setStartKey([$filter, $startKey])->setEndKey([$filter,Couch::WildCard()]);
-    if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
-
-    $rows = $this->couch->queryView("members", "byRole", NULL, $opts)->asArray();
-
-    $members = Member::collect(array_column($rows, 'id'));
-
-    if (count($members) > $this->resultsPerPage) {
-      $last = array_pop($members);
-      $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->username, $last->id));
-    }
-
-    $this->view->setVar('entries', $members);
-    $this->view->setVar('filters', $filters);
-    $this->view->setVar('title', 'Utenti per ruolo');
   }
 
 }
