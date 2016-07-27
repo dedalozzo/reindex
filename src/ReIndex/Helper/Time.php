@@ -12,6 +12,7 @@ namespace ReIndex\Helper;
 
 
 use EoC\Helper\TimeHelper;
+use EoC\Couch;
 
 
 /**
@@ -123,7 +124,7 @@ class Time extends TimeHelper {
         $format = $date->format("Y_W");
         break;
       case self::THIS_MONTH;
-        $format = $date->format("Ym");
+          $format = $date->format("Ym");
         break;
       case self::LAST_MONTH;
         $date->modify('last month');
@@ -141,6 +142,53 @@ class Time extends TimeHelper {
     }
 
     return empty($format) ? $format : $prefix.$format.$postfix;
+  }
+
+
+  /**
+   * @brief Given a constant representing a period, returns a range of timestamps (minimum and maximum) for that period.
+   * @param[in] int $periodInTime A period in time.
+   * @param[out] \DateTime $minTimestamp The minimum date in the period.
+   * @param[out] \DateTime $maxTimestamp The maximum date in the period.
+   */
+  public static function minMaxInPeriod($periodInTime, &$minTimestamp, &$maxTimestamp) {
+    switch ($periodInTime) {
+      case self::TODAY:
+        $minTimestamp = strtotime('midnight');
+        $maxTimestamp = time();
+        break;
+      case self::YESTERDAY:
+        $minTimestamp = strtotime('yesterday');
+        $maxTimestamp = strtotime('midnight') - 1;
+        break;
+      case self::THIS_WEEK:
+        $minTimestamp = strtotime('last monday');
+        $maxTimestamp = time();
+        break;
+      case self::LAST_WEEK;
+        $minTimestamp = strtotime('Monday last week');
+        $maxTimestamp = strtotime('Monday this week') - 1;
+        break;
+      case self::THIS_MONTH;
+        $minTimestamp = strtotime('first day of this month midnight');
+        $maxTimestamp = time();
+        break;
+      case self::LAST_MONTH;
+        $minTimestamp = strtotime('first day of last month midnight');
+        $minTimestamp = strtotime('first day of this month midnight') - 1;
+        break;
+      case self::THIS_YEAR;
+        $minTimestamp = strtotime('first day of January midnight');
+        $maxTimestamp = time();
+        break;
+      case self::LAST_YEAR:
+        $minTimestamp = strtotime('first day of January last year midnight');
+        $minTimestamp = strtotime('first day of January this year midnight') - 1;
+        break;
+      default: // EVER
+        $minTimestamp = Couch::WildCard();
+        $maxTimestamp = time();
+    }
   }
 
 
