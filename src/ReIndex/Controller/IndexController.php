@@ -212,7 +212,7 @@ class IndexController extends ListController {
       $set = $prefix . $subset . $this->type . $postfix;
 
     $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
-    $keys = $this->redis->zRevRangeByScore($set, $max, $min, ['limit' => [0, (int)$this->resultsPerPage]]);
+    $keys = $this->redis->zRevRangeByScore($set, $max, $min, ['limit' => [$offset, (int)$this->resultsPerPage]]);
     $count = $this->redis->zCount($set, $min, $max);
 
     $nextOffset = $offset + $this->resultsPerPage;
@@ -265,12 +265,12 @@ class IndexController extends ListController {
    * @param[in] string $unversionTagId (optional) An optional unversioned tag ID.
    */
   protected function popular($filter, $unversionTagId = NULL) {
-    $filter = Helper\Time::period($filter);
-    if ($filter === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+    $period = Helper\Time::period($filter);
+    if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    $this->dispatcher->setParam('period', $filter);
+    $this->dispatcher->setParam('period', $period);
 
-    $postfix = Helper\Time::aWhileBack($filter, "_");
+    $postfix = Helper\Time::aWhileBack($period, "_");
 
     $this->zRevRangeByScore(Post::POP_SET, $postfix, $unversionTagId);
 
@@ -284,7 +284,7 @@ class IndexController extends ListController {
    * @param[in] string $unversionTagId (optional) An optional unversioned tag ID.
    */
   protected function active($unversionTagId = NULL) {
-    $this->zRevRangeByScore(Post::ACT_SET, $unversionTagId);
+    $this->zRevRangeByScore(Post::ACT_SET, '', $unversionTagId);
 
     $this->view->setVar('title', sprintf('Active %s', ucfirst($this->getLabel())));
   }
