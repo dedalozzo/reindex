@@ -11,7 +11,6 @@
 namespace ReIndex\Controller;
 
 use EoC\Opt\ViewQueryOpts;
-use EoC\Couch;
 
 use ReIndex\Doc\Member;
 use ReIndex\Helper;
@@ -97,7 +96,7 @@ final class MemberController extends ListController {
   /**
    * @brief Displays the newest members, even filtered by role.
    * @param[in] string $role (optional) A role name.
-   * @param[in] string $period A human readable period of time.
+   * @param[in] string $period (optional) A human readable period of time.
    */
   public function newestAction($role = 'all', $period = NULL) {
     $roles = $this->getRoles();
@@ -106,21 +105,24 @@ final class MemberController extends ListController {
     $role = Helper\ArrayHelper::key($role, $roles);
     $period = Helper\Time::period($period);
 
+    if ($role === FALSE || $period === FALSE)
+      return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+
+    $min = 0; $max = 0;
+    Helper\Time::minMaxInPeriod($period, $min, $max);
+
     $opts = new ViewQueryOpts();
     $opts->reverseOrderOfResults()->setLimit($this->resultsPerPage+1);
 
-    $startKey = isset($_GET['startkey']) ? (int)$_GET['startkey'] : Couch::WildCard();
+    $startKey = isset($_GET['startkey']) ? (int)$_GET['startkey'] : $max;
     if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
 
     if ($role === 'all') {
-      $opts->setStartKey($startKey);
+      $opts->setStartKey($startKey)->setEndKey($min);
       $rows = $this->couch->queryView("members", "newest", NULL, $opts)->asArray();
     }
     else {
-      if ($role === FALSE || $period === FALSE)
-        return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
-
-      $opts->setStartKey([$role, $startKey])->setEndKey([$role]);
+      $opts->setStartKey([$role, $startKey])->setEndKey([$role, $min]);
       $rows = $this->couch->queryView("members", "byRole", NULL, $opts)->asArray();
     }
 
