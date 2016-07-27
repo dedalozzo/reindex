@@ -175,7 +175,7 @@ class Time extends TimeHelper {
         break;
       case self::LAST_MONTH;
         $minTimestamp = strtotime('first day of last month midnight');
-        $minTimestamp = strtotime('first day of this month midnight') - 1;
+        $maxTimestamp = strtotime('first day of this month midnight') - 1;
         break;
       case self::THIS_YEAR;
         $minTimestamp = strtotime('first day of January midnight');
@@ -183,11 +183,11 @@ class Time extends TimeHelper {
         break;
       case self::LAST_YEAR:
         $minTimestamp = strtotime('first day of January last year midnight');
-        $minTimestamp = strtotime('first day of January this year midnight') - 1;
+        $maxTimestamp = strtotime('first day of January this year midnight') - 1;
         break;
       default: // EVER
-        $minTimestamp = Couch::WildCard();
-        $maxTimestamp = time();
+        $minTimestamp = 0;
+        $maxTimestamp = Couch::WildCard();
     }
   }
 
