@@ -47,17 +47,16 @@ final class TagController extends ListController {
 
 
   /**
-   * @brief Displays the most popular tags.
+   * @brief Retrieves all tags IDs in a set.
+   * @param[in] string $set Name of the Redis set.
    */
-  public function popularAction() {
-    $set = Post::POP_SET . 'tags';
-
+  protected function zRevRangeByScore($set) {
     $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
-    $keys = $this->redis->zRevRangeByScore($set, '+inf', 0, ['limit' => [$offset, $this->resultsPerPage-1]]);
+    $keys = $this->redis->zRevRangeByScore($set, '+inf', 0, ['limit' => [$offset, (int)$this->resultsPerPage]]);
     $count = $this->redis->zCount($set, 0, '+inf');
 
     if ($count > $this->resultsPerPage)
-      $this->view->setVar('nextPage', $this->buildPaginationUrlForRedis($offset + $this->resultsPerPage));
+      $this->view->setVar('nextPage', $this->buildPaginationUrlForRedis($offset + $this->resultsPerPage+1));
 
     if (!empty($keys)) {
       $opts = new ViewQueryOpts();
@@ -69,6 +68,14 @@ final class TagController extends ListController {
       $tags = [];
 
     $this->view->setVar('entries', $tags);
+  }
+
+
+  /**
+   * @brief Displays the most popular tags.
+   */
+  public function popularAction() {
+    $this->zRevRangeByScore(Post::POP_SET . 'tags' . '_' . 'post');
     $this->view->setVar('title', 'Tags popolari');
   }
 
@@ -77,25 +84,7 @@ final class TagController extends ListController {
    * @brief Displays the last updated tags.
    */
   public function activeAction() {
-    $set = Post::ACT_SET . 'tags' . '_' . 'post';
-
-    $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
-    $keys = $this->redis->zRevRangeByScore($set, '+inf', 0, ['limit' => [$offset, $this->resultsPerPage-1]]);
-    $count = $this->redis->zCount($set, 0, '+inf');
-
-    if ($count > $this->resultsPerPage)
-      $this->view->setVar('nextPage', $this->buildPaginationUrlForRedis($offset + $this->resultsPerPage));
-
-    if (!empty($keys)) {
-      $opts = new ViewQueryOpts();
-      $opts->doNotReduce();
-      $rows = $this->couch->queryView("tags", "allNames", $keys, $opts);
-      $tags = Tag::collect(array_column($rows->asArray(), 'id'));
-    }
-    else
-      $tags = [];
-
-    $this->view->setVar('entries', $tags);
+    $this->zRevRangeByScore(Post::ACT_SET . 'tags' . '_' . 'post');
     $this->view->setVar('title', 'Tags attivi');
   }
 
