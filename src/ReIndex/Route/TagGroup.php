@@ -33,7 +33,7 @@ class TagGroup extends Group {
 
     // All the following routes start with /tag.
     $this->setPrefix('/tags');
-    $this->addGet('/', ['action' => 'newest']);
+    $this->addGet('/', ['action' => 'popular']);
     $this->addGet('/popular/', ['action' => 'popular']);
     $this->addGet('/active/', ['action' => 'active']);
     $this->addGet('/name/', ['action' => 'byName']);
