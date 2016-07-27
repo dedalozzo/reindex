@@ -141,9 +141,9 @@ class IndexController extends ListController {
     $recentTags = [];
 
     if ($this->isSameClass())
-      $set = Post::POP_SET . 'tags' . '_' . 'post';
+      $set = Post::ACT_SET . 'tags' . '_' . 'post';
     else
-      $set = Post::POP_SET . 'tags' . '_' . $this->type;
+      $set = Post::ACT_SET . 'tags' . '_' . $this->type;
 
     $ids = $this->redis->zRevRangeByScore($set, '+inf', 0, ['limit' => [0, $count]]);
 
@@ -212,7 +212,7 @@ class IndexController extends ListController {
       $set = $prefix . $subset . $this->type . $postfix;
 
     $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
-    $keys = $this->redis->zRevRangeByScore($set, $max, $min, ['limit' => [$offset, $this->resultsPerPage-1]]);
+    $keys = $this->redis->zRevRangeByScore($set, $max, $min, ['limit' => [0, (int)$this->resultsPerPage]]);
     $count = $this->redis->zCount($set, $min, $max);
 
     $nextOffset = $offset + $this->resultsPerPage;
@@ -268,13 +268,13 @@ class IndexController extends ListController {
     $filter = Helper\Time::period($filter);
     if ($filter === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    $this->dispatcher->setParam('filter', $filter);
+    $this->dispatcher->setParam('period', $filter);
 
     $postfix = Helper\Time::aWhileBack($filter, "_");
 
     $this->zRevRangeByScore(Post::POP_SET, $postfix, $unversionTagId);
 
-    $this->view->setVar('filters', $this->periods);
+    $this->view->setVar('periods', $this->periods);
     $this->view->setVar('title', sprintf('Popular %s', ucfirst($this->getLabel())));
   }
 
