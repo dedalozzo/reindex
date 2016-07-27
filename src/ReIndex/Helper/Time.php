@@ -120,7 +120,7 @@ class Time extends TimeHelper {
         break;
       case self::LAST_WEEK;
         $date->modify('last week');
-        $format = $date->format("Ymd");
+        $format = $date->format("Y_W");
         break;
       case self::THIS_MONTH;
         $format = $date->format("Ym");
