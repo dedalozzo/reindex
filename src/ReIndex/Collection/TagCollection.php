@@ -124,10 +124,14 @@ final class TagCollection extends MetaCollection {
    * @retval array
    */
   public function uniqueMasters() {
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce();
-    $masters = $this->couch->queryView("tags", "synonyms", array_keys($this->meta[$this->name]), $opts)->asArray();
-    return array_unique(array_column($masters, 'value'));
+    if (!$this->isEmpty()) {
+      $opts = new ViewQueryOpts();
+      $opts->doNotReduce();
+      $masters = $this->couch->queryView("tags", "synonyms", array_keys($this->meta[$this->name]), $opts)->asArray();
+      return array_unique(array_column($masters, 'value'));
+    }
+    else
+      return [];
   }
 
 
