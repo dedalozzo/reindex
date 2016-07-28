@@ -29,11 +29,11 @@ use ReIndex\Helper;
  *
  * @cond HIDDEN_SYMBOLS
  *
- * @property string $createdAt;  // Creation timestamp.
- * @property string $modifiedAt; // Timestamp of the last update.
+ * @property string $createdAt
+ * @property string $modifiedAt
  *
- * @property string $creatorId             // The user id of whom created the content.
- * @property string $editorId              // The user id of whom modified the content.
+ * @property string $creatorId
+ * @property string $editorId
  *
  * @endcond
  */
