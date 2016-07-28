@@ -212,8 +212,8 @@ MAP;
       $map = <<<'MAP'
 function($doc) use ($emit) {
   if (isset($doc->supertype) && $doc->supertype == 'post' && $doc->state == 'current' && isset($doc->tags))
-    foreach ($doc->tags as $tagId)
-      $emit($tagId);
+    foreach ($doc->tags as $key => $value)
+      $emit($key);
 };
 MAP;
 
