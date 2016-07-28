@@ -42,15 +42,16 @@ final class QuestionController extends IndexController {
    * @brief Displays the questions that are still open.
    * @param[in] string $filter (optional) A filter.
    */
-  public function openAction($filter = NULL) {
-    $filters = ['newest' => NULL, 'recently-active' => NULL, 'popular' => NULL];
-    if (is_null($filter)) $filter = 'insertion-date';
+  public function openAction($filter = 'new') {
+    $filters = ['new' => NULL, 'popular' => NULL, 'active' => NULL];
 
-    $index = Helper\ArrayHelper::key($filter, $filters);
-    if ($index === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
+    $filter = Helper\ArrayHelper::key($filter, $filters);
+    if ($filter === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    $this->view->setVar('entriesCount', 0); // @todo This must be removed.
-    $this->view->setVar('filters', $this->filters);
+    $this->dispatcher->setParam('filter', $filter);
+
+    $this->view->setVar('filters', $filters);
+    $this->view->setVar('entriesCount', Helper\Text::formatNumber(0));
     $this->view->setVar('title', sprintf('Open %s', ucfirst($this->getLabel())));
   }
 
