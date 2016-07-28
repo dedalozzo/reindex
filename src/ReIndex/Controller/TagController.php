@@ -72,6 +72,32 @@ final class TagController extends ListController {
 
 
   /**
+   * @brief Displays the newest tags.
+   */
+  public function newestAction() {
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->reverseOrderOfResults()->setLimit($this->resultsPerPage+1);
+
+    // Paginates results.
+    $startKey = isset($_GET['startkey']) ? (int)$_GET['startkey'] : Couch::WildCard();
+    $opts->setStartKey($startKey);
+    if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
+
+    $rows = $this->couch->queryView("tags", "newest", NULL, $opts)->asArray();
+
+    $tags = Tag::collect(array_column($rows, 'id'));
+
+    if (count($tags) > $this->resultsPerPage) {
+      $last = array_pop($tags);
+      $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->createdAt, $last->id));
+    }
+
+    $this->view->setVar('entries', $tags);
+    $this->view->setVar('title', 'Nuovi tags');
+  }
+
+
+  /**
    * @brief Displays the most popular tags.
    */
   public function popularAction() {
@@ -112,32 +138,6 @@ final class TagController extends ListController {
 
     $this->view->setVar('entries', $tags);
     $this->view->setVar('title', 'Tags per nome');
-  }
-
-
-  /**
-   * @brief Displays the newest tags.
-   */
-  public function newestAction() {
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->reverseOrderOfResults()->setLimit($this->resultsPerPage+1);
-
-    // Paginates results.
-    $startKey = isset($_GET['startkey']) ? (int)$_GET['startkey'] : Couch::WildCard();
-    $opts->setStartKey($startKey);
-    if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
-
-    $rows = $this->couch->queryView("tags", "newest", NULL, $opts)->asArray();
-
-    $tags = Tag::collect(array_column($rows, 'id'));
-
-    if (count($tags) > $this->resultsPerPage) {
-      $last = array_pop($tags);
-      $this->view->setVar('nextPage', $this->buildPaginationUrlForCouch($last->createdAt, $last->id));
-    }
-
-    $this->view->setVar('entries', $tags);
-    $this->view->setVar('title', 'Nuovi tags');
   }
 
 
