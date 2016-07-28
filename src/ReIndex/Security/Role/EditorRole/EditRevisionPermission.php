@@ -13,6 +13,7 @@ namespace ReIndex\Security\Role\EditorRole;
 
 
 use ReIndex\Security\Role\MemberRole\EditRevisionPermission as Superclass;
+use ReIndex\Enum\State;
 
 
 /**
