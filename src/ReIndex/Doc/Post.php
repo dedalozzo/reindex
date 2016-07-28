@@ -214,7 +214,7 @@ abstract class Post extends Versionable {
         $opts->doNotReduce();
 
         // Resolves the synonyms.
-        $synonyms = $couch->queryView("tags", "synonyms", $entry->tags, $opts);
+        $synonyms = $couch->queryView("tags", "synonyms", array_keys($entry->tags), $opts);
 
         // Extracts the masters.
         $masters = array_unique(array_column($synonyms->asArray(), 'value'));
