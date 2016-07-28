@@ -141,24 +141,23 @@ class IndexController extends ListController {
     $recentTags = [];
 
     if ($this->isSameClass())
-      $set = Post::ACT_SET . 'tags' . '_' . 'post';
+      $postfix = 'tags' . '_' . 'post';
     else
-      $set = Post::ACT_SET . 'tags' . '_' . $this->type;
+      $postfix = 'tags' . '_' . $this->type;
 
-    $ids = $this->redis->zRevRangeByScore($set, '+inf', 0, ['limit' => [0, $count]]);
+    $act = Post::ACT_SET . $postfix;
+    $pop = Post::POP_SET . $postfix;
+
+    $ids = $this->redis->zRevRangeByScore($act, '+inf', 0, ['limit' => [0, $count]]);
 
     if (!empty($ids)) {
       $opts = new ViewQueryOpts();
       $opts->doNotReduce();
       $names = $this->couch->queryView("tags", "allNames", $ids, $opts);
 
-      $opts->reset();
-      $opts->groupResults()->includeMissingKeys();
-      $posts = $this->couch->queryView("posts", "perTag", $ids, $opts);
-
       $count = count($ids);
       for ($i = 0; $i < $count; $i++)
-        $recentTags[] = [$names[$i]['value'], $posts[$i]['value']];
+        $recentTags[] = [$names[$i]['value'], $this->redis->zScore($pop, $ids[$i])];
     }
 
     $this->view->setVar('recentTags', $recentTags);
