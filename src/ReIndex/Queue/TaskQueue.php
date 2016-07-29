@@ -82,16 +82,14 @@ class TaskQueue extends AbstractQueue {
         $queue->ack($msg->getDeliveryTag());
       }
       catch (\Exception $e) {
-        $queue->nack($msg->getDeliveryTag());
+        print_r($e);
+        $queue->nack($msg->getDeliveryTag(), AMQP_REQUEUE);
       }
 
-      // The worker consumes at most N messages, then exit.
-      // This is done to avoid long running processes and consequently memory leaks.
+      // To avoid long running processes and consequently memory leaks,
+      // the worker consumes at most N messages, then exit.
       if ($jobsCounter > 1) {
         $jobsCounter--;
-
-        // Sleep for one ms.
-        usleep(1);
 
         // Returns `true` to consume the next message.
         return TRUE;
