@@ -208,12 +208,12 @@ abstract class Versionable extends ActiveDoc {
   /**
    * @copydoc ActiveDoc::save()
    */
-  public function save() {
+  public function save($update = TRUE) {
     // We force the document's revision state in case it hasn't been changed.
     if ($this->state->is(State::CREATED))
       $this->state->set(State::SUBMITTED);
 
-    parent::save();
+    parent::save($update);
   }
 
 
