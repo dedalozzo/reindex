@@ -110,14 +110,15 @@ abstract class ActiveDoc extends Doc {
 
   /**
    * @brief Saves the item to the database.
+   * @param[in] bool $update (optional) When `false`, it doesn't update the editing timestamp.
    */
-  public function save() {
+  public function save($update = TRUE) {
     // Creator ID has not been provided.
     if (!isset($this->creatorId))
       $this->creatorId = $this->user->id;
 
-    // Sets the editing timestamp.
-    $this->modifiedAt = time();
+    if ($update)
+      $this->modifiedAt = time(); // Sets the editing timestamp.
 
     // Creation timestamp has not been provided.
     if (!isset($this->createdAt))
