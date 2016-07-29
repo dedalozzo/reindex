@@ -22,7 +22,6 @@ use ReIndex\Doc\Post;
 
 use Phalcon\Mvc\View;
 use Phalcon\Validation\Validator\PresenceOf;
-use Phalcon\Tag;
 
 
 /**
@@ -140,13 +139,14 @@ class IndexController extends ListController {
   protected function recentTags($count = 20) {
     $recentTags = [];
 
-    if ($this->isSameClass())
-      $postfix = 'tags' . '_' . 'post';
-    else
-      $postfix = 'tags' . '_' . $this->type;
-
-    $act = Post::ACT_SET . $postfix;
-    $pop = Post::POP_SET . $postfix;
+    if ($this->isSameClass()) {
+      $act = Post::ACT_TAGS_SET . 'post';
+      $pop = Post::POP_TAGS_SET . 'post';
+    }
+    else {
+      $act = Post::ACT_TAGS_SET . $this->type;
+      $pop = Post::POP_TAGS_SET . $this->type;
+    }
 
     $ids = $this->redis->zRevRangeByScore($act, '+inf', 0, ['limit' => [0, $count]]);
 
