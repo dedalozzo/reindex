@@ -217,9 +217,9 @@ final class Member extends ActiveDoc implements IUser {
 
 
   /**
-   * @brief Saves the member.
+   * @brief @copydoc ActiveDoc::save()
    */
-  public function save() {
+  public function save($update = TRUE) {
     $memberRole = new MemberRole();
 
     // We must grant at least the MemberRole for the current member.
@@ -228,7 +228,7 @@ final class Member extends ActiveDoc implements IUser {
 
     $this->tasks->add(new IndexMemberTask($this));
 
-    parent::save();
+    parent::save($update);
   }
 
 
