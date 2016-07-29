@@ -110,27 +110,22 @@ abstract class Post extends Versionable {
   /**
    * @brief Registers the vote into Redis database.
    * @warning Don't call this function unless you know what are you doing.
-   * @param[in] int $vote The vote.
+   * @param[in] int $value The vote.
    */
-  public function zRegisterVote($vote) {
+  public function zRegisterVote($value) {
     $date = (new \DateTime())->setTimestamp($this->publishedAt);
 
     // Marks the start of a transaction block. Subsequent commands will be queued for atomic execution using `exec()`.
     $this->redis->multi();
 
-    // Order set with all the posts.
-    $this->zMultipleIncrBy(self::POP_SET . 'post', $date, $vote);
-
-    // Order set with all the posts of a specific type: article, question, ecc.
-    $this->zMultipleIncrBy(self::POP_SET . $this->type, $date, $vote);
+    $this->zMultipleIncrBy(self::POP_SET.'post', $date, $value);
+    $this->zMultipleIncrBy(self::POP_SET.$this->type, $date, $value);
 
     $uniqueMasters = $this->tags->uniqueMasters();
     foreach ($uniqueMasters as $tagId) {
-      // Order set with all the posts related to a specific tag.
-      $this->zMultipleIncrBy(self::POP_SET . $tagId . '_' . 'post', $date, $vote);
-
-      // Order set with all the post of a specific type, related to a specific tag.
-      $this->zMultipleIncrBy(self::POP_SET . $tagId . '_' . $this->type, $date, $vote);
+      $prefix = self::POP_SET . $tagId . '_';
+      $this->zMultipleIncrBy($prefix.'post', $date, $value);
+      $this->zMultipleIncrBy($prefix.$this->type, $date, $value);
     }
 
     // Marks the end of the transaction block.
