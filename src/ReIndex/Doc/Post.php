@@ -55,12 +55,15 @@ abstract class Post extends Versionable {
   /** @name Constants */
   //!@{
 
-  const PT_HASH = '_pt'; //!< Post's Redis hash postfix.
+  const HASH = '_pt'; //!< Post's Redis hash postfix.
 
   const NEW_SET = 'new_'; //!< Newest posts Redis set.
   const POP_SET = 'pop_'; //!< Popular posts Redis set.
   const ACT_SET = 'act_'; //!< Active posts Redis set.
   const OPN_SET = 'opn_'; //!< Open questions Redis set.
+
+  const POP_TAGS_SET = 'pop_tags_'; //!< Popular tags Redis set.
+  const ACT_TAGS_SET = 'act_tags_'; //!< Active tags Redis set.
 
   const CLOSED_PL = 'closed'; //!< The post is closed.
   const LOCKED_PL = 'locked'; //!< The post is locked.
