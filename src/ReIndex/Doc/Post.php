@@ -99,11 +99,11 @@ abstract class Post extends Versionable {
   private function zMultipleIncrBy($set, \DateTime $date, $value) {
     $id = $this->unversionId;
 
-    $this->redis->zIncrBy($set, $value, $this->id);
-    $this->redis->zIncrBy($set . $date->format('_Ymd'), $value, $id);
-    $this->redis->zIncrBy($set . $date->format('_Ym'), $value, $id);
-    $this->redis->zIncrBy($set . $date->format('_Y'), $value, $id);
-    $this->redis->zIncrBy($set . $date->format('_Y_w'), $value, $id);
+    $this->redis->zIncrBy($set, $value, $id);
+    $this->redis->zIncrBy($set.$date->format('_Ymd'), $value, $id);
+    $this->redis->zIncrBy($set.$date->format('_Ym'), $value, $id);
+    $this->redis->zIncrBy($set.$date->format('_Y'), $value, $id);
+    $this->redis->zIncrBy($set.$date->format('_Y_w'), $value, $id);
   }
 
 
