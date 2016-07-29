@@ -136,192 +136,11 @@ final class IndexPostTask implements ITask, IChunkHook {
 
 
   /**
-   * @brief Adds the post ID, using the provided score, to the specified Redis set.
-   * @param[in] string $set The name of the Redis set.
-   * @param[in] int $score The score.
-   */
-  private function zAdd($set, $score) {
-    // Order set with all the posts.
-    $this->redis->zAdd($set . 'post', $score, $this->id);
-
-    // Order set with all the posts of a specific type.
-    $this->redis->zAdd($set . $this->type, $score, $this->id);
-
-    foreach ($this->addTags as $tagId) {
-      // Order set with all the posts related to a specific tag.
-      $this->redis->zAdd($set . $tagId . '_' . 'post', $score, $this->id);
-
-      // Order set with all the posts of a specific type, related to a specific tag.
-      $this->redis->zAdd($set . $tagId . '_' . $this->type, $score, $this->id);
-    }
-  }
-
-
-  /**
-   * @brief Removes the post ID from the specified Redis set.
-   * @param[in] string $set The name of the Redis set.
-   */
-  private function zRem($set) {
-    // Order set with all the posts.
-    $this->redis->zRem($set.'post', $this->id);
-
-    // Order set with all the posts of a specific type.
-    $this->redis->zRem($set . $this->type, $this->id);
-
-    foreach ($this->remTags as $tagId) {
-      // Order set with all the posts related to a specific tag.
-      $this->redis->zRem($set . $tagId . '_' . 'post', $this->id);
-
-      // Order set with all the posts of a specific type, related to a specific tag.
-      $this->redis->zRem($set . $tagId . '_' . $this->type, $this->id);
-    }
-  }
-
-
-  /**
-   * @brief Adds the post ID, using the provided score, to the specified Redis set and its related subsets.
-   * @param[in] string $set The name of the Redis set.
-   * @param[in] \DateTime $date Use this date to create multiple subsets.
-   * @param[in] int $score The score.
-   */
-  private function zAddSpecial($set, \DateTime $date, $score) {
-    // Order set with all the posts.
-    $this->zMultipleAdd($set . 'post', $date, $score);
-
-    // Order set with all the posts of a specific type: article, question, ecc.
-    $this->zMultipleAdd($set . $this->type, $date, $score);
-
-    foreach ($this->addTags as $tagId) {
-      // Order set with all the posts related to a specific tag.
-      $this->zMultipleAdd($set . $tagId . '_' . 'post', $date, $score);
-
-      // Order set with all the post of a specific type, related to a specific tag.
-      $this->zMultipleAdd($set . $tagId . '_' . $this->type, $date, $score);
-    }
-  }
-
-
-  /**
-   * @brief Removes the post ID from the specified Redis set and its related subsets.
-   * @param[in] string $set The name of the Redis set.
-   * @param[in] \DateTime $date Use this date to create multiple subsets.
-   */
-  private function zRemSpecial($set, \DateTime $date) {
-    // Order set with all the posts.
-    $this->zMultipleRem($set . 'post', $date);
-
-    // Order set with all the posts of a specific type.
-    $this->zMultipleRem($set . $this->type, $date);
-
-    foreach ($this->remTags as $tagId) {
-      // Order set with all the posts related to a specific tag.
-      $this->zMultipleRem($set . $tagId . '_' . 'post', $date);
-
-      // Order set with all the post of a specific type, related to a specific tag.
-      $this->zMultipleRem($set . $tagId . '_' . $this->type, $date);
-    }
-  }
-
-
-  /**
-   * @brief Adds the post to the newest index.
-   */
-  private function zAddNewest() {
-    $this->zAdd(Post::NEW_SET, $this->post->publishedAt);
-  }
-
-
-  /**
-   * @brief Removes the post from the newest index.
-   */
-  private function zRemNewest() {
-    $this->zRem(Post::NEW_SET);
-  }
-
-
-  /**
-   * @brief Adds the post to the popular index.
-   * @param[in] \DateTime $date A date time conversion of the publishing timestamp.
-   */
-  private function zAddPopular(\DateTime $date) {
-    $score = count($this->post->votes);
-    // Let's index only the posts with a score > 0.
-    if ($score > 0)
-      $this->zAddSpecial(Post::POP_SET, $date, $score);
-  }
-
-
-  /**
-   * @brief Removes the post from the popular index.
-   * @param[in] \DateTime $date A date time conversion of the publishing timestamp.
-   */
-  private function zRemPopular(\DateTime $date) {
-    $this->zRemSpecial(Post::POP_SET, $date);
-  }
-
-
-  /**
-   * @brief Adds the post to the active index.
-   */
-  private function zAddActive() {
-    $timestamp = $this->post->getLastUpdate();
-
-    // Order set with all the posts.
-    $this->redis->zAdd(Post::ACT_SET . 'post', $timestamp, $this->id);
-
-    // Order set with all the posts of a specific type: article, question, ecc.
-    $this->redis->zAdd(Post::ACT_SET . $this->type, $timestamp, $this->id);
-
-    foreach ($this->addTags as $tagId) {
-      // Order set with all the posts related to a specific tag.
-      $this->redis->zAdd(Post::ACT_SET . $tagId . '_' . 'post', $timestamp, $this->id);
-
-      // Order set with all the posts of a specific type, related to a specific tag.
-      $this->redis->zAdd(Post::ACT_SET . $tagId . '_' . $this->type, $timestamp, $this->id);
-
-      // Used to get a list of tags recently updated.
-      $this->redis->zAdd(Post::ACT_SET . 'tags' . '_' . 'post', $timestamp, $tagId);
-
-      // Used to get a list of tags, in relation to a specific type, recently updated.
-      $this->redis->zAdd(Post::ACT_SET . 'tags' . '_' . $this->type, $timestamp, $tagId);
-
-      // Increments the tag's popularity.
-      $this->redis->zIncrBy(Post::POP_SET . 'tags' . '_' . 'post', +1, $tagId);
-      $this->redis->zIncrBy(Post::POP_SET . 'tags' . '_' . $this->type, +1, $tagId);
-    }
-  }
-
-
-  /**
-   * @brief Removes the post from the active index.
-   */
-  private function zRemActive() {
-    // Order set with all the posts.
-    $this->redis->zRem(Post::ACT_SET . 'post', $this->id);
-
-    // Order set with all the posts of a specific type: article, question, ecc.
-    $this->redis->zRem(Post::ACT_SET . $this->type, $this->id);
-
-    foreach ($this->remTags as $tagId) {
-      // Order set with all the posts related to a specific tag.
-      $this->redis->zRem(Post::ACT_SET . $tagId . '_' . 'post', $this->id);
-
-      // Order set with all the posts of a specific type, related to a specific tag.
-      $this->redis->zRem(Post::ACT_SET . $tagId . '_' . $this->type, $this->id);
-
-      // Decrements the tag's popularity.
-      $this->redis->zIncrBy(Post::POP_SET . 'tags' .'_' . 'post', -1, $tagId);
-      $this->redis->zIncrBy(Post::POP_SET . 'tags' .'_' . $this->type, -1, $tagId);
-    }
-  }
-
-
-  /**
    * @brief Returns `true` if the post must be removed from the indexes.
    * @return bool
    */
   private function toDeindex() {
-    if ($this->post->state->is(State::DELETING) || ($this->post->state->is(State::INDEXING) && isset($this->post->publishedAt)))
+    if ($this->post->state->is(State::DELETING) || $this->post->state->is(State::INDEXING))
       return TRUE;
     else
       return FALSE;
@@ -351,11 +170,33 @@ final class IndexPostTask implements ITask, IChunkHook {
     $set = Member::TL_SET . $this->post->creatorId . $date->format('_Y');
     $this->redis->zRem($set, $this->id);
 
-    $this->zRemNewest();
-    $this->zRemPopular($date);
-    $this->zRemActive();
+    $this->redis->zRem(Post::NEW_SET.'post', $this->id);
+    $this->redis->zRem(Post::NEW_SET.$this->type, $this->id);
 
-    $this->redis->del($this->post->unversionId . Post::PT_HASH);
+    $this->zMultipleRem(Post::POP_SET.'post', $date);
+    $this->zMultipleRem(Post::POP_SET.$this->type, $date);
+
+    $this->redis->zRem(Post::ACT_SET.'post', $this->id);
+    $this->redis->zRem(Post::ACT_SET.$this->type, $this->id);
+
+    foreach ($this->remTags as $tagId) {
+      $forAll = $tagId . '_' . 'post';
+      $forSpecificType = $tagId . '_' . $this->type;
+
+      $this->redis->zRem(Post::NEW_SET.$forAll, $this->id);
+      $this->redis->zRem(Post::NEW_SET.$forSpecificType, $this->id);
+
+      $this->zMultipleRem(Post::POP_SET.$forAll, $date);
+      $this->zMultipleRem(Post::POP_SET.$forSpecificType, $date);
+
+      $this->redis->zRem(Post::ACT_SET.$forAll, $this->id);
+      $this->redis->zRem(Post::ACT_SET.$forSpecificType, $this->id);
+
+      $this->redis->zIncrBy(Tag::POP_SET.'post', -1, $tagId);
+      $this->redis->zIncrBy(Tag::POP_SET.$this->type, -1, $tagId);
+    }
+
+    $this->redis->del($this->post->unversionId . Post::HASH);
   }
 
 
@@ -367,15 +208,54 @@ final class IndexPostTask implements ITask, IChunkHook {
     if (!$this->toIndex)
       return;
 
-    $set = Member::TL_SET . $this->post->creatorId . $date->format('_Y');
-    $this->redis->zAdd($set, $this->post->publishedAt, $this->id);
+    $updatedAt = $this->post->getLastUpdate();
+    $publishedAt = $this->post->publishedAt;
+    $score = count($this->post->votes);
 
-    $this->zAddNewest();
-    $this->zAddPopular($date);
-    $this->zAddActive();
+    $set = Member::TL_SET . $this->post->creatorId . $date->format('_Y');
+    $this->redis->zAdd($set, $publishedAt, $this->id);
+
+    $this->redis->zAdd(Post::NEW_SET.'post', $publishedAt, $this->id);
+    $this->redis->zAdd(Post::NEW_SET.$this->type, $publishedAt, $this->id);
+
+    $this->redis->zAdd(Post::ACT_SET.'post', $updatedAt, $this->id);
+    $this->redis->zAdd(Post::ACT_SET.$this->type, $updatedAt, $this->id);
+
+    // Let's index only the posts with a score > 0.
+    if ($score > 0) {
+      $this->zMultipleAdd(Post::POP_SET.'post', $date, $score);
+      $this->zMultipleAdd(Post::POP_SET.$this->type, $date, $score);
+    }
+
+    foreach ($this->addTags as $tagId) {
+      $forAll = $tagId . '_' . 'post';
+      $forSpecificType = $tagId . '_' . $this->type;
+
+      $this->redis->zAdd(Post::NEW_SET.$forAll, $publishedAt, $this->id);
+      $this->redis->zAdd(Post::NEW_SET.$forSpecificType, $publishedAt, $this->id);
+
+      $this->redis->zAdd(Post::ACT_SET.$forAll, $updatedAt, $this->id);
+      $this->redis->zAdd(Post::ACT_SET.$forSpecificType, $updatedAt, $this->id);
+
+      if ($score > 0) {
+        $this->zMultipleAdd(Post::POP_SET.$forAll, $date, $score);
+        $this->zMultipleAdd(Post::POP_SET.$forSpecificType, $date, $score);
+      }
+
+      $this->redis->zIncrBy(Post::POP_TAGS_SET.'post', 1, $tagId);
+      $this->redis->zIncrBy(Post::POP_TAGS_SET.$this->type, 1, $tagId);
+
+      $tagActSetForAll = Post::ACT_TAGS_SET.'post';
+      if ($publishedAt > $this->redis->zScore($tagActSetForAll, $tagId))
+        $this->redis->zAdd($tagActSetForAll, $publishedAt, $tagId);
+
+      $tagActSetForType = Post::ACT_TAGS_SET.$this->type;
+      if ($publishedAt > $this->redis->zScore($tagActSetForType, $tagId))
+        $this->redis->zAdd($tagActSetForType, $publishedAt, $tagId);
+    }
 
     $tags = implode(',', $this->uniqueMasters);
-    $this->redis->hMSet($this->id . Post::PT_HASH, ['tags' => $tags]);
+    $this->redis->hMSet($this->id . Post::HASH, ['tags' => $tags]);
   }
 
 
@@ -422,10 +302,10 @@ final class IndexPostTask implements ITask, IChunkHook {
 
     $date->setTimestamp($this->post->publishedAt);
 
-    $hash = $this->redis->hMGet($this->id . Post::PT_HASH, ['tags']);
+    $hash = $this->redis->hMGet($this->id . Post::HASH, ['tags']);
     $this->uniqueMasters = $this->post->tags->uniqueMasters();
 
-    $oldTags = is_array($hash['tags']) ? sort(explode(',', $hash['tags']), SORT_STRING) : [];
+    $oldTags = is_string($hash['tags']) ? explode(',', $hash['tags']) : [];
     $newTags = $this->uniqueMasters;
 
     $this->remTags = array_diff($oldTags, $newTags);
