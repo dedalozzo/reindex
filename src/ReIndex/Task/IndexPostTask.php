@@ -297,7 +297,9 @@ final class IndexPostTask implements ITask, IChunkHook {
         $this->post->publishedAt = time();
 
       $this->post->state->set(State::CURRENT);
-      $this->post->save();
+
+      // Saves the document, but it doesn't update the editing timestamp.
+      $this->post->save(FALSE);
     }
 
     $date->setTimestamp($this->post->publishedAt);
