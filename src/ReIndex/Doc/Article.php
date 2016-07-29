@@ -23,11 +23,6 @@ use Reindex\Exception;
 class Article extends Post {
 
 
-  public function save() {
-    parent::save();
-  }
-
-
   /**
    * @copydoc Versionable::submit()
    * @details Any modification, even by the same author who wrote the article, must go through the peer review procedure.
