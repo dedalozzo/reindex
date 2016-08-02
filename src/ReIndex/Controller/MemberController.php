@@ -76,11 +76,11 @@ final class MemberController extends ListController {
     $filter = Helper\Time::period($filter);
     if ($filter === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    $this->dispatcher->setParam('filter', $filter);
+    //$this->dispatcher->setParam('filter', $filter);
 
     // todo implementation goes here
 
-    $this->view->setVar('filters', $this->periods);
+    //$this->view->setVar('filters', $this->periods);
     $this->view->setVar('title', 'Utenti per reputazione');
   }
 
@@ -89,7 +89,7 @@ final class MemberController extends ListController {
    * @brief Displays the members from the most popular to the lowest.
    */
   public function popularAction() {
-    // todo
+    $this->view->setVar('title', 'Utenti più popolari');
   }
 
 
