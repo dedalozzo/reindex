@@ -133,7 +133,7 @@ final class Member extends ActiveDoc implements IUser {
       // Friendship.
       $opts->reset();
       $opts->doNotReduce()->setLimit(1)->setKey([$user->id, $id]);
-      $member->friendshipExists = !$couch->queryView("friendships", "approvedPerMember", NULL, $opts)->isEmpty();
+      $member->friendshipExists = $user->isMember() && !$couch->queryView("friendships", "approvedPerMember", NULL, $opts)->isEmpty();
 
       // Friends count.
       $opts->reset();
