@@ -131,9 +131,13 @@ final class Member extends ActiveDoc implements IUser {
       $member->when = Helper\Time::when($member->createdAt, false);
 
       // Friendship.
-      $opts->reset();
-      $opts->doNotReduce()->setLimit(1)->setKey([$user->id, $id]);
-      $member->friendshipExists = $user->isMember() && !$couch->queryView("friendships", "approvedPerMember", NULL, $opts)->isEmpty();
+      if ($user->isMember()) {
+        $opts->reset();
+        $opts->doNotReduce()->setLimit(1)->setKey([$user->id, $id]);
+        $member->friendshipExists = !$couch->queryView("friendships", "approvedPerMember", NULL, $opts)->isEmpty();
+      }
+      else
+        $member->friendshipExists = FALSE;
 
       // Friends count.
       $opts->reset();
