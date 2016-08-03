@@ -9,7 +9,9 @@ class Synonym  {
   /** @name Properties */
   //!@{
 
-  string $name; //!< The synonym's name.
+  string $name;       //!< The synonym's name.
+
+  string $creatorId;  //!< The user id of whom created the document.
 
   //!@}
 
