@@ -115,14 +115,16 @@ final class SynonymizeTask implements ITask {
 
 
   public function execute() {
+    $set = Post::ACT_TAGS_SET.'post';
+
     $masterTag = Tag::find($this->masterId);
     $synonymTag = Tag::find($this->synonymId);
 
-    $synonymScore = $this->redis->zScore(Post::ACT_SET . 'tags' . '_' . 'post', $this->synonymId);
-    $masterScore = $this->redis->zScore(Post::ACT_SET . 'tags' . '_' . 'post', $this->masterId);
+    $synonymScore = $this->redis->zScore($set, $this->synonymId);
+    $masterScore = $this->redis->zScore($set, $this->masterId);
 
     if ($synonymScore > $masterScore) {
-      $this->redis->zAdd(Post::ACT_SET . 'tags' . '_' . 'post', $synonymScore, $this->masterId);
+      $this->redis->zAdd($set, $synonymScore, $this->masterId);
     }
 
     // Marks the start of a transaction block. Subsequent commands will be queued for atomic execution using `exec()`.
@@ -132,15 +134,17 @@ final class SynonymizeTask implements ITask {
     $opts->setKey($this->synonymId)->doNotReduce();
     $this->couch->queryView('posts', 'perTag', NULL, $opts, $this);
 
+    $postfix = $this->synonymId . '_' . 'post';
+
     // Removes all the sets related the synonym.
-    $this->redis->del(Post::NEW_SET . $this->synonymId . '_' . 'post');
-    $this->redis->del(Post::ACT_SET . $this->synonymId . '_' . 'post');
-    $this->redis->del(Post::POP_SET . $this->synonymId . '_' . 'post');
+    $this->redis->del(Post::NEW_SET.$postfix);
+    $this->redis->del(Post::ACT_SET.$postfix);
+    $this->redis->del(Post::POP_SET.$postfix);
 
     $types = explode(',', str_replace(' ', '', $this->di['config']->postTypes));
 
     foreach ($types as $type) {
-      $set = Post::ACT_SET . 'tags' . '_' . $type;
+      $set = Post::ACT_TAGS_SET.$type;
 
       $synonymScore = $this->redis->zScore($set, $this->synonymId);
       $masterScore = $this->redis->zScore($set, $this->masterId);
@@ -150,9 +154,11 @@ final class SynonymizeTask implements ITask {
 
       $this->redis->zRem($set, $this->synonymId);
 
-      $this->redis->del(Post::NEW_SET . $this->synonymId . '_' . $type);
-      $this->redis->del(Post::ACT_SET . $this->synonymId . '_' . $type);
-      $this->redis->del(Post::POP_SET . $this->synonymId . '_' . $type);
+      $postfix = $this->synonymId . '_' . $type;
+
+      $this->redis->del(Post::NEW_SET.$postfix);
+      $this->redis->del(Post::ACT_SET.$postfix);
+      $this->redis->del(Post::POP_SET.$postfix);
     }
 
     $this->redis->exec();
@@ -181,30 +187,33 @@ final class SynonymizeTask implements ITask {
     $postId = $row->id;
     $postType = $row->type;
 
+    // Postfixes.
+    $forAllMaster = $this->masterId . '_' . 'post';
+    $forSpecificTypeMaster = $this->masterId . '_' . $postType;
+    $forAllSynonym = $this->synonymId . '_' . 'post';
+    $forSpecificTypeSynonym = $this->synonymId . '_' . $postType;
 
     // Newest posts.
-    $publishedAt = $this->redis->zScore(Post::NEW_SET . $this->synonymId . '_' . 'post', $postId);
+    $publishedAt = $this->redis->zScore(Post::NEW_SET.$forAllSynonym, $postId);
 
-    $this->redis->zAdd(Post::NEW_SET . $this->masterId . '_' . 'post', $publishedAt, $postId);
-    $this->redis->zAdd(Post::NEW_SET . $this->masterId . '_' . $postType, $publishedAt, $postId);
-
+    $this->redis->zAdd(Post::NEW_SET.$forAllMaster, $publishedAt, $postId);
+    $this->redis->zAdd(Post::NEW_SET.$forSpecificTypeMaster, $publishedAt, $postId);
 
     // Active posts.
-    $activeAt = $this->redis->zScore(Post::ACT_SET . $this->synonymId . '_' . 'post', $postId);
+    $activeAt = $this->redis->zScore(Post::ACT_SET.$forAllSynonym, $postId);
 
-    $this->redis->zAdd(Post::ACT_SET . $this->masterId . '_' . $postType, $activeAt, $postId);
-    $this->redis->zAdd(Post::ACT_SET . $this->masterId . '_' . $postType, $activeAt, $postId);
-
+    $this->redis->zAdd(Post::ACT_SET.$forAllMaster, $activeAt, $postId);
+    $this->redis->zAdd(Post::ACT_SET.$forSpecificTypeMaster, $activeAt, $postId);
 
     // Popular posts.
-    $popularity = $this->redis->zScore(Post::POP_SET . $this->synonymId . '_' . 'post', $postId);
+    $popularity = $this->redis->zScore(Post::POP_SET.$forAllSynonym, $postId);
     $date = (new \DateTime())->setTimestamp($publishedAt);
 
-    $this->zMultipleRem(Post::POP_SET . $this->synonymId . '_' . 'post', $date, $postId);
-    $this->zMultipleAdd(Post::POP_SET . $this->masterId . '_' . 'post', $date, $popularity, $postId);
+    $this->zMultipleRem(Post::POP_SET.$forAllSynonym, $date, $postId);
+    $this->zMultipleAdd(Post::POP_SET.$forAllMaster, $date, $popularity, $postId);
 
-    $this->zMultipleRem(Post::POP_SET . $this->synonymId . '_' . $postType, $date, $postId);
-    $this->zMultipleAdd(Post::POP_SET . $this->masterId . '_' . $postType, $date, $popularity, $postId);
+    $this->zMultipleRem(Post::POP_SET.$forSpecificTypeSynonym, $date, $postId);
+    $this->zMultipleAdd(Post::POP_SET.$forSpecificTypeMaster, $date, $popularity, $postId);
   }
 
 }
