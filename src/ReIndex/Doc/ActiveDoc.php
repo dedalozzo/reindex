@@ -32,9 +32,6 @@ use ReIndex\Helper;
  * @property string $createdAt
  * @property string $modifiedAt
  *
- * @property string $creatorId
- * @property string $editorId
- *
  * @endcond
  */
 abstract class ActiveDoc extends Doc {
@@ -196,48 +193,6 @@ abstract class ActiveDoc extends Doc {
   public function unsetModifiedAt() {
     if ($this->isMetadataPresent('modifiedAt'))
       unset($this->meta['modifiedAt']);
-  }
-
-
-  public function getCreatorId() {
-    return $this->meta["creatorId"];
-  }
-
-
-  public function issetCreatorId() {
-    return isset($this->meta['creatorId']);
-  }
-
-
-  public function setCreatorId($value) {
-    $this->meta["creatorId"] = $value;
-  }
-
-
-  public function unsetCreatorId() {
-    if ($this->isMetadataPresent('creatorId'))
-      unset($this->meta['creatorId']);
-  }
-
-
-  public function getEditorId() {
-    return $this->meta["editorId"];
-  }
-
-
-  public function issetEditorId() {
-    return isset($this->meta['editorId']);
-  }
-
-
-  public function setEditorId($value) {
-    $this->meta["editorId"] = $value;
-  }
-
-
-  public function unsetEditorId() {
-    if ($this->isMetadataPresent('editorId'))
-      unset($this->meta['editorId']);
   }
 
   //! @endcond
