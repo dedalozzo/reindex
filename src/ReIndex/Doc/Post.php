@@ -33,19 +33,20 @@ use Phalcon\Di;
  *
  * @cond HIDDEN_SYMBOLS
  *
- * @property int $legacyId        // Legacy identifier, in case you import from an old password.
+ * @property int $legacyId
  *
- * @property string $title        // Title.
- * @property string $slug         // A short name given to an article that is in production.
+ * @property string $title
+ * @property string $slug
+ * @property array $data
  *
- * @property int $publishedAt     // Publishing timestamp.
+ * @property int $publishedAt
  *
- * @property string $protection   // [readonly] Level of protection.
- * @property string $protectorId  // [readonly] The user ID of whom protected the content.
+ * @property string $protection
+ * @property string $protectorId
  *
- * @property Collection\TagCollection $tags // A collection of tags.
- * @property Collection\TaskCollection $tasks // A collection of tasks.
- * @property Collection\SubscriptionCollection $subscriptions // A collection of members who have subscribed the post.
+ * @property Collection\TagCollection $tags
+ * @property Collection\TaskCollection $tasks
+ * @property Collection\SubscriptionCollection $subscriptions
  *
  * @endcond
  */
@@ -534,6 +535,16 @@ abstract class Post extends Versionable {
   public function unsetSlug() {
     if ($this->isMetadataPresent('slug'))
       unset($this->meta['slug']);
+  }
+
+
+  public function getData() {
+    return $this->meta['data'];
+  }
+
+
+  public function issetData() {
+    return isset($this->meta['data']);
   }
 
 
