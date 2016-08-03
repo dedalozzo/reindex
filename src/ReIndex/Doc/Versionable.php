@@ -27,18 +27,20 @@ use ReIndex\Security\User\System;
  *
  * @cond HIDDEN_SYMBOLS
  *
- * @property string $unversionId           // [readonly] The id pruned of its version number.
+ * @property string $unversionId
  *
- * @property State $state                  // The state of the document.
+ * @property State $state
  *
- * @property string $versionNumber         // The document version number.
- * @property string $previousVersionNumber // The version number of the previous document revision.
+ * @property string $versionNumber
+ * @property string $previousVersionNumber
  *
- * @property string $username              // The author username.
+ * @property string $username
  *
- * @property string $dustmanId             // [readonly] The user id of whom moved to trash the content.
+ * @property string $creatorId
+ * @property string $editorId
+ * @property string $dustmanId
  *
- * @property string $editSummary           // A brief explanation of an edit to a versionable content.
+ * @property string $editSummary
  *
  * @property Collection\VoteCollection $votes // Casted votes.
  *
@@ -209,6 +211,12 @@ abstract class Versionable extends ActiveDoc {
    * @copydoc ActiveDoc::save()
    */
   public function save($update = TRUE) {
+    $userId = $this->user->getId();
+
+    // Creator ID has not been provided.
+    if (!isset($this->creatorId) && isset($userId))
+      $this->creatorId = $userId;
+
     // We force the document's revision state in case it hasn't been changed.
     if ($this->state->is(State::CREATED))
       $this->state->set(State::SUBMITTED);
@@ -286,6 +294,48 @@ abstract class Versionable extends ActiveDoc {
 
   public function issetPreviousVersionNumber() {
     return isset($this->meta['previousVersionNumber']);
+  }
+
+
+  public function getCreatorId() {
+    return $this->meta["creatorId"];
+  }
+
+
+  public function issetCreatorId() {
+    return isset($this->meta['creatorId']);
+  }
+
+
+  public function setCreatorId($value) {
+    $this->meta["creatorId"] = $value;
+  }
+
+
+  public function unsetCreatorId() {
+    if ($this->isMetadataPresent('creatorId'))
+      unset($this->meta['creatorId']);
+  }
+
+
+  public function getEditorId() {
+    return $this->meta["editorId"];
+  }
+
+
+  public function issetEditorId() {
+    return isset($this->meta['editorId']);
+  }
+
+
+  public function setEditorId($value) {
+    $this->meta["editorId"] = $value;
+  }
+
+
+  public function unsetEditorId() {
+    if ($this->isMetadataPresent('editorId'))
+      unset($this->meta['editorId']);
   }
 
 
