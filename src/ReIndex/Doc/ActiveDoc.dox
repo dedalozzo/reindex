@@ -12,9 +12,6 @@ class ActiveDoc {
   string $createdAt;  //!< Creation timestamp.
   string $modifiedAt; //!< Timestamp of the last update.
 
-  string $creatorId;  //!< The user id of whom created the document.
-  string $editorId;   //!< The user id of whom modified the document.
-
   //!@}
 
 }
