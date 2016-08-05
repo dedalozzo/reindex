@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file MemberRole/EditRevisionPermission.php
- * @brief This file contains the EditRevisionPermission class.
+ * @file MemberRole/EditPostPermission.php
+ * @brief This file contains the EditPostPermission class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -19,7 +19,7 @@ use ReIndex\Enum\State;
 /**
  * @brief Permission to edit a post.
  */
-class EditRevisionPermission extends AbstractPermission {
+class EditPostPermission extends AbstractPermission {
 
 
   /**

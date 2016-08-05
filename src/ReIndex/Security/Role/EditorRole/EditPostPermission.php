@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file EditorRole/EditRevisionPermission.php
- * @brief This file contains the EditRevisionPermission class.
+ * @file EditorRole/EditPostPermission.php
+ * @brief This file contains the EditPostPermission class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -12,14 +12,14 @@
 namespace ReIndex\Security\Role\EditorRole;
 
 
-use ReIndex\Security\Role\MemberRole\EditRevisionPermission as Superclass;
+use ReIndex\Security\Role\MemberRole\EditPostPermission as Superclass;
 use ReIndex\Enum\State;
 
 
 /**
- * @copydoc MemberRole::EditRevisionPermission
+ * @copydoc MemberRole::EditPostPermission
  */
-class EditRevisionPermission extends Superclass {
+class EditPostPermission extends Superclass {
 
 
   public function check() {
