@@ -587,6 +587,7 @@ class IndexController extends ListController {
       $opts->includeMissingKeys();
       $members = $this->couch->queryView("members", "allNames", $keys, $opts);
 
+      /*
       $versions = [];
       $revisionCount = count($revisions);
       for ($i = 0; $i < $revisionCount; $i++) {
@@ -599,13 +600,13 @@ class IndexController extends ListController {
       }
 
       krsort($versions);
+      */
 
       $this->tag->setDefault("title", $post->title);
       $this->tag->setDefault("body", $post->body);
     }
 
     $this->view->setVar('post', $post);
-    $this->view->setVar('revisions', $versions);
     $this->view->setVar('title', $post->title);
 
     $this->view->disableLevel(View::LEVEL_LAYOUT);
