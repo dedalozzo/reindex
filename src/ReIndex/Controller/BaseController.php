@@ -12,10 +12,8 @@ namespace ReIndex\Controller;
 
 
 use Phalcon\Mvc\Controller;
-use Phalcon\Di;
 use Phalcon\Assets\Manager;
 
-use ReIndex\Helper;
 use ReIndex\Version;
 use ReIndex\Security\Guardian;
 use ReIndex\Security\User\IUser;
