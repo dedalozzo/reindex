@@ -12,11 +12,13 @@
         }
     ],
     "require": {
-        "php": ">=5.4.0",
+        "php": ">=5.6.0",
         "ext-phalcon": "*",
         "ext-iconv": "*",
         "ext-mbstring": "*",
         "ext-amqp": "*",
+        "ext-yaml": "*",
+        "ext-hoedown": "*",
         "sneakybobito/phalcon-stubs": "2.0.10",
         "3f/eoc-client": "dev-master",
         "3f/pygmentize": "dev-master",
