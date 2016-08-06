@@ -22,7 +22,7 @@ $di->setShared('markdown',
           // HTML.
           Hoedown::RENDERER_HTML => TRUE, // Render HTML.
           Hoedown::RENDERER_TOC	=> FALSE, // Render the Table of Contents in HTML.
-          Hoedown::SKIP_HTML => TRUE, // Strip all HTML tags.
+          //Hoedown::SKIP_HTML => TRUE, // Strip all HTML tags.
           Hoedown::ESCAPE => FALSE, // Escape all HTML.
           //Hoedown::EXPAND_TABS => FALSE, // todo
           Hoedown::HARD_WRAP => FALSE, //	Render each linebreak as <br>.
@@ -44,16 +44,16 @@ $di->setShared('markdown',
           //Hoedown::LAX_SPACING => FALSE, // todo
           Hoedown::NO_INTRA_EMPHASIS => FALSE, // Disable emphasis_between_words.
           Hoedown::SPACE_HEADERS => TRUE, // Require a space after '#' in headers.
-          Hoedown::DISABLE_INDENTED_CODE => FALSE, // Don't parse indented code blocks.
+          Hoedown::DISABLE_INDENTED_CODE => FALSE, // Enable the parsing of indented code blocks.
           Hoedown::SPECIAL_ATTRIBUTE => TRUE, // Parse special attributes.
 
           // TOC.
           Hoedown::TOC => FALSE, // Produce links to the Table of Contents.
           Hoedown::TOC_BEGIN => 0, // Begin level for headers included in the TOC.
           Hoedown::TOC_END => 6, // End level for headers included in the TOC.
-          //Hoedown::TOC_ESCAPE => TRUE, // NO LONGER SUPPORTED.
           Hoedown::TOC_HEADER => "", // Render header in the TOC.
           Hoedown::TOC_FOOTER => "", // Render footer in the TOC.
+          //Hoedown::TOC_ESCAPE => TRUE, // NO LONGER SUPPORTED.
 
           //HOEDOWN_OPT_IS_USER_BLOCK, todo
           Hoedown::META_BLOCK => TRUE
@@ -61,7 +61,7 @@ $di->setShared('markdown',
     );
 
     $hoedown->setOption(Hoedown::META_PARSE, function($text) {
-      return json_encode($text); // todo: replace with a function that format metadata.
+        return yaml_parse($text);
     });
 
     $hoedown->addRender("blockcode", function($code, $language) {
