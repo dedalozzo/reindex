@@ -13,7 +13,8 @@ class Post {
 
   string $title;                //!< Title.
   string $slug;                 //!< A short name given to an article that is in production.
-  string $data;                 //!< [readonly] Additional structured information: the book's author, the number of pages, etc.
+  string $toc;                  //!< Table of contents in HTML format.
+  array $data;                  //!< Additional structured information: the book's author, the number of pages, etc.
 
   int $publishedAt;             //!< Publishing timestamp.
 
