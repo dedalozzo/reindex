@@ -37,6 +37,7 @@ use Phalcon\Di;
  *
  * @property string $title
  * @property string $slug
+ * @property string $toc
  * @property array $data
  *
  * @property int $publishedAt
@@ -545,6 +546,38 @@ abstract class Post extends Versionable {
 
   public function issetData() {
     return isset($this->meta['data']);
+  }
+
+
+  public function setData($value) {
+    $this->meta['data'] = $value;
+  }
+
+
+  public function unsetData() {
+    if ($this->isMetadataPresent('data'))
+      unset($this->meta['data']);
+  }
+
+
+  public function getToc() {
+    return $this->meta['toc'];
+  }
+
+
+  public function issetToc() {
+    return isset($this->meta['toc']);
+  }
+
+
+  public function setToc($value) {
+    $this->meta['toc'] = $value;
+  }
+
+
+  public function unsetToc() {
+    if ($this->isMetadataPresent('toc'))
+      unset($this->meta['toc']);
   }
 
 
