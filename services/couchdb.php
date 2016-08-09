@@ -15,8 +15,12 @@ use EoC\Adapter;
 // Creates an instance of EoC client and return it.
 $di->setShared('couchdb',
   function() use ($config) {
-    $couch = new Couch(new Adapter\NativeAdapter($config->couchdb->host.":".$config->couchdb->port, $config->couchdb->user, $config->couchdb->password));
-    //$couch = new Couch(new Adapter\CurlAdapter($config->couchdb->host.":".$config->couchdb->port, $config->couchdb->user, $config->couchdb->password));
+    $cf = &$config['couchdb'];
+
+    $couch = new Couch(new Adapter\SocketAdapter($cf['host'].":".$cf['port'], $cf['user'], $cf['password']));
+    //$couch = new Couch(new Adapter\CurlAdapter($cf['host'].":".$cf['port'], $cf['user'], $cf['password']));
+
+    $couch->setDbPrefix($config['application']['dbPrefix']);
 
     return $couch;
   }
