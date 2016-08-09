@@ -225,7 +225,7 @@ final class AuthController extends BaseController {
 
         $user = new Member(); // We don't use Member::create() since the user must confirm his e-mail address to sign in.
         $user->username = $username;
-        $user->addEmail($email);
+        $user->emails->add($email);
         $user->password = $password;
 
         // Updates the ip address with the current one.
