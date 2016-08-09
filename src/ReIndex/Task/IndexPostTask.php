@@ -288,9 +288,11 @@ final class IndexPostTask implements ITask, IChunkHook {
         $this->post->slug = $this->post->unversionId;
 
       if (isset($this->post->body)) {
-        $this->post->html = $this->markdown->parse($this->post->body);
-        $purged = Helper\Text::purge($this->post->html);
-        $this->post->excerpt = Helper\Text::truncate($purged);
+        $metadata = [];
+        $this->post->html = $this->markdown->parse($this->post->body, $metadata);
+        $this->post->toc = !empty($metadata['toc']) ? $metadata['toc'] : NULL;
+        $this->post->data = is_array($metadata['meta']) ? $metadata['meta'] : NULL;
+        $this->post->excerpt = Helper\Text::truncate(Helper\Text::purge($this->post->html));
       }
 
       if (!isset($this->post->publishedAt))
