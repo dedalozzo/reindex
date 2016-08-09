@@ -1,0 +1,393 @@
+---
+views:
+
+  # members
+
+  'members/info/view':
+    map: |-
+      function($doc) use ($emit) {
+        $emit($doc->_id, [$doc->username, $doc->primaryEmail, $doc->createdAt, $doc->firstName, $doc->lastName, $doc->headline]);
+      };
+    reduce: _count
+
+  'members/names/view':
+    map: |-
+      function($doc) use ($emit) {
+        $emit($doc->_id, [$doc->username, $doc->primaryEmail]);
+      };
+
+  'members/newest/view':
+    map: |-
+      function($doc) use ($emit) {
+        $emit($doc->createdAt);
+      };
+    reduce: _count
+
+  'members/byUsername/view':
+    map: |-
+      function($doc) use ($emit) {
+        $emit($doc->username, $doc->_id);
+      };
+    reduce: _count
+
+  'members/byEmail/view':
+    map: |-
+      function($doc) use ($emit) {
+        foreach ($doc->emails as $email => $verified)
+          $emit($email, $verified);
+      };
+
+  'members/byConsumer/view':
+    map: |-
+      function($doc) use ($emit) {
+        foreach ($doc->logins as $loginName => $value)
+          $emit($loginName);
+      };
+
+  'members/byRole/view':
+    map: |-
+      function($doc) use ($emit) {
+        foreach ($doc->roles as $name => $class)
+          $emit([$name, $doc->createdAt]);
+      };
+    reduce: _count
+
+  'members/byTagId/view':
+    map: |-
+      function($doc) use ($emit) {
+        foreach ($doc->tags as $key => $value)
+          $emit($key);
+      };
+    reduce: _count
+
+
+  # followers
+
+  'followers/byMemberIdAndFollowerId/view':
+    map: |-
+      function($doc) use ($emit) {
+        $emit([$doc->memberId, $doc->followerId]);
+      };
+    reduce: _count
+
+  'followers/FollowerIdAndMemberId/view':
+    map: |-
+      function($doc) use ($emit) {
+        $emit([$doc->followerId, $doc->memberId]);
+      };
+    reduce: _count
+
+
+  # friendships
+
+  'friendships/byMemberId/view':
+    map: |-
+      function($doc) use ($emit) {
+        if ($doc->approved) {
+          $emit([$doc->approved, $doc->senderId, $doc->receiverId], $doc->approvedAt);
+          $emit([$doc->approved, $doc->receiverId, $doc->senderId], $doc->approvedAt);
+        }
+        else {
+          $emit([$doc->approved, $doc->senderId, $doc->receiverId], $doc->requestedAt);
+          $emit([$doc->approved, $doc->receiverId, $doc->senderId], $doc->requestedAt);
+        }
+      };
+    reduce: _count
+
+
+  #subscriptions
+
+  'subscriptions/perItem/view':
+    map: |-
+      function($doc) use ($emit) {
+        $emit([$doc->itemId, $doc->memberId]);
+      };
+
+
+  # posts
+
+  'posts/info/view':
+    map: |-
+      function($doc) use ($emit) {
+        $emit($doc->_id, [
+            'type' => $doc->type,
+            'state' => $doc->state,
+            'title' => $doc->title,
+            'excerpt' => $doc->excerpt,
+            'slug' => $doc->slug,
+            'createdAt' => $doc->createdAt,
+            'modifiedAt' => $doc->modifiedAt,
+            'publishedAt' => $doc->publishedAt,
+            'creatorId' => $doc->creatorId,
+            'tags' => $doc->tags
+          ]);
+      };
+    reduce: _count
+
+  'posts/currentByUnversionId/view':
+    map: |-
+      function($doc) use ($emit) {
+        if ($doc->state == 'current')
+          $emit($doc->unversionId);
+      };
+    reduce: _count
+
+  'posts/currentByUrl/view':
+    map: |-
+      function($doc) use ($emit) {
+        if ($doc->state == 'current' or $doc->state == 'deleted')
+          $emit([$doc->year, $doc->month, $doc->day, $doc->slug]);
+      };
+    reduce: _count
+
+  'posts/currentByLegacyId/view':
+    map: |-
+      function($doc) use ($emit) {
+        if ($doc->state == 'current')
+          $emit($doc->legacyId);
+      };
+    reduce: _count
+
+  'posts/currentByTagId/view':
+    map: |-
+      function($doc) use ($emit) {
+        if ($doc->state == 'current' && isset($doc->tags))
+          foreach ($doc->tags as $key => $value)
+            $emit($key);
+      };
+    reduce: _count
+
+  'posts/currentPerPublishingDate/view':
+    map: |-
+      function($doc) use ($emit) {
+        if ($doc->state == 'current')
+          $emit($doc->publishedAt);
+      };
+    reduce: _count
+
+  'posts/currentByTypePerPublishingDate/view':
+    map: |-
+    function($doc) use ($emit) {
+      if ($doc->state == 'current')
+        $emit([$doc->type, $doc->publishedAt]);
+    };
+    reduce: _count
+
+  'posts/currentByTagIdPerPublishingDate/view':
+    map: |-
+      function($doc) use ($emit) {
+        if ($doc->state == 'current' && isset($doc->tags))
+          foreach ($doc->tags as $tagId)
+            $emit([$tagId, $doc->publishedAt]);
+      };
+    reduce: _count
+
+  'posts/currentByTagIdAndTypePerPublishingDate/view':
+    map: |-
+      function($doc) use ($emit) {
+        if ($doc->state == 'current' && isset($doc->tags))
+          foreach ($doc->tags as $tagId)
+            $emit([$tagId, $doc->type, $doc->publishedAt]);
+      };
+    reduce: _count
+
+  'posts/currentByCreatorIdPerPublishingDate/view':
+    map: |-
+      function($doc) use ($emit) {
+        if ($doc->state == 'current')
+          $emit([$doc->creatorId, $doc->publishedAt]);
+      };
+    reduce: _count
+
+  'posts/currentByCreatorIdAndTypePerPublishingDate/view':
+    map: |-
+      function($doc) use ($emit) {
+        if ($doc->state == 'current')
+          $emit([$doc->creatorId, $doc->type, $doc->publishedAt]);
+      };
+    reduce: _count
+
+  'posts/approvedInfo/view':
+    map: |-
+      function($doc) use ($emit) {
+        if ($doc->state == 'approved') {
+          $editorId = isset($doc->editorId) ? $doc->editorId : $doc->creatorId;
+          $editSummary = isset($doc->editSummary) ? $doc->editSummary : '';
+
+          $emit($doc->unversionId, [
+              'modifiedAt' => $doc->modifiedAt,
+              'editorId' => $editorId,
+              'editSummary' => $editSummary
+            ]);
+        }
+      };
+    reduce: _count
+
+  'posts/inProgress/view':
+    map: |-
+      function($doc) use ($emit) {
+        if ($doc->state == 'indexing' || $doc->state == 'deleting')
+          $emit($doc->unversionId);
+      };
+    reduce: _count
+
+
+  # replies
+
+  'replies/bypostId/view':
+    map: |-
+      function($doc) use ($emit) {
+        $emit($doc->postId);
+      };
+    reduce: _count
+
+  'replies/byPostIdPerPublishingDate/view':
+    map: |-
+      function($doc) use ($emit) {
+        $emit([$doc->postId, $doc->publishedAt]);
+      };
+    reduce: _count
+
+  'replies/byPostIdPerEditingDate/view':
+    map: |-
+      function($doc) use ($emit) {
+        $emit([$doc->postId, $doc->modifiedAt]);
+    reduce: _count
+
+
+  # tags
+
+  'tags/info/view':
+    map: |-
+      function($doc) use ($emit) {
+        if ($doc->type == 'tag')
+          $emit($doc->_id, [$doc->name, $doc->excerpt, $doc->createdAt]);
+      };
+    reduce: _count
+
+  'tags/currentByUnversionId/view':
+    map: |-
+      function($doc) use ($emit) {
+        if ($doc->type == 'tag' && $doc->state == 'current')
+          $emit($doc->unversionId);
+      };
+    reduce: _count
+
+  'tags/newest/view':
+    map: |-
+      function($doc) use ($emit) {
+        if ($doc->type == 'tag' && $doc->state == 'current')
+          $emit($doc->createdAt);
+      };
+    reduce: _count
+
+  'tags/names/view':
+    map: |-
+      function($doc) use ($emit) {
+        if ($doc->type == 'tag' && $doc->state == 'current')
+          $emit($doc->unversionId, $doc->name);
+      };
+    reduce: _count
+
+  'tags/synonymsNames/view':
+    map: |-
+      function($doc) use ($emit) {
+        if ($doc->type == 'synonym' && $doc->state == 'current') {
+          $emit($doc->_id, $doc->name);
+        }
+      };
+    reduce: _count
+
+  'tags/byName/view':
+    map: |-
+      function($doc) use ($emit) {
+        if ($doc->type == 'tag' && $doc->state == 'current')
+          $emit($doc->name);
+      };
+    reduce: _count
+
+  'tags/synonymsByName/view':
+    map: |-
+      function($doc) use ($emit) {
+        if ($doc->type == 'synonym' && $doc->state == 'current') {
+          $emit($doc->name);
+        }
+      };
+    reduce: _count
+
+  'tags/andSynonymsByName/view':
+    map: |-
+      function($doc) use ($emit) {
+        if ($doc->state == 'current')
+          $emit($doc->name);
+      };
+    reduce: _count
+
+  'tags/synonyms/view':
+    map: |-
+      function($doc) use ($emit) {
+        if ($doc->type == 'tag') {
+          $emit($doc->unversionId, $doc->unversionId);
+
+          foreach ($doc->synonyms as $value)
+            $emit($value, $doc->unversionId);
+        }
+      };
+    reduce: _count
+
+  'tags/synonyms/view':
+    map: |-
+      function($doc) use ($emit) {
+        if ($doc->state == 'current') {
+          $str = preg_replace('/-/su', '', $doc->name);
+          $length = mb_strlen($str, 'UTF-8');
+
+          $subs = [];
+          for ($i = 0; $i < $length; $i++)
+            for ($j = 1; $j <= $length; $j++)
+              $subs[] = mb_substr($str, $i, $j, 'UTF-8');
+
+          $subs = array_unique($subs);
+
+          foreach ($subs as $substring)
+            $emit($substring);
+        }
+      };
+
+
+  # votes
+
+  'votes/perItem/view':
+    map: |-
+      function($doc) use ($emit) {
+        $emit($doc->itemId, $doc->value);
+      };
+    reduce: _count
+
+    'votes/perItemAndEditingDate/view':
+      map: |-
+        function($doc) use ($emit) {
+          $emit([$doc->itemId, $doc->modifiedAt]);
+        };
+
+  'votes/perItemAndMember/view':
+    map: |-
+      function($doc) use ($emit) {
+        $emit([$doc->itemId, $doc->voterId], $doc->value);
+      };
+    reduce: _count
+
+  'votes/perMember/view':
+    map: |-
+      function($doc) use ($emit) {
+        $emit($doc->voterId);
+      };
+    reduce: _count
+
+  'votes/members/view':
+    map: |-
+      function($doc) use ($emit) {
+        $emit([$doc->itemId, $doc->timestamp], $doc->voterId);
+      };
+
+...
