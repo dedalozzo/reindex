@@ -418,7 +418,7 @@ class IndexController extends ListController {
 
     $this->perDate($minDate, $maxDate, Helper\Text::unversion($tagId));
 
-    $this->view->setVar('etag', $this->couch->getDoc(Couch::STD_DOC_PATH, $tagId));
+    $this->view->setVar('etag', $this->couch->getDoc('tags', Couch::STD_DOC_PATH, $tagId));
   }
 
 
@@ -440,7 +440,7 @@ class IndexController extends ListController {
 
     $this->newest(Helper\Text::unversion($tagId));
 
-    $this->view->setVar('etag', $this->couch->getDoc(Couch::STD_DOC_PATH, $tagId));
+    $this->view->setVar('etag', $this->couch->getDoc('tags', Couch::STD_DOC_PATH, $tagId));
   }
 
 
@@ -464,7 +464,7 @@ class IndexController extends ListController {
 
     $this->popular($filter, Helper\Text::unversion($tagId));
 
-    $this->view->setVar('etag', $this->couch->getDoc(Couch::STD_DOC_PATH, $tagId));
+    $this->view->setVar('etag', $this->couch->getDoc('tags', Couch::STD_DOC_PATH, $tagId));
   }
 
 
@@ -486,7 +486,7 @@ class IndexController extends ListController {
 
     $this->active(Helper\Text::unversion($tagId));
 
-    $this->view->setVar('etag', $this->couch->getDoc(Couch::STD_DOC_PATH, $tagId));
+    $this->view->setVar('etag', $this->couch->getDoc('tags', Couch::STD_DOC_PATH, $tagId));
   }
 
 
@@ -517,7 +517,7 @@ class IndexController extends ListController {
     if ($rows->isEmpty())
       return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    $post = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $rows[0]['id']);
+    $post = $this->couchdb->getDoc('posts', Couch::STD_DOC_PATH, $rows[0]['id']);
     
     if (!$this->user->has(new Role\GuestRole\ViewPostPermission($post)))
       return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
@@ -580,7 +580,7 @@ class IndexController extends ListController {
 
     }
     else {
-      $post = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $id);
+      $post = $this->couchdb->getDoc('posts', Couch::STD_DOC_PATH, $id);
 
       if (!$this->user->has(new Role\MemberRole\EditPostPermission($post)))
         return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
