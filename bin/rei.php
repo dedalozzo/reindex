@@ -29,7 +29,7 @@ try {
   require $root."/vendor/autoload.php";
 
   // Reads the application's configuration.
-  $config = new IniReader($root.'/config.ini');
+  $config = new IniReader($root.'/etc/config.ini');
 
   $log = new Logger('rei');
 
@@ -37,13 +37,14 @@ try {
   ErrorHandler::register($log);
 
   // Creates a stream handler to log debugging messages.
-  $log->pushHandler(new StreamHandler($root.'/'.$config->application->logDir."reindex.log", Logger::DEBUG));
+  $log->pushHandler(new StreamHandler($root.'/log/reindex.log", Logger::DEBUG));
 
   // The FactoryDefault Dependency Injector automatically registers the right services providing a full stack framework.
   $di = new DependencyInjector();
 
   // Initializes the services. The order doesn't matter.
   require $root . "/services/config.php";
+  require $root . "/services/init.php";
   require $root . "/services/log.php";
   require $root . "/services/taskqueue.php";
   require $root . "/services/couchdb.php";
