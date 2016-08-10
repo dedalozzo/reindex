@@ -172,6 +172,14 @@ final class Member extends ActiveDoc implements IUser {
 
 
   /**
+   * @copydoc ActiveDoc::getDbName()
+   */
+  protected function getDbName() {
+    return 'members';
+  }
+
+
+  /**
    * @brief Returns the actual user's age based on his birthday, `null`in case a the user's birthday is not available.
    * @retval int|null
    */
