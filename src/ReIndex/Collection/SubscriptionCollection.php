@@ -55,7 +55,8 @@ final class SubscriptionCollection implements \Countable {
     $opts = new ViewQueryOpts();
     $opts->setKey([$this->post->getUnversionId()]);
 
-    return $this->couch->queryView("subscriptions", "perItem", NULL, $opts)->getReducedValue();
+    // subscriptions/perItem/view
+    return $this->couch->queryView('subscriptions', 'perItem', 'view', NULL, $opts)->getReducedValue();
   }
 
 
@@ -69,7 +70,8 @@ final class SubscriptionCollection implements \Countable {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(1)->setKey([Text::unversion($this->post->id), $member->id]);
 
-    $result = $this->couch->queryView("subscriptions", "perItem", NULL, $opts);
+    // subscriptions/perItem/view
+    $result = $this->couch->queryView('subscriptions', 'perItem', 'view', NULL, $opts);
 
     if ($result->isEmpty())
       return FALSE;
