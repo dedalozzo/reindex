@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file RefreshCommand.php
- * @brief This file contains the RefreshCommand class.
+ * @file RebuildCommand.php
+ * @brief This file contains the RebuildCommand class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -29,7 +29,7 @@ use Monolog\Logger;
  * @details This class implement the IChunkHook interface.
  * @nosubgrouping
  */
-final class RefreshCommand extends AbstractCommand implements IChunkHook {
+final class RebuildCommand extends AbstractCommand implements IChunkHook {
 
   /**
    * @var TaskQueue $queue
@@ -52,7 +52,7 @@ final class RefreshCommand extends AbstractCommand implements IChunkHook {
    */
   protected function configure() {
     $this->setName("refresh");
-    $this->setDescription("Refreshes the application cache");
+    $this->setDescription("Rebuild the application cache");
 
     $this->addOption("id",
       NULL,
@@ -93,7 +93,7 @@ final class RefreshCommand extends AbstractCommand implements IChunkHook {
       }
     }
     else {
-      $question = new ConfirmationQuestion('Are you sure you want refresh application cache? [Y/n]', FALSE);
+      $question = new ConfirmationQuestion('Are you sure you want rebuild application cache? [Y/n]', FALSE);
 
       $helper = $this->getHelper('question');
 
