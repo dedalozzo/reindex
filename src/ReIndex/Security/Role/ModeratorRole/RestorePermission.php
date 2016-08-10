@@ -51,7 +51,7 @@ class RestorePermission extends AbstractPermission {
     elseif ($this->context->dustmanId == $this->user->id)
       return TRUE;
     else {
-      $dustman = $this->di['couchdb']->getDoc(Couch::STD_DOC_PATH, $this->context->dustmanId);
+      $dustman = $this->di['couchdb']->getDoc('members', Couch::STD_DOC_PATH, $this->context->dustmanId);
       return !$dustman->roles->areSuperiorThan($this->getRole()) ? TRUE : FALSE;
     }
   }
