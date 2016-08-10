@@ -74,6 +74,18 @@ members:
         };
       reduce: _count
 
+  tasks:
+
+    view: # members/tasks/view
+      map: |-
+        function($doc) use ($emit) {
+          if (isset($doc->tasks)) {
+            $tasks = $doc->tasks;
+            foreach ($tasks as $key => $value)
+              $emit($doc->_id, ['docClass' => $doc->class, 'taskClass' => $key]);
+          }
+        };
+
 
 followers:
 
@@ -237,6 +249,18 @@ posts:
         };
       reduce: _count
 
+  tasks:
+
+    view: # posts/tasks/view
+      map: |-
+        function($doc) use ($emit) {
+          if (isset($doc->tasks)) {
+            $tasks = $doc->tasks;
+            foreach ($tasks as $key => $value)
+              $emit($doc->_id, ['docClass' => $doc->class, 'taskClass' => $key]);
+          }
+        };
+
 
 replies:
 
@@ -258,12 +282,13 @@ replies:
         };
       reduce: _count
 
-  byPostIdPerEditingDate:
+  activePerPost:
 
-    view: # replies/byPostIdPerEditingDate/view
+    view: # replies/activePerPost/view
       map: |-
         function($doc) use ($emit) {
           $emit([$doc->postId, $doc->modifiedAt]);
+        };
       reduce: _count
 
 
