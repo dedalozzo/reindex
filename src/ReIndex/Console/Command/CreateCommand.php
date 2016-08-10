@@ -15,7 +15,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use EoC\Couch;
-use EoC\Adapter\NativeAdapter;
+use EoC\Adapter\SocketAdapter;
 
 
 /**
@@ -30,7 +30,7 @@ final class CreateCommand extends AbstractCommand {
    */
   protected function configure() {
     $this->setName("create");
-    $this->setDescription("Creates the ReIndex database");
+    $this->setDescription("Creates the ReIndex databases");
   }
 
 
@@ -38,11 +38,16 @@ final class CreateCommand extends AbstractCommand {
    * @brief Executes the command.
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $config = $this->di['config'];
+    $cf = $this->di['config']['couchdb'];
 
-    $couch = new Couch(new NativeAdapter(NativeAdapter::DEFAULT_SERVER, $config->couchdb->user, $config->couchdb->password));
+    $couch = new Couch(new SocketAdapter($cf['host'].":".$cf['port'], $cf['user'], $cf['password']));
 
-    $couch->createDb($config->couchdb->database);
+    $couch->setDbPrefix($this->di['config']['application']['dbPrefix']);
+
+    $databases = $this->di['init'];
+    foreach ($databases as $name => $value) {
+      $couch->createDb($name);
+    }
 
     $redis = $this->di['redis'];
     $redis->flushAll();
