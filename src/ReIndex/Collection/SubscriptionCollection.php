@@ -85,7 +85,7 @@ final class SubscriptionCollection implements \Countable {
   public function alter(Member $member) {
     if (!$this->exists($member)) {
       $doc = Subscription::create($this->post, $member);
-      $this->couch->saveDoc($doc);
+      $this->couch->saveDoc('subscriptions', $doc);
     }
   }
 
@@ -94,9 +94,9 @@ final class SubscriptionCollection implements \Countable {
     $subscriptionId = NULL;
 
     if ($this->exists($member, $subscriptionId)) {
-      $doc = $this->couch->getDoc(Couch::STD_DOC_PATH, $subscriptionId);
+      $doc = $this->couch->getDoc('subscriptions', Couch::STD_DOC_PATH, $subscriptionId);
       $doc->delete();
-      $this->couch->saveDoc($doc);
+      $this->couch->saveDoc('subscriptions', $doc);
     }
   }
 
