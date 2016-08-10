@@ -99,7 +99,7 @@ final class IndexPostTask implements ITask, IChunkHook {
   public function unserialize($serialized) {
     $this->init();
 
-    $this->post = $this->couch->getDoc(Couch::STD_DOC_PATH, unserialize($serialized));
+    $this->post = $this->couch->getDoc('posts', Couch::STD_DOC_PATH, unserialize($serialized));
 
     $this->toDeindex = $this->toDeindex();
     $this->toIndex = $this->toIndex();
@@ -273,7 +273,7 @@ final class IndexPostTask implements ITask, IChunkHook {
       $rows = $this->couch->queryView('posts', 'byUnversionId', 'view', NULL, $opts);
 
       if (!$rows->isEmpty()) {
-        $current = $this->couch->getDoc(Couch::STD_DOC_PATH, $rows[0]['id']);
+        $current = $this->couch->getDoc('posts', Couch::STD_DOC_PATH, $rows[0]['id']);
         $current->state->set(State::APPROVED);
         $current->tasks->rem(new IndexPostTask($current));
         $current->save();
