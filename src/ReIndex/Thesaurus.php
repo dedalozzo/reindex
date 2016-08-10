@@ -46,7 +46,7 @@ final class Thesaurus {
     if ($rows->isEmpty())
       throw new \RuntimeException('Tag not found.');
 
-    $master = Tag::find(current($rows->getIterator())['id']);
+    $master = Tag::find('tags', current($rows->getIterator())['id']);
 
     $opts->setKey($synonymName);
     // tags/andSynonymsByName/view
@@ -59,7 +59,7 @@ final class Thesaurus {
       $master->synonyms->add($synonym);
       $master->save();
     } else {
-      $tag = Tag::find(current($rows->getIterator())['id']);
+      $tag = Tag::find('tags', current($rows->getIterator())['id']);
 
       if ($tag instanceof Tag)
         $tag->markAsSynonymOf($tag);
@@ -83,7 +83,7 @@ final class Thesaurus {
     if ($rows->isEmpty())
       throw new \RuntimeException('Synonym not found.');
 
-    $synonym = Synonym::find(current($rows->getIterator())['id']);
+    $synonym = Synonym::find('tags', current($rows->getIterator())['id']);
 
     $opts->setKey($synonym->id);
     // tags/synonyms/view
@@ -91,7 +91,7 @@ final class Thesaurus {
 
     // If the synonym is associated to a tag (it should be), removes the association.
     if (!$rows->isEmpty()) {
-      $tag = Tag::find(current($rows->getIterator())['value']);
+      $tag = Tag::find('tags', current($rows->getIterator())['value']);
       $tag->synonyms->remove($synonym);
       $tag->save();
     }
@@ -123,7 +123,7 @@ final class Thesaurus {
       if ($rows->isEmpty())
         throw new \RuntimeException('Tag not found.');
 
-      $tag = Tag::find(current($rows->getIterator())['id']);
+      $tag = Tag::find('tags', current($rows->getIterator())['id']);
 
       $opts->reset();
       $opts->doNotReduce();
