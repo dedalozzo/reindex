@@ -1,3 +1,11 @@
+[![Latest Stable Version](https://poser.pugx.org/reindex/reindex/v/stable.png)](https://packagist.org/packages/reindex/reindex)
+[![Latest Unstable Version](https://poser.pugx.org/reindex/reindex/v/unstable.png)](https://packagist.org/packages/reindex/reindex)
+[![Build Status](https://scrutinizer-ci.com/g/dedalozzo/reindex/badges/build.png?b=master)](https://scrutinizer-ci.com/g/dedalozzo/reindex/build-status/master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/dedalozzo/reindex/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/dedalozzo/reindex/?branch=master)
+[![License](https://poser.pugx.org/reindex/reindex/license.svg)](https://packagist.org/packages/3f/converter)
+[![Total Downloads](https://poser.pugx.org/reindex/reindex/downloads.png)](https://packagist.org/packages/3f/converter)
+
+
 ReIndex
 ========
 ReIndex is an open source social network platform. The platform is still in active 
