@@ -26,7 +26,7 @@ try {
   require $root."/vendor/autoload.php";
 
   // Reads the application's configuration.
-  $config = new IniReader($root.'/config.ini');
+  $config = new IniReader($root.'/etc/config.ini');
 
   $log = new Logger('reindexd');
 
@@ -34,7 +34,7 @@ try {
   ErrorHandler::register($log);
 
   // Creates a stream handler to log debugging messages.
-  $log->pushHandler(new StreamHandler($root.'/'.$config->application->logDir."reindexd.log", Logger::DEBUG));
+  $log->pushHandler(new StreamHandler($root.'/log/.'reindexd'.getmygid().".log", Logger::DEBUG));
 
   // The FactoryDefault Dependency Injector automatically registers the right services providing a full stack framework.
   $di = new DependencyInjector();
@@ -53,6 +53,9 @@ try {
   // We finally save the book.
   $taskQueue->perform();
 }
-catch (Exception $e) {
-  echo $e;
+catch(\AMQPQueueException $ex){
+  print_r($ex);
+}
+catch(\Exception $ex){
+  print_r($ex);
 }
