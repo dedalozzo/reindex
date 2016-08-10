@@ -436,7 +436,7 @@ abstract class Post extends Versionable {
     $opts->doNotReduce()->reverseOrderOfResults()->setLimit(1);
 
     // todo view
-    $rows = $this->couch->queryView("updates", "perDateByPostId", NULL, $opts);
+    $rows = $this->couch->queryView('replies', 'activePerPost', 'view', NULL, $opts);
 
     if ($rows->isEmpty())
       $lastUpdate = $this->modifiedAt;
