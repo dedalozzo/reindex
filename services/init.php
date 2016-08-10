@@ -8,7 +8,6 @@
  */
 
 
-// Returns the $config object.
 $di->setShared('init',
   function() use ($root) {
     return yaml_parse_file($root.'/etc/init.yaml');
