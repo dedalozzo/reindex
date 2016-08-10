@@ -93,6 +93,14 @@ final class Tag extends Versionable {
   }
 
 
+  /**
+   * @copydoc ActiveDoc::getDbName()
+   */
+  protected function getDbName() {
+    return 'tags';
+  }
+
+
   /** @name Starring Methods */
   //!@{
 
@@ -189,7 +197,7 @@ final class Tag extends Versionable {
       $rows = $this->couch->queryView('tags', 'byUnversionId', 'view', NULL, $opts);
 
       if (!$rows->isEmpty()) {
-        $current = $this->couch->getDoc(Couch::STD_DOC_PATH, $rows[0]['id']);
+        $current = $this->couch->getDoc('tags', Couch::STD_DOC_PATH, $rows[0]['id']);
         $current->state->set(State::APPROVED);
         $current->save();
       }
