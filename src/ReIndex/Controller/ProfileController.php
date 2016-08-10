@@ -88,13 +88,15 @@ final class ProfileController extends ListController {
   /**
    * @brief Displays the user's timeline.
    * @param[in] string $username A username.
+   * @param[in] int $year Used to jump to the posts published during that year.
    */
-  public function indexAction($username) {
+  public function indexAction($username, $year = NULL) {
     $user = $this->getUser($username);
 
     // If the user doesn't exist, forward to 404.
     if (!$user->isMember()) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
+    /*
     $opts = new ViewQueryOpts();
 
     // Paginates results.
@@ -116,6 +118,7 @@ final class ProfileController extends ListController {
 
     $this->view->setVar('posts', $posts);
     $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
+    */
     $this->view->setVar('entriesLabel', 'contributi');
     $this->view->setVar('title', sprintf('%s timeline', $username));
 
@@ -154,10 +157,11 @@ final class ProfileController extends ListController {
 
     // Paginates results.
     $startKey = isset($_GET['startkey']) ? $_GET['startkey'] : chr(0);
-    $opts->setStartKey($startKey);
+    $opts->setStartKey([TRUE, $startKey])->setEndKey([TRUE]);
     if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
 
-    $rows = $this->couch->queryView("friendships", "approvedPerMember", NULL, $opts)->asArray();
+    // friendships/byMemberId/view
+    $rows = $this->couch->queryView('friendships', 'byMemberId', 'view', NULL, $opts)->asArray();
 
     $members = Member::collect(array_column($rows, 'id'));
 
@@ -499,7 +503,8 @@ final class ProfileController extends ListController {
           $opts = new ViewQueryOpts();
           $opts->setKey($email)->setLimit(1);
 
-          $rows = $this->couch->queryView("members", "byEmail", NULL, $opts);
+          // members/byEmail/view
+          $rows = $this->couch->queryView("members", 'byEmail', 'view', NULL, $opts);
 
           if (!$rows->isEmpty())
             throw new Exception\InvalidEmailException("L'e-mail che stai tentando di aggiungere è già utilizzata da un altro utente.");
