@@ -62,7 +62,7 @@ try {
   $console->add(new Command\CreateCommand());
   $console->add(new Command\InitCommand());
   $console->add(new Command\InstallCommand());
-  $console->add(new Command\RefreshCommand());
+  $console->add(new Command\RebuildCommand());
   $console->add(new Command\Role\GrantCommand());
   $console->add(new Command\Role\RevokeCommand());
   $console->add(new Command\Synonym\AddSynonymCommand());
