@@ -20,9 +20,10 @@ Some of the supported features are:
 - Peer reviewing
 - Tags and synonyms (merging is also supported)
 - OAuth2 with Facebook, LinkedIn, Google and GitHub authentication
-- Markdown
+- Github-flavored Markdown
 - Syntax highlighting
 - Themes
+- GitHub repositories
 
 
 Composer Installation
@@ -69,10 +70,12 @@ Built With
 ----------
 - [PHP](http://php.net)
 - [Phalcon](https://phalconphp.com)
-- [CouchDB](http://couchdb.apache.org/)
-- [Redis](http://redis.io/)
 - [RabbitMQ](https://www.rabbitmq.com)
+- [Supervisor](http://supervisord.org)
+- [Redis](http://redis.io)
+- [CouchDB](http://couchdb.apache.org)
 - [Elephant on Couch](http://elephantoncouch.com)
+- [Pygments](http://pygments.org)
 
 Plus lots of PHP extensions and libraries. See the [composer.json](https://github.com/dedalozzo/reindex/blob/master/composer.json)
 file for a complete list of dependencies.
@@ -85,7 +88,7 @@ Filippo F. Fadda - <filippo.fadda@programmazione.it> - <http://www.linkedin.com/
 
 Copyright
 ---------
-Copyright (c) 2013-2015, REINDEX LTD
+Copyright (c) 2013-2016, REINDEX LTD
 All rights reserved.
 
 
