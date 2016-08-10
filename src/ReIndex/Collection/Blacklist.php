@@ -61,7 +61,8 @@ final class Blacklist extends MetaCollection {
       if (empty($ids))
         $this->blacklist = [];
       else
-        $this->blacklist = $this->couch->queryView("members", "all", $ids, $opts)->asArray();
+        // members/info/view
+        $this->blacklist = $this->couch->queryView('members', 'info', 'view', $ids, $opts)->asArray();
     }
 
     return $this->blacklist;
