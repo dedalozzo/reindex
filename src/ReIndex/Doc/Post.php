@@ -152,7 +152,8 @@ abstract class Post extends Versionable {
 
     // Posts.
     $opts->doNotReduce();
-    $posts = $couch->queryView("posts", "all", $ids, $opts);
+    // posts/info/view
+    $posts = $couch->queryView('posts', 'info', 'view', $ids, $opts);
 
     Helper\ArrayHelper::unversion($ids);
 
@@ -165,7 +166,8 @@ abstract class Post extends Versionable {
       foreach ($ids as $postId)
         $keys[] = [$postId, $user->id];
 
-      $likes = $couch->queryView("votes", "perItemAndMember", $keys, $opts);
+      // votes/perItemAndMember/view
+      $likes = $couch->queryView('votes', 'perItemAndMember', 'view', $keys, $opts);
     }
     else
       $likes = [];
@@ -173,18 +175,21 @@ abstract class Post extends Versionable {
     // Scores.
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
-    $scores = $couch->queryView("votes", "perItem", $ids, $opts);
+    // votes/perItem/view
+    $scores = $couch->queryView('votes', 'perItem', 'view', $ids, $opts);
 
     // Replies.
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
-    $replies = $couch->queryView("replies", "perPost", $ids, $opts);
+    // replies/perPost/view
+    $replies = $couch->queryView('replies', 'perPost', 'view', $ids, $opts);
 
     // Members.
     $creatorIds = array_column(array_column($posts->asArray(), 'value'), 'creatorId');
     $opts->reset();
     $opts->doNotReduce()->includeMissingKeys();
-    $members = $couch->queryView("members", "allNames", $creatorIds, $opts);
+    // members/names/view
+    $members = $couch->queryView('members', 'names', 'view', $creatorIds, $opts);
 
     $entries = [];
     $postCount = count($posts);
@@ -214,12 +219,14 @@ abstract class Post extends Versionable {
         $opts->doNotReduce();
 
         // Resolves the synonyms.
-        $synonyms = $couch->queryView("tags", "synonyms", array_keys($entry->tags), $opts);
+        // tags/synonyms/view
+        $synonyms = $couch->queryView('tags', 'synonyms', array_keys($entry->tags), $opts);
 
         // Extracts the masters.
         $masters = array_unique(array_column($synonyms->asArray(), 'value'));
 
-        $entry->tags = $couch->queryView("tags", "allNames", $masters, $opts);
+        // tags/names/view
+        $entry->tags = $couch->queryView('tags', 'names', 'view', $masters, $opts);
       }
       else
         $entry->tags = [];
@@ -420,6 +427,7 @@ abstract class Post extends Versionable {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->reverseOrderOfResults()->setLimit(1);
 
+    // todo view
     $rows = $this->couch->queryView("updates", "perDateByPostId", NULL, $opts);
 
     if ($rows->isEmpty())
@@ -449,7 +457,8 @@ abstract class Post extends Versionable {
   public function getReplies() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->reverseOrderOfResults()->setStartKey([$this->unversionId, Couch::WildCard()])->setEndKey([$this->unversionId])->includeDocs();
-    $rows = $this->couch->queryView("replies", "newestPerPost", NULL, $opts);
+    // replies/newestPerPost/view
+    $rows = $this->couch->queryView('replies', 'newestPerPost', 'view', NULL, $opts);
 
     $replies = [];
     foreach ($rows as $row) {
@@ -468,7 +477,8 @@ abstract class Post extends Versionable {
   public function getRepliesCount() {
     $opts = new ViewQueryOpts();
     $opts->groupResults();
-    return $this->couch->queryView("replies", "perPost", [$this->unversionId], $opts)->getReducedValue();
+    // replies/perPost/view
+    return $this->couch->queryView('replies', 'perPost', 'view', [$this->unversionId], $opts)->getReducedValue();
   }
 
   //!@}
