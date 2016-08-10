@@ -61,7 +61,8 @@ final class TagController extends ListController {
     if (!empty($keys)) {
       $opts = new ViewQueryOpts();
       $opts->doNotReduce();
-      $rows = $this->couch->queryView("tags", "allNames", $keys, $opts);
+      // tags/names/view
+      $rows = $this->couch->queryView('tags', 'names', 'view', $keys, $opts);
       $tags = Tag::collect(array_column($rows->asArray(), 'id'));
     }
     else
@@ -83,7 +84,8 @@ final class TagController extends ListController {
     $opts->setStartKey($startKey);
     if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
 
-    $rows = $this->couch->queryView("tags", "newest", NULL, $opts)->asArray();
+    // tags/newest/view
+    $rows = $this->couch->queryView('tags', 'newest', 'view', NULL, $opts)->asArray();
 
     $tags = Tag::collect(array_column($rows, 'id'));
 
@@ -127,7 +129,8 @@ final class TagController extends ListController {
     $opts->setStartKey($startKey);
     if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
 
-    $rows = $this->couch->queryView("tags", "byName", NULL, $opts);
+    // tags/byName/view
+    $rows = $this->couch->queryView('tags', 'byName', 'view', NULL, $opts);
 
     $tags = Tag::collect(array_column($rows->asArray(), 'id'));
 
@@ -158,7 +161,8 @@ final class TagController extends ListController {
     if ($this->request->hasPost('filter')) {
       $opts = new ViewQueryOpts();
       $opts->setKey($this->request->getPost('filter'));
-      $rows = $this->couch->queryView('tags', 'substrings', NULL, $opts)->asArray();
+      //tags/substrings/view
+      $rows = $this->couch->queryView('tags', 'substrings', 'view', NULL, $opts)->asArray();
 
       $tags = Tag::collect(array_column($rows, 'id'));
       echo json_encode($tags);
