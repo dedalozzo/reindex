@@ -47,7 +47,7 @@ class UnbanMemberPermission extends AbstractPermission {
     elseif ($this->context->bannerId === $this->user->id)
       return TRUE;
     else {
-      $whoBanned = $this->di['couchdb']->getDoc(Couch::STD_DOC_PATH, $this->context->bannerId);
+      $whoBanned = $this->di['couchdb']->getDoc('members', Couch::STD_DOC_PATH, $this->context->bannerId);
       return !$whoBanned->roles->areSuperiorThan($this->getRole(), FALSE) ? TRUE : FALSE;
     }
   }
