@@ -81,7 +81,8 @@ final class UserFactory {
     $opts = new ViewQueryOpts();
     $loginName = $userId.'@'.$consumerName;
     $opts->setKey($loginName)->setLimit(1);
-    $result = $couch->queryView("members", "byConsumer", NULL, $opts);
+    // members/byConsumer/view
+    $result = $couch->queryView('members', 'byConsumer', 'view', NULL, $opts);
 
     if (!$result->isEmpty())
       return $couch->getDoc(Couch::STD_DOC_PATH, $result[0]['id']);
@@ -101,7 +102,8 @@ final class UserFactory {
 
     $opts = new ViewQueryOpts();
     $opts->setKey($email)->setLimit(1);
-    $result = $couch->queryView("members", "byEmail", NULL, $opts);
+    //members/byEmail/view
+    $result = $couch->queryView('members', 'byEmail', 'view', NULL, $opts);
 
     if (!$result->isEmpty())
       return $couch->getDoc(Couch::STD_DOC_PATH, $result[0]['id']);
@@ -122,7 +124,8 @@ final class UserFactory {
 
     $opts = new ViewQueryOpts();
     $opts->setKey($username)->setLimit(1);
-    $result = $couch->queryView("members", "byUsername", NULL, $opts);
+    // members/byUsername/view
+    $result = $couch->queryView('members', 'byUsername', 'view', NULL, $opts);
 
     if (!$result->isEmpty())
       return $couch->getDoc(Couch::STD_DOC_PATH, $result[0]['value']);
