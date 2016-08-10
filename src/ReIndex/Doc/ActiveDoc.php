@@ -94,15 +94,23 @@ abstract class ActiveDoc extends Doc {
 
   /**
    * @brief Tries to get the object from the database identified by the provided ID.
+   * @param[in] string $dbName The database's name where the document is stored.
    * @param[in] string $id An object ID.
    * @retval object
    */
-  public static function find($id) {
+  public static function find($dbName, $id) {
     $di = Di::getDefault();
     $couch = $di['couchdb'];
 
-    return $couch->getDoc(Couch::STD_DOC_PATH, $id);
+    return $couch->getDoc($dbName, Couch::STD_DOC_PATH, $id);
   }
+
+
+  /**
+   * @brief Returns the name of the database used to save the document.
+   * @retval string
+   */
+  abstract protected function getDbName();
 
 
   /**
@@ -117,7 +125,7 @@ abstract class ActiveDoc extends Doc {
     if (!isset($this->createdAt))
       $this->createdAt = $this->modifiedAt;
 
-    $this->couch->saveDoc($this);
+    $this->couch->saveDoc($this->getDbName(), $this);
   }
 
 
