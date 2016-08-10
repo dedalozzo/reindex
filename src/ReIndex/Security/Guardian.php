@@ -76,7 +76,8 @@ final class Guardian {
     $opts = new ViewQueryOpts();
     $opts->setLimit(1)->setKey($username);
 
-    $result = $this->couch->queryView("members", "byUsername", NULL, $opts);
+    // members/byUsername/view
+    $result = $this->couch->queryView('members', 'byUsername', 'view', NULL, $opts);
 
     return ($result->isEmpty()) ? FALSE : TRUE;
   }
