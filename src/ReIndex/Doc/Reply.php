@@ -39,6 +39,14 @@ class Reply extends Versionable {
   }
 
 
+  /**
+   * @copydoc ActiveDoc::getDbName()
+   */
+  protected function getDbName() {
+    return 'replies';
+  }
+
+
   //! @cond HIDDEN_SYMBOLS
 
   public function getPostId() {
@@ -59,6 +67,11 @@ class Reply extends Versionable {
   public function unsetPostId() {
     if ($this->isMetadataPresent('postId'))
       unset($this->meta['postId']);
+  }
+
+
+  public function save() {
+
   }
 
   //! @endcond
