@@ -33,7 +33,7 @@ $root = __DIR__;
 require $root."/vendor/autoload.php";
 
 // Reads the application's configuration.
-$config = new IniReader($root.'/config.ini');
+$config = new IniReader($root.'/etc/config.ini');
 
 $log = new Logger('reindex');
 
@@ -41,7 +41,7 @@ $log = new Logger('reindex');
 ErrorHandler::register($log);
 
 // Creates a stream handler to log debugging messages.
-$handler = new StreamHandler($root.'/'.$config->application->logDir."reindex.log", Logger::DEBUG);
+$handler = new StreamHandler($root.'/log/reindex.log", Logger::DEBUG);
 //$handler->pushProcessor(new MemoryUsageProcessor());
 //$handler->pushProcessor(new MemoryPeakUsageProcessor());
 //$handler->pushProcessor(new UidProcessor());
