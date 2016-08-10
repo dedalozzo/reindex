@@ -132,7 +132,8 @@ final class SynonymizeTask implements ITask {
 
     $opts = new ViewQueryOpts();
     $opts->setKey($this->synonymId)->doNotReduce();
-    $this->couch->queryView('posts', 'perTag', NULL, $opts, $this);
+    // posts/perTag/view
+    $this->couch->queryView('posts', 'perTag', 'view', NULL, $opts, $this);
 
     $postfix = $this->synonymId . '_' . 'post';
 
