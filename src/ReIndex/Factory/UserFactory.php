@@ -48,7 +48,7 @@ final class UserFactory {
 
       try {
         // Gets the user.
-        $user = $couch->getDoc(Couch::STD_DOC_PATH, $id);
+        $user = $couch->getDoc('members', Couch::STD_DOC_PATH, $id);
       }
       catch(ServerErrorException $e) { // The user doesn't exist anymore.
         Cookie::delete();
@@ -85,7 +85,7 @@ final class UserFactory {
     $result = $couch->queryView('members', 'byConsumer', 'view', NULL, $opts);
 
     if (!$result->isEmpty())
-      return $couch->getDoc(Couch::STD_DOC_PATH, $result[0]['id']);
+      return $couch->getDoc('members', Couch::STD_DOC_PATH, $result[0]['id']);
     else
       return new User\Anonymous();
   }
@@ -106,7 +106,7 @@ final class UserFactory {
     $result = $couch->queryView('members', 'byEmail', 'view', NULL, $opts);
 
     if (!$result->isEmpty())
-      return $couch->getDoc(Couch::STD_DOC_PATH, $result[0]['id']);
+      return $couch->getDoc('members', Couch::STD_DOC_PATH, $result[0]['id']);
     else
       return new User\Anonymous();
   }
@@ -128,7 +128,7 @@ final class UserFactory {
     $result = $couch->queryView('members', 'byUsername', 'view', NULL, $opts);
 
     if (!$result->isEmpty())
-      return $couch->getDoc(Couch::STD_DOC_PATH, $result[0]['value']);
+      return $couch->getDoc('members', Couch::STD_DOC_PATH, $result[0]['value']);
     else
       return new User\Anonymous();
   }
