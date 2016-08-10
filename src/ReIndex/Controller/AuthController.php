@@ -142,7 +142,7 @@ final class AuthController extends BaseController {
           throw new Exception\UserNotFoundException("Non vi è nessun utente registrato con l'e-mail inserita o la password è errata.");
 
         // Gets the user.
-        $user = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $rows[0]['id']);
+        $user = $this->couchdb->getDoc('members', Couch::STD_DOC_PATH, $rows[0]['id']);
 
         // Checks if the user has verified his e-mail.
         if (!$user->emails->isVerified($email))
