@@ -33,8 +33,8 @@ class ApiGroup extends Group {
 
     $this->setPrefix('/api');
 
-    $this->addPost('/friend/add/', ['action' => 'addFriend']);
-    $this->addPost('/friend/remove/', ['action' => 'removeFriend']);
+    $this->addPost('/member/add-friend/', ['action' => 'addFriend']);
+    $this->addPost('/member/remove-friend/', ['action' => 'removeFriend']);
 
     $this->addPost('/post/like/', ['action' => 'likePost']);
     $this->addPost('/post/close/', ['action' => 'closePost']);
