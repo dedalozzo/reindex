@@ -182,7 +182,8 @@ final class VoteCollection implements \Countable {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(1)->setKey([$itemId, $this->user->getId()]);
 
-    $result = $this->couch->queryView("votes", "perItemAndMember", NULL, $opts);
+    // votes/perItemAndMember/view
+    $result = $this->couch->queryView('votes', 'perItemAndMember', 'view', NULL, $opts);
 
     if ($result->isEmpty())
       return FALSE;
@@ -206,7 +207,8 @@ final class VoteCollection implements \Countable {
     $opts = new ViewQueryOpts();
     $opts->setKey($itemId);
 
-    return $this->couch->queryView("votes", "perItem", NULL, $opts)->getReducedValue();
+    // votes/perItem/view
+    return $this->couch->queryView('votes', 'perItem', 'view', NULL, $opts)->getReducedValue();
   }
 
 
@@ -223,7 +225,9 @@ final class VoteCollection implements \Countable {
     // Gets the members have voted the item.
     $opts = new ViewQueryOpts();
     $opts->setKey($itemId);
-    $result = $this->couch->queryView("members", "haveVoted", NULL, $opts);
+
+    // votes/members/view
+    $result = $this->couch->queryView('votes', 'members', 'view', NULL, $opts);
 
     if ($result->isEmpty())
       return [];
@@ -232,7 +236,8 @@ final class VoteCollection implements \Countable {
     $keys = array_column($result->asArray(), 'value');
     $opts->reset();
     $opts->doNotReduce();
-    $members = $this->couch->queryView("members", "allNames", $keys, $opts);
+    // members/names/view
+    $members = $this->couch->queryView('members', "names', 'view', $keys, $opts);
 
     $entries = [];
     foreach ($members as $member) {
@@ -260,7 +265,8 @@ final class VoteCollection implements \Countable {
 
     $opts = new ViewQueryOpts();
     $opts->setStartKey([$unversionId, Couch::WildCard()])->setEndKey([$unversionId])->setLimit(1);
-    $result = $this->couch->queryView("votes", "perItemAndDate", NULL, $opts);
+    // votes/perItemAndEditingDate/view
+    $result = $this->couch->queryView('votes', 'perItemAndEditingDate', 'view', NULL, $opts);
 
     return (!$result->isEmpty()) ? $result[0]['key'][1] : 0;
   }
