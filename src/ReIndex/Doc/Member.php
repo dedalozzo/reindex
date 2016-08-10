@@ -109,7 +109,8 @@ final class Member extends ActiveDoc implements IUser {
 
     // Gets the members' properties.
     $opts->doNotReduce();
-    $result = $couch->queryView("members", "all", $ids, $opts);
+    // members/info/view
+    $result = $couch->queryView('members', 'info', 'view', $ids, $opts);
 
     // Retrieves the members reputation.
     //$opts->reset();
@@ -133,21 +134,25 @@ final class Member extends ActiveDoc implements IUser {
       // Friendship.
       if ($user->isMember()) {
         $opts->reset();
-        $opts->doNotReduce()->setLimit(1)->setKey([$user->id, $id]);
-        $member->friendshipExists = !$couch->queryView("friendships", "approvedPerMember", NULL, $opts)->isEmpty();
+        // `true` means: approved friendship
+        $opts->doNotReduce()->setLimit(1)->setKey([TRUE, $user->id, $id]);
+        // friendships/relations/view
+        $member->friendshipExists = !$couch->queryView('friendships', 'relations', 'view', NULL, $opts)->isEmpty();
       }
       else
         $member->friendshipExists = FALSE;
 
       // Friends count.
       $opts->reset();
-      $opts->reduce()->reverseOrderOfResults()->setStartKey([$id, Couch::WildCard()])->setEndKey([$id]);
-      $member->friendsCount = Helper\Text::formatNumber($couch->queryView("friendships", "approvedPerMember", NULL, $opts)->getReducedValue());
+      $opts->reduce()->reverseOrderOfResults()->setStartKey([TRUE, $id, Couch::WildCard()])->setEndKey([TRUE, $id]);
+      // friendships/relations/view
+      $member->friendsCount = Helper\Text::formatNumber($couch->queryView('friendships', 'relations', 'view', NULL, $opts)->getReducedValue());
 
       // Followers count.
       $opts->reset();
       $opts->reduce()->setKey($id);
-      $member->followersCount = Helper\Text::formatNumber($couch->queryView("followers", "perMember", NULL, $opts)->getReducedValue());
+      // followers/perMember/view
+      $member->followersCount = Helper\Text::formatNumber($couch->queryView('followers', 'perMember', 'view', NULL, $opts)->getReducedValue());
 
       $members[] = $member;
     }
