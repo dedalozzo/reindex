@@ -139,9 +139,10 @@ final class FriendCollection extends MemberCollection {
    */
   public function exists(Member $member) {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([$this->member->id, $member->id]);
+    $opts->doNotReduce()->setLimit(1)->setKey([TRUE, $this->member->id, $member->id]);
 
-    $result = $this->couch->queryView("friendships", "approvedPerMember", NULL, $opts);
+    // friendships/relations/view
+    $result = $this->couch->queryView('friendships', 'relations', 'view', NULL, $opts);
 
     if ($result->isEmpty())
       return FALSE;
@@ -157,9 +158,10 @@ final class FriendCollection extends MemberCollection {
    */
   public function pendingRequest(Member $member) {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([$member->id, $this->member->id]);
+    $opts->doNotReduce()->setLimit(1)->setKey([FALSE, $member->id, $this->member->id]);
 
-    $result = $this->couch->queryView("friendships", "pendingRequest", NULL, $opts);
+    // friendships/relations/view
+    $result = $this->couch->queryView('friendships', 'relations', 'view', NULL, $opts);
 
     if ($result->isEmpty())
       return FALSE;
