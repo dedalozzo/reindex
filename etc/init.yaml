@@ -52,7 +52,7 @@ views:
       };
     reduce: _count
 
-  'members/byTagId/view':
+  'members/byTag/view':
     map: |-
       function($doc) use ($emit) {
         foreach ($doc->tags as $key => $value)
@@ -63,14 +63,14 @@ views:
 
   # followers
 
-  'followers/byMemberIdAndFollowerId/view':
+  'followers/perMember/view':
     map: |-
       function($doc) use ($emit) {
         $emit([$doc->memberId, $doc->followerId]);
       };
     reduce: _count
 
-  'followers/FollowerIdAndMemberId/view':
+  'followers/following/view':
     map: |-
       function($doc) use ($emit) {
         $emit([$doc->followerId, $doc->memberId]);
@@ -80,7 +80,7 @@ views:
 
   # friendships
 
-  'friendships/byMemberId/view':
+  'friendships/relations/view':
     map: |-
       function($doc) use ($emit) {
         if ($doc->approved) {
@@ -124,7 +124,7 @@ views:
       };
     reduce: _count
 
-  'posts/currentByUnversionId/view':
+  'posts/byUnversionId/view':
     map: |-
       function($doc) use ($emit) {
         if ($doc->state == 'current')
@@ -132,7 +132,7 @@ views:
       };
     reduce: _count
 
-  'posts/currentByUrl/view':
+  'posts/byUrl/view':
     map: |-
       function($doc) use ($emit) {
         if ($doc->state == 'current' or $doc->state == 'deleted')
@@ -140,7 +140,7 @@ views:
       };
     reduce: _count
 
-  'posts/currentByLegacyId/view':
+  'posts/byLegacyId/view':
     map: |-
       function($doc) use ($emit) {
         if ($doc->state == 'current')
@@ -148,7 +148,7 @@ views:
       };
     reduce: _count
 
-  'posts/currentByTagId/view':
+  'posts/perTag/view':
     map: |-
       function($doc) use ($emit) {
         if ($doc->state == 'current' && isset($doc->tags))
@@ -157,7 +157,7 @@ views:
       };
     reduce: _count
 
-  'posts/currentPerPublishingDate/view':
+  'posts/newest/view':
     map: |-
       function($doc) use ($emit) {
         if ($doc->state == 'current')
@@ -165,7 +165,7 @@ views:
       };
     reduce: _count
 
-  'posts/currentByTypePerPublishingDate/view':
+  'posts/newestPerType/view':
     map: |-
     function($doc) use ($emit) {
       if ($doc->state == 'current')
@@ -223,7 +223,7 @@ views:
       };
     reduce: _count
 
-  'posts/inProgress/view':
+  'posts/inElaboration/view':
     map: |-
       function($doc) use ($emit) {
         if ($doc->state == 'indexing' || $doc->state == 'deleting')
@@ -234,14 +234,14 @@ views:
 
   # replies
 
-  'replies/bypostId/view':
+  'replies/perPost/view':
     map: |-
       function($doc) use ($emit) {
         $emit($doc->postId);
       };
     reduce: _count
 
-  'replies/byPostIdPerPublishingDate/view':
+  'replies/newestPerPost/view':
     map: |-
       function($doc) use ($emit) {
         $emit([$doc->postId, $doc->publishedAt]);
@@ -265,7 +265,7 @@ views:
       };
     reduce: _count
 
-  'tags/currentByUnversionId/view':
+  'tags/byUnversionId/view':
     map: |-
       function($doc) use ($emit) {
         if ($doc->type == 'tag' && $doc->state == 'current')
@@ -335,7 +335,7 @@ views:
       };
     reduce: _count
 
-  'tags/synonyms/view':
+  'tags/substrings/view':
     map: |-
       function($doc) use ($emit) {
         if ($doc->state == 'current') {
@@ -364,11 +364,11 @@ views:
       };
     reduce: _count
 
-    'votes/perItemAndEditingDate/view':
-      map: |-
-        function($doc) use ($emit) {
-          $emit([$doc->itemId, $doc->modifiedAt]);
-        };
+  'votes/perItemAndEditingDate/view':
+    map: |-
+      function($doc) use ($emit) {
+        $emit([$doc->itemId, $doc->modifiedAt]);
+      };
 
   'votes/perItemAndMember/view':
     map: |-
