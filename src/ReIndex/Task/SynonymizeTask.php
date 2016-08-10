@@ -117,8 +117,8 @@ final class SynonymizeTask implements ITask {
   public function execute() {
     $set = Post::ACT_TAGS_SET.'post';
 
-    $masterTag = Tag::find($this->masterId);
-    $synonymTag = Tag::find($this->synonymId);
+    $masterTag = Tag::find('tags', $this->masterId);
+    $synonymTag = Tag::find('tags', $this->synonymId);
 
     $synonymScore = $this->redis->zScore($set, $this->synonymId);
     $masterScore = $this->redis->zScore($set, $this->masterId);
