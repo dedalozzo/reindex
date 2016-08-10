@@ -14,7 +14,7 @@ $di->setShared('github',
     $github = new Github\HttpClient\CachedHttpClient();
     $github->setCache(
       // Uses the built-in one, or any cache implementing this interface: Github\HttpClient\Cache\CacheInterface.
-      new Github\HttpClient\Cache\FilesystemCache($root.'/'.$config->application->cacheDir.'github/')
+      new Github\HttpClient\Cache\FilesystemCache($root.'/cache/github/')
     );
 
     $github = new Github\Client($github);
