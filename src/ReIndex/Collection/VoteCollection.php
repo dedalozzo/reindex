@@ -109,7 +109,9 @@ final class VoteCollection implements \Countable {
    */
   public function cast($vote, $unversion = TRUE, $action = '', $reason = '') {
     if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
-    if ($this->user->match($this->doc->creatorId)) throw new Exception\CannotVoteYourOwnPostException('Non puoi votare il tuo stesso post.');
+
+    if (property_exists($this->doc, 'creatorId') && $this->user->match($this->doc->creatorId))
+      throw new Exception\CannotVoteYourOwnPostException('Non puoi votare il tuo stesso post.');
 
     $fire = $unversion && empty($action) && isset($this->fnOnCastVote);
 
@@ -117,7 +119,7 @@ final class VoteCollection implements \Countable {
 
     if ($voted) {
       // Gets the vote.
-      $voteObj = $this->couch->getDoc(Couch::STD_DOC_PATH, $voteId);
+      $voteObj = $this->couch->getDoc('votes', Couch::STD_DOC_PATH, $voteId);
 
       // Calculates difference in seconds.
       $seconds = time() - $voteObj->timestamp;
@@ -129,7 +131,7 @@ final class VoteCollection implements \Countable {
 
         // The user clicked twice on the same button to undo his vote.
         if ($voteObj->value === $vote) {
-          $this->couch->deleteDoc(Couch::STD_DOC_PATH, $voteId, $voteObj->rev);
+          $this->couch->deleteDoc('votes', Couch::STD_DOC_PATH, $voteId, $voteObj->rev);
 
           if ($fire)
             $this->doc->{$this->fnOnCastVote}(-$vote);
@@ -140,7 +142,7 @@ final class VoteCollection implements \Countable {
           $voteObj->value = $vote;
           $voteObj->reason = $reason;
           $voteObj->timestamp = time();
-          $this->couch->saveDoc($voteObj);
+          $this->couch->saveDoc('votes', $voteObj);
 
           if ($fire)
             $this->doc->{$this->fnOnCastVote}($voteObj->value - $vote);
@@ -155,7 +157,7 @@ final class VoteCollection implements \Countable {
     else {
       $itemId = $this->getItemId($unversion, $action);
       $voteObj = Vote::cast($itemId, $this->user->getId(), $vote, $reason);
-      $this->couch->saveDoc($voteObj);
+      $this->couch->saveDoc('votes', $voteObj);
 
       if ($fire)
         $this->doc->{$this->fnOnCastVote}($vote);
@@ -237,7 +239,7 @@ final class VoteCollection implements \Countable {
     $opts->reset();
     $opts->doNotReduce();
     // members/names/view
-    $members = $this->couch->queryView('members', "names', 'view', $keys, $opts);
+    $members = $this->couch->queryView('members', 'names', 'view', $keys, $opts);
 
     $entries = [];
     foreach ($members as $member) {
