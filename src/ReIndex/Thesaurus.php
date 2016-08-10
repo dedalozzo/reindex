@@ -40,7 +40,8 @@ final class Thesaurus {
     $opts = new ViewQueryOpts();
     $opts->setLimit(1);
     $opts->setKey($tagName);
-    $rows = $this->couch->queryView("tags", "byName", NULL, $opts);
+    // tags/byName/view
+    $rows = $this->couch->queryView('tags', 'byName', 'view', NULL, $opts);
 
     if ($rows->isEmpty())
       throw new \RuntimeException('Tag not found.');
@@ -48,7 +49,8 @@ final class Thesaurus {
     $master = Tag::find(current($rows->getIterator())['id']);
 
     $opts->setKey($synonymName);
-    $rows = $this->couch->queryView("tags", "andSynonymsByName", NULL, $opts);
+    // tags/andSynonymsByName/view
+    $rows = $this->couch->queryView('tags', 'andSynonymsByName', 'view', NULL, $opts);
 
     if ($rows->isEmpty()) {
       $synonym = Synonym::create();
@@ -75,7 +77,8 @@ final class Thesaurus {
     $opts = new ViewQueryOpts();
     $opts->setLimit(1);
     $opts->setKey($synonymName);
-    $rows = $this->couch->queryView("tags", "synonymsByName", NULL, $opts);
+    // tags/synonymsByName/view
+    $rows = $this->couch->queryView('tags', 'synonymsByName', 'view', NULL, $opts);
 
     if ($rows->isEmpty())
       throw new \RuntimeException('Synonym not found.');
@@ -83,7 +86,8 @@ final class Thesaurus {
     $synonym = Synonym::find(current($rows->getIterator())['id']);
 
     $opts->setKey($synonym->id);
-    $rows = $this->couch->queryView("tags", "synonyms", NULL, $opts);
+    // tags/synonyms/view
+    $rows = $this->couch->queryView('tags', 'synonyms', 'view', NULL, $opts);
 
     // If the synonym is associated to a tag (it should be), removes the association.
     if (!$rows->isEmpty()) {
@@ -107,12 +111,14 @@ final class Thesaurus {
 
     if (is_null($tagName)) {
       $opts->doNotReduce();
-      $rows = $this->couch->queryView("tags", "synonymsAllNames", NULL, $opts);
+      // tags/synonymsNames/view
+      $rows = $this->couch->queryView('tags', 'synonymsNames', 'view', NULL, $opts);
     }
     else {
       $opts->setLimit(1);
       $opts->setKey($tagName);
-      $rows = $this->couch->queryView("tags", "byName", NULL, $opts);
+      // tags/byName/view
+      $rows = $this->couch->queryView('tags', 'byName', 'view', NULL, $opts);
 
       if ($rows->isEmpty())
         throw new \RuntimeException('Tag not found.');
@@ -121,7 +127,8 @@ final class Thesaurus {
 
       $opts->reset();
       $opts->doNotReduce();
-      $rows = $this->couch->queryView("tags", "synonymsAllNames", $tag->synonyms->asArray(), $opts);
+      // tags/synonymsNames/view
+      $rows = $this->couch->queryView('tags', 'synonymsNames', 'view', $tag->synonyms->asArray(), $opts);
     }
 
     return $rows->asArray();
