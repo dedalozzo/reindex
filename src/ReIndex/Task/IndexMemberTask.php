@@ -80,7 +80,7 @@ final class IndexMemberTask implements ITask {
 
   public function unserialize($serialized) {
     $this->init();
-    $this->member = $this->couch->getDoc(Couch::STD_DOC_PATH, unserialize($serialized));
+    $this->member = $this->couch->getDoc('members', Couch::STD_DOC_PATH, unserialize($serialized));
   }
 
 
