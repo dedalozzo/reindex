@@ -135,7 +135,8 @@ final class AuthController extends BaseController {
         $opts = new ViewQueryOpts();
         $opts->setKey($email)->setLimit(1);
 
-        $rows = $this->couch->queryView("members", "byEmail", NULL, $opts);
+        // members/byEmail/view
+        $rows = $this->couch->queryView('members', 'byEmail', 'view', NULL, $opts);
 
         if ($rows->isEmpty())
           throw new Exception\UserNotFoundException("Non vi è nessun utente registrato con l'e-mail inserita o la password è errata.");
@@ -218,7 +219,8 @@ final class AuthController extends BaseController {
         $opts = new ViewQueryOpts();
         $opts->setKey($email)->setLimit(1);
 
-        $rows = $this->couch->queryView("members", "byEmail", NULL, $opts);
+        // members/byEmail/view
+        $rows = $this->couch->queryView('members', 'byEmail', 'view', NULL, $opts);
 
         if (!$rows->isEmpty())
           throw new Exception\InvalidEmailException("Sei già registrato. <a href=\"#signin\">Fai il login!</a>");
