@@ -42,6 +42,14 @@ final class Synonym extends ActiveDoc {
 
 
   /**
+   * @copydoc ActiveDoc::getDbName()
+   */
+  protected function getDbName() {
+    return 'tags';
+  }
+
+
+  /**
    * @brief Returns a list of synonyms' related IDs.
    * @retval array An array of IDs.
    * @nosubgrouping
