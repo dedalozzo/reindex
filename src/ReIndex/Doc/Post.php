@@ -110,6 +110,14 @@ abstract class Post extends Versionable {
 
 
   /**
+   * @copydoc ActiveDoc::getDbName()
+   */
+  protected function getDbName() {
+    return 'posts';
+  }
+
+
+  /**
    * @brief Registers the vote into Redis database.
    * @warning Don't call this function unless you know what are you doing.
    * @param[in] int $value The vote.
