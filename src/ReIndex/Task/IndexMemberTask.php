@@ -123,8 +123,9 @@ final class IndexMemberTask implements ITask {
     // Username or full name has been changed or the member has never been indexed.
     if ($hash['username'] != $username or $hash['fullName'] != $fullName) {
       $opts = new ViewQueryOpts();
-      $opts->doNotReduce()->setKey([$this->member->id]);
-      $rows = $this->couch->queryView("friendships", "approvedPerMember", NULL, $opts);
+      $opts->doNotReduce()->setKey([TRUE, $this->member->id]);
+      // friendships/relations/view
+      $rows = $this->couch->queryView('friendships', 'relations', 'view', NULL, $opts);
 
       $this->redis->multi();
 
