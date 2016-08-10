@@ -119,11 +119,13 @@ final class MemberController extends ListController {
 
     if ($role === 'all') {
       $opts->setStartKey($startKey)->setEndKey($min);
-      $rows = $this->couch->queryView("members", "newest", NULL, $opts)->asArray();
+      // members/newest/view
+      $rows = $this->couch->queryView('members', 'newest', 'view', NULL, $opts)->asArray();
     }
     else {
       $opts->setStartKey([$role, $startKey])->setEndKey([$role, $min]);
-      $rows = $this->couch->queryView("members", "byRole", NULL, $opts)->asArray();
+      // members/byRole/view
+      $rows = $this->couch->queryView('members', 'byRole', 'view', NULL, $opts)->asArray();
     }
 
     $members = Member::collect(array_column($rows, 'id'));
