@@ -97,12 +97,12 @@ final class FriendCollection extends MemberCollection {
 
     // Creates and stores the friendship.
     $friendship = Friendship::request($this->member->id, $member->id);
-    $this->couch->saveDoc($friendship);
+    $this->couch->saveDoc('friendships', $friendship);
 
     // Follows the member.
     if (!$member->followers->exists($this->member)) {
       $follower = Follower::create($member->id, $this->member->id);
-      $this->couch->saveDoc($follower);
+      $this->couch->saveDoc('followers', $follower);
     }
   }
 
@@ -114,7 +114,7 @@ final class FriendCollection extends MemberCollection {
    */
   public function remove(Member $member) {
     if ($friendship = $this->exists($member)) {
-      $this->couch->deleteDoc(Couch::STD_DOC_PATH, $friendship->id, $friendship->rev);
+      $this->couch->deleteDoc('friendships', Couch::STD_DOC_PATH, $friendship->id, $friendship->rev);
 
       $this->redis->multi();
 
@@ -125,7 +125,7 @@ final class FriendCollection extends MemberCollection {
 
       // If you remove the member from your friends, you don't follow it anymore.
       if ($follower = $member->followers->exists($this->member))
-        $this->couch->deleteDoc(Couch::STD_DOC_PATH, $follower->id, $follower->rev);
+        $this->couch->deleteDoc('followers', Couch::STD_DOC_PATH, $follower->id, $follower->rev);
     }
     else
       throw new Exception\UserMismatchException("You are not friends.");
@@ -147,7 +147,7 @@ final class FriendCollection extends MemberCollection {
     if ($result->isEmpty())
       return FALSE;
     else
-      return $this->couch->getDoc(Couch::STD_DOC_PATH, $result[0]['id']);
+      return $this->couch->getDoc('friendships', Couch::STD_DOC_PATH, $result[0]['id']);
   }
 
 
@@ -166,7 +166,7 @@ final class FriendCollection extends MemberCollection {
     if ($result->isEmpty())
       return FALSE;
     else
-      return $this->couch->getDoc(Couch::STD_DOC_PATH, $result[0]['id']);
+      return $this->couch->getDoc('friendships', Couch::STD_DOC_PATH, $result[0]['id']);
   }
 
 
@@ -181,7 +181,7 @@ final class FriendCollection extends MemberCollection {
         throw new Exception\UserMismatchException("It's not up to you approve someone else's friendship.");
 
       $friendship->approve();
-      $this->couch->saveDoc($friendship);
+      $this->couch->saveDoc('friendships', $friendship);
 
       $this->redis->multi();
 
@@ -193,7 +193,7 @@ final class FriendCollection extends MemberCollection {
       // Follows the member.
       if (!$member->followers->exists($this->member)) {
         $follower = Follower::create($member->id, $this->member->id);
-        $this->couch->saveDoc($follower);
+        $this->couch->saveDoc('followers', $follower);
       }
     }
     else
@@ -212,7 +212,7 @@ final class FriendCollection extends MemberCollection {
       if (!$this->member->match($friendship->receiverId))
         throw new Exception\UserMismatchException("It's not up to you reject someone else's friendship.");
 
-      $this->couch->deleteDoc(Couch::STD_DOC_PATH, $friendship->id, $friendship->rev);
+      $this->couch->deleteDoc('friendships', Couch::STD_DOC_PATH, $friendship->id, $friendship->rev);
     }
     else
       throw new Exception\UserMismatchException("The friendship request doesn't exist anymore.");
