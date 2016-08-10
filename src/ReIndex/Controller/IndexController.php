@@ -69,7 +69,8 @@ class IndexController extends ListController {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(1)->setKey($name);
 
-    $rows = $this->couch->queryView('tags', 'byName', NULL, $opts);
+    // tags/byName/view
+    $rows = $this->couch->queryView('tags', 'byName', 'view', NULL, $opts);
 
     if ($rows->isEmpty())
       return FALSE;
@@ -80,14 +81,14 @@ class IndexController extends ListController {
 
   /*
    * @brief Retrieves information for a bunch of posts.
-   * @param[in] string $viewName The name of the view.
+   * @param[in] string $designDocName The name of the design document.
    * @param[in] string $type The type of posts.
    * @param[in] int $count The number of requested posts.
    */
-  protected function getInfo($viewName, $type, $count = 10) {
+  protected function getInfo($designDocName, $type, $count = 10) {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit($count)->reverseOrderOfResults()->setStartKey([$type, Couch::WildCard()])->setEndKey([$type]);
-    $rows = $this->couch->queryView('posts', $viewName, NULL, $opts);
+    $rows = $this->couch->queryView('posts', $designDocName, 'view', NULL, $opts);
 
     if ($rows->isEmpty())
       return NULL;
@@ -98,19 +99,22 @@ class IndexController extends ListController {
     // Posts.
     $opts->reset();
     $opts->doNotReduce()->includeMissingKeys();
-    $posts = $this->couch->queryView("posts", "all", $ids, $opts);
+    // posts/info/view
+    $posts = $this->couch->queryView('posts', 'info', 'view', $ids, $opts);
 
     Helper\ArrayHelper::unversion($ids);
 
     // Scores.
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
-    $scores = $this->couch->queryView("votes", "perItem", $ids, $opts);
+    // votes/perItem/view
+    $scores = $this->couch->queryView('votes', 'perItem', 'view', $ids, $opts);
 
     // Replies.
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
-    $replies = $this->couch->queryView("replies", "perPost", $ids, $opts);
+    // replies/perPost/view
+    $replies = $this->couch->queryView('replies', 'perPost', 'view', $ids, $opts);
 
     $entries = [];
     $postCount = count($posts);
@@ -153,7 +157,8 @@ class IndexController extends ListController {
     if (!empty($ids)) {
       $opts = new ViewQueryOpts();
       $opts->doNotReduce();
-      $names = $this->couch->queryView("tags", "allNames", $ids, $opts);
+      // tags/names/view
+      $names = $this->couch->queryView('tags', 'names', 'view', $ids, $opts);
 
       $count = count($ids);
       for ($i = 0; $i < $count; $i++)
@@ -222,7 +227,8 @@ class IndexController extends ListController {
     if (!empty($keys)) {
       $opts = new ViewQueryOpts();
       $opts->doNotReduce();
-      $rows = $this->couch->queryView("posts", "unversion", $keys, $opts);
+      // posts/byUnversionId/view
+      $rows = $this->couch->queryView('posts', 'byUnversionId', 'view', $keys, $opts);
       $posts = Post::collect(array_column($rows->asArray(), 'id'));
     }
     else
@@ -505,7 +511,8 @@ class IndexController extends ListController {
   public function showAction($year, $month, $day, $slug) {
     $opts = new ViewQueryOpts();
     $opts->setKey([$year, $month, $day, $slug])->setLimit(1);
-    $rows = $this->couch->queryView("posts", "byUrl", NULL, $opts);
+    // posts/byUrl/view
+    $rows = $this->couch->queryView('posts', 'byUrl', 'view', NULL, $opts);
 
     if ($rows->isEmpty())
       return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
@@ -578,14 +585,20 @@ class IndexController extends ListController {
       if (!$this->user->has(new Role\MemberRole\EditPostPermission($post)))
         return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
+      /*
       $opts = new ViewQueryOpts();
       $opts->setKey($post->unversionId)->doNotReduce();
-      $revisions = $this->couch->queryView("revisions", "perItem", NULL, $opts);
+      // posts/approvedInfo/view
+      $revisions = $this->couch->queryView('posts', 'approvedInfo', 'view', NULL, $opts);
+      */
 
+      /*
+      // members/names/view
       $keys = array_column(array_column($revisions->asArray(), 'value'), 'editorId');
       $opts->reset();
       $opts->includeMissingKeys();
-      $members = $this->couch->queryView("members", "allNames", $keys, $opts);
+      $members = $this->couch->queryView('members', 'names', 'view', $keys, $opts);
+      */
 
       /*
       $versions = [];
