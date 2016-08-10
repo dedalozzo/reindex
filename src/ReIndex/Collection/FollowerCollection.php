@@ -69,7 +69,7 @@ final class FollowerCollection extends MemberCollection {
    */
   public function unfollow(Member $member) {
     if ($follower = $member->followers->exists($this->member))
-      $this->couch->deleteDoc(Couch::STD_DOC_PATH, $follower->id, $follower->rev);
+      $this->couch->deleteDoc('followers', Couch::STD_DOC_PATH, $follower->id, $follower->rev);
     else
       throw new Exception\UserMismatchException("You are not following him.");
   }
@@ -90,7 +90,7 @@ final class FollowerCollection extends MemberCollection {
     if ($result->isEmpty())
       return FALSE;
     else
-      return $this->couch->getDoc(Couch::STD_DOC_PATH, $result[0]['id']);
+      return $this->couch->getDoc('followers', Couch::STD_DOC_PATH, $result[0]['id']);
   }
 
 }
