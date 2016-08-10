@@ -13,8 +13,6 @@ namespace ReIndex\Controller;
 
 use EoC\Couch;
 
-use ReIndex\Exception;
-
 
 /**
  * @brief Controller for the API requests.
@@ -71,13 +69,37 @@ final class ApiController extends BaseController {
   }
 
 
-  protected function doAction($action) {
+  /**
+   * @brief Executes the specified action on a post.
+   * @param[in] string $name The method name.
+   */
+  protected function fireMethod($name) {
     try {
       if ($this->request->hasPost('id')) {
-        $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
-        call_user_func([$doc, $action]);
+        $doc = $this->couchdb->getDoc('posts', Couch::STD_DOC_PATH, $this->request->getPost('id'));
+        call_user_func([$doc, $name]);
         $doc->save();
         echo json_encode([TRUE, $this->user->username, time()]);
+        $this->view->disable();
+      }
+      else
+        throw new \RuntimeException("La risorsa non è più disponibile.");
+    }
+    catch (\Exception $e) {
+      echo json_encode([FALSE, $e->getMessage()]);
+    }
+  }
+
+
+  /**
+   * @brief Likes a document.
+   * @param[in] string $dbName The database name where the document is stored.
+   */
+  protected function like($dbName) {
+    try {
+      if ($this->request->hasPost('id')) {
+        $doc = $this->couchdb->getDoc($dbName, Couch::STD_DOC_PATH, $this->request->getPost('id'));
+        echo json_encode([TRUE, $doc->like()]);
         $this->view->disable();
       }
       else
@@ -99,175 +121,12 @@ final class ApiController extends BaseController {
 
 
   /**
-   * @brief Likes a post.
-   * @retval array
-   */
-  public function likeAction() {
-    try {
-      if ($this->request->hasPost('id')) {
-        $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
-        echo json_encode([TRUE, $doc->like()]);
-        $this->view->disable();
-      }
-      else
-        throw new \RuntimeException("La risorsa non è più disponibile.");
-    }
-    catch (\Exception $e) {
-      echo json_encode([FALSE, $e->getMessage()]);
-    }
-  }
-
-
-  /**
-   * @brief Adds a tag to the user's favorites.
-   * @retval array
-   */
-  public function starTagAction() {
-    try {
-      if ($this->request->hasPost('id')) {
-        $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
-        echo json_encode([TRUE, $doc->star()]);
-        $this->view->disable();
-      }
-      else
-        throw new \RuntimeException("La risorsa non è più disponibile.");
-    }
-    catch (\Exception $e) {
-      echo json_encode([FALSE, $e->getMessage()]);
-    }
-  }
-
-
-  /**
-   * @brief Submits a new document's revision.
-   * @retval array
-   */
-  public function submitDocRevAction() {
-
-  }
-
-
-  /**
-   * @brief Casts a vote to approve a document's revision.
-   * @retval array
-   */
-  public function approveDocRevAction() {
-    try {
-      if ($this->request->hasPost('id')) {
-        $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
-        echo json_encode([TRUE, $doc->approve()]);
-        $this->view->disable();
-      }
-      else
-        throw new \RuntimeException("La risorsa non è più disponibile.");
-    }
-    catch (\Exception $e) {
-      echo json_encode([FALSE, $e->getMessage()]);
-    }
-  }
-
-
-  /**
-   * @brief Casts a vote to reject a document's revision.
-   * @retval array
-   */
-  public function rejectDocRevAction() {
-    try {
-      if ($this->request->hasPost('id')) {
-        $doc = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
-        echo json_encode([TRUE, $doc->reject($this->request->getPost('reason'))]);
-        $this->view->disable();
-      }
-      else
-        throw new \RuntimeException("La risorsa non è più disponibile.");
-    }
-    catch (\Exception $e) {
-      echo json_encode([FALSE, $e->getMessage()]);
-    }
-  }
-
-
-  /**
-   * @brief Reverts a versionable document.
-   * @retval array
-   */
-  public function revertAction() {
-
-  }
-
-
-  /**
-   * @brief Moves the document to trash.
-   */
-  public function moveToTrashAction() {
-    $this->doAction('moveToTrash');
-  }
-
-
-  /**
-   * @brief Restores the document.
-   */
-  public function restoreAction() {
-    $this->doAction('restore');
-  }
-
-
-  /**
-   * @brief Mark as draft a versionable document.
-   * @retval string
-   */
-  public function markAsDraftAction() {
-
-  }
-
-
-  /**
-   * @brief Closes the post.
-   */
-  public function closeAction() {
-    $this->doAction('close');
-  }
-
-
-  /**
-   * @brief Locks the post.
-   */
-  public function lockAction() {
-    $this->doAction('lock');
-  }
-
-
-  /**
-   * @brief Unprotects the post.
-   */
-  public function unprotectAction() {
-    $this->doAction('unprotect');
-  }
-
-
-  /**
-   * @brief Hides the post.
-   */
-  public function hideAction() {
-    $this->doAction('hide');
-  }
-
-
-  /**
-   * @brief Shows the post.
-   */
-  public function showAction() {
-    $this->doAction('show');
-  }
-
-
-  /**
    * @brief Adds a friend.
    */
   public function addFriendAction() {
     try {
       if ($this->request->hasPost('id')) {
-        $member = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
+        $member = $this->couchdb->getDoc('members', Couch::STD_DOC_PATH, $this->request->getPost('id'));
         $this->user->friends->add($member);
         echo json_encode([TRUE]);
         $this->view->disable();
@@ -287,9 +146,100 @@ final class ApiController extends BaseController {
   public function removeFriendAction() {
     try {
       if ($this->request->hasPost('id')) {
-        $member = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
+        $member = $this->couchdb->getDoc('members', Couch::STD_DOC_PATH, $this->request->getPost('id'));
         $this->user->friends->remove($member);
         echo json_encode([TRUE]);
+        $this->view->disable();
+      }
+      else
+        throw new \RuntimeException("La risorsa non è più disponibile.");
+    }
+    catch (\Exception $e) {
+      echo json_encode([FALSE, $e->getMessage()]);
+    }
+  }
+
+
+  /**
+   * @brief Likes a post.
+   */
+  public function likePostAction() {
+    $this->like('posts');
+  }
+
+
+  /**
+   * @brief Closes the post.
+   */
+  public function closePostAction() {
+    $this->fireMethod('close');
+  }
+
+
+  /**
+   * @brief Locks the post.
+   */
+  public function lockPostAction() {
+    $this->fireMethod('lock');
+  }
+
+
+  /**
+   * @brief Unprotects the post.
+   */
+  public function unprotectPostAction() {
+    $this->fireMethod('unprotect');
+  }
+
+
+  /**
+   * @brief Hides the post.
+   */
+  public function hidePostAction() {
+    $this->fireMethod('hide');
+  }
+
+
+  /**
+   * @brief Shows the post.
+   */
+  public function showPostAction() {
+    $this->fireMethod('show');
+  }
+
+  /**
+   * @brief Moves the document to trash.
+   */
+  public function movePostToTrashAction() {
+    $this->fireMethod('moveToTrash');
+  }
+
+
+  /**
+   * @brief Restores the document.
+   */
+  public function restorePostAction() {
+    $this->fireMethod('restore');
+  }
+
+
+  /**
+   * @brief Likes a reply.
+   */
+  public function likeReplyAction() {
+    $this->like('replies');
+  }
+
+
+  /**
+   * @brief Adds a tag to the user's favorites.
+   * @retval array
+   */
+  public function starTagAction() {
+    try {
+      if ($this->request->hasPost('id')) {
+        $doc = $this->couchdb->getDoc('tags', Couch::STD_DOC_PATH, $this->request->getPost('id'));
+        echo json_encode([TRUE, $doc->star()]);
         $this->view->disable();
       }
       else
