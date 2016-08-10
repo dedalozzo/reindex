@@ -34,7 +34,8 @@ final class FollowerCollection extends MemberCollection {
       $opts = new ViewQueryOpts();
       $opts->reduce()->setKey([$this->member->id]);
 
-      $this->followersCount = $this->couch->queryView("followers", "perMember", NULL, $opts)->getReducedValue();
+      //followers/perMember/view
+      $this->followersCount = $this->couch->queryView('followers', 'perMember', 'view', NULL, $opts)->getReducedValue();
     }
 
     return $this->followersCount;
@@ -83,7 +84,8 @@ final class FollowerCollection extends MemberCollection {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(1)->setKey([$this->member->id, $member->id]);
 
-    $result = $this->couch->queryView("followers", "perMember", NULL, $opts);
+    //followers/perMember/view
+    $result = $this->couch->queryView('followers', 'perMember', 'view', NULL, $opts);
 
     if ($result->isEmpty())
       return FALSE;
