@@ -98,7 +98,9 @@ final class TagCollection extends MetaCollection {
 
     $opts = new ViewQueryOpts();
     $opts->includeMissingKeys();
-    $rows = $this->couch->queryView("tags", "andSynonymsByName", $names, $opts)->asArray();
+
+    // tags/andSynonymsByName/view
+    $rows = $this->couch->queryView('tags', 'andSynonymsByName', 'view', $names, $opts)->asArray();
 
     foreach ($rows as $row) {
 
@@ -127,7 +129,8 @@ final class TagCollection extends MetaCollection {
     if (!$this->isEmpty()) {
       $opts = new ViewQueryOpts();
       $opts->doNotReduce();
-      $masters = $this->couch->queryView("tags", "synonyms", array_keys($this->meta[$this->name]), $opts)->asArray();
+      // tags/synonyms/view
+      $masters = $this->couch->queryView('tags', 'synonyms', 'view', array_keys($this->meta[$this->name]), $opts)->asArray();
       return array_unique(array_column($masters, 'value'));
     }
     else
@@ -144,7 +147,8 @@ final class TagCollection extends MetaCollection {
 
       $opts = new ViewQueryOpts();
       $opts->doNotReduce();
-      return $this->couch->queryView("tags", "allNames", $ids, $opts);
+      // tags/names/view
+      return $this->couch->queryView('tags', 'names', 'view', $ids, $opts);
     }
     else
       return [];
