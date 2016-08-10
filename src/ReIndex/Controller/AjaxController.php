@@ -34,7 +34,7 @@ final class AjaxController extends BaseController {
   public function moderatorMenuAction() {
     try {
       if ($this->request->hasPost('id')) {
-        $post = $this->couchdb->getDoc(Couch::STD_DOC_PATH, $this->request->getPost('id'));
+        $post = $this->couchdb->getDoc('posts', Couch::STD_DOC_PATH, $this->request->getPost('id'));
 
         $this->view->setVar('post', $post);
 
