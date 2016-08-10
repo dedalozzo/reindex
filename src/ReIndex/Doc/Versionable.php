@@ -72,7 +72,8 @@ abstract class Versionable extends ActiveDoc {
   protected function indexingInProgress() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setKey($this->unversionId);
-    $rows = $this->couch->queryView("revisions", "inProgress", NULL, $opts);
+    // posts/inElaboration/view
+    $rows = $this->couch->queryView('posts', 'inElaboration', 'view', NULL, $opts);
 
     return !$rows->isEmpty();
   }
@@ -231,7 +232,8 @@ abstract class Versionable extends ActiveDoc {
   public function getUsername() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setKey($this->creatorId);
-    return $this->couch->queryView("members", "allNames", NULL, $opts)[0]['value'][0];
+    // members/names/view
+    return $this->couch->queryView('members', 'names', 'view', NULL, $opts)[0]['value'][0];
   }
 
 
@@ -242,7 +244,7 @@ abstract class Versionable extends ActiveDoc {
   public function getGravatar() {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setKey($this->creatorId);
-    $email = $this->couch->queryView("members", "allNames", NULL, $opts)[0]['value'][1];
+    $email = $this->couch->queryView('members', 'names', 'view', NULL, $opts)[0]['value'][1];
     return 'http://gravatar.com/avatar/'.md5(strtolower($email)).'?d=identicon';
   }
 
