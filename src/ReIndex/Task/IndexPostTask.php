@@ -269,7 +269,8 @@ final class IndexPostTask implements ITask, IChunkHook {
       // Sets the state of the current revision to `approved`.
       $opts = new ViewQueryOpts();
       $opts->doNotReduce()->setKey($this->id);
-      $rows = $this->couch->queryView("posts", "unversion", NULL, $opts);
+      // posts/byUnversionId/view
+      $rows = $this->couch->queryView('posts', 'byUnversionId', 'view', NULL, $opts);
 
       if (!$rows->isEmpty()) {
         $current = $this->couch->getDoc(Couch::STD_DOC_PATH, $rows[0]['id']);
@@ -337,7 +338,8 @@ final class IndexPostTask implements ITask, IChunkHook {
     $opts->doNotReduce()->reverseOrderOfResults();
     $opts->setStartKey([$this->post->creatorId, Couch::WildCard()])->setEndKey([$this->post->creatorId]);
 
-    $this->couch->queryView("followers", "perMember", NULL, $opts, $this);
+    // followers/perMember/view
+    $this->couch->queryView('followers', 'perMember', 'view' NULL, $opts, $this);
     */
   }
 
