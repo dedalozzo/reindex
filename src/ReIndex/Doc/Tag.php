@@ -64,14 +64,16 @@ final class Tag extends Versionable {
 
     // Gets the tags properties.
     $opts->doNotReduce();
-    $rows = $couch->queryView("tags", "all", $ids, $opts);
+    // tags/info/view
+    $rows = $couch->queryView('tags', 'info', 'view', $ids, $opts);
 
     Helper\ArrayHelper::unversion($ids);
 
     // Retrieves the number of posts per tag.
     $opts->reset();
     $opts->groupResults()->includeMissingKeys();
-    $postsCount = $couch->queryView("posts", "perTag", $ids, $opts);
+    // posts/perTag/view
+    $postsCount = $couch->queryView('posts', 'perTag', 'view', $ids, $opts);
 
     $tags = [];
     $tagsCount = count($rows);
@@ -115,7 +117,8 @@ final class Tag extends Versionable {
   public function getStarsCount() {
     $opts = new ViewQueryOpts();
     $opts->setKey($this->unversionId);
-    return $this->couch->queryView("members", "byTag", NULL, $opts)->getReducedValue();
+    //members/byTag/view
+    return $this->couch->queryView('members', 'byTag', 'view', NULL, $opts)->getReducedValue();
   }
 
   //!@}
@@ -182,7 +185,8 @@ final class Tag extends Versionable {
       // Sets the state of the current revision (if any) to `approved`.
       $opts = new ViewQueryOpts();
       $opts->doNotReduce()->setKey($this->unversionId);
-      $rows = $this->couch->queryView("tags", "unversion", NULL, $opts);
+      // tags/byUnversionId/view
+      $rows = $this->couch->queryView('tags', 'byUnversionId', 'view', NULL, $opts);
 
       if (!$rows->isEmpty()) {
         $current = $this->couch->getDoc(Couch::STD_DOC_PATH, $rows[0]['id']);
