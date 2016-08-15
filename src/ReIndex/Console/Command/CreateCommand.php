@@ -19,7 +19,7 @@ use EoC\Adapter\SocketAdapter;
 
 
 /**
- * @brief Creates the ReIndex database.
+ * @brief Creates the ReIndex databases.
  * @nosubgrouping
  */
 final class CreateCommand extends AbstractCommand {
@@ -39,14 +39,15 @@ final class CreateCommand extends AbstractCommand {
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
     $cf = $this->di['config']['couchdb'];
+    $prefix = $this->di['config']['application']['dbPrefix'];
 
     $couch = new Couch(new SocketAdapter($cf['host'].":".$cf['port'], $cf['user'], $cf['password']));
-
-    $couch->setDbPrefix($this->di['config']['application']['dbPrefix']);
+    $couch->setDbPrefix($prefix);
 
     $databases = $this->di['init'];
     foreach ($databases as $name => $value) {
       $couch->createDb($name);
+      printf('%s%s... done'.PHP_EOL, $prefix, $name);
     }
 
     $redis = $this->di['redis'];
