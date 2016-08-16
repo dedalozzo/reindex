@@ -15,6 +15,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 use EoC\Couch;
 use EoC\Doc\DesignDoc;
@@ -148,34 +149,37 @@ final class InitCommand extends AbstractCommand {
     $this->prefix = $this->couch->getDbPrefix();
     $this->init = $this->di['init'];
 
-    if ($dbName = $input->getArgument('database-name')) {
-      if (!array_key_exists($dbName, $this->init)) {
-        echo "Invalid database's name.".PHP_EOL;
-        exit(0);
-      }
+    $question = new ConfirmationQuestion('Are you sure you want init the ReIndex database [Y/n]', FALSE);
 
-      if ($docName = $input->getArgument('ddoc-name')) {
-        if (!array_key_exists($docName, $this->init[$dbName])) {
-          echo "Invalid design document's name.".PHP_EOL;
+    $helper = $this->getHelper('question');
+
+    if ($helper->ask($input, $output, $question)) {
+      if ($dbName = $input->getArgument('database-name')) {
+        if (!array_key_exists($dbName, $this->init)) {
+          echo "Invalid database's name." . PHP_EOL;
           exit(0);
         }
 
-        $this->initDDoc($dbName, $docName);
-      }
+        if ($docName = $input->getArgument('ddoc-name')) {
+          if (!array_key_exists($docName, $this->init[$dbName])) {
+            echo "Invalid design document's name." . PHP_EOL;
+            exit(0);
+          }
+
+          $this->initDDoc($dbName, $docName);
+        } else {
+          if ($input->getOption('list'))
+            $this->listDDocs($dbName);
+          else
+            $this->initDb($dbName);
+        }
+      } elseif ($input->getOption('list'))
+        foreach ($this->init as $dbName => $ddocs)
+          $this->listDDocs($dbName, $ddocs);
       else {
-        if ($input->getOption('list'))
-          $this->listDDocs($dbName);
-        else
-          $this->initDb($dbName);
+        foreach ($this->init as $dbName => $ddocs)
+          $this->initDb($dbName, $ddocs);
       }
-    }
-    elseif ($input->getOption('list'))
-      foreach ($this->init as $dbName => $ddocs)
-        $this->listDDocs($dbName, $ddocs);
-    else {
-      foreach ($this->init as $dbName => $ddocs)
-        $this->initDb($dbName, $ddocs);
     }
   }
-
 }
