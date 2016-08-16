@@ -18,6 +18,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Helper\ProgressBar;
 
+use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 use EoC\Hook\IChunkHook;
 
@@ -46,6 +47,11 @@ final class RebuildCommand extends AbstractCommand implements IChunkHook {
    */
   private $progress;
 
+  /**
+   * @var Couch $couch
+   */
+  protected $couch;
+
 
   /**
    * @brief Configures the command.
@@ -54,10 +60,39 @@ final class RebuildCommand extends AbstractCommand implements IChunkHook {
     $this->setName("refresh");
     $this->setDescription("Rebuild the application cache");
 
+    $this->addArgument("database-name",
+      InputArgument::OPTIONAL,
+      "An optional database name"
+    );
+
     $this->addOption("id",
       NULL,
       InputOption::VALUE_REQUIRED,
       "When provided, executes the tasks associated to the related document, if any");
+  }
+
+
+  /**
+   * @brief Enqueues the tasks.
+   * @param[in] string $dbName The database's name.
+   * @param[in] OutputInterface $output The Symfony console output interface.
+   */
+  protected function queueTasks($dbName, OutputInterface $output) {
+    $opts = new ViewQueryOpts();
+    $opts->reduce();
+    $docsCount = $this->couch->queryView($dbName, 'tasks', 'view', NULL, $opts)->getReducedValue();
+
+    $this->progress = new ProgressBar($output, $docsCount);
+    $this->progress->setRedrawFrequency(1);
+    $this->progress->setOverwrite(TRUE);
+    $this->progress->start();
+
+    $opts->reset();
+    $opts->doNotReduce();
+
+    $this->couch->queryView($dbName, 'tasks', 'view', NULL, $opts, $this);
+
+    $this->progress->finish();
   }
 
 
@@ -68,28 +103,47 @@ final class RebuildCommand extends AbstractCommand implements IChunkHook {
     $this->queue = $this->di['taskqueue'];
 
     // We can't use this instance inside the `process()` method.
-    $couch = $this->di['couchdb'];
+    $this->couch = $this->di['couchdb'];
+    $databases = $this->di['init'];
 
-    $opts = new ViewQueryOpts();
+    if ($dbName = $input->getOption('database-name')) {
+      if (!array_key_exists($dbName, $databases)) {
+        $output->writeln("There is no database with such name");
+        exit(0);
+      }
 
-    if ($id = $input->getOption('id')) {
-      $opts->doNotReduce()->setKey($id);
-      $rows = $couch->queryView("tasks", "all", NULL, $opts);
+      if ($id = $input->getOption('id')) {
+        $opts = new ViewQueryOpts();
+        $opts->doNotReduce()->setKey($id);
+        $rows = $this->couch->queryView($dbName, 'tasks', 'view', NULL, $opts);
 
-      if (!$rows->isEmpty()) {
-        foreach($rows as $row) {
-          $docClass = $row['value']['docClass'];
-          $taskClass = $row['value']['taskClass'];
+        if (!$rows->isEmpty()) {
+          foreach ($rows as $row) {
+            $docClass = $row['value']['docClass'];
+            $taskClass = $row['value']['taskClass'];
 
-          $doc = new $docClass;
-          $doc->id = $row['id'];
+            $doc = new $docClass;
+            $doc->id = $row['id'];
 
-          $task = new $taskClass($doc);
-          $this->queue->add($task);
+            $task = new $taskClass($doc);
+            $this->queue->add($task);
+          }
         }
+        else
+          $output->writeln("There aren't tasks associated to the document");
       }
       else {
-        $output->writeln("There aren't tasks associated to the document");
+        $question = new ConfirmationQuestion('Are you sure you want partially rebuild application cache? [Y/n]', FALSE);
+
+        $helper = $this->getHelper('question');
+
+        if ($helper->ask($input, $output, $question)) {
+          $output->writeln("Refreshing application cache...");
+
+          $this->queueTasks($dbName, $output);
+        }
+
+        parent::execute($input, $output);
       }
     }
     else {
@@ -103,20 +157,12 @@ final class RebuildCommand extends AbstractCommand implements IChunkHook {
         $redis = $this->di['redis'];
         $redis->flushAll();
 
-        $opts->reduce();
-        $docsCount = $couch->queryView("tasks", "all", NULL, $opts)->getReducedValue();
+        foreach ($databases as $dbName => $ddocs) {
+          if (!array_key_exists('tasks', $ddocs))
+            continue;
 
-        $this->progress = new ProgressBar($output, $docsCount);
-        $this->progress->setRedrawFrequency(1);
-        $this->progress->setOverwrite(TRUE);
-        $this->progress->start();
-
-        $opts->reset();
-        $opts->doNotReduce();
-
-        $couch->queryView("tasks", "all", NULL, $opts, $this);
-
-        $this->progress->finish();
+          $this->queueTasks($dbName, $output);
+        }
 
         parent::execute($input, $output);
       }
