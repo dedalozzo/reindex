@@ -24,6 +24,7 @@
         "3f/pygmentize": "dev-master",
         "3f/converter": "dev-master",
         "symfony/console": "~3",
+        "symfony/process": "~3",
         "lusitanian/oauth": "~0.8",
         "monolog/monolog": "~1",
         "graze/monolog-extensions": "*",
