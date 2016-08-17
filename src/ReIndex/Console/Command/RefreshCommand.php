@@ -120,9 +120,6 @@ final class RefreshCommand extends AbstractCommand {
     else {
       foreach ($this->init as $dbName => $ddocs)
         $this->refreshViewsInDb($output, $dbName, $ddocs);
-
-      echo PHP_EOL;
-      $output->writeln('Please use `couch status` to see the status progression.');
     }
   }
 
