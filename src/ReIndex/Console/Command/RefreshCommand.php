@@ -62,18 +62,13 @@ final class RefreshCommand extends AbstractCommand {
       $ddocs = &$this->init[$dbName];
 
     foreach ($ddocs as $docName => $views) {
-
       $cmd = sprintf('rei refresh %s %s', $dbName, $docName);
+
       $process = new Process($cmd);
-
       $process->start();
-      $output->writeln('Please use `couch status` to see the status progression.');
-      $msg = sprintf('%s %s ...refreshing', $this->prefix.$dbName, $docName);
-      $output->writeln($msg);
 
-      if (!$process->isSuccessful()) {
-        throw new ProcessFailedException($process);
-      }
+      $msg = sprintf('%s/%s ...done', $this->prefix.$dbName, $docName);
+      $output->writeln($msg);
     }
   }
 
@@ -125,6 +120,9 @@ final class RefreshCommand extends AbstractCommand {
     else {
       foreach ($this->init as $dbName => $ddocs)
         $this->refreshViewsInDb($output, $dbName, $ddocs);
+
+      echo PHP_EOL;
+      $output->writeln('Please use `couch status` to see the status progression.');
     }
   }
 
