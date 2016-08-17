@@ -23,7 +23,7 @@ use EoC\Couch;
 
 
 /**
- * @brief Initializes the ReIndex database, adding the required design documents.
+ * @brief Refreshes the ReIndex databases' views (or a single view).
  * @nosubgrouping
  */
 final class RefreshCommand extends AbstractCommand {
@@ -34,33 +34,17 @@ final class RefreshCommand extends AbstractCommand {
   protected $couch;
 
   protected $prefix;
-  protected $init; // The init array.
+
+  protected $init;
 
 
   /**
-   * @brief Prints a list of all the available design documents.
-   * @param[in] string $dbName The database's name.
-   * @param[in] array $ddocs An array of design documents.
-   */
-  protected function listDDocs($dbName, &$ddocs = NULL) {
-    if (is_null($ddocs))
-      $ddocs = $this->init[$dbName];
-
-    foreach ($ddocs as $docName => $views) {
-      printf('%s%s/%s'.PHP_EOL, $this->prefix, $dbName, $docName);
-    }
-  }
-
-
-  /**
-   * @brief Insert a single design document within all its views.
+   * @brief Refresh all the views contained inside a design document.
    * @param[in] string $dbName The database's name.
    * @param[in] string $docName The design document's name.
-   * @param[in] array $views An array of views.
    */
-  protected function refreshViewsInDDoc($dbName, $docName, $views) {
-    $viewName = key($views) ;
-
+  protected function refreshViewsInDDoc($dbName, $docName) {
+    $viewName = key($this->init[$dbName][$docName]) ;
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->setLimit(0);
     $this->couch->queryView($dbName, $docName, $viewName);
@@ -68,16 +52,28 @@ final class RefreshCommand extends AbstractCommand {
 
 
   /**
-   * @brief Insert all design documents.
+   * @brief Refresh all the views contained inside a database.
+   * @param[in] OutputInterface $output The Symfony console output interface.
    * @param[in] string $dbName The database's name.
    * @param[in] array $ddocs An array of design documents.
    */
-  protected function refreshViewsInDb($dbName, &$ddocs = NULL) {
+  protected function refreshViewsInDb(OutputInterface $output, $dbName, &$ddocs = NULL) {
     if (is_null($ddocs))
       $ddocs = &$this->init[$dbName];
 
     foreach ($ddocs as $docName => $views) {
-      $this->refreshViewsInDDoc($dbName, $docName, $views);
+
+      $cmd = sprintf('rei refresh %s %s', $dbName, $docName);
+      $process = new Process($cmd);
+
+      $process->start();
+      $output->writeln('Please use `couch status` to see the status progression.');
+      $msg = sprintf('%s %s ...refreshing', $this->prefix.$dbName, $docName);
+      $output->writeln($msg);
+
+      if (!$process->isSuccessful()) {
+        throw new ProcessFailedException($process);
+      }
     }
   }
 
@@ -124,11 +120,11 @@ final class RefreshCommand extends AbstractCommand {
         $this->refreshViewsInDDoc($dbName, $docName);
       }
       else
-        $this->refreshViewsInDb($dbName);
+        $this->refreshViewsInDb($output, $dbName);
     }
     else {
       foreach ($this->init as $dbName => $ddocs)
-        $this->refreshViewsInDb($dbName, $ddocs);
+        $this->refreshViewsInDb($output, $dbName, $ddocs);
     }
   }
 
