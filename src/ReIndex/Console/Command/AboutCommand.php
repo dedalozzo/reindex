@@ -43,6 +43,7 @@ class AboutCommand extends AbstractCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     $couch = $this->di['couchdb'];
     $redis = $this->di['redis'];
+    $init = $this->di['init'];
 
     echo ucfirst($this->di['config']->application->domainName).PHP_EOL;
     echo PHP_EOL;
@@ -52,12 +53,6 @@ class AboutCommand extends AbstractCommand {
     echo "PHP ".phpversion().PHP_EOL;
     echo "Phalcon ".PhalconVersion::get().PHP_EOL;
     echo $couch->getClientInfo();
-    echo PHP_EOL;
-
-    echo "[couchdb]".PHP_EOL;
-    echo $couch->getServerInfo();
-    echo PHP_EOL;
-    echo $couch->getDbInfo();
     echo PHP_EOL;
 
     echo "[redis]".PHP_EOL;
@@ -74,6 +69,15 @@ class AboutCommand extends AbstractCommand {
     echo "Total Connections Received: ".$redisInfo['total_connections_received'].PHP_EOL;
     echo "Total Commands Processed: ".$redisInfo['total_commands_processed'].PHP_EOL;
     echo "Role: ".$redisInfo['role'].PHP_EOL;
+    echo PHP_EOL;
+
+    echo "[couchdb]".PHP_EOL;
+    echo $couch->getServerInfo();
+    echo PHP_EOL;
+    foreach ($init as $dbName => $ddocs) {
+      echo $couch->getDbInfo($dbName);
+      echo PHP_EOL;
+    }
   }
 
 }
