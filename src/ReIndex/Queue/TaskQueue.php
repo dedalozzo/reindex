@@ -13,6 +13,8 @@ namespace ReIndex\Queue;
 
 use ReIndex\Task\ITask;
 
+use EoC\Exception\ServerErrorException;
+
 use AMQPChannel;
 use AMQPExchange;
 use AMQPQueue;
@@ -68,18 +70,24 @@ class TaskQueue extends AbstractQueue {
    * @brief Performs the execution of the next task in the queue.
    */
   public function perform() {
-    $jobsCounter = $this->config->application->maxJobs;
+    $jobsCounter = $this->config['application']['maxJobs'];
 
     $callback = function(AMQPEnvelope $msg, AMQPQueue $queue) use (&$jobsCounter) {
-      // Creates a new task.
-      $task = unserialize($msg->getBody());
-
       try {
+        // Creates a new task.
+        $task = unserialize($msg->getBody());
+
         // Executes the task.
         $task->execute();
 
         // Acknowledges the receipt of the message.
         $queue->ack($msg->getDeliveryTag());
+      }
+      catch (ServerErrorException $e) {
+        // Just in case the document doesn't exist we acknowledge the message,
+        // since we don't have to execute the related task anymore.
+        if ($e->getResponse()->getStatusCode() == 404)
+          $queue->ack($msg->getDeliveryTag());
       }
       catch (\Exception $e) {
         print_r($e);
