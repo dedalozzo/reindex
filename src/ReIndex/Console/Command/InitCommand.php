@@ -167,13 +167,15 @@ final class InitCommand extends AbstractCommand {
           }
 
           $this->initDDoc($dbName, $docName);
-        } else {
+        }
+        else {
           if ($input->getOption('list'))
             $this->listDDocs($dbName);
           else
             $this->initDb($dbName);
         }
-      } elseif ($input->getOption('list'))
+      }
+      elseif ($input->getOption('list'))
         foreach ($this->init as $dbName => $ddocs)
           $this->listDDocs($dbName, $ddocs);
       else {
@@ -182,4 +184,5 @@ final class InitCommand extends AbstractCommand {
       }
     }
   }
+
 }
