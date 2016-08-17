@@ -58,7 +58,7 @@ final class RebuildCommand extends AbstractCommand implements IChunkHook {
    * @brief Configures the command.
    */
   protected function configure() {
-    $this->setName("refresh");
+    $this->setName("rebuild");
     $this->setDescription("Rebuild the application cache");
 
     $this->addArgument("database-name",
