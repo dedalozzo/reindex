@@ -82,7 +82,7 @@ final class RefreshCommand extends AbstractCommand {
    * @brief Configures the command.
    */
   protected function configure() {
-    $this->setName("init");
+    $this->setName("refresh");
     $this->setDescription("Refreshes (in parallel) all the views, just the ones contained in a database or in a single design document");
 
     $this->addArgument("database-name",
