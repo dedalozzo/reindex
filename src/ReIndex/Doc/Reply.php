@@ -69,11 +69,6 @@ class Reply extends Versionable {
       unset($this->meta['postId']);
   }
 
-
-  public function save() {
-
-  }
-
   //! @endcond
 
 } 
