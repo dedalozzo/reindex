@@ -158,7 +158,7 @@ final class AuthController extends BaseController {
 
         $user->save();
 
-        return $this->redirectToReferrer($user);
+        return $this->redirectToReferrer();
       }
       catch (\Exception $e) {
         Cookie::delete();
@@ -225,7 +225,7 @@ final class AuthController extends BaseController {
         if (!$rows->isEmpty())
           throw new Exception\InvalidEmailException("Sei già registrato. <a href=\"#signin\">Fai il login!</a>");
 
-        $user = new Member(); // We don't use Member::create() since the user must confirm his e-mail address to sign in.
+        $user = Member::create();
         $user->username = $username;
         $user->emails->add($email);
         $user->password = $password;
@@ -235,7 +235,7 @@ final class AuthController extends BaseController {
 
         $user->save();
 
-        return $this->redirectToReferrer($user);
+        return $this->redirectToReferrer();
       }
       catch (\Exception $e) {
         // Displays the error message.
