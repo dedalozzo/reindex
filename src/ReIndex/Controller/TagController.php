@@ -59,10 +59,8 @@ final class TagController extends ListController {
       $this->view->setVar('nextPage', $this->buildPaginationUrlForRedis($offset + $this->resultsPerPage+1));
 
     if (!empty($keys)) {
-      $opts = new ViewQueryOpts();
-      $opts->doNotReduce();
       // tags/names/view
-      $rows = $this->couch->queryView('tags', 'names', 'view', $keys, $opts);
+      $rows = $this->couch->queryView('tags', 'names', 'view', $keys);
       $tags = Tag::collect(array_column($rows->asArray(), 'id'));
     }
     else
@@ -77,7 +75,7 @@ final class TagController extends ListController {
    */
   public function newestAction() {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->reverseOrderOfResults()->setLimit($this->resultsPerPage+1);
+    $opts->reverseOrderOfResults()->setLimit($this->resultsPerPage+1);
 
     // Paginates results.
     $startKey = isset($_GET['startkey']) ? (int)$_GET['startkey'] : Couch::WildCard();
@@ -122,7 +120,7 @@ final class TagController extends ListController {
    */
   public function byNameAction() {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit($this->resultsPerPage+1);
+    $opts->setLimit($this->resultsPerPage+1);
 
     // Paginates results.
     $startKey = isset($_GET['startkey']) ? $_GET['startkey'] : chr(0);
