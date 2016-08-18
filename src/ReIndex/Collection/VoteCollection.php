@@ -182,7 +182,7 @@ final class VoteCollection implements \Countable {
     $itemId = $this->getItemId($unversion, $action);
 
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([$itemId, $this->user->getId()]);
+    $opts->setLimit(1)->setKey([$itemId, $this->user->getId()]);
 
     // votes/perItemAndMember/view
     $result = $this->couch->queryView('votes', 'perItemAndMember', 'view', NULL, $opts);
