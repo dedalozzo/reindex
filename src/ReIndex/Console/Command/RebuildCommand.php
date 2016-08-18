@@ -107,7 +107,7 @@ final class RebuildCommand extends AbstractCommand implements IChunkHook {
     $this->couch = $this->di['couchdb'];
     $databases = $this->di['init'];
 
-    if ($dbName = $input->getOption('database-name')) {
+    if ($dbName = $input->getArgument('database-name')) {
       if (!array_key_exists($dbName, $databases)) {
         $output->writeln("There is no database with such name");
         exit(0);
