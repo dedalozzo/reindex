@@ -71,7 +71,7 @@ abstract class Versionable extends ActiveDoc {
    */
   protected function indexingInProgress() {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setKey($this->unversionId);
+    $opts->setKey($this->unversionId);
     // posts/inElaboration/view
     $rows = $this->couch->queryView('posts', 'inElaboration', 'view', NULL, $opts);
 
