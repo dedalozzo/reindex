@@ -67,7 +67,7 @@ class IndexController extends ListController {
     $name = urldecode($name);
 
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey($name);
+    $opts->setLimit(1)->setKey($name);
 
     // tags/byName/view
     $rows = $this->couch->queryView('tags', 'byName', 'view', NULL, $opts);
@@ -155,10 +155,8 @@ class IndexController extends ListController {
     $ids = $this->redis->zRevRangeByScore($act, '+inf', 0, ['limit' => [0, $count]]);
 
     if (!empty($ids)) {
-      $opts = new ViewQueryOpts();
-      $opts->doNotReduce();
       // tags/names/view
-      $names = $this->couch->queryView('tags', 'names', 'view', $ids, $opts);
+      $names = $this->couch->queryView('tags', 'names', 'view', $ids);
 
       $count = count($ids);
       for ($i = 0; $i < $count; $i++)
@@ -517,7 +515,7 @@ class IndexController extends ListController {
     if ($rows->isEmpty())
       return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    $post = $this->couchdb->getDoc('posts', Couch::STD_DOC_PATH, $rows[0]['id']);
+    $post = $this->couch->getDoc('posts', Couch::STD_DOC_PATH, $rows[0]['id']);
     
     if (!$this->user->has(new Role\GuestRole\ViewPostPermission($post)))
       return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
