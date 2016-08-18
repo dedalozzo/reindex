@@ -81,6 +81,7 @@ members:
               $emit($doc->_id, ['docClass' => $doc->class, 'taskClass' => $key]);
           }
         };
+      reduce: _count
 
 
 followers:
@@ -232,6 +233,7 @@ posts:
               $emit($doc->_id, ['docClass' => $doc->class, 'taskClass' => $key]);
           }
         };
+      reduce: _count
 
 
 replies:
