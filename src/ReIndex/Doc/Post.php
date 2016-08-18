@@ -168,7 +168,7 @@ abstract class Post extends Versionable {
     // Likes.
     if ($user->isMember()) {
       $opts->reset();
-      $opts->doNotReduce()->includeMissingKeys();
+      $opts->includeMissingKeys();
 
       $keys = [];
       foreach ($ids as $postId)
@@ -223,12 +223,10 @@ abstract class Post extends Versionable {
 
       if (!empty($entry->tags)) {
         // Tags.
-        $opts->reset();
-        $opts->doNotReduce();
 
         // Resolves the synonyms.
         // tags/synonyms/view
-        $synonyms = $couch->queryView('tags', 'synonyms', array_keys($entry->tags), $opts);
+        $synonyms = $couch->queryView('tags', 'synonyms', 'view', array_keys($entry->tags));
 
         // Extracts the masters.
         $masters = array_unique(array_column($synonyms->asArray(), 'value'));
@@ -464,7 +462,7 @@ abstract class Post extends Versionable {
    */
   public function getReplies() {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->reverseOrderOfResults()->setStartKey([$this->unversionId, Couch::WildCard()])->setEndKey([$this->unversionId])->includeDocs();
+    $opts->reverseOrderOfResults()->setStartKey([$this->unversionId, Couch::WildCard()])->setEndKey([$this->unversionId])->includeDocs();
     // replies/newestPerPost/view
     $rows = $this->couch->queryView('replies', 'newestPerPost', 'view', NULL, $opts);
 
