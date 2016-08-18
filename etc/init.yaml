@@ -25,7 +25,6 @@ members:
         function($doc) use ($emit) {
           $emit($doc->createdAt);
         };
-      reduce: _count
 
   byUsername:
 
@@ -34,7 +33,6 @@ members:
         function($doc) use ($emit) {
           $emit($doc->username, $doc->_id);
         };
-      reduce: _count
 
   byEmail:
 
@@ -62,7 +60,6 @@ members:
           foreach ($doc->roles as $name => $class)
             $emit([$name, $doc->createdAt]);
         };
-      reduce: _count
 
   byTag:
 
@@ -72,7 +69,6 @@ members:
           foreach ($doc->tags as $key => $value)
             $emit($key);
         };
-      reduce: _count
 
   tasks:
 
@@ -178,7 +174,6 @@ posts:
           if ($doc->state == 'current' or $doc->state == 'deleted')
             $emit([$doc->year, $doc->month, $doc->day, $doc->slug]);
         };
-      reduce: _count
 
   byLegacyId:
 
@@ -188,7 +183,6 @@ posts:
           if ($doc->state == 'current')
             $emit($doc->legacyId);
         };
-      reduce: _count
 
   perTag:
 
@@ -198,26 +192,6 @@ posts:
           if ($doc->state == 'current' && isset($doc->tags))
             foreach ($doc->tags as $key => $value)
               $emit($key);
-        };
-      reduce: _count
-
-  newest:
-
-    view: # posts/newest/view
-      map: |-
-        function($doc) use ($emit) {
-          if ($doc->state == 'current')
-            $emit($doc->publishedAt);
-        };
-      reduce: _count
-
-  newestPerType:
-
-    view: # posts/newestPerType/view
-      map: |-
-        function($doc) use ($emit) {
-          if ($doc->state == 'current')
-            $emit([$doc->type, $doc->publishedAt]);
         };
       reduce: _count
 
@@ -237,7 +211,6 @@ posts:
               ]);
           }
         };
-      reduce: _count
 
   inElaboration:
 
@@ -247,7 +220,6 @@ posts:
           if ($doc->state == 'indexing' || $doc->state == 'deleting')
             $emit($doc->unversionId);
         };
-      reduce: _count
 
   tasks:
 
@@ -280,7 +252,6 @@ replies:
         function($doc) use ($emit) {
           $emit([$doc->postId, $doc->publishedAt]);
         };
-      reduce: _count
 
   activePerPost:
 
@@ -289,7 +260,6 @@ replies:
         function($doc) use ($emit) {
           $emit([$doc->postId, $doc->modifiedAt]);
         };
-      reduce: _count
 
 
 tags:
@@ -322,7 +292,6 @@ tags:
           if ($doc->type == 'tag' && $doc->state == 'current')
             $emit($doc->createdAt);
         };
-      reduce: _count
 
   names:
 
@@ -332,7 +301,6 @@ tags:
           if ($doc->type == 'tag' && $doc->state == 'current')
             $emit($doc->unversionId, $doc->name);
         };
-      reduce: _count
 
   synonymsNames:
 
@@ -343,7 +311,6 @@ tags:
             $emit($doc->_id, $doc->name);
           }
         };
-      reduce: _count
 
   byName:
 
@@ -353,7 +320,6 @@ tags:
           if ($doc->type == 'tag' && $doc->state == 'current')
             $emit($doc->name);
         };
-      reduce: _count
 
   synonymsByName:
 
@@ -364,7 +330,6 @@ tags:
             $emit($doc->name);
           }
         };
-      reduce: _count
 
   andSynonymsByName:
 
@@ -374,7 +339,6 @@ tags:
           if ($doc->state == 'current')
             $emit($doc->name);
         };
-      reduce: _count
 
   synonyms:
 
@@ -388,7 +352,6 @@ tags:
               $emit($value, $doc->unversionId);
           }
         };
-      reduce: _count
 
   substrings:
 
@@ -438,7 +401,6 @@ votes:
         function($doc) use ($emit) {
           $emit([$doc->itemId, $doc->voterId], $doc->value);
         };
-      reduce: _count
 
   perMember:
 
