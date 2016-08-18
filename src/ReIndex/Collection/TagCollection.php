@@ -127,10 +127,8 @@ final class TagCollection extends MetaCollection {
    */
   public function uniqueMasters() {
     if (!$this->isEmpty()) {
-      $opts = new ViewQueryOpts();
-      $opts->doNotReduce();
       // tags/synonyms/view
-      $masters = $this->couch->queryView('tags', 'synonyms', 'view', array_keys($this->meta[$this->name]), $opts)->asArray();
+      $masters = $this->couch->queryView('tags', 'synonyms', 'view', array_keys($this->meta[$this->name]))->asArray();
       return array_unique(array_column($masters, 'value'));
     }
     else
@@ -145,10 +143,8 @@ final class TagCollection extends MetaCollection {
     if (!$this->isEmpty()) {
       $ids = $this->uniqueMasters();
 
-      $opts = new ViewQueryOpts();
-      $opts->doNotReduce();
       // tags/names/view
-      return $this->couch->queryView('tags', 'names', 'view', $ids, $opts);
+      return $this->couch->queryView('tags', 'names', 'view', $ids);
     }
     else
       return [];
