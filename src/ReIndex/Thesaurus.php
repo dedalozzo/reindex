@@ -107,14 +107,12 @@ final class Thesaurus {
    * @todo Fix the result, since must be an array of strings.
    */
   public function listSynonyms($tagName = NULL) {
-    $opts = new ViewQueryOpts();
-
     if (is_null($tagName)) {
-      $opts->doNotReduce();
       // tags/synonymsNames/view
-      $rows = $this->couch->queryView('tags', 'synonymsNames', 'view', NULL, $opts);
+      $rows = $this->couch->queryView('tags', 'synonymsNames', 'view');
     }
     else {
+      $opts = new ViewQueryOpts();
       $opts->setLimit(1);
       $opts->setKey($tagName);
       // tags/byName/view
