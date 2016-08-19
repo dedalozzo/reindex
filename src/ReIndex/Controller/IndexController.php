@@ -576,6 +576,7 @@ class IndexController extends ListController {
         $post->title = $this->request->getPost('title');
         $post->body = $this->request->getPost('body');
         $post->editSummary = $this->request->getPost('editSummary');
+        $post->tags->addMultipleAtOnce($this->request->getPost('tags'));
 
         $post->submit();
       }
