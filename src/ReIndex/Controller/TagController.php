@@ -163,6 +163,12 @@ final class TagController extends ListController {
       $rows = $this->couch->queryView('tags', 'substrings', 'view', NULL, $opts)->asArray();
 
       $tags = Tag::collect(array_column($rows, 'id'));
+
+      // Selectize requires as id the tag's name.
+      array_walk($tags, function(&$value) {
+        $value->id = $value->name;
+      });
+
       echo json_encode($tags);
 
       $this->view->disable();
