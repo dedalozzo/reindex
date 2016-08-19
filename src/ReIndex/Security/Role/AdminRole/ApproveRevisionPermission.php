@@ -12,6 +12,7 @@ namespace ReIndex\Security\Role\AdminRole;
 
 
 use ReIndex\Security\Role\ModeratorRole\ApproveRevisionPermission as Superclass;
+use ReIndex\Enum\State;
 
 
 /**
