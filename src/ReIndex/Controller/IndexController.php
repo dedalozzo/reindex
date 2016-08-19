@@ -559,6 +559,9 @@ class IndexController extends ListController {
         $validation->setFilters("body", "trim");
         $validation->add("body", new PresenceOf(["message" => "Body is mandatory."]));
 
+        $validation->setFilters("editSummary", "trim");
+        $validation->add("editSummary", new PresenceOf(["message" => "Summary is mandatory."]));
+
         $group = $validation->validate($_POST);
         if (count($group) > 0) {
           throw new InvalidFieldException("Fields are incomplete or the entered values are invalid. The errors are reported in red under the respective entry fields.");
