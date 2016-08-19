@@ -541,8 +541,10 @@ class IndexController extends ListController {
     if (empty($id))
       return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    if (is_null($this->user))
-      return $this->dispatcher->forward(['controller' => 'auth', 'action' => 'signin']);
+    $post = $this->couchdb->getDoc('posts', Couch::STD_DOC_PATH, $id);
+
+    if (!$this->user->has(new Role\MemberRole\EditPostPermission($post)))
+      return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     // The validation object must be created in any case.
     $validation = new Validation();
@@ -568,8 +570,11 @@ class IndexController extends ListController {
           break;
         }*/
 
-        $title = $this->request->getPost('email');
-        $body = $this->request->getPost('body');
+        $post->title = $this->request->getPost('title');
+        $post->body = $this->request->getPost('body');
+        $post->editSummary = $this->request->getPost('editSummary');
+
+        $post->submit();
       }
       catch (\Exception $e) {
         // Displays the error message.
@@ -578,11 +583,6 @@ class IndexController extends ListController {
 
     }
     else {
-      $post = $this->couchdb->getDoc('posts', Couch::STD_DOC_PATH, $id);
-
-      if (!$this->user->has(new Role\MemberRole\EditPostPermission($post)))
-        return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
-
       /*
       $opts = new ViewQueryOpts();
       $opts->setKey($post->unversionId)->doNotReduce();
