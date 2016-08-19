@@ -12,6 +12,7 @@ namespace ReIndex\Security\Role\ReviewerRole;
 
 
 use ReIndex\Security\Role\EditorRole\SubmitRevisionPermission as Superclass;
+use ReIndex\Enum\State;
 
 
 /**
