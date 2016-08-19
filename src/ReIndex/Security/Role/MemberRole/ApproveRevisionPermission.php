@@ -26,7 +26,7 @@ class ApproveRevisionPermission extends AbstractPermission {
    * @brief Constructor.
    * @param[in] Doc::Versionable $context.
    */
-  public function __construct(Versionable $context) {
+  public function __construct(Versionable $context = NULL) {
     parent::__construct($context);
   }
 
