@@ -551,7 +551,6 @@ class IndexController extends ListController {
     $this->view->setVar('validation', $validation);
 
     if ($this->request->isPost()) {
-
       try {
         $validation->setFilters("title", "trim");
         $validation->add("title", new PresenceOf(["message" => "Title is mandatory."]));
@@ -567,24 +566,21 @@ class IndexController extends ListController {
           throw new InvalidFieldException("Fields are incomplete or the entered values are invalid. The errors are reported in red under the respective entry fields.");
         }
 
-        // Filters only the messages generated for the field 'name'.
-        /*foreach ($validation->getMessages()->filter('email') as $message) {
-          $this->flash->notice($message->getMessage());
-          break;
-        }*/
-
         $post->title = $this->request->getPost('title');
         $post->body = $this->request->getPost('body');
         $post->editSummary = $this->request->getPost('editSummary');
-        $post->tags->addMultipleAtOnce($this->request->getPost('tags'));
-
-        $post->submit();
       }
-      catch (\Exception $e) {
-        // Displays the error message.
+      catch (InvalidFieldException $e) {
+        // We handle only this type of exception.
         $this->flash->error($e->getMessage());
       }
+      finally {
+        // Even in case a field is invalid we must execute the following statement to refill
+        // the tags array used by Selectize component.
+        $post->tags->addMultipleAtOnce($this->request->getPost('tags'));
+      }
 
+      $post->submit();
     }
     else {
       /*
