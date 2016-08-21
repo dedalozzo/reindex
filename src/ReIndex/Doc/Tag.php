@@ -12,9 +12,9 @@ namespace ReIndex\Doc;
 
 
 use ReIndex\Property;
+use Reindex\Exception;
 use ReIndex\Collection;
 use ReIndex\Helper;
-use Reindex\Exception;
 use ReIndex\Task\SynonymizeTask;
 use ReIndex\Enum\State;
 use ReIndex\Security\Role;
