@@ -13,8 +13,8 @@ namespace ReIndex\Security\Role;
 
 /**
  * @brief A contents editor.
- * @details Having this role a member can edit any content. Since the platform uses a peer to peer review system, every
- * single content modification must be approved.
+ * @details Having this role a member can edit any content. We trust an editor to edit anything in the system
+ * without it going through peer review.
  * @nosubgrouping
  */
 class EditorRole extends TrustedRole {
