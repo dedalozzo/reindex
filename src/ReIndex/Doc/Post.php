@@ -293,6 +293,8 @@ abstract class Post extends Versionable {
 
     $this->meta['protection'] = self::CLOSED_PL;
     $this->meta['protectorId'] = $this->user->id;
+
+    $this->save();
   }
 
 
@@ -307,6 +309,8 @@ abstract class Post extends Versionable {
 
     $this->meta['protection'] = self::LOCKED_PL;
     $this->meta['protectorId'] = $this->user->id;
+
+    $this->save();
   }
 
 
@@ -319,6 +323,8 @@ abstract class Post extends Versionable {
 
     $this->unsetMetadata('protection');
     $this->unsetMetadata('protectorId');
+
+    $this->save();
   }
 
 
@@ -345,7 +351,7 @@ abstract class Post extends Versionable {
   public function submit () {
     parent::submit();
 
-    if ($this->user->match($this->creatorId)) {
+    if ($this->user->match($this->creatorId) or $this->user->roles->areSuperiorThan(new Role\EditorRole())) {
       $this->state->set(State::INDEXING);
       $this->tasks->add(new IndexPostTask($this));
     }
