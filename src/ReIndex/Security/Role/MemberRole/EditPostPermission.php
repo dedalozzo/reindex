@@ -41,9 +41,8 @@ class EditPostPermission extends AbstractPermission {
    * @retval bool
    */
   public function check() {
-    if ($this->user->match($this->context->creatorId) &&
-      !$this->context->isLocked() &&
-      ($this->context->state->is(State::CURRENT) or $this->context->state->is(State::DRAFT)))
+    if (!$this->context->isLocked() &&
+      ($this->context->state->is(State::CURRENT) or ($this->context->state->is(State::DRAFT) && $this->user->match($this->context->creatorId))))
       return TRUE;
     else
       return FALSE;
