@@ -1,18 +1,18 @@
 <?php
 
 /**
- * @file ModeratorRole/ProtectPostPermission.php
- * @brief This file contains the ProtectPostPermission class.
+ * @file Post/ProtectPermission.php
+ * @brief This file contains the ProtectPermission class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-//! Permissions for the moderator role
-namespace ReIndex\Security\Role\ModeratorRole;
+//! Posts related permissions
+namespace ReIndex\Security\Role\Permission\Post;
 
 
-use ReIndex\Security\Role\AbstractPermission;
+use ReIndex\Security\Role\Permission\AbstractPermission;
 use ReIndex\Doc\Post;
 use ReIndex\Enum\State;
 
@@ -23,15 +23,17 @@ use ReIndex\Enum\State;
  * protection.
  * @nosubgrouping
  */
-class ProtectPostPermission extends AbstractPermission {
+class ProtectPermission extends AbstractPermission {
 
+  protected $post;
 
   /**
    * @brief Constructor.
    * @param[in] Doc::Post $context
    */
-  public function __construct(Post $context = NULL) {
-    parent::__construct($context);
+  public function __construct(Post $post) {
+    parent::__construct();
+    $this->post = $post;
   }
 
 
@@ -40,8 +42,12 @@ class ProtectPostPermission extends AbstractPermission {
   }
 
 
-  public function check() {
-    return (!$this->context->isProtected() && $this->context->state->is(State::CURRENT)) ? TRUE : FALSE;
+  /**
+   * @brief Returns `true` if the post can be protected, `false` otherwise.
+   * @retval bool
+   */
+  public function checkForModeratorRole() {
+    return (!$this->post->isProtected() && $this->post->state->is(State::CURRENT)) ? TRUE : FALSE;
   }
 
 }
