@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file NotEnoughPrivilegesException.php
- * @brief This file contains the NotEnoughPrivilegesException class.
+ * @file AccessDeniedException.php
+ * @brief This file contains the AccessDeniedException class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -12,6 +12,6 @@ namespace ReIndex\Exception;
 
 
 /**
- * @brief Exception thrown when there is an user registered with the same e-mail.
+ * @brief Exception thrown when the user doesn't have the permission to access a resource.
  */
-class NotEnoughPrivilegesException extends \RuntimeException {}
+class AccessDeniedException extends \RuntimeException {}
