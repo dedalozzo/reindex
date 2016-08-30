@@ -8,10 +8,10 @@
  */
 
 
-namespace ReIndex\Security\Role\DeveloperRole;
+namespace ReIndex\Security\Role\Permission\System;
 
 
-use ReIndex\Security\Role\AbstractPermission;
+use ReIndex\Security\Role\Permission\AbstractPermission;
 
 
 /**
@@ -20,12 +20,21 @@ use ReIndex\Security\Role\AbstractPermission;
 class PhpinfoPermission extends AbstractPermission {
 
 
+  public function __construct() {
+    parent::__construct();
+  }
+
+
   public function getDescription() {
     return "Permission to display information about PHP's configuration.";
   }
 
 
-  public function check() {
+  /**
+   * @brief A developer can see the PHP's info page.
+   * @return bool
+   */
+  public function checkForDeveloperRole() {
     return TRUE;
   }
 
