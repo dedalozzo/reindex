@@ -13,8 +13,8 @@ namespace ReIndex\Collection;
 
 use ReIndex\Security\User\IUser;
 use ReIndex\Security\Role\IRole;
-use ReIndex\Security\Role\AdminRole\GrantRolePermission;
-use ReIndex\Exception\NotEnoughPrivilegesException;
+use ReIndex\Security\Role\Permission\Role\GrantPermission;
+use ReIndex\Exception\AccessDeniedException;
 
 
 /**
@@ -48,8 +48,8 @@ final class RoleCollection extends MetaCollection {
    * @param[in] IRole $role A role object.
    */
   public function grant(IRole $role) {
-    if (!$this->user->has(new GrantRolePermission($role)))
-      throw new NotEnoughPrivilegesException('Not enough privileges to grant the role.');
+    if (!$this->user->has(new GrantPermission($role)))
+      throw new AccessDeniedException('Not enough privileges to grant the role.');
 
     // Checks if the same role has been already assigned to the member.
     if ($this->exists($role))
@@ -82,8 +82,8 @@ final class RoleCollection extends MetaCollection {
    * @param[in] IRole $role A role object.
    */
   public function revoke(IRole $role) {
-    if (!$this->user->has(new GrantRolePermission($role)))
-      throw new NotEnoughPrivilegesException('Not enough privileges to revoke the role.');
+    if (!$this->user->has(new GrantPermission($role)))
+      throw new AccessDeniedException('Not enough privileges to revoke the role.');
 
     if ($this->exists($role))
       unset($this->meta[$this->name][$role->getName()]);
