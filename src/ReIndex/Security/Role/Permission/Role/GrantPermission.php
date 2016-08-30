@@ -1,18 +1,18 @@
 <?php
 
 /**
- * @file GuestRole/GrantRolePermission.php
- * @brief This file contains the GrantRolePermission class.
+ * @file GrantPermission.php
+ * @brief This file contains the GrantPermission class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-//! Permissions for the admin role
-namespace ReIndex\Security\Role\GuestRole;
+//! Permissions related to the roles
+namespace ReIndex\Security\Role\Permission\Role;
 
 
-use ReIndex\Security\Role\AbstractPermission;
+use ReIndex\Security\Role\Permission\AbstractPermission;
 use ReIndex\Security\Role\IRole;
 use ReIndex\Security\Role\MemberRole;
 
@@ -20,15 +20,18 @@ use ReIndex\Security\Role\MemberRole;
 /**
  * @brief Permission to grant or revoke a role.
  */
-class GrantRolePermission extends AbstractPermission {
+class GrantPermission extends AbstractPermission {
+
+  protected $role;
 
 
   /**
    * @brief Constructor.
-   * @param[in] IRole $context
+   * @param[in] IRole $role
    */
-  public function __construct(IRole $context = NULL) {
-    parent::__construct($context);
+  public function __construct(IRole $role) {
+    $this->role = $role;
+    parent::__construct();
   }
 
 
@@ -36,14 +39,23 @@ class GrantRolePermission extends AbstractPermission {
     return "Permission to grant a role to a member or revoke it.";
   }
 
+
+  /**
+   * @brief A guest can assign to a newly created member the `MemberRole`.
+   * @details This is done since every member must have such a role.
+   * @return bool
+   */
+  public function checkForGuestRole() {
+    return ($this->role instanceof MemberRole) ? TRUE : FALSE;
+  }
+
+
+  /**
+   * @brief An admin can associate every role but not the `SupervisorRole`.
+   * @return bool
+   */
+  public function checkForAdminRole() {
+    return $this->user->roles->areSuperiorThan($this->role);
+  }
+
 }
-
-
-$checkForGuest = function($context) {
-  // A member can assign to himself only the MemberRole. This is done since the member role is assigned.
-  return ($context instanceof MemberRole) ? TRUE : FALSE;
-};
-
-$checkForAdmin = function($context) {
-  return $this->user->roles->areSuperiorThan($context);
-};
