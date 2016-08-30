@@ -1,38 +1,40 @@
 <?php
 
 /**
- * @file MemberRole/StarTagPermission.php
- * @brief This file contains the StarTagPermission class.
+ * @file StarPermission.php
+ * @brief This file contains the StarPermission class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-namespace ReIndex\Security\Role\MemberRole;
+namespace ReIndex\Security\Role\Permission\Tag;
 
 
-use ReIndex\Security\Role\AbstractPermission;
+use ReIndex\Security\Role\Permission\AbstractPermission;
 use ReIndex\Doc\Tag;
 use ReIndex\Enum\State;
 
 
 /**
- * @brief Permission to add or remove a tag to favorites.
+ * @brief Permission to star (or unstar) a tag.
  */
-class StarTagPermission extends AbstractPermission {
+class StarPermission extends AbstractPermission {
+
+  protected $tag;
 
 
   /**
    * @brief Constructor.
    * @param[in] Tag $context.
    */
-  public function __construct(Tag $context = NULL) {
-    parent::__construct($context);
+  public function __construct(Tag $tag) {
+    parent::__construct();
   }
 
 
   public function getDescription() {
-    return "Approves the document revision.";
+    return "Permission to add or remove a tag from favorites.";
   }
 
 
@@ -40,8 +42,8 @@ class StarTagPermission extends AbstractPermission {
    * @brief Returns `true` if the tag can be starred (or unstarred), `false` otherwise.
    * @retval bool
    */
-  public function check() {
-    return $this->context->state->is(State::CURRENT);
+  public function checkForMemberRole() {
+    return $this->tag->state->is(State::CURRENT);
   }
 
 }
