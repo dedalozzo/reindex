@@ -8,7 +8,6 @@
  */
 
 
-//! Permissions related to the member actions.
 namespace ReIndex\Security\Role\Permission\Member;
 
 
@@ -41,13 +40,17 @@ class BanPermission extends AbstractPermission {
   }
 
 
+  /**
+   * @brief A moderator can ban another member.
+   * @return bool
+   */
   public function checkForModerator() {
     if ($this->member->isBanned())
       return FALSE;
     elseif ($this->user->match($this->member->id))
       return FALSE;
     else
-      return !$this->member->roles->areSuperiorThan($this->user->getRole()) ? TRUE : FALSE;
+      return !$this->member->roles->areSuperiorThan($this->getRole()) ? TRUE : FALSE;
   }
   
 }
