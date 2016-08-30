@@ -8,7 +8,7 @@
  */
 
 
-namespace ReIndex\Security\Role;
+namespace ReIndex\Security\Role\Permission;
 
 
 use ReIndex\Security\User\IUser;
@@ -29,16 +29,6 @@ abstract class AbstractPermission implements IPermission {
   protected $role;
 
   /**
-   * @var mixed $context
-   */
-  protected $context;
-
-  /**
-   * @var Di $di
-   */
-  protected $di;
-
-  /**
    * @var IUser $user
    */
   protected $user;
@@ -48,9 +38,17 @@ abstract class AbstractPermission implements IPermission {
    */
   protected $name;
 
+  /**
+   * @var Di $di
+   */
+  protected $di;
 
-  public function __construct($context = NULL) {
-    $this->context = $context;
+
+
+  /**
+   * @brief Constructor is protected so it can't call explicitly from outside. Subclasses must override this method.
+   */
+  protected function __construct() {
     $this->di = Di::getDefault();
     $this->user = $this->di['guardian']->getUser();
     $this->name = lcfirst(preg_replace('/Permission$/', '', get_class($this)));
@@ -78,28 +76,5 @@ abstract class AbstractPermission implements IPermission {
   public function getRole() {
     return $this->role;
   }
-
-
-  public function setContext($context) {
-    $this->context = $context;
-  }
-
-
-  public function getContext() {
-    return $this->context;
-  }
-
-
-  abstract public function check();
-
-
-  public function castAs($newClass) {
-    $obj = new $newClass;
-
-    $obj->setRole($this->getRole());
-    $obj->setContext($this->getContext());
-
-    return $obj;
-  }  
 
 }
