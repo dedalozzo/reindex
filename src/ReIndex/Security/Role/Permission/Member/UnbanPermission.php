@@ -43,7 +43,7 @@ class UnbanPermission extends BanPermission {
    * @brief A moderator can unban a member has been previously banned.
    * @return bool
    */
-  public function checkForModerator() {
+  public function checkForModeratorRole() {
     if (!$this->member->isBanned())
       return FALSE;
     elseif ($this->user->match($this->member->bannerId))

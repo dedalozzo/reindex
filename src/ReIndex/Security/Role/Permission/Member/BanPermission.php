@@ -44,7 +44,7 @@ class BanPermission extends AbstractPermission {
    * @brief A moderator can ban another member.
    * @return bool
    */
-  public function checkForModerator() {
+  public function checkForModeratorRole() {
     if ($this->member->isBanned())
       return FALSE;
     elseif ($this->user->match($this->member->id))
