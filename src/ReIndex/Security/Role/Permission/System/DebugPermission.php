@@ -8,11 +8,11 @@
  */
 
 
-//! Permissions for the developer role
-namespace ReIndex\Security\Role\DeveloperRole;
+//! System's permissions
+namespace ReIndex\Security\Role\Permission\System;
 
 
-use ReIndex\Security\Role\AbstractPermission;
+use ReIndex\Security\Role\Permission\AbstractPermission;
 
 
 /**
@@ -21,12 +21,21 @@ use ReIndex\Security\Role\AbstractPermission;
 class DebugPermission extends AbstractPermission {
 
 
+  public function __construct() {
+    parent::__construct();
+  }
+
+
   public function getDescription() {
     return "The member can use the integrated debugger.";
   }
 
 
-  public function check() {
+  /**
+   * @brief A developer can display useful information in case of exception.
+   * @return bool
+   */
+  public function checkForDeveloperRole() {
     return TRUE;
   }
 
