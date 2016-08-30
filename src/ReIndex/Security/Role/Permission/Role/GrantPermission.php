@@ -36,10 +36,14 @@ class GrantRolePermission extends AbstractPermission {
     return "Permission to grant a role to a member or revoke it.";
   }
 
-
-  public function check() {
-    // A member can assign to himself only the MemberRole. This is done since the member role is assigned.
-    return ($this->context instanceof MemberRole) ? TRUE : FALSE;
-  }
-
 }
+
+
+$checkForGuest = function($context) {
+  // A member can assign to himself only the MemberRole. This is done since the member role is assigned.
+  return ($context instanceof MemberRole) ? TRUE : FALSE;
+};
+
+$checkForAdmin = function($context) {
+  return $this->user->roles->areSuperiorThan($context);
+};

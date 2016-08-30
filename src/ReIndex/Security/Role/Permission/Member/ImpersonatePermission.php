@@ -43,3 +43,15 @@ class ImpersonatePermission extends AbstractPermission {
   }
 
 }
+
+
+/*
+ * admin
+ *
+public function check() {
+  if (parent::check())
+    return TRUE;
+  else
+    return !$this->context->roles->areSuperiorThan(new AdminRole());
+}
+*/

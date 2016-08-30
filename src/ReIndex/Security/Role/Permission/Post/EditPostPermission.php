@@ -48,4 +48,37 @@ class EditPostPermission extends AbstractPermission {
       return FALSE;
   }
 
+  /*
+   * Editor
+   */
+
+  /*
+  public function check() {
+    if (parent::check())
+      return TRUE;
+    else
+     return (!$this->context->isLocked() && $this->context->state->is(State::CURRENT)) ? TRUE : FALSE;
+  }
+
+
+  Moderator
+
+  public function check() {
+    return $this->context->state->is(State::CURRENT) or $this->context->state->is(State::SUBMITTED);
+  }
+
+
+
+  Reviewer
+  
+  if (parent::check())
+      return TRUE;
+    else
+     return !$this->context->isLocked() &&
+            ($this->context->state->is(State::CURRENT) || $this->context->state->is(State::SUBMITTED))
+            ? TRUE : FALSE;
+  }
+
+   */
+
 }

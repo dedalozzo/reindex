@@ -53,3 +53,18 @@ class MoveToTrashPermission extends AbstractPermission {
   }
 
 }
+
+
+/*
+ * Moderator
+ */
+
+
+/*
+public function check() {
+  if (parent::check())
+    return TRUE;
+  else
+    return $this->context->state->is(State::CURRENT) ? TRUE : FALSE;
+}
+*/

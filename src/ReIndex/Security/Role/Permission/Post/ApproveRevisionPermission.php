@@ -50,3 +50,39 @@ class ApproveRevisionPermission extends AbstractPermission {
   }
 
 }
+
+
+/*
+ * Reviewer
+ */
+
+/*
+   public function check() {
+    if ($this->context->state->is(State::SUBMITTED) &&
+        !$this->user->match($this->context->editorId))
+      return $this->di['config']->review->reviewerVoteValue;
+    else
+      return FALSE;
+  }
+
+Moderator
+
+  public function check() {
+    if ($this->context->state->is(State::SUBMITTED))
+      return $this->di['config']->review->moderatorVoteValue;
+    else
+      return FALSE;
+  }
+
+
+Admin
+
+  public function check() {
+    if ($this->context->state->is(State::SUBMITTED))
+      return $this->di['config']->review->scoreToApproveRevision;
+    else
+      return FALSE;
+  }
+
+
+ */
