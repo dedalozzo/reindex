@@ -8,6 +8,7 @@
  */
 
 
+//! Permissions related to the tags
 namespace ReIndex\Security\Role\Permission\Tag;
 
 
