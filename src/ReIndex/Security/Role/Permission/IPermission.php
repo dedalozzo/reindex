@@ -12,6 +12,9 @@
 namespace ReIndex\Security\Role\Permission;
 
 
+use ReIndex\Security\Role\IRole;
+
+
 /**
  * @brief You may implement this interface to create a new permission class.
  * @details Permissions are hereditary, that means you may have the same permission for the role member and admin. The
