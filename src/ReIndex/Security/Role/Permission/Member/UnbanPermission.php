@@ -1,17 +1,15 @@
 <?php
 
 /**
- * @file ModeratorRole/UnbanMemberPermission.php
- * @brief This file contains the UnbanMemberPermission class.
+ * @file UnbanPermission.php
+ * @brief This file contains the UnbanPermission class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-namespace ReIndex\Security\Role\ModeratorRole;
+namespace ReIndex\Security\Role\Permission\Member;
 
-
-use ReIndex\Security\Role\AbstractPermission;
 use ReIndex\Doc\Member;
 
 use EoC\Couch;
@@ -22,15 +20,17 @@ use EoC\Couch;
  * @details A moderator (or a member with a superior role) can remove a ban, but only if the member has been
  * banned by an user with an equal (or inferior) role or by himself. And of course he cannot unban himself.
  */
-class UnbanMemberPermission extends AbstractPermission {
-
+class UnbanPermission extends BanPermission {
 
   /**
-   * @brief Constructor.
-   * @param[in] Doc::Member $context
+   * @var Couch $couch
    */
-  public function __construct(Member $context = NULL) {
-    parent::__construct($context);
+  protected $couch;
+
+
+  public function __construct(Member $member) {
+    parent::__construct($member);
+    $this->couch = $this->di['couchdb'];
   }
 
 
@@ -39,15 +39,15 @@ class UnbanMemberPermission extends AbstractPermission {
   }
 
 
-  public function check() {
-    if (!$this->context->isBanned())
+  public function checkForModerator() {
+    if (!$this->member->isBanned())
       return FALSE;
-    elseif ($this->user->match($this->context->bannerId))
+    elseif ($this->user->match($this->member->bannerId))
       return FALSE;
-    elseif ($this->context->bannerId === $this->user->id)
+    elseif ($this->member->bannerId === $this->user->id)
       return TRUE;
     else {
-      $whoBanned = $this->di['couchdb']->getDoc('members', Couch::STD_DOC_PATH, $this->context->bannerId);
+      $whoBanned = $this->couch->getDoc('members', Couch::STD_DOC_PATH, $this->member->bannerId);
       return !$whoBanned->roles->areSuperiorThan($this->getRole(), FALSE) ? TRUE : FALSE;
     }
   }
