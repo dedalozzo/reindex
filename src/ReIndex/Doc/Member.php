@@ -16,7 +16,7 @@ use ReIndex\Exception;
 use ReIndex\Helper;
 use ReIndex\Security\User\IUser;
 use ReIndex\Security\Role;
-use ReIndex\Security\Role\IPermission;
+use ReIndex\Security\Role\Permission\IPermission;
 use ReIndex\Security\Role\MemberRole;
 use ReIndex\Task\IndexMemberTask;
 
@@ -144,7 +144,8 @@ final class Member extends ActiveDoc implements IUser {
 
       // Friends count.
       $opts->reset();
-      $opts->reduce()->reverseOrderOfResults()->setStartKey([TRUE, $id, Couch::WildCard()])->setEndKey([TRUE, $id]);
+      $opts->reduce();
+      $opts->setStartKey([TRUE, $id, Couch::WildCard()])->setEndKey([TRUE, $id])->reverseOrderOfResults();
       // friendships/relations/view
       $member->friendsCount = Helper\Text::formatNumber($couch->queryView('friendships', 'relations', 'view', NULL, $opts)->getReducedValue());
 
@@ -260,37 +261,32 @@ final class Member extends ActiveDoc implements IUser {
 
     $permissionReflection = new \ReflectionObject($permission);
 
-    // Gets the class name of the provided instance, pruned by its namespace.
-    $permissionClassName = $permissionReflection->getShortName();
-
-    // Determines the namespace excluded the role name.
-    $root = Helper\ClassHelper::getClassRoot($permissionReflection->getNamespaceName());
-
     foreach ($this->roles as $roleName => $roleClass) {
 
       do {
         $role = new $roleClass;
 
+        // Sets the execution role for the current user.
+        $permission->setRole($role);
+
         // Creates a reflection class for the roleName.
         $roleReflection = new \ReflectionObject($role);
 
-        // Determines the permission class related to the roleName.
-        $newPermissionClass = $root . $roleReflection->getShortName() . '\\' . $permissionClassName;
+        // Determines the method's name related to the roleName.
+        $methodName = 'checkFor' . $roleReflection->getShortName();
 
-        if (class_exists($newPermissionClass)) { // If a permission exists for the roleName...
-          // Sets the execution role for the current user.
-          $permission->setRole($role);
+        if ($permissionReflection->hasMethod($methodName)) { // If a method exists for the roleName...
+          // Gets the method.
+          $method = $permissionReflection->getMethod($methodName);
 
-          // Casts the original permission object to an instance of the determined class.
-          $obj = $permission->castAs($newPermissionClass);
-
-          // Invokes on it the check() method.
-          $result = $obj->check();
+          // Invokes the method.
+          $result = $method->invoke($this);
 
           // Exits from the do while and foreach as well.
           break 2;
         }
-        else { // Go back to the previous role class in the hierarchy. For example, from AdminRole to ModeratorRole.
+        else {
+          // Go back to the previous role class in the hierarchy. For example, from AdminRole to ModeratorRole.
           $parentRoleReflection = $roleReflection->getParentClass();
 
           // Proceed only if the parent role is not an abstract class.
@@ -312,10 +308,10 @@ final class Member extends ActiveDoc implements IUser {
    * @param[in] IUser $user An anonymous user or a member instance.
    */
   public function impersonate(IUser $user) {
-    if ($this->user->has(new Role\AdminRole\ImpersonatePermission($user)))
+    if ($this->user->has(new Role\Permission\Member\ImpersonatePermission($user)))
       $this->user = $user;
     else
-      throw new Exception\NotEnoughPrivilegesException('Non hai sufficienti privilegi per impersonare un altro utente.');
+      throw new Exception\AccessDeniedException('Non hai sufficienti privilegi per impersonare un altro utente.');
   }
 
 
@@ -362,8 +358,8 @@ final class Member extends ActiveDoc implements IUser {
    * @param[in] integer $days The ban duration in days. When zero, the ban is permanent.
    */
   public function ban($days = 0) {
-    if (!$this->user->has(new Role\ModeratorRole\BanMemberPermission($this)))
-      throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
+    if (!$this->user->has(new Role\Permission\Member\BanPermission($this)))
+      throw new Exception\AccessDeniedException("Privilegi di accesso insufficienti.");
 
     $this->meta['banned'] = TRUE;
     $this->meta['bannedOn'] = time();
@@ -381,8 +377,8 @@ final class Member extends ActiveDoc implements IUser {
    * @brief Removes the ban.
    */
   public function unban() {
-    if (!$this->user->has(new Role\ModeratorRole\UnbanMemberPermission($this)))
-      throw new Exception\NotEnoughPrivilegesException("Privilegi di accesso insufficienti.");
+    if (!$this->user->has(new Role\Permission\Member\UnbanPermission($this)))
+      throw new Exception\AccessDeniedException("Privilegi di accesso insufficienti.");
 
     if ($this->isMetadataPresent('banned')) {
       unset($this->meta['banned']);
