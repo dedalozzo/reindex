@@ -46,7 +46,8 @@ abstract class AbstractPermission implements IPermission {
 
 
   /**
-   * @brief Constructor is protected so it can't call explicitly from outside. Subclasses must override this method.
+   * @brief Constructor is protected so it can't call explicitly from outside.
+   * @attention Subclasses must override this method and make it public.
    */
   protected function __construct() {
     $this->di = Di::getDefault();
