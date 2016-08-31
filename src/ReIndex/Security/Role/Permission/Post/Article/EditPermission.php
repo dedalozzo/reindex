@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file MemberRole/EditPostPermission.php
- * @brief This file contains the EditPostPermission class.
+ * @file Article/EditPermission.php
+ * @brief This file contains the EditPermission class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -11,28 +11,18 @@
 namespace ReIndex\Security\Role\MemberRole;
 
 
-use ReIndex\Security\Role\AbstractPermission;
-use ReIndex\Doc\Post;
+use ReIndex\Security\Role\Permission\Post\Article\AbstractPermission;
 use ReIndex\Enum\State;
 
 
 /**
- * @brief Permission to edit a post.
+ * @brief Permission to edit an article.
  */
-class EditPostPermission extends AbstractPermission {
-
-
-  /**
-   * @brief Constructor.
-   * @param[in] Doc::Post $context
-   */
-  public function __construct(Post $context = NULL) {
-    parent::__construct($context);
-  }
-
+class EditPermission extends AbstractPermission {
+  
 
   public function getDescription() {
-    return "Permission to edit a post.";
+    return "Permission to edit an article.";
   }
 
 
@@ -40,45 +30,36 @@ class EditPostPermission extends AbstractPermission {
    * @brief Returns `true` if the user is the creator of the post and the post is unlocked, `false` otherwise.
    * @retval bool
    */
-  public function check() {
-    if (!$this->context->isLocked() &&
-      ($this->context->state->is(State::CURRENT) or ($this->context->state->is(State::DRAFT) && $this->user->match($this->context->creatorId))))
+  public function checkForMemberRole() {
+    if (!$this->article->isLocked() &&
+        ($this->article->state->is(State::CURRENT) or 
+         ($this->article->state->is(State::DRAFT) && $this->user->match($this->article->creatorId))))
       return TRUE;
     else
       return FALSE;
   }
 
-  /*
-   * Editor
-   */
 
-  /*
-  public function check() {
-    if (parent::check())
+  public function checkForEditorRole() {
+    if ($this->checkForMemberRole())
       return TRUE;
     else
-     return (!$this->context->isLocked() && $this->context->state->is(State::CURRENT)) ? TRUE : FALSE;
+     return (!$this->article->isLocked() && $this->article->state->is(State::CURRENT)) ? TRUE : FALSE;
   }
 
 
-  Moderator
-
-  public function check() {
-    return $this->context->state->is(State::CURRENT) or $this->context->state->is(State::SUBMITTED);
-  }
-
-
-
-  Reviewer
-  
-  if (parent::check())
+  public function checkForReviewerRole() {
+    if ($this->checkForEditorRole())
       return TRUE;
     else
-     return !$this->context->isLocked() &&
-            ($this->context->state->is(State::CURRENT) || $this->context->state->is(State::SUBMITTED))
-            ? TRUE : FALSE;
+      return !$this->article->isLocked() &&
+      ($this->article->state->is(State::CURRENT) || $this->article->state->is(State::SUBMITTED))
+        ? TRUE : FALSE;
   }
 
-   */
+
+  public function checkForModeratorRole() {
+    return $this->article->state->is(State::CURRENT) or $this->article->state->is(State::SUBMITTED);
+  }
 
 }
