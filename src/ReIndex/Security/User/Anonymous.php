@@ -12,7 +12,7 @@ namespace ReIndex\Security\User;
 
 
 use ReIndex\Security\Role\GuestRole;
-use ReIndex\Security\Role\IPermission;
+use ReIndex\Security\Role\Permission\IPermission;
 use ReIndex\Helper\ClassHelper;
 
 
@@ -46,36 +46,21 @@ final class Anonymous implements IUser {
    * @copydoc IUser::has()
    */
   public function has(IPermission $permission) {
-    $result = FALSE;
-
     $role = new GuestRole();
 
-    // Creates the reflection classes.
-    $roleReflection = new \ReflectionObject($role);
     $permissionReflection = new \ReflectionObject($permission);
 
-    // Determines the namespace excluded the role name.
-    $root = ClassHelper::getClassRoot($permissionReflection->getNamespaceName());
+    if ($permissionReflection->hasMethod('checkForGuestRole')) { // If a method exists for the roleName...
+      // Gets the method.
+      $method = $permissionReflection->getMethod('checkForGuestRole');
 
-    // Determines the permission class related to the roleName.
-    $newPermissionClass = $root . $roleReflection->getShortName() . '\\' . $permissionReflection->getShortName();
-
-    if (class_exists($newPermissionClass)) { // If a permission exists for the role...
-      // Sets the execution role for the current user.
       $permission->setRole($role);
 
-      if ($permissionReflection->getName() != $newPermissionClass) {
-        // Casts the original permission object to an instance of the determined class.
-        $obj = $permission->castAs($newPermissionClass);
-
-        // Invokes on it the check() method.
-        $result = $obj->check();
-      }
-      else
-        $result = $permission->check();
+      // Invokes the method.
+      return $method->invoke($this);
     }
-
-    return $result;
+    else
+      return FALSE;
   }
 
 
