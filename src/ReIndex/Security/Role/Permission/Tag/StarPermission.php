@@ -8,12 +8,9 @@
  */
 
 
-//! Permissions related to the tags
 namespace ReIndex\Security\Role\Permission\Tag;
 
 
-use ReIndex\Security\Role\Permission\AbstractPermission;
-use ReIndex\Doc\Tag;
 use ReIndex\Enum\State;
 
 
@@ -21,17 +18,6 @@ use ReIndex\Enum\State;
  * @brief Permission to star (or unstar) a tag.
  */
 class StarPermission extends AbstractPermission {
-
-  protected $tag;
-
-
-  /**
-   * @brief Constructor.
-   * @param[in] Tag $context.
-   */
-  public function __construct(Tag $tag) {
-    parent::__construct();
-  }
 
 
   public function getDescription() {
