@@ -1,19 +1,17 @@
 <?php
 
 /**
- * @file MemberRole/MoveToTrashPermission.php
+ * @file Article/MoveToTrashPermission.php
  * @brief This file contains the MoveToTrashPermission class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-namespace ReIndex\Security\Role\MemberRole;
+namespace ReIndex\Security\Role\Permission\Post\Article;
 
 
 use ReIndex\Doc\Comment;
-use ReIndex\Security\Role\AbstractPermission;
-use ReIndex\Doc\Versionable;
 use ReIndex\Enum\State;
 use ReIndex\Doc\Update;
 
@@ -24,47 +22,31 @@ use ReIndex\Doc\Update;
 class MoveToTrashPermission extends AbstractPermission {
 
 
-  /**
-   * @brief Constructor.
-   * param[in] Doc::Versionable $context
-   */
-  public function __construct(Versionable $context = NULL) {
-    parent::__construct($context);
-  }
-
-
   public function getDescription() {
-    return "Permission to delete the content.";
+    return "Permission to delete the article.";
   }
 
 
-  public function check() {
-    if (!$this->user->match($this->context->creatorId))
+  public function checkForMemberRole() {
+    if (!$this->user->match($this->article->creatorId))
       return FALSE;
 
-    if ($this->context->state->is(State::DRAFT))
+    if ($this->article->state->is(State::DRAFT))
       return TRUE;
 
     // Special case for updates and comments.
-    if ($this->context->state->is(State::CURRENT) && ($this->context instanceof Update or $this->context instanceof Comment))
+    if ($this->article->state->is(State::CURRENT) && ($this->article instanceof Update or $this->article instanceof Comment))
       return TRUE;
 
     return FALSE;
   }
 
+
+  public function checkForModeratorRole() {
+    if ($this->checkForMemberRole())
+      return TRUE;
+    else
+      return $this->article->state->is(State::CURRENT) ? TRUE : FALSE;
+  }
+
 }
-
-
-/*
- * Moderator
- */
-
-
-/*
-public function check() {
-  if (parent::check())
-    return TRUE;
-  else
-    return $this->context->state->is(State::CURRENT) ? TRUE : FALSE;
-}
-*/
