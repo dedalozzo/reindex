@@ -11,7 +11,7 @@
 namespace ReIndex\Security\User;
 
 
-use ReIndex\Security\Role\IPermission;
+use ReIndex\Security\Role\Permission\IPermission;
 
 
 /**
