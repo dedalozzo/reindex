@@ -1,57 +1,40 @@
 <?php
 
 /**
- * @file MemberRole/SubmitRevisionPermission.php
- * @brief This file contains the SubmitRevisionPermission class.
+ * @file Article/SubmitPermission.php
+ * @brief This file contains the SubmitPermission class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-namespace ReIndex\Security\Role\MemberRole;
+namespace ReIndex\Security\Role\Permission\Post\Article;
 
 
-use ReIndex\Security\Role\AbstractPermission;
-use ReIndex\Doc\Versionable;
 use ReIndex\Enum\State;
 
 
 /**
  * @brief Permission to submit the revision to the Peer Review Committee.
  */
-class SubmitRevisionPermission extends AbstractPermission {
-
-
-  /**
-   * @brief Constructor.
-   * @param[in] Doc::Versionable $context
-   */
-  public function __construct(Versionable $context = NULL) {
-    parent::__construct($context);
-  }
+class SubmitPermission extends AbstractPermission {
 
 
   public function getDescription() {
-    return "Permission to submit the document's revision to the Peer Review Committee.";
+    return "Permission to submit the article's revision to the Peer Review Committee.";
   }
 
 
-  public function check() {
-    return $this->user->match($this->context->creatorId) &&
-           ($this->context->state->is(State::CREATED) or
-            $this->context->state->is(State::DRAFT) or
-            $this->context->state->is(State::CURRENT));
+  public function checkForMemberRole() {
+    return $this->user->match($this->article->creatorId) &&
+           ($this->article->state->is(State::CREATED) or
+            $this->article->state->is(State::DRAFT) or
+            $this->article->state->is(State::CURRENT));
+  }
+
+
+  public function checkForEditorRole() {
+    return $this->article->state->is(State::CURRENT);
   }
 
 }
-
-/*
- * Editor
- */
-
-/*
-  public function check() {
-    return $this->context->state->is(State::CURRENT);
-  }
-
- */
