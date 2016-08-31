@@ -1,38 +1,27 @@
 <?php
 
 /**
- * @file MemberRole/RejectRevisionPermission.php
- * @brief This file contains the RejectRevisionPermission class.
+ * @file Article/RejectPermission.php
+ * @brief This file contains the RejectPermission class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-namespace ReIndex\Security\Role\MemberRole;
+namespace ReIndex\Security\Role\Permission\Post\Article;
 
 
-use ReIndex\Security\Role\AbstractPermission;
-use ReIndex\Doc\Versionable;
 use ReIndex\Enum\State;
 
 
 /**
  * @brief Permission to vote for the rejection of a document's revision.
  */
-class RejectRevisionPermission extends AbstractPermission {
-
-
-  /**
-   * @brief Constructor.
-   * @param[in] Doc::Versionable $context
-   */
-  public function __construct(Versionable $context) {
-    parent::__construct($context);
-  }
+class RejectPermission extends AbstractPermission {
 
 
   public function getDescription() {
-    return "Permission to vote for the rejection of a document's revision.";
+    return "Permission to vote for the rejection of a article's revision.";
   }
 
 
@@ -40,49 +29,38 @@ class RejectRevisionPermission extends AbstractPermission {
    * @brief Returns the value for the vote if the document revision can be rejected, `false` otherwise.
    * @retval mixed
    */
-  public function check() {
-    if ($this->context->state->is(State::SUBMITTED) &&
-      $this->user->match($this->context->creatorId) &&
-      !$this->user->match($this->context->editorId))
+  public function checkForMemberRole() {
+    if ($this->article->state->is(State::SUBMITTED) &&
+      $this->user->match($this->article->creatorId) &&
+      !$this->user->match($this->article->editorId))
       return -$this->di['config']->review->creatorVoteValue;
     else
       return FALSE;
   }
 
-}
+
+  public function checkForReviewerRole() {
+    if ($this->article->state->is(State::SUBMITTED) &&
+      !$this->user->match($this->article->editorId))
+      return -$this->di['config']->review->reviewerVoteValue;
+    else
+      return FALSE;
+  }
 
 
-/*
- * Moderator
- */
-
-/*
-  public function check() {
-    if ($this->context->state->is(State::SUBMITTED))
+  public function checkForModeratorRole() {
+    if ($this->article->state->is(State::SUBMITTED))
       return -$this->di['config']->review->moderatorVoteValue;
     else
       return FALSE;
   }
 
 
-Admin
-
-  public function check() {
-    if ($this->context->state->is(State::SUBMITTED))
+  public function checkForAdminRole() {
+    if ($this->article->state->is(State::SUBMITTED))
       return $this->di['config']->review->scoreToRejectRevision;
     else
       return FALSE;
   }
 
-
-Reviewer
-
-  public function check() {
-    if ($this->context->state->is(State::SUBMITTED) &&
-        !$this->user->match($this->context->editorId))
-      return -$this->di['config']->review->reviewerVoteValue;
-    else
-      return FALSE;
-  }
-
- */
+}
