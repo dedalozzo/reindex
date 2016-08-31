@@ -11,13 +11,15 @@
 namespace ReIndex\Doc;
 
 
-use ReIndex\Property;
-use Reindex\Exception;
+use ReIndex\Property\TExcerpt;
+use ReIndex\Property\TBody;
+use ReIndex\Property\TDescription;
+use ReIndex\Exception;
 use ReIndex\Collection;
 use ReIndex\Helper;
 use ReIndex\Task\SynonymizeTask;
 use ReIndex\Enum\State;
-use ReIndex\Security\Role;
+use ReIndex\Security\Role\Permission\Tag as Permission;
 use ReIndex\Security\User\System;
 
 use EoC\Opt\ViewQueryOpts;
@@ -31,7 +33,7 @@ use Phalcon\Di;
  * @nosubgrouping
  */
 final class Tag extends Versionable {
-  use Property\TExcerpt, Property\TBody, Property\TDescription;
+  use TExcerpt, TBody, TDescription;
 
   /** @name Constants */
   //!@{
@@ -109,8 +111,8 @@ final class Tag extends Versionable {
    * @param[in] Tag $tag The master tag.
    */
   public function star() {
-    if (!$this->user->has(new Role\MemberRole\StarTagPermission($this)))
-      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
+    if (!$this->user->has(new Permission\StarPermission($this)))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
 
     $result = $this->user->tags->alter($this->unversionId);
     $this->user->save();
@@ -170,23 +172,14 @@ final class Tag extends Versionable {
 
 
   /**
-   * @copydoc Versionable::submit()
-   */
-  public function submit () {
-    parent::submit();
-    $this->state->set(State::SUBMITTED);
-    $this->save();
-  }
-
-
-  /**
    * @copydoc Versionable::approve()
    */
   public function approve() {
-    if (!$value = $this->user->has(new Role\MemberRole\ApproveRevisionPermission($this)))
-      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
+    if (!$value = $this->user->has(new Permission\ApprovePermission($this)))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
 
-    if ($this->user instanceof Member)
+    // Casts a vote just in case the
+    if ($this->user instanceof Member && !$this->user->match($this->creatorId))
       $this->votes->cast($value, FALSE);
 
     if ($this->user instanceof System || $this->votes->count(FALSE) >= $this->di['config']->review->scoreToApproveRevision) {
