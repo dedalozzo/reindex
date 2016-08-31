@@ -1,17 +1,14 @@
 <?php
 
 /**
- * @file RevertToVersionPermission.php
- * @brief This file contains the RevertToVersionPermission class.
+ * @file Article/RevertPermission.php
+ * @brief This file contains the RevertPermission class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-namespace ReIndex\Security\Role\ModeratorRole;
-
-
-use ReIndex\Security\Role\AbstractPermission;
+namespace ReIndex\Security\Role\Permission\Post\Article;
 
 
 /**
@@ -21,11 +18,11 @@ class RevertToVersionPermission extends AbstractPermission {
 
 
   public function getDescription() {
-    return "Permission to revert the content to a specific revision.";
+    return "Permission to revert the article content to a specific revision.";
   }
 
 
-  public function check() {
+  public function checkForModeratorRole() {
     return TRUE;
   }
 
