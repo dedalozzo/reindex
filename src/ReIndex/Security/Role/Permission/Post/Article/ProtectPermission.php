@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file Post/ProtectPermission.php
+ * @file Article/ProtectPermission.php
  * @brief This file contains the ProtectPermission class.
  * @details
  * @author Filippo F. Fadda
@@ -9,11 +9,10 @@
 
 
 //! Posts related permissions
-namespace ReIndex\Security\Role\Permission\Post;
+namespace ReIndex\Security\Role\Permission\Post\Article;
 
 
-use ReIndex\Security\Role\Permission\AbstractPermission;
-use ReIndex\Doc\Post;
+use ReIndex\Doc\Article;
 use ReIndex\Enum\State;
 
 
@@ -24,17 +23,6 @@ use ReIndex\Enum\State;
  * @nosubgrouping
  */
 class ProtectPermission extends AbstractPermission {
-
-  protected $post;
-
-  /**
-   * @brief Constructor.
-   * @param[in] Doc::Post $context
-   */
-  public function __construct(Post $post) {
-    parent::__construct();
-    $this->post = $post;
-  }
 
 
   public function getDescription() {
@@ -47,7 +35,7 @@ class ProtectPermission extends AbstractPermission {
    * @retval bool
    */
   public function checkForModeratorRole() {
-    return (!$this->post->isProtected() && $this->post->state->is(State::CURRENT)) ? TRUE : FALSE;
+    return (!$this->article->isProtected() && $this->article->state->is(State::CURRENT)) ? TRUE : FALSE;
   }
 
 }
