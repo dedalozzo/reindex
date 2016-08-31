@@ -20,7 +20,7 @@ use Whoops\Handler\PrettyPageHandler;
 use Graze\Monolog\Handler\WhoopsHandler;
 
 use ReIndex\Handler\Error as ReIndexErrorHandler;
-use ReIndex\Security\Role\DeveloperRole\DebugPermission;
+use ReIndex\Security\Role\Permission\System\DebugPermission;
 
 
 $start = microtime(true);
