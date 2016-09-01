@@ -8,7 +8,7 @@
  */
 
 
-namespace ReIndex\Security\Role\Permission;
+namespace ReIndex\Security\Permission;
 
 
 use ReIndex\Security\User\IUser;
