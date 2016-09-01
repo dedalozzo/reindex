@@ -13,7 +13,7 @@ namespace ReIndex\Collection;
 
 use ReIndex\Security\User\IUser;
 use ReIndex\Security\Role\IRole;
-use ReIndex\Security\Role\Permission\Role\GrantPermission;
+use ReIndex\Security\Permission\Role\GrantPermission;
 use ReIndex\Exception\AccessDeniedException;
 
 
