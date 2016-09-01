@@ -8,7 +8,7 @@
  */
 
 
-namespace ReIndex\Security\Role\Permission\Member;
+namespace ReIndex\Security\Permission\Member;
 
 use ReIndex\Doc\Member;
 

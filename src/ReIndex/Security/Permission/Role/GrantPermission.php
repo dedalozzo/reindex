@@ -9,10 +9,10 @@
 
 
 //! Permissions related to the roles
-namespace ReIndex\Security\Role\Permission\Role;
+namespace ReIndex\Security\Permission\Role;
 
 
-use ReIndex\Security\Role\Permission\AbstractPermission;
+use ReIndex\Security\Permission\AbstractPermission;
 use ReIndex\Security\Role\IRole;
 use ReIndex\Security\Role\MemberRole;
 

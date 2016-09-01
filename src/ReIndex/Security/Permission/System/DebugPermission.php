@@ -9,10 +9,10 @@
 
 
 //! System's permissions
-namespace ReIndex\Security\Role\Permission\System;
+namespace ReIndex\Security\Permission\System;
 
 
-use ReIndex\Security\Role\Permission\AbstractPermission;
+use ReIndex\Security\Permission\AbstractPermission;
 
 
 /**

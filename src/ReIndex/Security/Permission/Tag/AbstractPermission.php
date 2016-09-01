@@ -8,10 +8,10 @@
  */
 
 
-namespace ReIndex\Security\Role\Permission\Tag;
+namespace ReIndex\Security\Permission\Tag;
 
 
-use ReIndex\Security\Role\Permission\AbstractPermission as Superclass;
+use ReIndex\Security\Permission\AbstractPermission as Superclass;
 use ReIndex\Doc\Tag;
 
 

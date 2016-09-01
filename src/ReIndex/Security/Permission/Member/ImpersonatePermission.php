@@ -9,10 +9,10 @@
 
 
 //! Permissions related to the member actions.
-namespace ReIndex\Security\Role\Permission\Member;
+namespace ReIndex\Security\Permission\Member;
 
 
-use ReIndex\Security\Role\Permission\AbstractPermission;
+use ReIndex\Security\Permission\AbstractPermission;
 use ReIndex\Security\User\IUser;
 
 

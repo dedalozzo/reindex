@@ -8,7 +8,7 @@
  */
 
 
-namespace ReIndex\Security\Role\Permission\Tag;
+namespace ReIndex\Security\Permission\Tag;
 
 
 use ReIndex\Enum\State;

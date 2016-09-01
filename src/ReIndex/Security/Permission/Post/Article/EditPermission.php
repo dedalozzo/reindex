@@ -11,7 +11,7 @@
 namespace ReIndex\Security\Role\MemberRole;
 
 
-use ReIndex\Security\Role\Permission\Post\Article\AbstractPermission;
+use ReIndex\Security\Permission\Post\Article\AbstractPermission;
 use ReIndex\Enum\State;
 
 

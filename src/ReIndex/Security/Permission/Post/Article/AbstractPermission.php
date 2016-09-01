@@ -8,10 +8,10 @@
  */
 
 
-namespace ReIndex\Security\Role\Permission\Post\Article;
+namespace ReIndex\Security\Permission\Post\Article;
 
 
-use ReIndex\Security\Role\Permission\AbstractPermission as Superclass;
+use ReIndex\Security\Permission\AbstractPermission as Superclass;
 use ReIndex\Doc\Article;
 
 
