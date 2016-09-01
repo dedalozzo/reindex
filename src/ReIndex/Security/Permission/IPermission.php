@@ -9,7 +9,7 @@
 
 
 //! Permissions
-namespace ReIndex\Security\Role\Permission;
+namespace ReIndex\Security\Permission;
 
 
 use ReIndex\Security\Role\IRole;
