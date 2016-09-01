@@ -72,7 +72,7 @@ require $root . "/services/flash.php";
 require $root . "/services/guardian.php";
 
 // Must be done after the services' initialization.
-if ($config->['application']->debug && $di['guardian']->getUser()->has(new DebugPermission()))
+if ($config['application']->debug && $di['guardian']->getUser()->has(new DebugPermission()))
   $log->pushHandler(new WhoopsHandler(new PrettyPageHandler(), Logger::ERROR, TRUE));
   //(new Phalcon\Debug)->listen(); // Eventually we can use Phalcon debugger.
 else
