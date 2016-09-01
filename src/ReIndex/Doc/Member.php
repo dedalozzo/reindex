@@ -16,7 +16,7 @@ use ReIndex\Exception;
 use ReIndex\Helper;
 use ReIndex\Security\User\IUser;
 use ReIndex\Security\Role;
-use ReIndex\Security\Role\Permission\IPermission;
+use ReIndex\Security\Permission\IPermission;
 use ReIndex\Security\Role\MemberRole;
 use ReIndex\Task\IndexMemberTask;
 
