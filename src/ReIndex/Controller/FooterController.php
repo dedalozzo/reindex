@@ -13,7 +13,7 @@ namespace ReIndex\Controller;
 
 use Phalcon\Mvc\View;
 
-use ReIndex\Security\Role\Permission;
+use ReIndex\Security\Permission;
 
 
 /**
