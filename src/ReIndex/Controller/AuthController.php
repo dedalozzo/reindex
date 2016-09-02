@@ -57,7 +57,7 @@ final class AuthController extends BaseController {
 
     try {
       $consumer->join();
-      $this->flash->success(sprintf('Congratulations, your %s social login has been added.', $this->di['config'][$consumer->getName()]['name']));
+      $this->flash->success(sprintf('Congratulations, your <b>%s</b> social login has been added.', $this->di['config'][$consumer->getName()]['name']));
     }
     catch (\Exception $e) {
       // Displays the error message.
