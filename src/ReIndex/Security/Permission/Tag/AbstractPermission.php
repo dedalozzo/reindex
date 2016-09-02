@@ -26,6 +26,7 @@ abstract class AbstractPermission extends Superclass {
    * @param[in] Tag $context.
    */
   public function __construct(Tag $tag) {
+    $this->tag = $tag;
     parent::__construct();
   }
 
