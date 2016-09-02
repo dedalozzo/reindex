@@ -12,13 +12,8 @@ namespace ReIndex\Controller;
 
 
 use EoC\Couch;
-use Phalcon\Mvc\View;
 
-use ReIndex\Security\Role\AdminRole\ChangeVisibilityPermission;
-use ReIndex\Security\Role\ModeratorRole\ProtectPostPermission;
-use ReIndex\Security\Role\ModeratorRole\UnprotectPostPermission;
-use ReIndex\Security\Role\ModeratorRole\MoveToTrashPermission;
-use ReIndex\Security\Role\ModeratorRole\RestorePermission;
+use ReIndex\Security\Permission;
 
 
 /**
@@ -38,10 +33,10 @@ final class AjaxController extends BaseController {
 
         $this->view->setVar('post', $post);
 
-        $this->view->setVar('canProtect', $this->user->has(new ProtectPostPermission($post)));
-        $this->view->setVar('canUnprotect', $this->user->has(new UnprotectPostPermission($post)));
-        $this->view->setVar('canMoveToTrash', $this->user->has(new MoveToTrashPermission($post)));
-        $this->view->setVar('canRestore', $this->user->has(new RestorePermission($post)));
+        $this->view->setVar('canProtect', $this->user->has(new Permission\Post\Article\ProtectPermission($post)));
+        $this->view->setVar('canUnprotect', $this->user->has(new Permission\Post\Article\UnprotectPermission($post)));
+        $this->view->setVar('canMoveToTrash', $this->user->has(new Permission\Post\Article\MoveToTrashPermission($post)));
+        $this->view->setVar('canRestore', $this->user->has(new Permission\Post\Article\RestorePermission($post)));
 
         $this->view->pick('views/ajax/moderator-menu');
       }
