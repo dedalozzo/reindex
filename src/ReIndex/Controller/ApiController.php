@@ -78,7 +78,6 @@ final class ApiController extends BaseController {
       if ($this->request->hasPost('id')) {
         $doc = $this->couchdb->getDoc('posts', Couch::STD_DOC_PATH, $this->request->getPost('id'));
         call_user_func([$doc, $name]);
-        $doc->save();
         echo json_encode([TRUE, $this->user->username, time()]);
         $this->view->disable();
       }
@@ -191,21 +190,6 @@ final class ApiController extends BaseController {
     $this->fireMethod('unprotect');
   }
 
-
-  /**
-   * @brief Hides the post.
-   */
-  public function hidePostAction() {
-    $this->fireMethod('hide');
-  }
-
-
-  /**
-   * @brief Shows the post.
-   */
-  public function showPostAction() {
-    $this->fireMethod('show');
-  }
 
   /**
    * @brief Moves the document to trash.
