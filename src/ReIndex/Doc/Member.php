@@ -280,7 +280,7 @@ final class Member extends ActiveDoc implements IUser {
           $method = $permissionReflection->getMethod($methodName);
 
           // Invokes the method.
-          $result = $method->invoke($this);
+          $result = $method->invoke($permission);
 
           // Exits from the do while and foreach as well.
           break 2;
