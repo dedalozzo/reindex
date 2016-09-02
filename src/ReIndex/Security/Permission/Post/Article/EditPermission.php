@@ -8,10 +8,9 @@
  */
 
 
-namespace ReIndex\Security\Role\MemberRole;
+namespace ReIndex\Security\Permission\Post\Article;
 
 
-use ReIndex\Security\Permission\Post\Article\AbstractPermission;
 use ReIndex\Enum\State;
 
 
