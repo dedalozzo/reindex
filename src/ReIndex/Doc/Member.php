@@ -16,6 +16,7 @@ use ReIndex\Exception;
 use ReIndex\Helper;
 use ReIndex\Security\User\IUser;
 use ReIndex\Security\Role;
+use ReIndex\Security\Permission;
 use ReIndex\Security\Permission\IPermission;
 use ReIndex\Security\Role\MemberRole;
 use ReIndex\Task\IndexMemberTask;
@@ -308,7 +309,7 @@ final class Member extends ActiveDoc implements IUser {
    * @param[in] IUser $user An anonymous user or a member instance.
    */
   public function impersonate(IUser $user) {
-    if ($this->user->has(new Role\Permission\Member\ImpersonatePermission($user)))
+    if ($this->user->has(new Permission\Member\ImpersonatePermission($user)))
       $this->user = $user;
     else
       throw new Exception\AccessDeniedException('Non hai sufficienti privilegi per impersonare un altro utente.');
@@ -358,7 +359,7 @@ final class Member extends ActiveDoc implements IUser {
    * @param[in] integer $days The ban duration in days. When zero, the ban is permanent.
    */
   public function ban($days = 0) {
-    if (!$this->user->has(new Role\Permission\Member\BanPermission($this)))
+    if (!$this->user->has(new Permission\Member\BanPermission($this)))
       throw new Exception\AccessDeniedException("Privilegi di accesso insufficienti.");
 
     $this->meta['banned'] = TRUE;
@@ -377,7 +378,7 @@ final class Member extends ActiveDoc implements IUser {
    * @brief Removes the ban.
    */
   public function unban() {
-    if (!$this->user->has(new Role\Permission\Member\UnbanPermission($this)))
+    if (!$this->user->has(new Permission\Member\UnbanPermission($this)))
       throw new Exception\AccessDeniedException("Privilegi di accesso insufficienti.");
 
     if ($this->isMetadataPresent('banned')) {
