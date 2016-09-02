@@ -14,7 +14,7 @@ namespace ReIndex\Controller;
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
-use ReIndex\Security\Role;
+use ReIndex\Security\Permission;
 use ReIndex\Validation;
 use ReIndex\Helper;
 use ReIndex\Exception\InvalidFieldException;
@@ -517,11 +517,11 @@ class IndexController extends ListController {
 
     $post = $this->couch->getDoc('posts', Couch::STD_DOC_PATH, $rows[0]['id']);
     
-    if (!$this->user->has(new Role\GuestRole\ViewPostPermission($post)))
+    if (!$this->user->has(new Permission\Post\Article\ViewPermission($post)))
       return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     $this->view->setVar('post', $post);
-    $this->view->setVar('canEdit', $this->user->has(new Role\MemberRole\EditPostPermission($post)));
+    $this->view->setVar('canEdit', $this->user->has(new Permission\Post\Article\EditPermission($post)));
     $this->view->setVar('replies', $post->getReplies());
     $this->view->setVar('title', $post->title);
 
@@ -543,7 +543,7 @@ class IndexController extends ListController {
 
     $post = $this->couchdb->getDoc('posts', Couch::STD_DOC_PATH, $id);
 
-    if (!$this->user->has(new Role\MemberRole\EditPostPermission($post)))
+    if (!$this->user->has(new Permission\Post\Article\EditPermission($post)))
       return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     // The validation object must be created in any case.
