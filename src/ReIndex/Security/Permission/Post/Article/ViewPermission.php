@@ -11,6 +11,9 @@
 namespace ReIndex\Security\Permission\Post\Article;
 
 
+use ReIndex\Enum\State;
+
+
 /**
  * @brief Permission to display an article.
  * @details A member can only see his own articles, even if they are invisible to the other members.
