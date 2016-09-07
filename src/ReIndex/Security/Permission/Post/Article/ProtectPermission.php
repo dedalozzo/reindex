@@ -12,30 +12,11 @@
 namespace ReIndex\Security\Permission\Post\Article;
 
 
-use ReIndex\Doc\Article;
-use ReIndex\Enum\State;
+use ReIndex\Security\Permission\Post\ProtectPermission as Superclass;
 
 
 /**
- * @brief Permission to close or lock a post.
- * @details A moderator can protect only the current revision of a post, just in case it doesn't have any active
- * protection.
+ * @brief Permission to close or lock an article.
  * @nosubgrouping
  */
-class ProtectPermission extends AbstractPermission {
-
-
-  public function getDescription() {
-    return "Permission to close or lock a post.";
-  }
-
-
-  /**
-   * @brief Returns `true` if the post can be protected, `false` otherwise.
-   * @retval bool
-   */
-  public function checkForModeratorRole() {
-    return (!$this->article->isProtected() && $this->article->state->is(State::CURRENT)) ? TRUE : FALSE;
-  }
-
-}
+class ProtectPermission extends Superclass {}
