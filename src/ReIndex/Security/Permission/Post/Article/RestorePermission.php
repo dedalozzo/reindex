@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file RestorePermission.php
+ * @file Article/RestorePermission.php
  * @brief This file contains the RestorePermission class.
  * @details
  * @author Filippo F. Fadda
@@ -29,8 +29,7 @@ class RestorePermission extends AbstractPermission  {
 
 
   /**
-   * @brief Constructor.
-   * @param[in] Doc::Article $article
+   * @copydoc AbstractPermission::__construct
    */
   public function __construct(Article $article) {
     parent::__construct($article);
@@ -39,7 +38,7 @@ class RestorePermission extends AbstractPermission  {
 
 
   /**
-   * @brief Permission to restore a deleted content
+   * @brief Permission to restore a deleted an article.
    */
   public function getDescription() {
     return "Permission to restore a deleted article.";
@@ -60,6 +59,5 @@ class RestorePermission extends AbstractPermission  {
       return !$dustman->roles->areSuperiorThan($this->getRole()) ? TRUE : FALSE;
     }
   }
-
 
 }
