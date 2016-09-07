@@ -81,12 +81,14 @@ final class Synonym extends ActiveDoc {
   /**
    * @copydoc ActiveDoc::save()
    */
-  public function save() {
+  public function save($update = TRUE) {
     $userId = $this->user->getId();
 
     // Creator ID has not been provided.
     if (!isset($this->creatorId) && isset($userId))
       $this->creatorId = $userId;
+
+    parent::save($update);
   }
 
 
