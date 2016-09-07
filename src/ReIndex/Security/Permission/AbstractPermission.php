@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file AbstractPermission.php
+ * @file Permission/AbstractPermission.php
  * @brief This file contains the AbstractPermission class.
  * @details
  * @author Filippo F. Fadda
