@@ -31,10 +31,8 @@ class PostGroup extends Group {
 
     $this->setHostname(Di::getDefault()['config']['application']['domainName']);
 
-    // Shows post.
-    $this->addGet('/{year:[0-9]{4}}/{month:[0-9]{2}}/{day:[0-9]{2}}/{slug:[\da-z-]+}', ['action' => 'show']);
-
-    // Edits post.
+    $this->addGet('/{id}/', ['action' => 'displayById']);
+    $this->addGet('/{year:[0-9]{4}}/{month:[0-9]{2}}/{day:[0-9]{2}}/{slug:[\da-z-]+}', ['action' => 'displayByDate']);
     $this->add('/{id}/edit/', ['action' => 'edit'])->via(['GET', 'POST']);
   }
 
