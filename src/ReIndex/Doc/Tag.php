@@ -108,7 +108,6 @@ final class Tag extends Versionable {
 
   /**
    * @brief Adds to the user's favorite the current tag.
-   * @param[in] Tag $tag The master tag.
    */
   public function star() {
     if (!$this->user->has(new Permission\StarPermission($this)))
