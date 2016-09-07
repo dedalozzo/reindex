@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file RestorePermission.php
+ * @file Update/RestorePermission.php
  * @brief This file contains the RestorePermission class.
  * @details
  * @author Filippo F. Fadda
@@ -29,8 +29,7 @@ class RestorePermission extends AbstractPermission  {
 
 
   /**
-   * @brief Constructor.
-   * @param[in] Doc::Update $update
+   * @copydoc AbstractPermission::__construct
    */
   public function __construct(Update $update) {
     parent::__construct($update);
