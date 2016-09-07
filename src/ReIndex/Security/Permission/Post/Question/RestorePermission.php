@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file RestorePermission.php
+ * @file Question/RestorePermission.php
  * @brief This file contains the RestorePermission class.
  * @details
  * @author Filippo F. Fadda
@@ -29,8 +29,7 @@ class RestorePermission extends AbstractPermission  {
 
 
   /**
-   * @brief Constructor.
-   * @param[in] Doc::Question $question
+   * @copydoc AbstractPermission::__construct
    */
   public function __construct(Question $question) {
     parent::__construct($question);
