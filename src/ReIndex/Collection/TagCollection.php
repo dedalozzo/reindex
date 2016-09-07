@@ -109,7 +109,7 @@ final class TagCollection extends MetaCollection {
         $tag = Tag::create();
         $tag->name = $row['key'];
         $tag->creatorId = $this->meta['creatorId'];
-        $tag->approve();
+        $tag->submit();
 
         $this->add(Helper\Text::unversion($tag->id));
       }
