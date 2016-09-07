@@ -22,7 +22,7 @@ abstract class AbstractPermission extends Superclass {
 
   /**
    * @brief Constructor.
-   * @param[in] Doc::Article $article
+   * @param[in] Doc::Article $article An article.
    */
   public function __construct(Article $article) {
     $this->article = $article;
