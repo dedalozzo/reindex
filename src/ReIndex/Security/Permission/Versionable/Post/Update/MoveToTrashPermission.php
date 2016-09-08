@@ -8,7 +8,7 @@
  */
 
 
-namespace ReIndex\Security\Permission\Post\Update;
+namespace ReIndex\Security\Permission\Versionable\Post\Update;
 
 
 use ReIndex\Doc\Comment;
