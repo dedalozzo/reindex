@@ -94,23 +94,6 @@ abstract class AbstractPermission implements IPermission {
   }
 
 
-  /**
-   * @brief Overrides the magic method __toString() to return the permission's name.
-   * @return string
-   */
-  public function __toString() {
-    return $this->getName();
-  }
-
-
-  public function getName() {
-    return $this->name;
-  }
-
-
-  abstract public function getDescription();
-
-
   public function setRole(IRole $role) {
     $this->role = $role;
   }
