@@ -305,7 +305,7 @@ abstract class Post extends Versionable {
 
 
   /**
-   * @brief Removes the post protection.
+   * @brief Used by `removeProtection()` to remove the protection.
    */
   protected function unprotect() {
     $this->unsetMetadata('protection');
@@ -338,6 +338,17 @@ abstract class Post extends Versionable {
       throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
 
     $this->protect(self::LOCKED_PL);
+  }
+
+
+  /**
+   * @brief Removes the protection if any.
+   */
+  public function removeProtection() {
+    if (!$this->user->has(new Permission\UnprotectPermission($this)))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+
+    $this->unprotect();
   }
 
 
