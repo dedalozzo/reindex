@@ -18,7 +18,7 @@ use ReIndex\Enum\State;
  * @brief Permission to display a post.
  * @details A member can only see his own posts, even if they are invisible to the other members.
  */
-abstract class ViewPermission extends AbstractPermission  {
+class ViewPermission extends AbstractPermission  {
 
 
   /**
