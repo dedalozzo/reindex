@@ -35,7 +35,7 @@ class Article extends Post {
 
     $this->castVoteByRole($permission->getRole());
 
-    parent::approve();
+    $this->index();
   }
 
 
