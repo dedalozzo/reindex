@@ -17,11 +17,11 @@ use ReIndex\Enum\State;
 /**
  * @brief Permission to edit a post.
  */
-abstract class EditPermission extends AbstractPermission {
+class EditPermission extends AbstractPermission {
 
 
   /**
-   * @brief Returns `true` if the user is the creator of the post and the post is unlocked, `false` otherwise.
+   * @brief A member can edit any current (and unlocked) post within his own drafts.
    * @retval bool
    */
   public function checkForMemberRole() {
@@ -33,16 +33,12 @@ abstract class EditPermission extends AbstractPermission {
   }
 
 
-  public function checkForEditorRole() {
-    if ($this->checkForMemberRole())
-      return TRUE;
-    else
-      return (!$this->post->isLocked() && $this->post->state->is(State::CURRENT)) ? TRUE : FALSE;
-  }
-
-
+  /**
+   * @brief A reviewer can even edit submitted revisions.
+   * @retval bool
+   */
   public function checkForReviewerRole() {
-    if ($this->checkForEditorRole())
+    if ($this->checkForMemberRole())
       return TRUE;
     else
       return !$this->post->isLocked() &&
@@ -51,6 +47,10 @@ abstract class EditPermission extends AbstractPermission {
   }
 
 
+  /**
+   * @brief A moderator doesn't care if a post has been locked.
+   * @retval bool
+   */
   public function checkForModeratorRole() {
     return $this->post->state->is(State::CURRENT) or $this->post->state->is(State::SUBMITTED);
   }
