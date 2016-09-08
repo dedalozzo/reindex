@@ -8,14 +8,14 @@
  */
 
 
-namespace ReIndex\Security\Permission\Tag;
+namespace ReIndex\Security\Permission\Versionable\Tag;
 
 
 use ReIndex\Enum\State;
 
 
 /**
- * @brief Permission to edit a tag.
+ * @brief Permission to edit the tags' information.
  */
 class EditPermission extends AbstractPermission {
 
@@ -26,32 +26,16 @@ class EditPermission extends AbstractPermission {
 
 
   /**
-   * @brief Returns `true` if the user is the creator of the post and the post is unlocked, `false` otherwise.
+   * @brief A member can edit any current tag.
    * @retval bool
    */
   public function checkForMemberRole() {
-    if ($this->user->match($this->tag->creatorId) &&
-       ($this->tag->state->is(State::CURRENT) or $this->tag->state->is(State::DRAFT)))
-      return TRUE;
-    else
-      return FALSE;
+    return $this->tag->state->is(State::CURRENT) ? TRUE : FALSE;
   }
 
 
   /**
-   * @brief Returns `true` if `checkForMemberRole()` or tag is current, `false` otherwise.
-   * @retval bool
-   */
-  public function checkForEditorRole() {
-    if ($this->checkForReviewerRole())
-      return TRUE;
-    else
-      return $this->tag->state->is(State::CURRENT) ? TRUE : FALSE;
-  }
-
-
-  /**
-   * @brief Returns `true` if `checkForMemberRole()` or tag is current or submitted, `false` otherwise.
+   * @brief A reviewer can edit current tags and submitted revisions.
    * @retval bool
    */
   public function checkForReviewerRole() {
