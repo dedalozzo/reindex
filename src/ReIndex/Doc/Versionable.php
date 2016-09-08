@@ -16,9 +16,9 @@ use EoC\Opt\ViewQueryOpts;
 use ReIndex\Helper;
 use ReIndex\Exception;
 use ReIndex\Enum\State;
-use ReIndex\Security\Role;
 use ReIndex\Collection;
 use ReIndex\Security\User\System;
+use ReIndex\Security\Role\IRole;
 
 
 /**
@@ -79,6 +79,19 @@ abstract class Versionable extends ActiveDoc {
   }
 
 
+  /**
+   * @brief Casts a vote according to the provided role.
+   * @param[in] IRole $role A role.
+   */
+  protected function castVoteByRole(IRole $role) {
+    if ($this->user instanceof Member) {
+      $name = $role->getName();
+      $vote = $this->di['config']->review->{$name.'Vote'};
+      $this->votes->cast($vote, FALSE);
+    }
+  }
+
+
   /** @name Control Versioning Methods */
   //!@{
 
@@ -97,14 +110,21 @@ abstract class Versionable extends ActiveDoc {
   /**
    * @brief Submits the document's revision for peer review.
    */
-  public function submit() {
-    if (!$this->user->has(new Role\MemberRole\SubmitRevisionPermission($this)))
-      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
-
+  protected function submit() {
     // In case this is a revision of a published version, we must update the editor identifier.
-    if ($this->state->is(State::CURRENT)) {
+    if ($this->state->is(State::CURRENT) && $this->user instanceof Member) {
       $this->editorId = $this->user->id;
       $this->reset();
+    }
+
+    $this->state->set(State::SUBMITTED);
+
+    // Tries to approve the revision; in case of a failure, submits it.
+    try {
+      $this->approve();
+    }
+    catch (Exception\AccessDeniedException $e) {
+      $this->save();
     }
   }
 
@@ -112,28 +132,17 @@ abstract class Versionable extends ActiveDoc {
   /**
    * @brief Casts a vote to approve this document's revision.
    */
-  public function approve() {
-    if (!$value = $this->user->has(new Role\MemberRole\ApproveRevisionPermission($this)))
-      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
-
-    if ($this->user instanceof Member)
-      $this->votes->cast($value, FALSE);
-  }
+  abstract protected function approve();
 
 
   /**
    * @brief Casts a vote to rejects this document's revision.
    * @details The document's revision will be automatically deleted in 10 days.
-   * @param[in] $reason The reason why the document's revision has been rejected.
+   * @param[in] string $reason The reason why the document's revision has been rejected.
    */
-  public function reject($reason) {
-    if (!$value = $this->user->has(new Role\ReviewerRole\RejectRevisionPermission($this)))
-      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
-
-    if ($this->user instanceof Member)
-      $this->votes->cast($value, FALSE, '', $reason);
-
-    if ($this->user instanceof System || $this->votes->count(FALSE) >= $this->di['config']->review->scoreToRejectRevision) {
+  protected function reject($reason) {
+    if ($this->user instanceof System ||
+        $this->votes->count(FALSE) >= $this->di['config']->review->scoreToRejectRevision) {
       $this->state->set(State::REJECTED);
       $this->save();
     }
@@ -146,21 +155,15 @@ abstract class Versionable extends ActiveDoc {
    * previous one.
    * @todo Implement the method Versionable.revert().
    */
-  public function revert($versionNumber = NULL) {
-    if (!$this->user->has(new Role\ModeratorRole\RevertToVersionPermission()))
-      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
-
+  protected function revert($versionNumber = NULL) {
     // cerca se la revisione specificata è approved e la marca come current.
   }
 
 
   /**
-   * @brief Moves the document to the trash.
+   * @brief Alias of delete().
    */
-  public function delete() {
-    if (!$this->user->has(new Role\MemberRole\MoveToTrashPermission($this)))
-      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
-
+  protected function moveToTrash() {
     if ($this->indexingInProgress())
       throw new Exception\InvalidStateException("Operazione non consentita; riprova più tardi.");
 
@@ -171,20 +174,9 @@ abstract class Versionable extends ActiveDoc {
 
 
   /**
-   * @brief Alias of delete().
-   */
-  public function moveToTrash() {
-    $this->delete();
-  }
-
-
-  /**
    * @brief Restores the document to its previous state, removing it from trash.
    */
-  public function restore() {
-    if (!$this->user->has(new Role\ModeratorRole\RestorePermission($this)))
-      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
-
+  protected function restore() {
     if ($this->meta['prevState'] === State::CURRENT)
       $this->state->set(State::INDEXING);
     else
@@ -196,16 +188,15 @@ abstract class Versionable extends ActiveDoc {
     unset($this->meta['deletedAt']);
   }
 
+  //@}
+
 
   /**
-   * @brief Gets information about all the previous versions.
-   * @retval array
+   * @brief A versionable document can't be deleted, but it can be moved into the trash.
    */
-  public function getPastVersionsInfo() {
-    // todo
+  public function delete() {
+    throw new \BadMethodCallException("You can't call this method on a versionable object.");
   }
-
-  //@}
 
 
   /**
