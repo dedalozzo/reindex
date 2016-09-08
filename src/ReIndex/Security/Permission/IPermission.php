@@ -29,27 +29,6 @@ interface IPermission {
 
 
   /**
-   * @brief Magic method __toString.
-   * @return string
-   */
-  function __toString();
-
-
-  /**
-   * @brief Returns the permission's name.
-   * @return string
-   */
-  function getName();
-
-
-  /**
-   * @brief Returns the permission's description.
-   * @return string
-   */
-  function getDescription();
-
-
-  /**
    * @brief Sets the permission's execution role.
    * @param[in] Role::IRole $role The relative role.
    */
