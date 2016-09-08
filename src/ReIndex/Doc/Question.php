@@ -25,17 +25,6 @@ final class Question extends Post {
 
 
   /**
-   * @copydoc Post::unprotect()
-   */
-  public function unprotect() {
-    if (!$this->user->has(new Permission\UnprotectPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
-    parent::unprotect();
-  }
-
-
-  /**
    * @copydoc Versionable::submit()
    */
   public function submit() {
