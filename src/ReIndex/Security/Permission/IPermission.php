@@ -58,7 +58,7 @@ interface IPermission {
 
   /**
    * @brief Returns the permission's execution role.
-   * @return Role::IRole
+   * @retval Role::IRole
    */
   function getRole();
 
