@@ -14,11 +14,10 @@ namespace ReIndex\Security\Permission\Versionable\Post\Update;
 use ReIndex\Security\Permission\Versionable\Post\UnprotectPermission as Superclass;
 
 
-
 /**
  * @brief Permission to unprotect an update.
  */
-abstract class UnprotectPermission extends Superclass {
+class UnprotectPermission extends Superclass {
 
 
   /**
