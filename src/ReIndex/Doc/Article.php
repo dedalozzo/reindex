@@ -25,28 +25,6 @@ class Article extends Post {
 
 
   /**
-   * @copydoc Post::close()
-   */
-  public function close() {
-    if (!$this->user->has(new Permission\ProtectPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
-    parent::close();
-  }
-
-
-  /**
-   * @copydoc Post::lock()
-   */
-  public function lock() {
-    if (!$this->user->has(new Permission\ProtectPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
-    parent::lock();
-  }
-
-
-  /**
    * @copydoc Post::unprotect()
    */
   public function unprotect() {
@@ -158,19 +136,6 @@ class Article extends Post {
       return $controller->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
     parent::editAction($controller);
-  }
-
-
-  /**
-   * @copydoc Post::viewAction()
-   */
-  public function viewAction(BaseController $controller) {
-    if (!$this->user->has(new Permission\ViewPermission($this)))
-      return $controller->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
-
-    $controller->view->setVar('canEdit', $this->user->has(new Permission\EditPermission($this)));
-
-    parent::viewAction($controller);
   }
 
 }

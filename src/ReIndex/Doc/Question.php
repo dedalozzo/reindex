@@ -23,27 +23,6 @@ use ReIndex\Controller\BaseController;
  */
 final class Question extends Post {
 
-  /**
-   * @copydoc Post::close()
-   */
-  public function close() {
-    if (!$this->user->has(new Permission\ProtectPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
-    parent::close();
-  }
-
-
-  /**
-   * @copydoc Post::lock()
-   */
-  public function lock() {
-    if (!$this->user->has(new Permission\ProtectPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
-    parent::lock();
-  }
-
 
   /**
    * @copydoc Post::unprotect()
