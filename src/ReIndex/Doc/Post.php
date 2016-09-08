@@ -14,16 +14,23 @@ namespace ReIndex\Doc;
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
-use ReIndex\Property;
+use ReIndex\Property\TExcerpt;
+use ReIndex\Property\TBody;
+use ReIndex\Property\TDescription;
 use ReIndex\Helper;
 use ReIndex\Collection;
-use ReIndex\Exception;
-use ReIndex\Security\Role;
 use ReIndex\Enum\State;
 use ReIndex\Task\IndexPostTask;
 use ReIndex\Security\User\System;
+use ReIndex\Security\Permission\Post as Permission;
+use ReIndex\Controller\BaseController;
+use ReIndex\Validation;
+use ReIndex\Exception\InvalidFieldException;
 
 use Phalcon\Di;
+use Phalcon\Mvc\View;
+use Phalcon\Validation\Validator\PresenceOf;
+
 
 
 /**
@@ -36,6 +43,9 @@ use Phalcon\Di;
  * @property int $legacyId
  *
  * @property string $title
+ * @property string $excerpt
+ * @property string $body
+ * @property string $html
  * @property string $slug
  * @property string $toc
  * @property array $data
@@ -52,7 +62,7 @@ use Phalcon\Di;
  * @endcond
  */
 abstract class Post extends Versionable {
-  use Property\TExcerpt, Property\TBody, Property\TDescription;
+  use TExcerpt, TBody, TDescription;
 
   /** @name Constants */
   //!@{
@@ -102,10 +112,10 @@ abstract class Post extends Versionable {
     $id = $this->unversionId;
 
     $this->redis->zIncrBy($set, $value, $id);
-    $this->redis->zIncrBy($set.$date->format('_Ymd'), $value, $id);
-    $this->redis->zIncrBy($set.$date->format('_Ym'), $value, $id);
-    $this->redis->zIncrBy($set.$date->format('_Y'), $value, $id);
-    $this->redis->zIncrBy($set.$date->format('_Y_w'), $value, $id);
+    $this->redis->zIncrBy($set . $date->format('_Ymd'), $value, $id);
+    $this->redis->zIncrBy($set . $date->format('_Ym'), $value, $id);
+    $this->redis->zIncrBy($set . $date->format('_Y'), $value, $id);
+    $this->redis->zIncrBy($set . $date->format('_Y_w'), $value, $id);
   }
 
 
@@ -128,14 +138,14 @@ abstract class Post extends Versionable {
     // Marks the start of a transaction block. Subsequent commands will be queued for atomic execution using `exec()`.
     $this->redis->multi();
 
-    $this->zMultipleIncrBy(self::POP_SET.'post', $date, $value);
-    $this->zMultipleIncrBy(self::POP_SET.$this->type, $date, $value);
+    $this->zMultipleIncrBy(self::POP_SET . 'post', $date, $value);
+    $this->zMultipleIncrBy(self::POP_SET . $this->type, $date, $value);
 
     $uniqueMasters = $this->tags->uniqueMasters();
     foreach ($uniqueMasters as $tagId) {
       $prefix = self::POP_SET . $tagId . '_';
-      $this->zMultipleIncrBy($prefix.'post', $date, $value);
-      $this->zMultipleIncrBy($prefix.$this->type, $date, $value);
+      $this->zMultipleIncrBy($prefix . 'post', $date, $value);
+      $this->zMultipleIncrBy($prefix . $this->type, $date, $value);
     }
 
     // Marks the end of the transaction block.
@@ -284,13 +294,10 @@ abstract class Post extends Versionable {
 
   /**
    * @brief Closes the post.
-   * @details No more answers or comments can be added.
+   * @details No more new replies and comments can be added.
    * @see http://meta.stackexchange.com/questions/10582/what-is-a-closed-or-on-hold-question
    */
-  public function close() {
-    if (!$this->user->has(new Role\ModeratorRole\ProtectPostPermission($this)))
-      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
-
+  protected function close() {
     $this->meta['protection'] = self::CLOSED_PL;
     $this->meta['protectorId'] = $this->user->id;
 
@@ -300,13 +307,10 @@ abstract class Post extends Versionable {
 
   /**
    * @brief Locks the post.
-   * @details No more new answers (or comments), votes, edits, question comments.
+   * @details No more new replies, comments, votes, edits.
    * @see http://meta.stackexchange.com/questions/22228/what-is-a-locked-post
    */
-  public function lock() {
-    if (!$this->user->has(new Role\ModeratorRole\ProtectPostPermission($this)))
-      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
-
+  protected function lock() {
     $this->meta['protection'] = self::LOCKED_PL;
     $this->meta['protectorId'] = $this->user->id;
 
@@ -317,10 +321,7 @@ abstract class Post extends Versionable {
   /**
    * @brief Removes the post protection.
    */
-  public function unprotect() {
-    if (!$this->user->has(new Role\ModeratorRole\UnprotectPostPermission($this)))
-      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
-
+  protected function unprotect() {
     $this->unsetMetadata('protection');
     $this->unsetMetadata('protectorId');
 
@@ -335,6 +336,7 @@ abstract class Post extends Versionable {
     return ($this->isProtected() && $this->protection === self::CLOSED_PL) ? TRUE : FALSE;
   }
 
+
   /**
    * @brief Returns `true` if the post is locked.
    */
@@ -346,30 +348,12 @@ abstract class Post extends Versionable {
 
 
   /**
-   * @copydoc Versionable::submit()
-   */
-  public function submit () {
-    parent::submit();
-
-    if ($this->user->match($this->creatorId) or $this->user->roles->areSuperiorThan(new Role\EditorRole())) {
-      $this->state->set(State::INDEXING);
-      $this->tasks->add(new IndexPostTask($this));
-    }
-    else
-      $this->state->set(State::SUBMITTED);
-
-    // Finally saves the document itself.
-    $this->save();
-  }
-
-
-  /**
    * @copydoc Versionable::approve()
    */
-  public function approve() {
-    parent::approve();
-
-    if ($this->user instanceof System || !$this->indexingInProgress() || $this->votes->count(FALSE) >= $this->di['config']->review->scoreToApproveRevision) {
+  protected function approve() {
+    if ($this->user instanceof System ||
+        !$this->indexingInProgress() ||
+        $this->votes->count(FALSE) >= $this->di['config']->review->scoreToApproveRevision) {
       $this->state->set(State::INDEXING);
       $this->tasks->add(new IndexPostTask($this));
       $this->save();
@@ -378,10 +362,10 @@ abstract class Post extends Versionable {
 
 
   /**
-   * @copydoc Versionable::delete()
+   * @copydoc Versionable::moveToTrash()
    */
-  public function delete() {
-    parent::delete();
+  protected function moveToTrash() {
+    parent::moveToTrash();
     $this->state->set(State::DELETING);
     $this->tasks->add(new IndexPostTask($this));
     $this->save();
@@ -391,7 +375,7 @@ abstract class Post extends Versionable {
   /**
    * @copydoc Versionable::restore()
    */
-  public function restore() {
+  protected function restore() {
     parent::restore();
 
     if ($this->state->is(State::INDEXING))
@@ -399,6 +383,79 @@ abstract class Post extends Versionable {
 
     $this->save();
   }
+
+
+  /** @name Actions */
+  //!@{
+
+  /**
+   * @brief Executed when the user is editing an existent post.
+   * @param[in] BaseController $controller A controller instance.
+   */
+  protected function editAction(BaseController $controller) {
+    // The validation object must be created in any case.
+    $validation = new Validation();
+    $controller->view->setVar('validation', $validation);
+
+    if ($controller->request->isPost()) {
+      try {
+        $validation->setFilters("title", "trim");
+        $validation->add("title", new PresenceOf(["message" => "Title is mandatory."]));
+
+        $validation->setFilters("body", "trim");
+        $validation->add("body", new PresenceOf(["message" => "Body is mandatory."]));
+
+        $validation->setFilters("editSummary", "trim");
+        $validation->add("editSummary", new PresenceOf(["message" => "Summary is mandatory."]));
+
+        $group = $validation->validate($_POST);
+        if (count($group) > 0) {
+          throw new InvalidFieldException("Fields are incomplete or the entered values are invalid. The errors are reported in red under the respective entry fields.");
+        }
+
+        $this->title = $controller->request->getPost('title');
+        $this->body = $controller->request->getPost('body');
+        $this->editSummary = $controller->request->getPost('editSummary');
+      }
+      catch (InvalidFieldException $e) {
+        // We handle only this type of exception.
+        $controller->flash->error($e->getMessage());
+      }
+      finally {
+        // Even in case a field is invalid we must execute the following statement to refill
+        // the tags array used by Selectize component.
+        $this->tags->addMultipleAtOnce($controller->request->getPost('tags'));
+      }
+
+      $this->submit();
+    }
+    else {
+      $controller->tag->setDefault("title", $this->title);
+      $controller->tag->setDefault("body", $this->body);
+    }
+
+    $controller->view->setVar('post', $this);
+    $controller->view->setVar('title', $this->title);
+
+    $controller->view->disableLevel(View::LEVEL_LAYOUT);
+
+    $controller->view->pick('views/post/edit');
+  }
+
+
+  /**
+   * @brief Executed when the user is displaying a post.
+   * @param[in] BaseController $controller A controller instance.
+   */
+  protected function viewAction(BaseController $controller) {
+    $controller->view->setVar('post', $this);
+    $controller->view->setVar('replies', $this->getReplies());
+    $controller->view->setVar('title', $this->title);
+
+    $controller->view->pick('views/post/show');
+  }
+
+  //@}
 
 
   /**
