@@ -14,7 +14,7 @@ namespace ReIndex\Security\Permission\Post\Question;
 /**
  * @brief Permission to revert the content to a specific revision.
  */
-class RevertToVersionPermission extends AbstractPermission {
+class RevertPermission extends AbstractPermission {
 
 
   public function getDescription() {
