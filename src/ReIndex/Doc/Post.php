@@ -22,7 +22,7 @@ use ReIndex\Collection;
 use ReIndex\Enum\State;
 use ReIndex\Task\IndexPostTask;
 use ReIndex\Security\User\System;
-use ReIndex\Security\Permission\Post as Permission;
+use ReIndex\Security\Permission\Versionable\Post as Permission;
 use ReIndex\Controller\BaseController;
 use ReIndex\Validation;
 use ReIndex\Exception\InvalidFieldException;
