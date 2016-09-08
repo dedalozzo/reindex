@@ -19,7 +19,7 @@ use ReIndex\Collection;
 use ReIndex\Helper;
 use ReIndex\Task\SynonymizeTask;
 use ReIndex\Enum\State;
-use ReIndex\Security\Permission\Tag as Permission;
+use ReIndex\Security\Permission\Versionable\Tag as Permission;
 use ReIndex\Security\User\System;
 
 use EoC\Opt\ViewQueryOpts;
