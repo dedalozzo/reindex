@@ -14,14 +14,8 @@ namespace ReIndex\Controller;
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
-use ReIndex\Security\Permission;
-use ReIndex\Validation;
 use ReIndex\Helper;
-use ReIndex\Exception\InvalidFieldException;
 use ReIndex\Doc\Post;
-
-use Phalcon\Mvc\View;
-use Phalcon\Validation\Validator\PresenceOf;
 
 
 /**
@@ -506,7 +500,7 @@ class IndexController extends ListController {
    * @param[in] int $day The exact day when a post has been published.
    * @param[in] string $slug The post' slug.
    */
-  public function showAction($year, $month, $day, $slug) {
+  public function displayByDateAction($year, $month, $day, $slug) {
     $opts = new ViewQueryOpts();
     $opts->setKey([$year, $month, $day, $slug])->setLimit(1);
     // posts/byUrl/view
@@ -517,19 +511,11 @@ class IndexController extends ListController {
 
     $post = $this->couch->getDoc('posts', Couch::STD_DOC_PATH, $rows[0]['id']);
     
-    if (!$this->user->has(new Permission\Post\Article\ViewPermission($post)))
-      return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
-
-    $this->view->setVar('post', $post);
-    $this->view->setVar('canEdit', $this->user->has(new Permission\Post\Article\EditPermission($post)));
-    $this->view->setVar('replies', $post->getReplies());
-    $this->view->setVar('title', $post->title);
-
     //$this->assets->addJs($this->dist."/js/post.min.js", FALSE);
     // FOR DEBUG PURPOSE ONLY UNCOMMENT THE FOLLOWING LINE AND COMMENT THE ONE ABOVE.
     $this->assets->addJs("/reindex/themes/".$this->themeName."/src/js/post.js", FALSE);
 
-    $this->view->pick('views/post/show');
+    $post->viewAction($this);
   }
 
 
@@ -537,104 +523,16 @@ class IndexController extends ListController {
    * @brief Edits the post.
    * @param[in] string $id The post ID.
    */
-  public function editAction($id) {
+  public function editAction($id = NULL) {
     if (empty($id))
       return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $post = $this->couchdb->getDoc('posts', Couch::STD_DOC_PATH, $id);
 
-    if (!$this->user->has(new Permission\Post\Article\EditPermission($post)))
-      return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
-
-    // The validation object must be created in any case.
-    $validation = new Validation();
-    $this->view->setVar('validation', $validation);
-
-    if ($this->request->isPost()) {
-      try {
-        $validation->setFilters("title", "trim");
-        $validation->add("title", new PresenceOf(["message" => "Title is mandatory."]));
-
-        $validation->setFilters("body", "trim");
-        $validation->add("body", new PresenceOf(["message" => "Body is mandatory."]));
-
-        $validation->setFilters("editSummary", "trim");
-        $validation->add("editSummary", new PresenceOf(["message" => "Summary is mandatory."]));
-
-        $group = $validation->validate($_POST);
-        if (count($group) > 0) {
-          throw new InvalidFieldException("Fields are incomplete or the entered values are invalid. The errors are reported in red under the respective entry fields.");
-        }
-
-        $post->title = $this->request->getPost('title');
-        $post->body = $this->request->getPost('body');
-        $post->editSummary = $this->request->getPost('editSummary');
-      }
-      catch (InvalidFieldException $e) {
-        // We handle only this type of exception.
-        $this->flash->error($e->getMessage());
-      }
-      finally {
-        // Even in case a field is invalid we must execute the following statement to refill
-        // the tags array used by Selectize component.
-        $post->tags->addMultipleAtOnce($this->request->getPost('tags'));
-      }
-
-      $post->submit();
-    }
-    else {
-      /*
-      $opts = new ViewQueryOpts();
-      $opts->setKey($post->unversionId)->doNotReduce();
-      // posts/approvedInfo/view
-      $revisions = $this->couch->queryView('posts', 'approvedInfo', 'view', NULL, $opts);
-      */
-
-      /*
-      // members/names/view
-      $keys = array_column(array_column($revisions->asArray(), 'value'), 'editorId');
-      $opts->reset();
-      $opts->includeMissingKeys();
-      $members = $this->couch->queryView('members', 'names', 'view', $keys, $opts);
-      */
-
-      /*
-      $versions = [];
-      $revisionCount = count($revisions);
-      for ($i = 0; $i < $revisionCount; $i++) {
-        $version = (object)($revisions[$i]['value']);
-        $version->id = $revisions[$i]['id'];
-        $version->whenHasBeenModified = Helper\Time::when($version->modifiedAt);
-        $version->editor = $members[$i]['value'][0];
-
-        $versions[$version->modifiedAt] = $version;
-      }
-
-      krsort($versions);
-      */
-
-      $this->tag->setDefault("title", $post->title);
-      $this->tag->setDefault("body", $post->body);
-    }
-
-    $this->view->setVar('post', $post);
-    $this->view->setVar('title', $post->title);
-
-    $this->view->disableLevel(View::LEVEL_LAYOUT);
-
-    // Adds Selectize Plugin files.
-    $this->assets->addJs($this->dist."/js/selectize.min.js", FALSE);
     $this->addCodeMirror();
+    $this->assets->addJs($this->dist."/js/selectize.min.js", FALSE);
 
-    $this->view->pick('views/post/edit');
-  }
-
-
-  /**
-   * @brief Creates a new post.
-   */
-  public function newAction() {
-
+    $post->editAction($this);
   }
 
 }
