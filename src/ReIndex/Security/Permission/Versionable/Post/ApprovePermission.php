@@ -17,7 +17,7 @@ use ReIndex\Enum\State;
 /**
  * @brief Permission to vote for the approval of a post's revision.
  */
-abstract class ApprovePermission extends AbstractPermission {
+class ApprovePermission extends AbstractPermission {
 
 
   /**
