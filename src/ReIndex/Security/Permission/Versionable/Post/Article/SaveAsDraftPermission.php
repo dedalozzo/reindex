@@ -19,11 +19,6 @@ use ReIndex\Enum\State;
 class SaveAsDraftPermission extends AbstractPermission  {
 
 
-  public function getDescription() {
-    return "Permission to save an article as draft.";
-  }
-
-
   public function checkForMemberRole() {
     return $this->user->match($this->article->creatorId) &&
            ($this->article->state->is(State::CREATED) or $this->article->state->is(State::DRAFT))
