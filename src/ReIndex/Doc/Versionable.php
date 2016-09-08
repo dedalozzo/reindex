@@ -66,20 +66,6 @@ abstract class Versionable extends ActiveDoc {
 
 
   /**
-   * @brief Returns `true` in case there is an indexing task in progress, `false` otherwise.
-   * @return bool
-   */
-  protected function indexingInProgress() {
-    $opts = new ViewQueryOpts();
-    $opts->setKey($this->unversionId);
-    // posts/inElaboration/view
-    $rows = $this->couch->queryView('posts', 'inElaboration', 'view', NULL, $opts);
-
-    return !$rows->isEmpty();
-  }
-
-
-  /**
    * @brief Casts a vote according to the provided role.
    * @param[in] IRole $role A role.
    */
