@@ -11,9 +11,10 @@
 namespace ReIndex\Doc;
 
 
+use ReIndex\Security\Permission\Post\Article as Permission;
 use ReIndex\Enum\State;
-use ReIndex\Security\Role;
 use Reindex\Exception;
+use ReIndex\Controller\BaseController;
 
 
 /**
@@ -24,20 +25,109 @@ class Article extends Post {
 
 
   /**
+   * @copydoc Post::close()
+   */
+  public function close() {
+    if (!$this->user->has(new Permission\ProtectPermission($this)))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+
+    parent::close();
+  }
+
+
+  /**
+   * @copydoc Post::lock()
+   */
+  public function lock() {
+    if (!$this->user->has(new Permission\ProtectPermission($this)))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+
+    parent::lock();
+  }
+
+
+  /**
+   * @copydoc Post::unprotect()
+   */
+  public function unprotect() {
+    if (!$this->user->has(new Permission\UnprotectPermission($this)))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+
+    parent::unprotect();
+  }
+
+
+  /**
    * @copydoc Versionable::submit()
-   * @details Any modification, even by the same author who wrote the article, must go through the peer review procedure.
    */
   public function submit() {
-    if (!$this->user->has(new Role\MemberRole\SubmitRevisionPermission($this)))
-      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
+    if (!$this->user->has(new Permission\EditPermission($this)))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
 
-    // In case this is a revision of a published version, we must update the editor identifier.
-    if ($this->state->is(State::CURRENT))
-      $this->editorId = $this->user->id;
+    parent::submit();
+  }
 
-    $this->state->set(State::SUBMITTED);
 
-    $this->save();
+  /**
+   * @copydoc Versionable::approve()
+   */
+  public function approve() {
+    $permission = new Permission\ApprovePermission($this);
+
+    if (!$this->user->has($permission))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+
+    $this->castVoteByRole($permission->getRole());
+
+    parent::approve();
+  }
+
+
+  /**
+   * @copydoc Versionable::reject()
+   */
+  public function reject($reason) {
+    $permission = new Permission\RejectPermission($this);
+
+    if (!$this->user->has($permission))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+
+    $this->castVoteByRole($permission->getRole());
+
+    parent::reject($reason);
+  }
+
+
+  /**
+   * @copydoc Versionable::revert()
+   */
+  public function revert($versionNumber = NULL) {
+    if (!$this->user->has(new Permission\RevertPermission($this)))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+
+    parent::revert($versionNumber);
+  }
+
+
+  /**
+   * @copydoc Versionable::moveToTrash()
+   */
+  public function moveToTrash() {
+    if (!$this->user->has(new Permission\MoveToTrashPermission($this)))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+
+    parent::moveToTrash();
+  }
+
+
+  /**
+   * @copydoc Versionable::restore()
+   */
+  public function restore() {
+    if (!$this->user->has(new Permission\RestorePermission($this)))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+
+    parent::restore();
   }
 
 
@@ -46,8 +136,8 @@ class Article extends Post {
    * @details When a user works on an article, he wants save many time the item before submit it for peer revision.
    */
   public function saveAsDraft() {
-    if (!$this->user->has(new Role\MemberRole\SaveAsDraftPermission($this)))
-      throw new Exception\NotEnoughPrivilegesException("Privilegi insufficienti o stato incompatibile.");
+    if (!$this->user->has(new Permission\SaveAsDraftPermission($this)))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
 
     $this->state->set(State::DRAFT);
 
@@ -57,6 +147,30 @@ class Article extends Post {
     $this->meta['day'] = date("d", $this->createdAt);
 
     $this->save();
+  }
+
+
+  /**
+   * @copydoc Post::editAction()
+   */
+  public function editAction(BaseController $controller) {
+    if (!$this->user->has(new Permission\EditPermission($this)))
+      return $controller->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
+
+    parent::editAction($controller);
+  }
+
+
+  /**
+   * @copydoc Post::viewAction()
+   */
+  public function viewAction(BaseController $controller) {
+    if (!$this->user->has(new Permission\ViewPermission($this)))
+      return $controller->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
+
+    $controller->view->setVar('canEdit', $this->user->has(new Permission\EditPermission($this)));
+
+    parent::viewAction($controller);
   }
 
 }
