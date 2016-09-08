@@ -61,17 +61,6 @@ class Update extends Post {
 
 
   /**
-   * @copydoc Versionable::submit()
-   */
-  public function submit() {
-    if (!$this->user->has(new Permission\EditPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
-    parent::submit();
-  }
-
-
-  /**
    * @copydoc Versionable::approve()
    */
   public function approve() {
