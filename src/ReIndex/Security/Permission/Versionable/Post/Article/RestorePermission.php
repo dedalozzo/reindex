@@ -8,7 +8,7 @@
  */
 
 
-namespace ReIndex\Security\Permission\Post\Article;
+namespace ReIndex\Security\Permission\Versionable\Post\Article;
 
 
 use ReIndex\Doc\Article;
