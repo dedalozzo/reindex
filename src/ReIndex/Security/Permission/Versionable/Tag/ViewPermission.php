@@ -8,10 +8,7 @@
  */
 
 
-namespace ReIndex\Security\Permission\Tag;
-
-
-use ReIndex\Enum\State;
+namespace ReIndex\Security\Permission\Versionable\Tag;
 
 
 /**
@@ -26,7 +23,7 @@ class ViewPermission extends AbstractPermission  {
 
 
   /**
-   * @brief Returns `true` if tag is current, `false` otherwise.
+   * @brief A guest can see any current tag.
    * @retval bool
    */
   public function checkForGuest() {
