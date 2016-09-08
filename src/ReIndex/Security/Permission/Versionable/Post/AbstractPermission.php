@@ -8,7 +8,7 @@
  */
 
 
-namespace ReIndex\Security\Permission\Post;
+namespace ReIndex\Security\Permission\Versionable\Post;
 
 
 use ReIndex\Security\Permission\AbstractPermission as Superclass;
