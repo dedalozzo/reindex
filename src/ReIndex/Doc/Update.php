@@ -61,21 +61,6 @@ class Update extends Post {
 
 
   /**
-   * @copydoc Versionable::approve()
-   */
-  public function approve() {
-    $permission = new Permission\ApprovePermission($this);
-
-    if (!$this->user->has($permission))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
-    $this->castVoteByRole($permission->getRole());
-
-    parent::approve();
-  }
-
-
-  /**
    * @copydoc Versionable::reject()
    */
   public function reject($reason) {
