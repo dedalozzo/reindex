@@ -20,11 +20,6 @@ use ReIndex\Security\Permission\Versionable\Post\ApprovePermission as Superclass
 class ApprovePermission extends Superclass {
 
 
-  public function getDescription() {
-    return "Approves the article revision.";
-  }
-
-
   /**
    * @brief A member can approve modifications of other than himself on his own posts.
    * @retval bool
