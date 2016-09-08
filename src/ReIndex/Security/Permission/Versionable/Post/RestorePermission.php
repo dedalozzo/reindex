@@ -1,17 +1,17 @@
 <?php
 
 /**
- * @file Update/RestorePermission.php
+ * @file Post/RestorePermission.php
  * @brief This file contains the RestorePermission class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-namespace ReIndex\Security\Permission\Versionable\Post\Update;
+namespace ReIndex\Security\Permission\Versionable\Post;
 
 
-use ReIndex\Doc\Update;
+use ReIndex\Doc\Post;
 use ReIndex\Enum\State;
 
 use EoC\Couch;
@@ -31,17 +31,9 @@ class RestorePermission extends AbstractPermission  {
   /**
    * @copydoc AbstractPermission::__construct
    */
-  public function __construct(Update $update) {
-    parent::__construct($update);
+  public function __construct(Post $post) {
+    parent::__construct($post);
     $this->couch = $this->di['couchdb'];
-  }
-
-
-  /**
-   * @brief Permission to restore a deleted content
-   */
-  public function getDescription() {
-    return "Permission to restore a deleted update.";
   }
 
 
@@ -50,12 +42,12 @@ class RestorePermission extends AbstractPermission  {
    * deleted by a member with an inferior role or by himself.
    */
   public function checkForModeratorRole() {
-    if (!$this->update->state->is(State::DELETED))
+    if (!$this->post->state->is(State::DELETED))
       return FALSE;
-    elseif ($this->update->dustmanId == $this->user->id)
+    elseif ($this->post->dustmanId == $this->user->id)
       return TRUE;
     else {
-      $dustman = $this->couch->getDoc('members', Couch::STD_DOC_PATH, $this->update->dustmanId);
+      $dustman = $this->couch->getDoc('members', Couch::STD_DOC_PATH, $this->post->dustmanId);
       return !$dustman->roles->areSuperiorThan($this->getRole()) ? TRUE : FALSE;
     }
   }
