@@ -25,7 +25,7 @@ use ReIndex\Security\User\System;
 use ReIndex\Security\Permission\Versionable\Post as Permission;
 use ReIndex\Controller\BaseController;
 use ReIndex\Validation;
-use ReIndex\Exception\InvalidFieldException;
+use ReIndex\Exception;
 
 use Phalcon\Di;
 use Phalcon\Mvc\View;
@@ -293,25 +293,11 @@ abstract class Post extends Versionable {
 
 
   /**
-   * @brief Closes the post.
-   * @details No more new replies and comments can be added.
-   * @see http://meta.stackexchange.com/questions/10582/what-is-a-closed-or-on-hold-question
+   * @brief Protects the post with the given protection.
+   * @param[in] string $protectionType A post can be `closed` or `locked`.
    */
-  protected function close() {
-    $this->meta['protection'] = self::CLOSED_PL;
-    $this->meta['protectorId'] = $this->user->id;
-
-    $this->save();
-  }
-
-
-  /**
-   * @brief Locks the post.
-   * @details No more new replies, comments, votes, edits.
-   * @see http://meta.stackexchange.com/questions/22228/what-is-a-locked-post
-   */
-  protected function lock() {
-    $this->meta['protection'] = self::LOCKED_PL;
+  protected function protect($protectionType) {
+    $this->meta['protection'] = $protectionType;
     $this->meta['protectorId'] = $this->user->id;
 
     $this->save();
@@ -326,6 +312,32 @@ abstract class Post extends Versionable {
     $this->unsetMetadata('protectorId');
 
     $this->save();
+  }
+
+
+  /**
+   * @brief Closes the post.
+   * @details No more new replies and comments can be added.
+   * @see http://meta.stackexchange.com/questions/10582/what-is-a-closed-or-on-hold-question
+   */
+  public function close() {
+    if (!$this->user->has(new Permission\ProtectPermission($this)))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+
+    $this->protect(self::CLOSED_PL);
+  }
+
+
+  /**
+   * @brief Locks the post.
+   * @details No more new replies, comments, votes, edits.
+   * @see http://meta.stackexchange.com/questions/22228/what-is-a-locked-post
+   */
+  public function lock() {
+    if (!$this->user->has(new Permission\ProtectPermission($this)))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+
+    $this->protect(self::LOCKED_PL);
   }
 
 
@@ -410,14 +422,14 @@ abstract class Post extends Versionable {
 
         $group = $validation->validate($_POST);
         if (count($group) > 0) {
-          throw new InvalidFieldException("Fields are incomplete or the entered values are invalid. The errors are reported in red under the respective entry fields.");
+          throw new Exception\InvalidFieldException("Fields are incomplete or the entered values are invalid. The errors are reported in red under the respective entry fields.");
         }
 
         $this->title = $controller->request->getPost('title');
         $this->body = $controller->request->getPost('body');
         $this->editSummary = $controller->request->getPost('editSummary');
       }
-      catch (InvalidFieldException $e) {
+      catch (Exception\InvalidFieldException $e) {
         // We handle only this type of exception.
         $controller->flash->error($e->getMessage());
       }
@@ -448,6 +460,14 @@ abstract class Post extends Versionable {
    * @param[in] BaseController $controller A controller instance.
    */
   protected function viewAction(BaseController $controller) {
+    if (!$this->user->has(new Permission\ViewPermission($this)))
+      return $controller->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
+
+    $controller->view->setVar('canEdit', $this->user->has(new Permission\EditPermission($this)));
+
+    parent::viewAction($controller);
+
+
     $controller->view->setVar('post', $this);
     $controller->view->setVar('replies', $this->getReplies());
     $controller->view->setVar('title', $this->title);
