@@ -14,6 +14,7 @@ namespace ReIndex\Collection;
 use ReIndex\Security\User\IUser;
 use ReIndex\Security\Role\IRole;
 use ReIndex\Security\Permission\Role\GrantPermission;
+use ReIndex\Security\Permission\Role\RevokePermission;
 use ReIndex\Exception\AccessDeniedException;
 
 
@@ -82,7 +83,7 @@ final class RoleCollection extends MetaCollection {
    * @param[in] IRole $role A role object.
    */
   public function revoke(IRole $role) {
-    if (!$this->user->has(new GrantPermission($role)))
+    if (!$this->user->has(new RevokePermission($role)))
       throw new AccessDeniedException('Not enough privileges to revoke the role.');
 
     if ($this->exists($role))
