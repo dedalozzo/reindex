@@ -8,6 +8,7 @@
  */
 
 
+//! Posts related permissions
 namespace ReIndex\Security\Permission\Versionable\Post;
 
 
