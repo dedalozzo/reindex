@@ -1,14 +1,14 @@
 <?php
 
 /**
- * @file Article/MoveToTrashPermission.php
+ * @file Post/MoveToTrashPermission.php
  * @brief This file contains the MoveToTrashPermission class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-namespace ReIndex\Security\Permission\Versionable\Post\Article;
+namespace ReIndex\Security\Permission\Versionable\Post;
 
 
 use ReIndex\Doc\Comment;
@@ -17,25 +17,20 @@ use ReIndex\Doc\Update;
 
 
 /**
- * @brief Permission to delete the content.
+ * @brief Permission to delete a post.
  */
 class MoveToTrashPermission extends AbstractPermission {
 
 
-  public function getDescription() {
-    return "Permission to delete the article.";
-  }
-
-
   public function checkForMemberRole() {
-    if (!$this->user->match($this->article->creatorId))
+    if (!$this->user->match($this->post->creatorId))
       return FALSE;
 
-    if ($this->article->state->is(State::DRAFT))
+    if ($this->post->state->is(State::DRAFT))
       return TRUE;
 
     // Special case for updates and comments.
-    if ($this->article->state->is(State::CURRENT) && ($this->article instanceof Update or $this->article instanceof Comment))
+    if ($this->post->state->is(State::CURRENT) && ($this->post instanceof Update or $this->post instanceof Comment))
       return TRUE;
 
     return FALSE;
@@ -46,7 +41,7 @@ class MoveToTrashPermission extends AbstractPermission {
     if ($this->checkForMemberRole())
       return TRUE;
     else
-      return $this->article->state->is(State::CURRENT) ? TRUE : FALSE;
+      return $this->post->state->is(State::CURRENT) ? TRUE : FALSE;
   }
 
 }
