@@ -11,7 +11,7 @@
 namespace ReIndex\Doc;
 
 
-use ReIndex\Security\Permission\Post\Question as Permission;
+use ReIndex\Security\Permission\Versionable\Post\Question as Permission;
 use ReIndex\Enum\State;
 use Reindex\Exception;
 use ReIndex\Controller\BaseController;
