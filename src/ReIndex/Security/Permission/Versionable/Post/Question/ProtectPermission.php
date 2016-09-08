@@ -9,10 +9,10 @@
 
 
 //! Questions related permissions
-namespace ReIndex\Security\Permission\Post\Question;
+namespace ReIndex\Security\Permission\Versionable\Post\Question;
 
 
-use ReIndex\Security\Permission\Post\ProtectPermission as Superclass;
+use ReIndex\Security\Permission\Versionable\Post\ProtectPermission as Superclass;
 
 
 /**
