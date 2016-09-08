@@ -8,7 +8,6 @@
  */
 
 
-//! Posts related permissions
 namespace ReIndex\Security\Permission\Versionable\Post;
 
 
@@ -17,20 +16,13 @@ use ReIndex\Enum\State;
 
 /**
  * @brief Permission to close or lock a post.
- * @details A moderator can protect only the current revision of a post, just in case it doesn't have any active
- * protection.
- * @nosubgrouping
  */
 class ProtectPermission extends AbstractPermission {
 
 
-  public function getDescription() {
-    return "Permission to close or lock a post.";
-  }
-
-
   /**
-   * @brief Returns `true` if the post can be protected, `false` otherwise.
+   * @brief A moderator can protect only the current revision of a post, just in case it doesn't have any active
+   * protection.
    * @retval bool
    */
   public function checkForModeratorRole() {
