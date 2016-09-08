@@ -128,6 +128,34 @@ abstract class Post extends Versionable {
 
 
   /**
+   * @brief Returns `true` in case there is an indexing task in progress, `false` otherwise.
+   * @return bool
+   */
+  protected function indexingInProgress() {
+    $opts = new ViewQueryOpts();
+    $opts->setKey($this->unversionId);
+    // posts/inElaboration/view
+    $rows = $this->couch->queryView('posts', 'inElaboration', 'view', NULL, $opts);
+
+    return !$rows->isEmpty();
+  }
+
+
+  /**
+   * @brief Schedules the post for indexing.
+   */
+  protected function index() {
+    if ($this->user instanceof System ||
+      !$this->indexingInProgress() ||
+      $this->votes->count(FALSE) >= $this->di['config']->review->scoreToApproveRevision) {
+      $this->state->set(State::INDEXING);
+      $this->tasks->add(new IndexPostTask($this));
+      $this->save();
+    }
+  }
+
+
+  /**
    * @brief Registers the vote into Redis database.
    * @warning Don't call this function unless you know what are you doing.
    * @param[in] int $value The vote.
@@ -384,14 +412,15 @@ abstract class Post extends Versionable {
   /**
    * @copydoc Versionable::approve()
    */
-  protected function approve() {
-    if ($this->user instanceof System ||
-        !$this->indexingInProgress() ||
-        $this->votes->count(FALSE) >= $this->di['config']->review->scoreToApproveRevision) {
-      $this->state->set(State::INDEXING);
-      $this->tasks->add(new IndexPostTask($this));
-      $this->save();
-    }
+  public function approve() {
+    $permission = new Permission\ApprovePermission($this);
+
+    if (!$this->user->has($permission))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+
+    $this->castVoteByRole($permission->getRole());
+
+    $this->index();
   }
 
 
