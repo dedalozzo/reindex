@@ -187,7 +187,7 @@ final class ApiController extends BaseController {
    * @brief Unprotects the post.
    */
   public function unprotectPostAction() {
-    $this->fireMethod('unprotect');
+    $this->fireMethod('removeProtection');
   }
 
 
