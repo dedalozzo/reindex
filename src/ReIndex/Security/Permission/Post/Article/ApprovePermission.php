@@ -11,13 +11,13 @@
 namespace ReIndex\Security\Permission\Post\Article;
 
 
-use ReIndex\Enum\State;
+use ReIndex\Security\Permission\Post\ApprovePermission as Superclass;
 
 
 /**
  * @brief Permission to vote for the approval of a article's revision.
  */
-class ApprovePermission extends AbstractPermission {
+class ApprovePermission extends Superclass {
 
 
   public function getDescription() {
@@ -26,41 +26,15 @@ class ApprovePermission extends AbstractPermission {
 
 
   /**
-   * @brief Returns `true` if the document can be approved, `false` otherwise.
+   * @brief A member can approve modifications of other than himself on his own posts.
    * @retval bool
    */
   public function checkForMemberRole() {
-    if ($this->article->state->is(State::SUBMITTED) &&
-      $this->user->match($this->article->creatorId) &&
-      !$this->user->match($this->article->editorId)
+    if ($this->post->state->is(State::SUBMITTED) &&
+      $this->user->match($this->post->creatorId) &&
+      !$this->user->match($this->post->editorId)
     )
-      return $this->di['config']->review->creatorVoteValue;
-    else
-      return FALSE;
-  }
-
-
-  public function checkForReviewerRole() {
-    if ($this->article->state->is(State::SUBMITTED) &&
-      !$this->user->match($this->article->editorId)
-    )
-      return $this->di['config']->review->reviewerVoteValue;
-    else
-      return FALSE;
-  }
-
-
-  public function checkForModeratorRole() {
-    if ($this->article->state->is(State::SUBMITTED))
-      return $this->di['config']->review->moderatorVoteValue;
-    else
-      return FALSE;
-  }
-
-
-  public function checkForAdminRole() {
-    if ($this->article->state->is(State::SUBMITTED))
-      return $this->di['config']->review->scoreToApproveRevision;
+      return TRUE;
     else
       return FALSE;
   }
