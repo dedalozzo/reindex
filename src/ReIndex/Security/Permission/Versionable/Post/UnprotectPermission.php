@@ -19,7 +19,7 @@ use EoC\Couch;
 /**
  * @brief Permission to unprotect a post.
  */
-abstract class UnprotectPermission extends ProtectPermission {
+class UnprotectPermission extends ProtectPermission {
 
   /**
    * @var Couch $couch
