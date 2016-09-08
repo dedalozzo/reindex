@@ -12,7 +12,7 @@ namespace ReIndex\Doc;
 
 
 use ReIndex\Controller\BaseController;
-use ReIndex\Security\Permission\Post\Update as Permission;
+use ReIndex\Security\Permission\Versionable\Post\Update as Permission;
 use ReIndex\Enum\State;
 use Reindex\Exception;
 
