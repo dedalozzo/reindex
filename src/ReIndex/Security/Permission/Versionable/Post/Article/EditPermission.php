@@ -8,10 +8,10 @@
  */
 
 
-namespace ReIndex\Security\Permission\Post\Article;
+namespace ReIndex\Security\Permission\Versionable\Post\Article;
 
 
-use ReIndex\Security\Permission\Post\EditPermission as Superclass;
+use ReIndex\Security\Permission\Versionable\Post\EditPermission as Superclass;
 
 
 /**
