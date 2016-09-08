@@ -18,7 +18,7 @@ use ReIndex\Security\Role\MemberRole;
 
 
 /**
- * @brief Permission to grant or revoke a role.
+ * @brief Permission to grant a role.
  */
 class GrantPermission extends AbstractPermission {
 
@@ -36,7 +36,7 @@ class GrantPermission extends AbstractPermission {
 
 
   public function getDescription() {
-    return "Permission to grant a role to a member or revoke it.";
+    return "Permission to grant a role to a member.";
   }
 
 
