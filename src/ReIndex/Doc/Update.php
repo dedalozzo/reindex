@@ -34,7 +34,7 @@ class Update extends Post {
     if (!$this->user->has(new Permission\ProtectPermission($this)))
       throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
 
-    parent::close();
+    $this->protect(self::CLOSED_PL);
   }
 
 
@@ -45,18 +45,18 @@ class Update extends Post {
     if (!$this->user->has(new Permission\ProtectPermission($this)))
       throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
 
-    parent::lock();
+    $this->protect(self::LOCKED_PL);
   }
 
 
   /**
-   * @copydoc Post::unprotect()
+   * @copydoc Post::removeProtection()
    */
-  public function unprotect() {
+  public function removeProtection() {
     if (!$this->user->has(new Permission\UnprotectPermission($this)))
       throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
 
-    parent::unprotect();
+    $this->unprotect();
   }
 
 
