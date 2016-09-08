@@ -371,6 +371,17 @@ abstract class Post extends Versionable {
 
 
   /**
+   * @copydoc Versionable::submit()
+   */
+  public function submit() {
+    if (!$this->user->has(new Permission\EditPermission($this)))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+
+    parent::submit();
+  }
+
+
+  /**
    * @copydoc Versionable::approve()
    */
   protected function approve() {
