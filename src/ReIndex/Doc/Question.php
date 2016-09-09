@@ -12,7 +12,6 @@ namespace ReIndex\Doc;
 
 
 use ReIndex\Security\Permission\Versionable\Post\Question as Permission;
-use ReIndex\Enum\State;
 use Reindex\Exception;
 use ReIndex\Controller\BaseController;
 
@@ -22,21 +21,6 @@ use ReIndex\Controller\BaseController;
  * @nosubgrouping
  */
 final class Question extends Post {
-
-
-  /**
-   * @copydoc Versionable::reject()
-   */
-  public function reject($reason) {
-    $permission = new Permission\RejectPermission($this);
-
-    if (!$this->user->has($permission))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
-    $this->castVoteByRole($permission->getRole());
-
-    parent::reject($reason);
-  }
 
 
   /**
