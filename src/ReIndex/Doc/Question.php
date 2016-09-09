@@ -33,48 +33,4 @@ final class Question extends Post {
     parent::revert($versionNumber);
   }
 
-
-  /**
-   * @copydoc Versionable::moveToTrash()
-   */
-  public function moveToTrash() {
-    if (!$this->user->has(new Permission\MoveToTrashPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
-    parent::moveToTrash();
-  }
-
-
-  /**
-   * @copydoc Versionable::restore()
-   */
-  public function restore() {
-    if (!$this->user->has(new Permission\RestorePermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
-    parent::restore();
-  }
-
-
-  /**
-   * @copydoc Post::editAction()
-   */
-  public function editAction(BaseController $controller) {
-    if (!$this->user->has(new Permission\EditPermission($this)))
-      return $controller->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
-
-    parent::editAction($controller);
-  }
-
-
-  /**
-   * @copydoc Post::viewAction()
-   */
-  public function viewAction(BaseController $controller) {
-    if (!$this->user->has(new Permission\ViewPermission($this)))
-      return $controller->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
-
-    parent::viewAction($controller);
-  }
-
 }
