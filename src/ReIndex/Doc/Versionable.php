@@ -18,7 +18,7 @@ use ReIndex\Exception;
 use ReIndex\Enum\State;
 use ReIndex\Collection;
 use ReIndex\Security\User\System;
-use ReIndex\Security\Role\IRole;
+use ReIndex\Security\Permission\IPermission;
 
 
 /**
@@ -66,14 +66,50 @@ abstract class Versionable extends ActiveDoc {
 
 
   /**
-   * @brief Casts a vote according to the provided role.
-   * @param[in] IRole $role A role.
+   * @brief Returns `true` in case there is an indexing task in progress, `false` otherwise.
+   * @return bool
    */
-  protected function castVoteByRole(IRole $role) {
+  abstract protected function indexingInProgress();
+
+
+  /**
+   * @brief Casts a vote valid as peer review.
+   * @param[in] IPermission $permission A permission.
+   * @param[in] bool $positive The vote can be positive or negative.
+   * @param[in] string $reason The reason for the vote to be casted.
+   */
+  protected function castVoteForPeerReview(IPermission $permission, $positive = TRUE, $reason = '') {
+    if (!$this->user->has($permission))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+
     if ($this->user instanceof Member) {
-      $name = $role->getName();
-      $vote = $this->di['config']->review->{$name.'Vote'};
-      $this->votes->cast($vote, FALSE);
+      $vote = $this->di['config']->review->{$permission->getRole()->getName().'Vote'};
+
+      if ($positive) {
+        $this->votes->cast($vote, FALSE, '', $reason);
+        $this->index();
+      }
+      else {
+        $this->votes->cast(-$vote, FALSE, '', $reason);
+      }
+    }
+  }
+
+
+  /**
+   * @brief Approves the document's revision.
+   */
+  abstract protected function markAsApproved();
+
+
+  /**
+   * @brief Rejects the document's revision.
+   */
+  protected function markAsRejected() {
+    if ($this->user instanceof System ||
+      $this->votes->count(FALSE) >= $this->di['config']->review->scoreToRejectRevision) {
+      $this->state->set(State::REJECTED);
+      $this->save();
     }
   }
 
@@ -118,21 +154,14 @@ abstract class Versionable extends ActiveDoc {
   /**
    * @brief Casts a vote to approve this document's revision.
    */
-  abstract protected function approve();
+  abstract public function approve();
 
 
   /**
-   * @brief Casts a vote to rejects this document's revision.
-   * @details The document's revision will be automatically deleted in 10 days.
+   * @brief Casts a vote to reject this document's revision.
    * @param[in] string $reason The reason why the document's revision has been rejected.
    */
-  protected function reject($reason) {
-    if ($this->user instanceof System ||
-        $this->votes->count(FALSE) >= $this->di['config']->review->scoreToRejectRevision) {
-      $this->state->set(State::REJECTED);
-      $this->save();
-    }
-  }
+  abstract public function reject($reason);
 
 
   /**
