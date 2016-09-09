@@ -128,8 +128,7 @@ abstract class Post extends Versionable {
 
 
   /**
-   * @brief Returns `true` in case there is an indexing task in progress, `false` otherwise.
-   * @return bool
+   * @copydoc Versionable::indexingInProgress()
    */
   protected function indexingInProgress() {
     $opts = new ViewQueryOpts();
@@ -142,9 +141,9 @@ abstract class Post extends Versionable {
 
 
   /**
-   * @brief Schedules the post for indexing.
+   * @copydoc Versionable::markAsApproved()
    */
-  protected function index() {
+  protected function markAsApproved() {
     if ($this->user instanceof System ||
       !$this->indexingInProgress() ||
       $this->votes->count(FALSE) >= $this->di['config']->review->scoreToApproveRevision) {
@@ -413,14 +412,15 @@ abstract class Post extends Versionable {
    * @copydoc Versionable::approve()
    */
   public function approve() {
-    $permission = new Permission\ApprovePermission($this);
+    $this->castVoteForPeerReview(new Permission\ApprovePermission($this));
+  }
 
-    if (!$this->user->has($permission))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
 
-    $this->castVoteByRole($permission->getRole());
-
-    $this->index();
+  /**
+   * @copydoc Versionable::reject()
+   */
+  public function reject($reason) {
+    $this->castVoteForPeerReview(new Permission\RejectPermission($this), $reason);
   }
 
 
@@ -456,6 +456,9 @@ abstract class Post extends Versionable {
    * @param[in] BaseController $controller A controller instance.
    */
   protected function editAction(BaseController $controller) {
+    if (!$this->user->has(new Permission\EditPermission($this)))
+      return $controller->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
+
     // The validation object must be created in any case.
     $validation = new Validation();
     $controller->view->setVar('validation', $validation);
