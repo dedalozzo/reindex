@@ -15,7 +15,7 @@ use ReIndex\Security\Permission\Versionable\Post\ApprovePermission as Superclass
 
 
 /**
- * @brief Permission to vote for the approval of a article's revision.
+ * @brief Permission to vote for the approval of an article's revision.
  */
 class ApprovePermission extends Superclass {
 
