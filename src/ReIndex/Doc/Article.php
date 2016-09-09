@@ -14,28 +14,20 @@ namespace ReIndex\Doc;
 use ReIndex\Security\Permission\Versionable\Post\Article as Permission;
 use ReIndex\Enum\State;
 use Reindex\Exception;
-use ReIndex\Controller\BaseController;
 
 
 /**
  * @brief This class represents a blog article.
  * @nosubgrouping
  */
-class Article extends Post {
+final class Article extends Post {
 
 
   /**
    * @copydoc Versionable::approve()
    */
   public function approve() {
-    $permission = new Permission\ApprovePermission($this);
-
-    if (!$this->user->has($permission))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
-    $this->castVoteByRole($permission->getRole());
-
-    $this->index();
+    $this->castVoteForPeerReview(new Permission\ApprovePermission($this));
   }
 
 
@@ -43,14 +35,7 @@ class Article extends Post {
    * @copydoc Versionable::reject()
    */
   public function reject($reason) {
-    $permission = new Permission\RejectPermission($this);
-
-    if (!$this->user->has($permission))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
-    $this->castVoteByRole($permission->getRole());
-
-    parent::reject($reason);
+    $this->castVoteForPeerReview(new Permission\RejectPermission($this), FALSE, $reason);
   }
 
 
@@ -103,17 +88,6 @@ class Article extends Post {
     $this->meta['day'] = date("d", $this->createdAt);
 
     $this->save();
-  }
-
-
-  /**
-   * @copydoc Post::editAction()
-   */
-  public function editAction(BaseController $controller) {
-    if (!$this->user->has(new Permission\EditPermission($this)))
-      return $controller->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
-
-    parent::editAction($controller);
   }
 
 }
