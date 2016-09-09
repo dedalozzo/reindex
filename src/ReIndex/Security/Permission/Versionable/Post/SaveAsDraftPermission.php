@@ -1,14 +1,14 @@
 <?php
 
 /**
- * @file Article/SaveAsDraftPermission.php
+ * @file Post/SaveAsDraftPermission.php
  * @brief This file contains the SaveAsDraftPermission class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-namespace ReIndex\Security\Permission\Versionable\Post\Article;
+namespace ReIndex\Security\Permission\Versionable\Post;
 
 use ReIndex\Enum\State;
 
@@ -20,8 +20,8 @@ class SaveAsDraftPermission extends AbstractPermission  {
 
 
   public function checkForMemberRole() {
-    return $this->user->match($this->article->creatorId) &&
-           ($this->article->state->is(State::CREATED) or $this->article->state->is(State::DRAFT))
+    return $this->user->match($this->post->creatorId) &&
+           ($this->post->state->is(State::CREATED) or $this->post->state->is(State::DRAFT))
            ? TRUE : FALSE;
   }
 
