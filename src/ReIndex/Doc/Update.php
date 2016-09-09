@@ -61,21 +61,6 @@ class Update extends Post {
 
 
   /**
-   * @copydoc Versionable::reject()
-   */
-  public function reject($reason) {
-    $permission = new Permission\RejectPermission($this);
-
-    if (!$this->user->has($permission))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
-    $this->castVoteByRole($permission->getRole());
-
-    parent::reject($reason);
-  }
-
-
-  /**
    * @copydoc Versionable::revert()
    */
   public function revert($versionNumber = NULL) {
@@ -83,48 +68,6 @@ class Update extends Post {
       throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
 
     parent::revert($versionNumber);
-  }
-
-
-  /**
-   * @copydoc Versionable::delete()
-   */
-  public function moveToTrash() {
-    if (!$this->user->has(new Permission\MoveToTrashPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
-    parent::moveToTrash();
-  }
-
-
-  /**
-   * @copydoc Versionable::restore()
-   */
-  public function restore() {
-    if (!$this->user->has(new Permission\RestorePermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
-    parent::restore();
-  }
-
-
-  /**
-   * @copydoc Post::newAction()
-   */
-  public function editAction(BaseController $controller) {
-    if (!$this->user->has(new Permission\ViewPermission($this)))
-      return $controller->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
-
-    $controller->view->setVar('canEdit', $this->user->has(new Permission\EditPermission($this)));
-  }
-
-
-  /**
-   * @copydoc Post::viewAction()
-   */
-  public function viewAction(BaseController $controller) {
-    if (!$this->user->has(new Permission\ViewPermission($this)))
-      return $controller->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
   }
 
 
