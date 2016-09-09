@@ -428,6 +428,9 @@ abstract class Post extends Versionable {
    * @copydoc Versionable::moveToTrash()
    */
   protected function moveToTrash() {
+    if (!$this->user->has(new Permission\MoveToTrashPermission($this)))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+
     parent::moveToTrash();
     $this->state->set(State::DELETING);
     $this->tasks->add(new IndexPostTask($this));
@@ -439,6 +442,9 @@ abstract class Post extends Versionable {
    * @copydoc Versionable::restore()
    */
   protected function restore() {
+    if (!$this->user->has(new Permission\RestorePermission($this)))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+
     parent::restore();
 
     if ($this->state->is(State::INDEXING))
@@ -447,6 +453,18 @@ abstract class Post extends Versionable {
     $this->save();
   }
 
+
+  /**
+   * @brief Marks the document as draft.
+   * @details When a user works on an article, he wants save many time the item before submit it for peer revision.
+   */
+  public function saveAsDraft() {
+    if (!$this->user->has(new Permission\SaveAsDraftPermission($this)))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+
+    $this->state->set(State::DRAFT);
+    $this->save();
+  }
 
   /** @name Actions */
   //!@{
