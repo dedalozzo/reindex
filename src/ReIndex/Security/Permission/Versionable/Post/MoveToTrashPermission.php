@@ -11,9 +11,10 @@
 namespace ReIndex\Security\Permission\Versionable\Post;
 
 
-use ReIndex\Doc\Comment;
+use ReIndex\Doc\Post;
 use ReIndex\Enum\State;
-use ReIndex\Doc\Update;
+
+use EoC\Couch;
 
 
 /**
@@ -21,27 +22,46 @@ use ReIndex\Doc\Update;
  */
 class MoveToTrashPermission extends AbstractPermission {
 
+  /**
+   * @var Couch $couch
+   */
+  protected $couch;
 
-  public function checkForMemberRole() {
-    if (!$this->user->match($this->post->creatorId))
-      return FALSE;
 
-    if ($this->post->state->is(State::DRAFT))
-      return TRUE;
-
-    // Special case for updates and comments.
-    if ($this->post->state->is(State::CURRENT) && ($this->post instanceof Update or $this->post instanceof Comment))
-      return TRUE;
-
-    return FALSE;
+  /**
+   * @brief Constructor.
+   * @param[in] Doc::Post $post
+   */
+  public function __construct(Post $post) {
+    parent::__construct($post);
+    $this->couch = $this->di['couchdb'];
   }
 
 
+  /**
+   * @brief A member can delete his own posts.
+   * @retval bool
+   */
+  public function checkForMemberRole() {
+    return $this->user->match($this->post->creatorId) &&
+           ($this->post->state->is(State::DRAFT) || $this->post->state->is(State::CURRENT))
+      ? TRUE : FALSE;
+  }
+
+
+  /**
+   * @brief A moderator can delete any current post, unless the content has been created by a superior or equal role.
+   * @retval bool
+   */
   public function checkForModeratorRole() {
     if ($this->checkForMemberRole())
       return TRUE;
-    else
-      return $this->post->state->is(State::CURRENT) ? TRUE : FALSE;
+    else {
+      $creator = $this->couch->getDoc('members', Couch::STD_DOC_PATH, $this->post->creatorId);
+      return $this->post->state->is(State::CURRENT) &&
+             !$creator->roles->areSuperiorThan($this->getRole())
+        ? TRUE : FALSE;
+    }
   }
 
 }
