@@ -49,45 +49,4 @@ final class Article extends Post {
     parent::revert($versionNumber);
   }
 
-
-  /**
-   * @copydoc Versionable::moveToTrash()
-   */
-  public function moveToTrash() {
-    if (!$this->user->has(new Permission\MoveToTrashPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
-    parent::moveToTrash();
-  }
-
-
-  /**
-   * @copydoc Versionable::restore()
-   */
-  public function restore() {
-    if (!$this->user->has(new Permission\RestorePermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
-    parent::restore();
-  }
-
-
-  /**
-   * @brief Marks the document as draft.
-   * @details When a user works on an article, he wants save many time the item before submit it for peer revision.
-   */
-  public function saveAsDraft() {
-    if (!$this->user->has(new Permission\SaveAsDraftPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
-    $this->state->set(State::DRAFT);
-
-    // Used to group by year, month and day.
-    $this->meta['year'] = date("Y", $this->createdAt);
-    $this->meta['month'] = date("m", $this->createdAt);
-    $this->meta['day'] = date("d", $this->createdAt);
-
-    $this->save();
-  }
-
 }
