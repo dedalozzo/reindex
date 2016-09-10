@@ -9,7 +9,13 @@ class Comment {
   /** @name Properties */
   //!@{
 
-  public string $itemId; //!< The item id the comment is related. It can be a postId, a replyId, etc.
+  public string $itemId;        //!< The item id the comment is related. It can be a postId, a replyId, etc.
+
+  string $excerpt;              //!< A short extract from the body.
+  string $body;                 //!< The content.
+  string $html;                 //!< The body converted to HTML.
+
+  VoteCollection $votes         //!< Casted votes.
 
   //!@}
 
