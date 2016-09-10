@@ -1,31 +1,31 @@
 <?php
 
 /**
- * @file Post/ApprovePermission.php
+ * @file versionable/ApprovePermission.php
  * @brief This file contains the ApprovePermission class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-namespace ReIndex\Security\Permission\Versionable\Post;
+namespace ReIndex\Security\Permission\Versionable;
 
 
 use ReIndex\Enum\State;
 
 
 /**
- * @brief Permission to vote for the approval of a post's revision.
+ * @brief Permission to vote for the approval of a versionable's revision.
  */
 class ApprovePermission extends AbstractPermission {
 
 
   /**
-   * @brief A member can approve any modifications on his own posts.
+   * @brief A member can approve any modifications on his own versionables.
    * @retval bool
    */
   public function checkForMemberRole() {
-    return ($this->post->state->is(State::SUBMITTED) && $this->user->match($this->post->creatorId)) ? TRUE : FALSE;
+    return ($this->versionable->state->is(State::SUBMITTED) && $this->user->match($this->versionable->creatorId)) ? TRUE : FALSE;
   }
 
 
@@ -34,7 +34,7 @@ class ApprovePermission extends AbstractPermission {
    * @retval bool
    */
   public function checkForEditorRole() {
-    return $this->post->state->is(State::SUBMITTED) && $this->user->match($this->post->editorId) ? TRUE : FALSE;
+    return $this->versionable->state->is(State::SUBMITTED) && $this->user->match($this->versionable->editorId) ? TRUE : FALSE;
   }
 
 
@@ -43,7 +43,7 @@ class ApprovePermission extends AbstractPermission {
    * @retval bool
    */
   public function checkForReviewerRole() {
-    return $this->post->state->is(State::SUBMITTED) ? TRUE : FALSE;
+    return $this->versionable->state->is(State::SUBMITTED) ? TRUE : FALSE;
   }
 
 
