@@ -409,28 +409,9 @@ abstract class Post extends Revision {
 
 
   /**
-   * @copydoc Revision::approve()
-   */
-  public function approve() {
-    $this->castVoteForPeerReview(new Permission\ApprovePermission($this));
-  }
-
-
-  /**
-   * @copydoc Revision::reject()
-   */
-  public function reject($reason) {
-    $this->castVoteForPeerReview(new Permission\RejectPermission($this), $reason);
-  }
-
-
-  /**
    * @copydoc Revision::moveToTrash()
    */
   protected function moveToTrash() {
-    if (!$this->user->has(new Permission\MoveToTrashPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
     parent::moveToTrash();
     $this->state->set(State::DELETING);
     $this->tasks->add(new IndexPostTask($this));
@@ -442,26 +423,12 @@ abstract class Post extends Revision {
    * @copydoc Revision::restore()
    */
   protected function restore() {
-    if (!$this->user->has(new Permission\RestorePermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
     parent::restore();
 
     if ($this->state->is(State::INDEXING))
       $this->tasks->add(new IndexPostTask($this));
 
     $this->save();
-  }
-
-
-  /**
-   * @copydoc Revision::revert()
-   */
-  public function revert($versionNumber = NULL) {
-    if (!$this->user->has(new Permission\RevertPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
-    parent::revert($versionNumber);
   }
 
 
@@ -476,6 +443,7 @@ abstract class Post extends Revision {
     $this->state->set(State::DRAFT);
     $this->save();
   }
+
 
   /** @name Actions */
   //!@{
