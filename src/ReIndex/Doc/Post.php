@@ -43,8 +43,8 @@ use Phalcon\Validation\Validator\PresenceOf;
  * @property int $legacyId
  *
  * @property string $title
- * @property string $excerpt
  * @property string $body
+ * @property string $excerpt
  * @property string $html
  * @property string $slug
  * @property string $toc
@@ -223,11 +223,11 @@ abstract class Post extends Versionable {
     // votes/perItem/view
     $scores = $couch->queryView('votes', 'perItem', 'view', $ids, $opts);
 
-    // Replies.
+    // Comments.
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
-    // replies/perPost/view
-    $replies = $couch->queryView('replies', 'perPost', 'view', $ids, $opts);
+    // comments/perPost/view
+    $comments = $couch->queryView('comments', 'perPost', 'view', $ids, $opts);
 
     // Members.
     $creatorIds = array_column(array_column($posts->asArray(), 'value'), 'creatorId');
@@ -255,7 +255,7 @@ abstract class Post extends Versionable {
       $entry->gravatar = Member::getGravatar($members[$i]['value'][1]);
       $entry->hitsCount = Helper\Text::formatNumber($redis->hGet(Helper\Text::unversion($entry->id), 'hits'));
       $entry->score = is_null($scores[$i]['value']) ? 0 : $scores[$i]['value'];
-      $entry->repliesCount = is_null($replies[$i]['value']) ? 0 : $replies[$i]['value'];
+      $entry->commentsCount = is_null($comments[$i]['value']) ? 0 : $comments[$i]['value'];
       $entry->liked = $user->isGuest() || is_null($likes[$i]['value']) ? FALSE : TRUE;
 
       if (!empty($entry->tags)) {
@@ -344,7 +344,7 @@ abstract class Post extends Versionable {
 
   /**
    * @brief Closes the post.
-   * @details No more new replies and comments can be added.
+   * @details No more answers (in case of a question) and comments can be added.
    * @see http://meta.stackexchange.com/questions/10582/what-is-a-closed-or-on-hold-question
    */
   public function close() {
@@ -357,7 +357,7 @@ abstract class Post extends Versionable {
 
   /**
    * @brief Locks the post.
-   * @details No more new replies, comments, votes, edits.
+   * @details No more new answers (in case of a question), comments, votes, edits.
    * @see http://meta.stackexchange.com/questions/22228/what-is-a-locked-post
    */
   public function lock() {
@@ -552,7 +552,7 @@ abstract class Post extends Versionable {
 
 
     $controller->view->setVar('post', $this);
-    $controller->view->setVar('replies', $this->getReplies());
+    $controller->view->setVar('comments', $this->getComments());
     $controller->view->setVar('title', $this->title);
 
     $controller->view->pick('views/post/show');
@@ -600,7 +600,7 @@ abstract class Post extends Versionable {
     $opts->doNotReduce()->reverseOrderOfResults()->setLimit(1);
 
     // todo view
-    $rows = $this->couch->queryView('replies', 'activePerPost', 'view', NULL, $opts);
+    $rows = $this->couch->queryView('comments', 'activePerPost', 'view', NULL, $opts);
 
     if ($rows->isEmpty())
       $lastUpdate = $this->modifiedAt;
@@ -624,33 +624,33 @@ abstract class Post extends Versionable {
   //!@{
 
   /**
-   * @brief Get the post replays, answers, in case of a question, else comments
+   * @brief Get the comments.
    */
-  public function getReplies() {
+  public function getComments() {
     $opts = new ViewQueryOpts();
     $opts->reverseOrderOfResults()->setStartKey([$this->unversionId, Couch::WildCard()])->setEndKey([$this->unversionId])->includeDocs();
-    // replies/newestPerPost/view
-    $rows = $this->couch->queryView('replies', 'newestPerPost', 'view', NULL, $opts);
+    // comments/newestPerPost/view
+    $rows = $this->couch->queryView('comments', 'newestPerPost', 'view', NULL, $opts);
 
-    $replies = [];
+    $comments = [];
     foreach ($rows as $row) {
-      $reply = new Reply();
-      $reply->assignArray($row['doc']);
-      $replies[] = $reply;
+      $comment = new Comment();
+      $comment->assignArray($row['doc']);
+      $comments[] = $comment;
     }
 
-    return $replies;
+    return $comments;
   }
 
 
   /**
-   * @brief Gets the number of the answer or comments.
+   * @brief Gets the comments.
    */
-  public function getRepliesCount() {
+  public function getCommentsCount() {
     $opts = new ViewQueryOpts();
     $opts->groupResults();
-    // replies/perPost/view
-    return $this->couch->queryView('replies', 'perPost', 'view', [$this->unversionId], $opts)->getReducedValue();
+    // comments/perPost/view
+    return $this->couch->queryView('comments', 'perPost', 'view', [$this->unversionId], $opts)->getReducedValue();
   }
 
   //!@}
