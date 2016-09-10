@@ -1,24 +1,24 @@
 <?php
 
 /**
- * @file Post/MoveToTrashPermission.php
+ * @file Revision/MoveToTrashPermission.php
  * @brief This file contains the MoveToTrashPermission class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-namespace ReIndex\Security\Permission\Versionable\Post;
+namespace ReIndex\Security\Permission\Revision;
 
 
-use ReIndex\Doc\Post;
+use ReIndex\Doc\Revision;
 use ReIndex\Enum\State;
 
 use EoC\Couch;
 
 
 /**
- * @brief Permission to delete a post.
+ * @brief Permission to delete a revision.
  */
 class MoveToTrashPermission extends AbstractPermission {
 
@@ -30,35 +30,35 @@ class MoveToTrashPermission extends AbstractPermission {
 
   /**
    * @brief Constructor.
-   * @param[in] Doc::Post $post
+   * @param[in] Doc::Revision $revision
    */
-  public function __construct(Post $post) {
-    parent::__construct($post);
+  public function __construct(Revision $revision) {
+    parent::__construct($revision);
     $this->couch = $this->di['couchdb'];
   }
 
 
   /**
-   * @brief A member can delete his own posts.
+   * @brief A member can delete his own revisions.
    * @retval bool
    */
   public function checkForMemberRole() {
-    return $this->user->match($this->post->creatorId) &&
-           ($this->post->state->is(State::DRAFT) || $this->post->state->is(State::CURRENT))
+    return $this->user->match($this->revision->creatorId) &&
+           ($this->revision->state->is(State::DRAFT) || $this->revision->state->is(State::CURRENT))
       ? TRUE : FALSE;
   }
 
 
   /**
-   * @brief A moderator can delete any current post, unless the content has been created by a superior or equal role.
+   * @brief A moderator can delete any current revision, unless the content has been created by a superior or equal role.
    * @retval bool
    */
   public function checkForModeratorRole() {
     if ($this->checkForMemberRole())
       return TRUE;
     else {
-      $creator = $this->couch->getDoc('members', Couch::STD_DOC_PATH, $this->post->creatorId);
-      return $this->post->state->is(State::CURRENT) &&
+      $creator = $this->couch->getDoc('members', Couch::STD_DOC_PATH, $this->revision->creatorId);
+      return $this->revision->state->is(State::CURRENT) &&
              !$creator->roles->areSuperiorThan($this->getRole())
         ? TRUE : FALSE;
     }

@@ -1,14 +1,14 @@
 <?php
 
 /**
- * @file Post/RevertPermission.php
+ * @file Revision/RevertPermission.php
  * @brief This file contains the RevertPermission class.
  * @details
  * @author Filippo F. Fadda
  */
 
 
-namespace ReIndex\Security\Permission\Versionable\Post;
+namespace ReIndex\Security\Permission\Revision;
 
 
 /**

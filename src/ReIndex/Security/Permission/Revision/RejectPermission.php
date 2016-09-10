@@ -8,7 +8,7 @@
  */
 
 
-namespace ReIndex\Security\Permission\Versionable\Post;
+namespace ReIndex\Security\Permission\Revision;
 
 
 /**
