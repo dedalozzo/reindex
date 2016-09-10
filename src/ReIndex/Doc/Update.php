@@ -11,13 +11,8 @@
 namespace ReIndex\Doc;
 
 
-use ReIndex\Controller\BaseController;
 use ReIndex\Security\Permission\Versionable\Post\Update as Permission;
-use ReIndex\Enum\State;
 use Reindex\Exception;
-
-
-use Phalcon\Mvc\Controller;
 
 
 /*
@@ -57,17 +52,6 @@ class Update extends Post {
       throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
 
     $this->unprotect();
-  }
-
-
-  /**
-   * @copydoc Versionable::revert()
-   */
-  public function revert($versionNumber = NULL) {
-    if (!$this->user->has(new Permission\RevertPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
-    parent::revert($versionNumber);
   }
 
 

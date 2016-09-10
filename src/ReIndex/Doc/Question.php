@@ -12,8 +12,6 @@ namespace ReIndex\Doc;
 
 
 use ReIndex\Security\Permission\Versionable\Post\Question as Permission;
-use Reindex\Exception;
-use ReIndex\Controller\BaseController;
 
 
 /**
@@ -21,16 +19,5 @@ use ReIndex\Controller\BaseController;
  * @nosubgrouping
  */
 final class Question extends Post {
-
-
-  /**
-   * @copydoc Versionable::revert()
-   */
-  public function revert($versionNumber = NULL) {
-    if (!$this->user->has(new Permission\RevertPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
-    parent::revert($versionNumber);
-  }
 
 }

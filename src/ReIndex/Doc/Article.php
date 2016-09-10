@@ -12,8 +12,6 @@ namespace ReIndex\Doc;
 
 
 use ReIndex\Security\Permission\Versionable\Post\Article as Permission;
-use ReIndex\Enum\State;
-use Reindex\Exception;
 
 
 /**
@@ -36,17 +34,6 @@ final class Article extends Post {
    */
   public function reject($reason) {
     $this->castVoteForPeerReview(new Permission\RejectPermission($this), FALSE, $reason);
-  }
-
-
-  /**
-   * @copydoc Versionable::revert()
-   */
-  public function revert($versionNumber = NULL) {
-    if (!$this->user->has(new Permission\RevertPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
-    parent::revert($versionNumber);
   }
 
 }
