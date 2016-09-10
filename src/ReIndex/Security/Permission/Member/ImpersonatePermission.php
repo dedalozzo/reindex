@@ -8,7 +8,6 @@
  */
 
 
-//! Permissions related to the member actions.
 namespace ReIndex\Security\Permission\Member;
 
 
@@ -33,11 +32,6 @@ class ImpersonatePermission extends AbstractPermission {
   public function __construct(IUser $someone) {
     $this->someone = $someone;
     parent::__construct();
-  }
-
-
-  public function getDescription() {
-    return "Permission to impersonate another user: a member or a guest.";
   }
 
 
