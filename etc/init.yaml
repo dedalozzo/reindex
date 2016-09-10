@@ -236,11 +236,11 @@ posts:
       reduce: _count
 
 
-replies:
+comments:
 
   perPost:
 
-    view: # replies/perPost/view
+    view: # comments/perPost/view
       map: |-
         function($doc) use ($emit) {
           $emit($doc->postId);
@@ -249,7 +249,7 @@ replies:
 
   newestPerPost:
 
-    view: # replies/newestPerPost/view
+    view: # comments/newestPerPost/view
       map: |-
         function($doc) use ($emit) {
           $emit([$doc->postId, $doc->publishedAt]);
@@ -257,7 +257,7 @@ replies:
 
   activePerPost:
 
-    view: # replies/activePerPost/view
+    view: # comments/activePerPost/view
       map: |-
         function($doc) use ($emit) {
           $emit([$doc->postId, $doc->modifiedAt]);
