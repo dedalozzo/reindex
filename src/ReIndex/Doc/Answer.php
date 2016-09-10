@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file Reply.php
- * @brief This file contains the Reply class.
+ * @file Answer.php
+ * @brief This file contains the Answer class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -26,16 +26,12 @@ use ReIndex\Collection;
  *
  * @endcond
  */
-class Reply extends Versionable {
+final class Answer extends Versionable {
   use TBody;
 
 
   public function __construct() {
     parent::__construct();
-
-    // Since we can't use reflection inside EoC Server, we need a way to recognize every subclass of the `Reply` class.
-    // This is done testing `isset($doc->supertype) && $doc->supertype == 'reply'`.
-    $this->meta['supertype'] = 'reply';
   }
 
 
@@ -43,7 +39,15 @@ class Reply extends Versionable {
    * @copydoc ActiveDoc::getDbName()
    */
   protected function getDbName() {
-    return 'replies';
+    return 'answers';
+  }
+
+
+  /**
+   * @brief Marks the item as duplicate of another item.
+   */
+  public function markAsDuplicate() {
+
   }
 
 
