@@ -19,6 +19,7 @@ use ReIndex\Enum\State;
 use ReIndex\Collection;
 use ReIndex\Security\User\System;
 use ReIndex\Security\Permission\IPermission;
+use ReIndex\Security\Permission\Revision as Permission;
 
 
 /**
@@ -87,10 +88,11 @@ abstract class Revision extends ActiveDoc {
 
       if ($positive) {
         $this->votes->cast($vote, FALSE, '', $reason);
-        $this->index();
+        $this->markAsApproved();
       }
       else {
         $this->votes->cast(-$vote, FALSE, '', $reason);
+        $this->markAsRejected();
       }
     }
   }
@@ -154,14 +156,18 @@ abstract class Revision extends ActiveDoc {
   /**
    * @brief Casts a vote to approve this document's revision.
    */
-  abstract public function approve();
+  public function approve() {
+    $this->castVoteForPeerReview(new Permission\ApprovePermission($this));
+  }
 
 
   /**
    * @brief Casts a vote to reject this document's revision.
    * @param[in] string $reason The reason why the document's revision has been rejected.
    */
-  abstract public function reject($reason);
+  public function reject($reason) {
+    $this->castVoteForPeerReview(new Permission\RejectPermission($this), $reason);
+  }
 
 
   /**
@@ -171,6 +177,9 @@ abstract class Revision extends ActiveDoc {
    * @todo Implement the method Revision.revert().
    */
   protected function revert($versionNumber = NULL) {
+    if (!$this->user->has(new Permission\RevertPermission($this)))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+
     // cerca se la revisione specificata è approved e la marca come current.
   }
 
@@ -179,6 +188,9 @@ abstract class Revision extends ActiveDoc {
    * @brief Alias of delete().
    */
   protected function moveToTrash() {
+    if (!$this->user->has(new Permission\MoveToTrashPermission($this)))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+
     if ($this->indexingInProgress())
       throw new Exception\InvalidStateException("Operazione non consentita; riprova più tardi.");
 
@@ -192,6 +204,9 @@ abstract class Revision extends ActiveDoc {
    * @brief Restores the document to its previous state, removing it from trash.
    */
   protected function restore() {
+    if (!$this->user->has(new Permission\RestorePermission($this)))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+
     if ($this->meta['prevState'] === State::CURRENT)
       $this->state->set(State::INDEXING);
     else
