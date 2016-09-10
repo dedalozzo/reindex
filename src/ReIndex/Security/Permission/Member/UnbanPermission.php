@@ -20,7 +20,7 @@ use EoC\Couch;
  * @details A moderator (or a member with a superior role) can remove a ban, but only if the member has been
  * banned by an user with an equal (or inferior) role or by himself. And of course he cannot unban himself.
  */
-class UnbanPermission extends BanPermission {
+class UnbanPermission extends AbstractPermission {
 
   /**
    * @var Couch $couch
@@ -31,11 +31,6 @@ class UnbanPermission extends BanPermission {
   public function __construct(Member $member) {
     parent::__construct($member);
     $this->couch = $this->di['couchdb'];
-  }
-
-
-  public function getDescription() {
-    return "Permission to revoke the ban from a member.";
   }
 
 

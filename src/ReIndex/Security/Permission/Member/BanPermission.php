@@ -11,33 +11,12 @@
 namespace ReIndex\Security\Permission\Member;
 
 
-use ReIndex\Security\Permission\AbstractPermission;
-use ReIndex\Doc\Member;
-
-
 /**
  * @brief Permission to ban another community's member.
  * @details A moderator (or a member with a superior role) can ban another member,
  * but only if the member has an inferior role. And of course he cannot ban himself.
  */
 class BanPermission extends AbstractPermission {
-
-  protected $member;
-
-
-  /**
-   * @brief Constructor.
-   * @param[in] Doc::Member $member
-   */
-  public function __construct(Member $member) {
-    $this->member = $member;
-    parent::__construct();
-  }
-
-
-  public function getDescription() {
-    return "Permission to ban another community's member.";
-  }
 
 
   /**
