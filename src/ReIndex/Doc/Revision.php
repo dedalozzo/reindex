@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file Versionable.php
- * @brief This file contains the Versionable class.
+ * @file Revision.php
+ * @brief This file contains the Revision class.
  * @details
  * @author Filippo F. Fadda
  */
@@ -46,7 +46,7 @@ use ReIndex\Security\Permission\IPermission;
  *
  * @endcond
  */
-abstract class Versionable extends ActiveDoc {
+abstract class Revision extends ActiveDoc {
 
   private $state; // State of the document.
   private $votes; // Casted votes.
@@ -168,7 +168,7 @@ abstract class Versionable extends ActiveDoc {
    * @brief Reverts to the specified version.
    * @param[in] $versionNumber (optional ) Reverts to the specified version. If a version is not specified it takes the
    * previous one.
-   * @todo Implement the method Versionable.revert().
+   * @todo Implement the method Revision.revert().
    */
   protected function revert($versionNumber = NULL) {
     // cerca se la revisione specificata è approved e la marca come current.
@@ -207,10 +207,10 @@ abstract class Versionable extends ActiveDoc {
 
 
   /**
-   * @brief A versionable document can't be deleted, but it can be moved into the trash.
+   * @brief A revision document can't be deleted, but it can be moved into the trash.
    */
   public function delete() {
-    throw new \BadMethodCallException("You can't call this method on a versionable object.");
+    throw new \BadMethodCallException("You can't call this method on a revision object.");
   }
 
 
