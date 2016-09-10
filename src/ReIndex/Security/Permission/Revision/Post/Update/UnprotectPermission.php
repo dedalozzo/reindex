@@ -8,10 +8,10 @@
  */
 
 
-namespace ReIndex\Security\Permission\Versionable\Post\Update;
+namespace ReIndex\Security\Permission\Revision\Post\Update;
 
 
-use ReIndex\Security\Permission\Versionable\Post\UnprotectPermission as Superclass;
+use ReIndex\Security\Permission\Revision\Post\UnprotectPermission as Superclass;
 
 
 /**
@@ -21,7 +21,7 @@ class UnprotectPermission extends Superclass {
 
 
   /**
-   * @brief A member must be able to unprotect any post he has protected.
+   * @brief A member must be able to unprotect any update he has protected.
    */
   public function checkForMemberRole() {
     $this->checkForModeratorRole();
