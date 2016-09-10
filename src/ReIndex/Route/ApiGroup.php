@@ -47,7 +47,7 @@ class ApiGroup extends Group {
 
     $this->addPost('/tag/star/', ['action' => 'starTag']);
 
-    $this->addPost('/reply/like/', ['action' => 'likeReply']);
+    $this->addPost('/comment/like/', ['action' => 'likeComment']);
   }
 
 }
