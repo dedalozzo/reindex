@@ -4,12 +4,12 @@
 namespace ReIndex\Doc;
 
 
-class Reply {
+class Answer {
 
   /** @name Properties */
   //!@{
 
-  public string $postId; //!< The post id the replay is related.
+  public string $questionId; //!< The question ID the answwer is related.
 
   VoteCollection $votes; //!< Casted votes.
 
