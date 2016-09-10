@@ -455,6 +455,17 @@ abstract class Post extends Versionable {
 
 
   /**
+   * @copydoc Versionable::revert()
+   */
+  public function revert($versionNumber = NULL) {
+    if (!$this->user->has(new Permission\RevertPermission($this)))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+
+    parent::revert($versionNumber);
+  }
+
+
+  /**
    * @brief Marks the document as draft.
    * @details When a user works on an article, he wants save many time the item before submit it for peer revision.
    */
