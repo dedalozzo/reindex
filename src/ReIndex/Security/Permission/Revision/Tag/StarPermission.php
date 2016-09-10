@@ -8,7 +8,7 @@
  */
 
 
-namespace ReIndex\Security\Permission\Versionable\Tag;
+namespace ReIndex\Security\Permission\Revision\Tag;
 
 
 use ReIndex\Enum\State;
@@ -20,13 +20,8 @@ use ReIndex\Enum\State;
 class StarPermission extends AbstractPermission {
 
 
-  public function getDescription() {
-    return "Permission to add or remove a tag from favorites.";
-  }
-
-
   /**
-   * @brief Returns `true` if the tag can be starred (or unstarred), `false` otherwise.
+   * @brief A member can star any current tag.
    * @retval bool
    */
   public function checkForMemberRole() {
