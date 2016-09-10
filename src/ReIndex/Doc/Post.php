@@ -507,21 +507,15 @@ abstract class Post extends Revision {
 
 
   /**
-   * @brief Executed when the user is displaying a post.
-   * @param[in] BaseController $controller A controller instance.
+   * @copydoc Revision::viewAction()
    */
   protected function viewAction(BaseController $controller) {
-    if (!$this->user->has(new Permission\ViewPermission($this)))
-      return $controller->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
-
-    $controller->view->setVar('canEdit', $this->user->has(new Permission\EditPermission($this)));
-
     parent::viewAction($controller);
-
 
     $controller->view->setVar('post', $this);
     $controller->view->setVar('comments', $this->getComments());
     $controller->view->setVar('title', $this->title);
+    $controller->view->setVar('canEdit', $this->user->has(new Permission\EditPermission($this)));
 
     $controller->view->pick('views/post/show');
   }

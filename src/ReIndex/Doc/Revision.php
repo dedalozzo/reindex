@@ -20,6 +20,7 @@ use ReIndex\Collection;
 use ReIndex\Security\User\System;
 use ReIndex\Security\Permission\IPermission;
 use ReIndex\Security\Permission\Revision as Permission;
+use ReIndex\Controller\BaseController;
 
 
 /**
@@ -267,6 +268,16 @@ abstract class Revision extends ActiveDoc {
     $opts->doNotReduce()->setKey($this->creatorId);
     $email = $this->couch->queryView('members', 'names', 'view', NULL, $opts)[0]['value'][1];
     return 'http://gravatar.com/avatar/'.md5(strtolower($email)).'?d=identicon';
+  }
+
+
+  /**
+   * @brief Executed when the user is displaying a document's revision.
+   * @param[in] BaseController $controller A controller instance.
+   */
+  protected function viewAction(BaseController $controller) {
+    if (!$this->user->has(new Permission\ViewPermission($this)))
+      return $controller->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
   }
 
 
