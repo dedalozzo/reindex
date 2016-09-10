@@ -12,6 +12,9 @@ class Post {
   int $legacyId;                //!< Legacy identifier, in case you import from an old password.
 
   string $title;                //!< Title.
+  string $body;                 //!< The content.
+  string $excerpt;              //!< A short extract from the body.
+  string $html;                 //!< The body converted to HTML.
   string $slug;                 //!< A short name given to an article that is in production.
   string $toc;                  //!< Table of contents in HTML format.
   array $data;                  //!< Additional structured information: the book's author, the number of pages, etc.
