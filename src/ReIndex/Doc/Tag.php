@@ -19,7 +19,7 @@ use ReIndex\Collection;
 use ReIndex\Helper;
 use ReIndex\Task\SynonymizeTask;
 use ReIndex\Enum\State;
-use ReIndex\Security\Permission\Versionable\Tag as Permission;
+use ReIndex\Security\Permission\Revision\Tag as Permission;
 use ReIndex\Security\User\System;
 
 use EoC\Opt\ViewQueryOpts;
@@ -32,7 +32,7 @@ use Phalcon\Di;
  * @details Every post must be tagged with a maximun of five tags.
  * @nosubgrouping
  */
-final class Tag extends Versionable {
+final class Tag extends Revision {
   use TExcerpt, TBody, TDescription;
 
   /** @name Constants */
@@ -171,7 +171,7 @@ final class Tag extends Versionable {
 
 
   /**
-   * @copydoc Versionable::approve()
+   * @copydoc Revision::approve()
    */
   public function approve() {
     if (!$value = $this->user->has(new Permission\ApprovePermission($this)))
@@ -209,7 +209,7 @@ final class Tag extends Versionable {
 
 
   /**
-   * @copydoc Versionable::delete()
+   * @copydoc Revision::delete()
    */
   public function delete() {
     parent::delete();
