@@ -9,7 +9,7 @@
 
 
 //! Posts related permissions
-namespace ReIndex\Security\Permission\Versionable\Post;
+namespace ReIndex\Security\Permission\Revision\Post;
 
 
 use ReIndex\Security\Permission\AbstractPermission as Superclass;

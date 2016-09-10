@@ -8,7 +8,7 @@
  */
 
 
-namespace ReIndex\Security\Permission\Versionable\Tag;
+namespace ReIndex\Security\Permission\Revision\Tag;
 
 
 use ReIndex\Security\Permission\AbstractPermission as Superclass;
