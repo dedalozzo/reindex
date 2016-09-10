@@ -210,8 +210,8 @@ final class ApiController extends BaseController {
   /**
    * @brief Likes a reply.
    */
-  public function likeReplyAction() {
-    $this->like('replies');
+  public function likeCommentAction() {
+    $this->like('comments');
   }
 
 
