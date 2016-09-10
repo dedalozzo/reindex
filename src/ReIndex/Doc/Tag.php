@@ -171,6 +171,17 @@ final class Tag extends Revision {
 
 
   /**
+   * @copydoc Revision::submit()
+   */
+  public function submit() {
+    if (!$this->user->has(new Permission\EditPermission($this)))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+
+    parent::submit();
+  }
+
+
+  /**
    * @copydoc Revision::approve()
    */
   public function approve() {
