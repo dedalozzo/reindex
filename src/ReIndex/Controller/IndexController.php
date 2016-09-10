@@ -104,11 +104,11 @@ class IndexController extends ListController {
     // votes/perItem/view
     $scores = $this->couch->queryView('votes', 'perItem', 'view', $ids, $opts);
 
-    // Replies.
+    // Comments.
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
-    // replies/perPost/view
-    $replies = $this->couch->queryView('replies', 'perPost', 'view', $ids, $opts);
+    // comments/perPost/view
+    $comments = $this->couch->queryView('comments', 'perPost', 'view', $ids, $opts);
 
     $entries = [];
     $postCount = count($posts);
@@ -121,7 +121,7 @@ class IndexController extends ListController {
       $entry->url = Helper\Url::build($properties['publishedAt'], $properties['slug']);
       $entry->whenHasBeenPublished = Helper\Time::when($properties['publishedAt']);
       $entry->score = is_null($scores[$i]['value']) ? 0 : $scores[$i]['value'];
-      $entry->repliesCount = is_null($replies[$i]['value']) ? 0 : $replies[$i]['value'];
+      $entry->commentsCount = is_null($comments[$i]['value']) ? 0 : $comments[$i]['value'];
 
       $entries[] = $entry;
     }
