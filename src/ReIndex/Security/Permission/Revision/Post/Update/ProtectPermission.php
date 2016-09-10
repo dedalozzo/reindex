@@ -8,10 +8,10 @@
  */
 
 
-namespace ReIndex\Security\Permission\Versionable\Post\Update;
+namespace ReIndex\Security\Permission\Revision\Post\Update;
 
 
-use ReIndex\Security\Permission\Versionable\Post\ProtectPermission as Superclass;
+use ReIndex\Security\Permission\Revision\Post\ProtectPermission as Superclass;
 use ReIndex\Enum\State;
 
 
@@ -22,7 +22,7 @@ class ProtectPermission extends Superclass {
 
 
   /**
-   * @brief A member can protect only the current revision of his own post, just in case it doesn't have any active
+   * @brief A member can ony protect the current revision of his own update, just in case it doesn't have any active
    * protection.
    * @retval bool
    */

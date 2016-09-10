@@ -8,7 +8,7 @@
  */
 
 
-namespace ReIndex\Security\Permission\Versionable\Tag;
+namespace ReIndex\Security\Permission\Revision\Tag;
 
 
 use ReIndex\Enum\State;
@@ -18,11 +18,6 @@ use ReIndex\Enum\State;
  * @brief Permission to edit the tags' information.
  */
 class EditPermission extends AbstractPermission {
-
-
-  public function getDescription() {
-    return "Permission to edit a tag.";
-  }
 
 
   /**
@@ -35,14 +30,11 @@ class EditPermission extends AbstractPermission {
 
 
   /**
-   * @brief A reviewer can edit current tags and submitted revisions.
+   * @brief A reviewer can even edit submitted revision.
    * @retval bool
    */
   public function checkForReviewerRole() {
-    if ($this->checkForMemberRole())
-      return TRUE;
-    else
-      return ($this->tag->state->is(State::CURRENT) || $this->tag->state->is(State::SUBMITTED)) ? TRUE : FALSE;
+    return ($this->checkForMemberRole() || $this->tag->state->is(State::SUBMITTED)) ? TRUE : FALSE;
   }
 
 }

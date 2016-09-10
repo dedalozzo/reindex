@@ -8,7 +8,7 @@
  */
 
 
-namespace ReIndex\Security\Permission\Versionable\Post;
+namespace ReIndex\Security\Permission\Revision\Post;
 
 
 use ReIndex\Enum\State;
@@ -34,7 +34,7 @@ class EditPermission extends AbstractPermission {
 
 
   /**
-   * @brief A reviewer can even edit submitted revisions.
+   * @brief A reviewer can even edit submitted revision.
    * @retval bool
    */
   public function checkForReviewerRole() {
