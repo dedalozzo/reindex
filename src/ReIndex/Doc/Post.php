@@ -22,7 +22,7 @@ use ReIndex\Collection;
 use ReIndex\Enum\State;
 use ReIndex\Task\IndexPostTask;
 use ReIndex\Security\User\System;
-use ReIndex\Security\Permission\Versionable\Post as Permission;
+use ReIndex\Security\Permission\Revision\Post as Permission;
 use ReIndex\Controller\BaseController;
 use ReIndex\Validation;
 use ReIndex\Exception;
@@ -61,7 +61,7 @@ use Phalcon\Validation\Validator\PresenceOf;
  *
  * @endcond
  */
-abstract class Post extends Versionable {
+abstract class Post extends Revision {
   use TExcerpt, TBody, TDescription;
 
   /** @name Constants */
@@ -128,7 +128,7 @@ abstract class Post extends Versionable {
 
 
   /**
-   * @copydoc Versionable::indexingInProgress()
+   * @copydoc Revision::indexingInProgress()
    */
   protected function indexingInProgress() {
     $opts = new ViewQueryOpts();
@@ -141,7 +141,7 @@ abstract class Post extends Versionable {
 
 
   /**
-   * @copydoc Versionable::markAsApproved()
+   * @copydoc Revision::markAsApproved()
    */
   protected function markAsApproved() {
     if ($this->user instanceof System ||
@@ -398,7 +398,7 @@ abstract class Post extends Versionable {
 
 
   /**
-   * @copydoc Versionable::submit()
+   * @copydoc Revision::submit()
    */
   public function submit() {
     if (!$this->user->has(new Permission\EditPermission($this)))
@@ -409,7 +409,7 @@ abstract class Post extends Versionable {
 
 
   /**
-   * @copydoc Versionable::approve()
+   * @copydoc Revision::approve()
    */
   public function approve() {
     $this->castVoteForPeerReview(new Permission\ApprovePermission($this));
@@ -417,7 +417,7 @@ abstract class Post extends Versionable {
 
 
   /**
-   * @copydoc Versionable::reject()
+   * @copydoc Revision::reject()
    */
   public function reject($reason) {
     $this->castVoteForPeerReview(new Permission\RejectPermission($this), $reason);
@@ -425,7 +425,7 @@ abstract class Post extends Versionable {
 
 
   /**
-   * @copydoc Versionable::moveToTrash()
+   * @copydoc Revision::moveToTrash()
    */
   protected function moveToTrash() {
     if (!$this->user->has(new Permission\MoveToTrashPermission($this)))
@@ -439,7 +439,7 @@ abstract class Post extends Versionable {
 
 
   /**
-   * @copydoc Versionable::restore()
+   * @copydoc Revision::restore()
    */
   protected function restore() {
     if (!$this->user->has(new Permission\RestorePermission($this)))
@@ -455,7 +455,7 @@ abstract class Post extends Versionable {
 
 
   /**
-   * @copydoc Versionable::revert()
+   * @copydoc Revision::revert()
    */
   public function revert($versionNumber = NULL) {
     if (!$this->user->has(new Permission\RevertPermission($this)))
