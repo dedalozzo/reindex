@@ -26,7 +26,7 @@ use ReIndex\Collection;
  *
  * @endcond
  */
-final class Answer extends Versionable {
+final class Answer extends Revision {
   use TBody;
 
 

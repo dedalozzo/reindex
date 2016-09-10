@@ -11,7 +11,7 @@
 namespace ReIndex\Doc;
 
 
-use ReIndex\Security\Permission\Versionable\Post\Article as Permission;
+use ReIndex\Security\Permission\Revision\Post\Article as Permission;
 
 
 /**
@@ -22,7 +22,7 @@ final class Article extends Post {
 
 
   /**
-   * @copydoc Versionable::approve()
+   * @copydoc Revision::approve()
    */
   public function approve() {
     $this->castVoteForPeerReview(new Permission\ApprovePermission($this));
@@ -30,7 +30,7 @@ final class Article extends Post {
 
 
   /**
-   * @copydoc Versionable::reject()
+   * @copydoc Revision::reject()
    */
   public function reject($reason) {
     $this->castVoteForPeerReview(new Permission\RejectPermission($this), FALSE, $reason);

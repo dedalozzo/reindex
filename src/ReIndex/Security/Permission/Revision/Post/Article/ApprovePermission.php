@@ -8,10 +8,10 @@
  */
 
 
-namespace ReIndex\Security\Permission\Versionable\Post\Article;
+namespace ReIndex\Security\Permission\Revision\Post\Article;
 
 
-use ReIndex\Security\Permission\Versionable\Post\ApprovePermission as Superclass;
+use ReIndex\Security\Permission\Revision\ApprovePermission as Superclass;
 
 
 /**
@@ -21,13 +21,13 @@ class ApprovePermission extends Superclass {
 
 
   /**
-   * @brief A member can approve modifications of other than himself on his own posts.
+   * @brief A member can approve modifications of other than himself on his own revisions.
    * @retval bool
    */
   public function checkForMemberRole() {
-    if ($this->post->state->is(State::SUBMITTED) &&
-      $this->user->match($this->post->creatorId) &&
-      !$this->user->match($this->post->editorId)
+    if ($this->revision->state->is(State::SUBMITTED) &&
+      $this->user->match($this->revision->creatorId) &&
+      !$this->user->match($this->revision->editorId)
     )
       return TRUE;
     else
