@@ -19,7 +19,7 @@ use Reindex\Exception;
  * @brief This class represents an user's update.
  * @nosubgrouping
  */
-class Update extends Post {
+final class Update extends Post {
 
 
   /**
