@@ -11,7 +11,7 @@
 namespace ReIndex\Doc;
 
 
-use ReIndex\Security\Permission\Versionable\Post\Update as Permission;
+use ReIndex\Security\Permission\Revision\Post\Update as Permission;
 use Reindex\Exception;
 
 
