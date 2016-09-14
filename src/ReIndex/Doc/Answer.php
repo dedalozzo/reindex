@@ -16,13 +16,14 @@ use ReIndex\Collection;
 
 
 /**
- * @brief A generic reply. It can be an answer, a comment to a question (or to an answer) or a reply to a post (an
- * article, a book review, etc.).
+ * @brief An answer.
  * @nosubgrouping
  *
  * @cond HIDDEN_SYMBOLS
  *
- * @property Collection\VoteCollection $votes // Casted votes.
+ * @property string $questionId
+ *
+ * @property Collection\VoteCollection $votes
  *
  * @endcond
  */
@@ -49,12 +50,6 @@ final class Answer extends Revision {
   public function markAsDuplicate() {
 
   }
-
-
-  protected function approve() {
-    //! @todo: Implement approve() method.
-  }
-
 
   //! @cond HIDDEN_SYMBOLS
 
