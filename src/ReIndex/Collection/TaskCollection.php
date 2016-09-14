@@ -44,13 +44,11 @@ final class TaskCollection extends MetaCollection {
    * @param[in] ITask $task The task object.
    */
   public function add(ITask $task) {
-    $this->queue->add($task);
-
     // Adds the task to the collection in case is not present.
     if ($this->exists($task))
       return;
     else
-      $this->meta[$this->name][get_class($task)] = NULL;
+      $this->meta[$this->name][get_class($task)] = $task;
   }
 
 
@@ -73,5 +71,13 @@ final class TaskCollection extends MetaCollection {
     return isset($this->meta[$this->name][get_class($task)]);
   }
 
+
+  /**
+   * @brief Enqueues the tasks.
+   */
+  public function enqueueAll() {
+    foreach ($this->meta[$this->name] as $task)
+      $this->queue->add($task);
+  }
 
 }
