@@ -89,4 +89,13 @@ class State {
 
   }
 
+
+  /**
+   * @brief Removes the provided value from the set.
+   * @param[in] string $value The value to unset.
+   */
+  public function remove($value) {
+    $this->meta["state"] &= ~$value;
+  }
+
 }
