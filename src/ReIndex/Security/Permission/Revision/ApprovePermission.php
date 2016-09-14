@@ -25,7 +25,9 @@ class ApprovePermission extends AbstractPermission {
    * @retval bool
    */
   public function checkForMemberRole() {
-    return ($this->revision->state->is(State::SUBMITTED) && $this->user->match($this->revision->creatorId)) ? TRUE : FALSE;
+    return $this->revision->state->is(State::SUBMITTED) &&
+           $this->user->match($this->revision->creatorId)
+      ? TRUE : FALSE;
   }
 
 
@@ -34,27 +36,9 @@ class ApprovePermission extends AbstractPermission {
    * @retval bool
    */
   public function checkForEditorRole() {
-    return $this->revision->state->is(State::SUBMITTED) && $this->user->match($this->revision->editorId) ? TRUE : FALSE;
-  }
-
-
-  /**
-   * @brief A reviewer can approve any modifications.
-   * @retval bool
-   */
-  public function checkForReviewerRole() {
-    return $this->revision->state->is(State::SUBMITTED) ? TRUE : FALSE;
-  }
-
-
-  /**
-   * @brief A moderator can approve any modifications.
-   * @attention This method is an alias of `checkForReviewRole`. We need to establish the role of the current member,
-   * since in a peer review the vote of a moderator is more important that the one of a reviewer.
-   * @retval bool
-   */
-  public function checkForModeratorRole() {
-    return $this->checkForReviewerRole();
+    return $this->revision->state->is(State::SUBMITTED) &&
+           $this->user->match($this->revision->editorId)
+      ? TRUE : FALSE;
   }
 
 }
