@@ -20,4 +20,12 @@ use ReIndex\Security\Permission\Revision\Post\Question as Permission;
  */
 final class Question extends Post {
 
+
+  /**
+   * @brief Marks a question as duplicate of another question.
+   */
+  public function markAsDuplicate(Question $question) {
+
+  }
+
 }
