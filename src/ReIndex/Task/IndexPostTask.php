@@ -14,12 +14,10 @@ namespace ReIndex\Task;
 use ReIndex\Doc\Post;
 use ReIndex\Doc\Member;
 use ReIndex\Enum\State;
-use ReIndex\Helper;
 
 use Phalcon\Di;
 
 use EoC\Couch;
-use EoC\Opt\ViewQueryOpts;
 use EoC\Hook\IChunkHook;
 
 use Monolog\Logger;
@@ -140,10 +138,7 @@ final class IndexPostTask implements ITask, IChunkHook {
    * @return bool
    */
   private function toDeindex() {
-    if ($this->post->state->is(State::DELETING) || $this->post->state->is(State::INDEXING))
-      return TRUE;
-    else
-      return FALSE;
+    return $this->post->state->is(State::DELETED) || $this->post->state->is(State::CURRENT);
   }
 
 
@@ -152,10 +147,7 @@ final class IndexPostTask implements ITask, IChunkHook {
    * @return bool
    */
   private function toIndex() {
-    if ($this->post->state->is(State::INDEXING) || $this->post->state->is(State::CURRENT))
-      return TRUE;
-    else
-      return FALSE;
+    return $this->post->state->is(State::CURRENT);
   }
 
 
@@ -265,44 +257,13 @@ final class IndexPostTask implements ITask, IChunkHook {
 
     $date = new \DateTime();
 
-    if ($this->post->state->is(State::INDEXING)) {
-      // Sets the state of the current revision to `approved`.
-      $opts = new ViewQueryOpts();
-      $opts->doNotReduce()->setKey($this->id);
-      // posts/byUnversionId/view
-      $rows = $this->couch->queryView('posts', 'byUnversionId', 'view', NULL, $opts);
-
-      if (!$rows->isEmpty()) {
-        $current = $this->couch->getDoc('posts', Couch::STD_DOC_PATH, $rows[0]['id']);
-        $current->state->set(State::APPROVED);
-        $current->tasks->rem(new IndexPostTask($current));
-        $current->save();
-      }
-      else {
-        // If a current version doesn't exist, it means we don't need to deindex the post.
-        $this->toDeindex = FALSE;
-      }
-
-      if (isset($this->post->title))
-        $this->post->slug = Helper\Text::slug($this->post->title);
-      else
-        $this->post->slug = $this->post->unversionId;
-
-      if (isset($this->post->body)) {
-        $metadata = [];
-        $this->post->html = $this->markdown->parse($this->post->body, $metadata);
-        $this->post->toc = !empty($metadata['toc']) ? $metadata['toc'] : NULL;
-        $this->post->data = is_array($metadata['meta']) ? $metadata['meta'] : NULL;
-        $this->post->excerpt = Helper\Text::truncate(Helper\Text::purge($this->post->html));
-      }
-
-      if (!isset($this->post->publishedAt))
-        $this->post->publishedAt = time();
-
+    if ($this->post->state->is(State::CURRENT)) {
+      // If a current version doesn't exist, it means we don't need to deindex the post.
+      $this->toDeindex = $this->post->replaceCurrentRevision();
+    }
+    elseif ($this->post->state->is(State::CREATED)) {
+      $this->post->refresh();
       $this->post->state->set(State::CURRENT);
-
-      // Saves the document, but it doesn't update the editing timestamp.
-      $this->post->save(FALSE);
     }
 
     $date->setTimestamp($this->post->publishedAt);
@@ -341,6 +302,9 @@ final class IndexPostTask implements ITask, IChunkHook {
     // followers/perMember/view
     $this->couch->queryView('followers', 'perMember', 'view' NULL, $opts, $this);
     */
+
+    $this->post->state->remove(State::INDEXING);
+    $this->post->save();
   }
 
 
