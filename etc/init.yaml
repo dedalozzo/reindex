@@ -162,7 +162,7 @@ posts:
     view: # posts/byUnversionId/view
       map: |-
         function($doc) use ($emit) {
-          if ($doc->state == 'current')
+          if ($doc->state & 1)
             $emit($doc->unversionId);
         };
       reduce: _count
@@ -172,7 +172,7 @@ posts:
     view: # posts/byUrl/view
       map: |-
         function($doc) use ($emit) {
-          if ($doc->state == 'current' or $doc->state == 'deleted')
+          if ($doc->state & 1 or $doc->state & 64)
             $emit([$doc->year, $doc->month, $doc->day, $doc->slug]);
         };
 
@@ -181,7 +181,7 @@ posts:
     view: # posts/byLegacyId/view
       map: |-
         function($doc) use ($emit) {
-          if ($doc->state == 'current')
+          if ($doc->state & 1)
             $emit($doc->legacyId);
         };
 
@@ -190,7 +190,7 @@ posts:
     view: # posts/perTag/view
       map: |-
         function($doc) use ($emit) {
-          if ($doc->state == 'current' && isset($doc->tags))
+          if (($doc->state & 1) && isset($doc->tags))
             foreach ($doc->tags as $key => $value)
               $emit($key);
         };
@@ -201,7 +201,7 @@ posts:
     view: # posts/approvedInfo/view
       map: |-
         function($doc) use ($emit) {
-          if ($doc->state == 'approved') {
+          if ($doc->state & 8) {
             $editorId = isset($doc->editorId) ? $doc->editorId : $doc->creatorId;
             $editSummary = isset($doc->editSummary) ? $doc->editSummary : '';
 
@@ -213,12 +213,12 @@ posts:
           }
         };
 
-  inElaboration:
+  indexing:
 
-    view: # posts/inElaboration/view
+    view: # posts/indexing/view
       map: |-
         function($doc) use ($emit) {
-          if ($doc->state == 'indexing' || $doc->state == 'deleting')
+          if ($doc->state & 128))
             $emit($doc->unversionId);
         };
 
@@ -281,7 +281,7 @@ tags:
     view: # tags/byUnversionId/view
       map: |-
         function($doc) use ($emit) {
-          if ($doc->type == 'tag' && $doc->state == 'current')
+          if ($doc->type == 'tag' && ($doc->state & 1))
             $emit($doc->unversionId);
         };
       reduce: _count
@@ -291,7 +291,7 @@ tags:
     view: # tags/newest/view
       map: |-
         function($doc) use ($emit) {
-          if ($doc->type == 'tag' && $doc->state == 'current')
+          if ($doc->type == 'tag' && ($doc->state & 1))
             $emit($doc->createdAt);
         };
 
@@ -300,7 +300,7 @@ tags:
     view: # tags/names/view
       map: |-
         function($doc) use ($emit) {
-          if ($doc->type == 'tag' && $doc->state == 'current')
+          if ($doc->type == 'tag' && ($doc->state & 1))
             $emit($doc->unversionId, $doc->name);
         };
 
@@ -309,7 +309,7 @@ tags:
     view: # tags/synonymsNames/view
       map: |-
         function($doc) use ($emit) {
-          if ($doc->type == 'synonym' && $doc->state == 'current') {
+          if ($doc->type == 'synonym' && ($doc->state & 1)) {
             $emit($doc->_id, $doc->name);
           }
         };
@@ -319,7 +319,7 @@ tags:
     view: # tags/byName/view
       map: |-
         function($doc) use ($emit) {
-          if ($doc->type == 'tag' && $doc->state == 'current')
+          if ($doc->type == 'tag' && ($doc->state & 1))
             $emit($doc->name);
         };
 
@@ -328,7 +328,7 @@ tags:
     view: # tags/synonymsByName/view
       map: |-
         function($doc) use ($emit) {
-          if ($doc->type == 'synonym' && $doc->state == 'current') {
+          if ($doc->type == 'synonym' && ($doc->state & 1)) {
             $emit($doc->name);
           }
         };
@@ -338,7 +338,7 @@ tags:
     view: # tags/andSynonymsByName/view
       map: |-
         function($doc) use ($emit) {
-          if ($doc->state == 'current')
+          if ($doc->state & 1)
             $emit($doc->name);
         };
 
@@ -360,7 +360,7 @@ tags:
     view: # tags/substrings/view
       map: |-
         function($doc) use ($emit) {
-          if ($doc->state == 'current') {
+          if ($doc->state & 1) {
             $str = preg_replace('/-/su', '', $doc->name);
             $length = mb_strlen($str, 'UTF-8');
 
