@@ -25,13 +25,10 @@ class ApprovePermission extends Superclass {
    * @retval bool
    */
   public function checkForMemberRole() {
-    if ($this->revision->state->is(State::SUBMITTED) &&
-      $this->user->match($this->revision->creatorId) &&
-      !$this->user->match($this->revision->editorId)
-    )
-      return TRUE;
-    else
-      return FALSE;
+    return $this->revision->state->is(State::SUBMITTED) &&
+           $this->user->match($this->revision->creatorId) &&
+           !$this->user->match($this->revision->editorId)
+      ? TRUE : FALSE;
   }
 
 }
