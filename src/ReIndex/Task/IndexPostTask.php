@@ -55,11 +55,6 @@ final class IndexPostTask implements ITask, IChunkHook {
   protected $redis;
 
   /**
-   * @var Hoedown $markdown
-   */
-  protected $markdown;
-
-  /**
    * @var Logger $log
    */
   protected $log;
@@ -257,12 +252,9 @@ final class IndexPostTask implements ITask, IChunkHook {
 
     $date = new \DateTime();
 
-    if ($this->post->state->is(State::CURRENT)) {
-      // If a current version doesn't exist, it means we don't need to deindex the post.
-      $this->toDeindex = $this->post->replaceCurrentRevision();
-    }
-    elseif ($this->post->state->is(State::CREATED)) {
-      $this->post->refresh();
+    // In case the post has been imported...
+    if ($this->post->state->is(State::CREATED)) {
+      $this->post->parseBody();
       $this->post->state->set(State::CURRENT);
     }
 
