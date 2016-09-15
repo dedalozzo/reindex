@@ -26,6 +26,7 @@ class EditPermission extends AbstractPermission {
    */
   public function checkForMemberRole() {
     if (!$this->post->isLocked() &&
+        !$this->post->state->is(State::INDEXING) &&
         ($this->post->state->is(State::CURRENT) || ($this->post->state->is(State::DRAFT) && $this->user->match($this->post->creatorId))))
       return TRUE;
     else
@@ -42,7 +43,8 @@ class EditPermission extends AbstractPermission {
       return TRUE;
     else
       return !$this->post->isLocked() &&
-      ($this->post->state->is(State::CURRENT) || $this->post->state->is(State::SUBMITTED))
+             !$this->post->state->is(State::INDEXING) &&
+             ($this->post->state->is(State::CURRENT) || $this->post->state->is(State::SUBMITTED))
         ? TRUE : FALSE;
   }
 
@@ -52,7 +54,9 @@ class EditPermission extends AbstractPermission {
    * @retval bool
    */
   public function checkForModeratorRole() {
-    return $this->post->state->is(State::CURRENT) or $this->post->state->is(State::SUBMITTED);
+    return !$this->post->state->is(State::INDEXING) &&
+           ($this->post->state->is(State::CURRENT) || $this->post->state->is(State::SUBMITTED))
+      ? TRUE : FALSE;
   }
 
 }
