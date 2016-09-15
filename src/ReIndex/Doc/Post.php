@@ -14,14 +14,10 @@ namespace ReIndex\Doc;
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
-use ReIndex\Property\TExcerpt;
-use ReIndex\Property\TBody;
-use ReIndex\Property\TDescription;
 use ReIndex\Helper;
 use ReIndex\Collection;
 use ReIndex\Enum\State;
 use ReIndex\Task\IndexPostTask;
-use ReIndex\Security\User\System;
 use ReIndex\Security\Permission\Revision\Post as Permission;
 use ReIndex\Controller\BaseController;
 use ReIndex\Validation;
@@ -43,12 +39,7 @@ use Phalcon\Validation\Validator\PresenceOf;
  * @property int $legacyId
  *
  * @property string $title
- * @property string $body
- * @property string $excerpt
- * @property string $html
  * @property string $slug
- * @property string $toc
- * @property array $data
  *
  * @property int $publishedAt
  *
@@ -62,7 +53,6 @@ use Phalcon\Validation\Validator\PresenceOf;
  * @endcond
  */
 abstract class Post extends Revision {
-  use TExcerpt, TBody, TDescription;
 
   /** @name Constants */
   //!@{
@@ -128,29 +118,44 @@ abstract class Post extends Revision {
 
 
   /**
-   * @copydoc Revision::indexingInProgress()
+   * @copydoc Revision::replaceCurrentRevision()
    */
-  protected function indexingInProgress() {
-    $opts = new ViewQueryOpts();
-    $opts->setKey($this->unversionId);
-    // posts/inElaboration/view
-    $rows = $this->couch->queryView('posts', 'inElaboration', 'view', NULL, $opts);
+  public function replaceCurrentRevision() {
+    parent::replaceCurrentRevision();
 
-    return !$rows->isEmpty();
+    $this->state->set(State::CURRENT | State::INDEXING);
+    $this->tasks->add(new IndexPostTask($this));
+
+    // It's a new document, there is no need to check for a current revision.
+    if (is_null($this->rev))
+      return;
+
+    // Sets the state of the current revision to `approved`.
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->setKey($this->unversionId);
+    // posts/byUnversionId/view
+    $rows = $this->couch->queryView('posts', 'byUnversionId', 'view', NULL, $opts);
+
+    if (!$rows->isEmpty()) {
+      $current = $this->couch->getDoc('posts', Couch::STD_DOC_PATH, $rows[0]['id']);
+      $current->state->set(State::APPROVED);
+      $current->tasks->remove(new IndexPostTask($current));
+      $current->save(FALSE);
+    }
   }
 
 
   /**
-   * @copydoc Revision::markAsApproved()
+   * @copydoc Revision::refresh()
    */
-  protected function markAsApproved() {
-    if ($this->user instanceof System ||
-      !$this->indexingInProgress() ||
-      $this->votes->count(FALSE) >= $this->di['config']->review->scoreToApproveRevision) {
-      $this->state->set(State::INDEXING);
-      $this->tasks->add(new IndexPostTask($this));
-      $this->save();
-    }
+  public function parseBody() {
+    parent::parseBody();
+
+    if (isset($this->title))
+      $this->slug = Helper\Text::slug($this->title);
+
+    if (!isset($this->publishedAt))
+      $this->publishedAt = time();
   }
 
 
@@ -293,6 +298,25 @@ abstract class Post extends Revision {
   //!@{
 
   /**
+   * @brief Protects the post with the given protection.
+   * @param[in] string $protectionType A post can be `closed` or `locked`.
+   */
+  protected function protect($protectionType) {
+    $this->meta['protection'] = $protectionType;
+    $this->meta['protectorId'] = $this->user->id;
+  }
+
+
+  /**
+   * @brief Used by `removeProtection()` to remove the protection.
+   */
+  protected function unprotect() {
+    $this->unsetMetadata('protection');
+    $this->unsetMetadata('protectorId');
+  }
+
+
+  /**
    * @brief Returns `true` if the post has some kind of protection, `false` otherwise.
    * @retval bool
    */
@@ -316,29 +340,6 @@ abstract class Post extends Revision {
    */
   public function getProtectorId() {
     return ($this->isProtected()) ? $this->meta['protectorId'] : NULL;
-  }
-
-
-  /**
-   * @brief Protects the post with the given protection.
-   * @param[in] string $protectionType A post can be `closed` or `locked`.
-   */
-  protected function protect($protectionType) {
-    $this->meta['protection'] = $protectionType;
-    $this->meta['protectorId'] = $this->user->id;
-
-    $this->save();
-  }
-
-
-  /**
-   * @brief Used by `removeProtection()` to remove the protection.
-   */
-  protected function unprotect() {
-    $this->unsetMetadata('protection');
-    $this->unsetMetadata('protectorId');
-
-    $this->save();
   }
 
 
@@ -411,24 +412,24 @@ abstract class Post extends Revision {
   /**
    * @copydoc Revision::moveToTrash()
    */
-  protected function moveToTrash() {
+  public function moveToTrash() {
     parent::moveToTrash();
-    $this->state->set(State::DELETING);
+
+    $this->state->set(State::DELETED | State::INDEXING);
     $this->tasks->add(new IndexPostTask($this));
-    $this->save();
   }
 
 
   /**
    * @copydoc Revision::restore()
    */
-  protected function restore() {
+  public function restore() {
     parent::restore();
 
-    if ($this->state->is(State::INDEXING))
+    if ($this->state->is(State::CURRENT)) {
+      $this->state->set(State::CURRENT | State::INDEXING);
       $this->tasks->add(new IndexPostTask($this));
-
-    $this->save();
+    }
   }
 
 
@@ -436,12 +437,20 @@ abstract class Post extends Revision {
    * @brief Marks the document as draft.
    * @details When a user works on an article, he wants save many time the item before submit it for peer revision.
    */
-  public function saveAsDraft() {
+  public function markAsDraft() {
     if (!$this->user->has(new Permission\SaveAsDraftPermission($this)))
       throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
 
     $this->state->set(State::DRAFT);
-    $this->save();
+  }
+
+
+  /**
+   * @copydoc ActiveDoc::save()
+   */
+  public function save($update = TRUE) {
+    parent::save($update);
+    $this->tasks->enqueueAll();
   }
 
 
@@ -491,6 +500,7 @@ abstract class Post extends Revision {
       }
 
       $this->submit();
+      $this->save();
     }
     else {
       $controller->tag->setDefault("title", $this->title);
