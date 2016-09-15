@@ -22,6 +22,8 @@ use ReIndex\Security\Permission\Revision\Post as Permission;
 use ReIndex\Controller\BaseController;
 use ReIndex\Validation;
 use ReIndex\Exception;
+use ReIndex\Property\TExcerpt;
+use ReIndex\Property\TDescription;
 
 use Phalcon\Di;
 use Phalcon\Mvc\View;
@@ -41,6 +43,10 @@ use Phalcon\Validation\Validator\PresenceOf;
  * @property string $title
  * @property string $slug
  *
+ * @property string $excerpt
+ *
+ * @property string $description
+ *
  * @property int $publishedAt
  *
  * @property string $protection
@@ -53,6 +59,8 @@ use Phalcon\Validation\Validator\PresenceOf;
  * @endcond
  */
 abstract class Post extends Revision {
+  use TExcerpt, TDescription;
+
 
   /** @name Constants */
   //!@{
@@ -121,8 +129,6 @@ abstract class Post extends Revision {
    * @copydoc Revision::replaceCurrentRevision()
    */
   public function replaceCurrentRevision() {
-    parent::replaceCurrentRevision();
-
     $this->state->set(State::CURRENT | State::INDEXING);
     $this->tasks->add(new IndexPostTask($this));
 
@@ -146,10 +152,12 @@ abstract class Post extends Revision {
 
 
   /**
-   * @copydoc Revision::refresh()
+   * @copydoc Revision::parseBody()
    */
   public function parseBody() {
     parent::parseBody();
+
+    $this->excerpt = Helper\Text::truncate(Helper\Text::purge($this->html));
 
     if (isset($this->title))
       $this->slug = Helper\Text::slug($this->title);
