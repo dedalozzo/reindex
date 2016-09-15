@@ -57,6 +57,11 @@ final class Update extends Post {
 
   //! @cond HIDDEN_SYMBOLS
 
+  public function setTitle($value) {
+    throw new \BadMethodCallException('Method is not implemented.');
+  }
+
+
   public function getUrl() {
     return $this->meta['url'];
   }
