@@ -12,6 +12,9 @@ namespace ReIndex\Doc;
 
 
 use ReIndex\Collection;
+use ReIndex\Helper;
+use ReIndex\Property\TBody;
+use ReIndex\Property\TExcerpt;
 
 
 /**
@@ -25,6 +28,7 @@ use ReIndex\Collection;
  *
  */
 class Comment extends ActiveDoc {
+  use TBody, TExcerpt;
 
   private $votes; // Casted votes.
 
@@ -41,6 +45,15 @@ class Comment extends ActiveDoc {
    */
   protected function getDbName() {
     return 'comments';
+  }
+
+
+  /**
+   * @brief Parses the body.
+   */
+  public function parseBody() {
+    $this->html = $this->markdown->parse($this->body);
+    $this->excerpt = Helper\Text::truncate(Helper\Text::purge($this->html));
   }
 
 
@@ -71,11 +84,23 @@ class Comment extends ActiveDoc {
   }
 
 
+  /**
+   * @brief Deletes the comment.
+   */
   public function delete() {
     parent::delete();
-    $this->save();
+    parent::save(FALSE);
 
     // deletes the votes from redis
+  }
+
+
+  /**
+   * @copydoc ActiveDoc::save()
+   */
+  public function save() {
+    $this->parseBody();
+    $this->save();
   }
 
 
