@@ -14,7 +14,6 @@ class Revision {
   State $state;                   //!< The state of the document.
 
   string $body;                   //!< The content.
-  string $excerpt;                //!< A short extract from the body.
   string $html;                   //!< The body converted to HTML.
   string $toc;                    //!< Table of contents in HTML format.
 
