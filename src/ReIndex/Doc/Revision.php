@@ -17,10 +17,12 @@ use ReIndex\Helper;
 use ReIndex\Exception;
 use ReIndex\Enum\State;
 use ReIndex\Collection;
-use ReIndex\Security\User\System;
 use ReIndex\Security\Permission\IPermission;
 use ReIndex\Security\Permission\Revision as Permission;
 use ReIndex\Controller\BaseController;
+use ReIndex\Property\TExcerpt;
+use ReIndex\Property\TBody;
+use ReIndex\Property\TDescription;
 
 
 /**
@@ -32,6 +34,13 @@ use ReIndex\Controller\BaseController;
  * @property string $unversionId
  *
  * @property State $state
+ *
+ * @property string $body
+ * @property string $excerpt
+ * @property string $html
+ * @property string $toc
+ *
+ * @property array $data
  *
  * @property string $versionNumber
  * @property string $previousVersionNumber
@@ -49,9 +58,15 @@ use ReIndex\Controller\BaseController;
  * @endcond
  */
 abstract class Revision extends ActiveDoc {
+  use TExcerpt, TBody, TDescription;
 
   private $state; // State of the document.
   private $votes; // Casted votes.
+
+  /**
+   * @var Hoedown $markdown
+   */
+  protected $markdown;
 
 
   /**
@@ -68,51 +83,15 @@ abstract class Revision extends ActiveDoc {
 
 
   /**
-   * @brief Returns `true` in case there is an indexing task in progress, `false` otherwise.
-   * @return bool
+   * @brief Refreshes metadata.
    */
-  abstract protected function indexingInProgress();
-
-
-  /**
-   * @brief Casts a vote valid as peer review.
-   * @param[in] IPermission $permission A permission.
-   * @param[in] bool $positive The vote can be positive or negative.
-   * @param[in] string $reason The reason for the vote to be casted.
-   */
-  protected function castVoteForPeerReview(IPermission $permission, $positive = TRUE, $reason = '') {
-    if (!$this->user->has($permission))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
-    if ($this->user instanceof Member) {
-      $vote = $this->di['config']->review->{$permission->getRole()->getName().'Vote'};
-
-      if ($positive) {
-        $this->votes->cast($vote, FALSE, '', $reason);
-        $this->markAsApproved();
-      }
-      else {
-        $this->votes->cast(-$vote, FALSE, '', $reason);
-        $this->markAsRejected();
-      }
-    }
-  }
-
-
-  /**
-   * @brief Approves the document's revision.
-   */
-  abstract protected function markAsApproved();
-
-
-  /**
-   * @brief Rejects the document's revision.
-   */
-  protected function markAsRejected() {
-    if ($this->user instanceof System ||
-      $this->votes->count(FALSE) >= $this->di['config']->review->scoreToRejectRevision) {
-      $this->state->set(State::REJECTED);
-      $this->save();
+  public function parseBody() {
+    if (isset($this->body)) {
+      $metadata = [];
+      $this->html = $this->markdown->parse($this->body, $metadata);
+      $this->toc = !empty($metadata['toc']) ? $metadata['toc'] : NULL;
+      $this->data = is_array($metadata['meta']) ? $metadata['meta'] : NULL;
+      $this->excerpt = Helper\Text::truncate(Helper\Text::purge($this->html));
     }
   }
 
@@ -133,29 +112,73 @@ abstract class Revision extends ActiveDoc {
 
 
   /**
-   * @brief Submits the document's revision for peer review.
+   * @brief Returns `true` if the revision can be approved instantly, `false` if a peer review is necessary.
+   * @retval bool
    */
-  protected function submit() {
-    // In case this is a revision of a published version, we must update the editor identifier.
-    if ($this->state->is(State::CURRENT) && $this->user instanceof Member) {
-      $this->editorId = $this->user->id;
-      $this->reset();
-    }
+  protected function instantApproval() {
+    return $this->user->has(new Permission\ApprovePermission($this));
+  }
 
-    $this->state->set(State::SUBMITTED);
 
-    // Tries to approve the revision; in case of a failure, submits it.
-    try {
-      $this->approve();
-    }
-    catch (Exception\AccessDeniedException $e) {
-      $this->save();
+  /**
+   * @brief Casts a vote valid as peer review.
+   * @param[in] IPermission $permission A permission.
+   * @param[in] string $reason The user must provide a reason exclusively for a negative vote.
+   */
+  protected function castVoteForPeerReview(IPermission $permission, $reason = '') {
+    if (!$this->user->has($permission))
+      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+
+    if ($this->user instanceof Member) {
+      $vote = $this->di['config']['peer-review']->{$permission->getRole()->getName().'Vote'};
+
+      if (empty($reason)) {
+        $this->votes->cast($vote, FALSE);
+
+        if ($this->votes->count(FALSE) >= $this->di['config']['peer-review']->score)
+          $this->replaceCurrentRevision();
+      }
+      else {
+        $this->votes->cast(-$vote, FALSE, '', $reason);
+
+        if ($this->votes->count(FALSE) <= -$this->di['config']->review->score)
+          $this->state->set(State::REJECTED);
+      }
     }
   }
 
 
   /**
-   * @brief Casts a vote to approve this document's revision.
+   * @brief Replaces the current revision with this one.
+   * @details It also marks the current revision as `approved`.
+   * @attention Don't use this method even if it's public, unless you know what are you doing.
+   */
+  abstract public function replaceCurrentRevision();
+
+
+  /**
+   * @brief Submits the document's revision for peer review.
+   */
+  protected function submit() {
+    // In case this is the current revision, we must update the `editorId`.
+    if ($this->state->is(State::CURRENT) && $this->user instanceof Member)
+      $this->editorId = $this->user->id;
+
+    $this->parseBody();
+
+    // We must change the state here, otherwise `instantApproval()` will return `false`.
+    $this->state->set(State::SUBMITTED);
+
+    if ($this->instantApproval())
+      $this->replaceCurrentRevision();
+
+    // Resets the document's identifier and unset its CouchDB's revision.
+    $this->reset();
+  }
+
+
+  /**
+   * @brief Approves this document's revision.
    */
   public function approve() {
     $this->castVoteForPeerReview(new Permission\ApprovePermission($this));
@@ -186,32 +209,28 @@ abstract class Revision extends ActiveDoc {
 
 
   /**
-   * @brief Alias of delete().
+   * @brief Moves the document's revision to the trash.
    */
-  protected function moveToTrash() {
+  public function moveToTrash() {
     if (!$this->user->has(new Permission\MoveToTrashPermission($this)))
       throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
-    if ($this->indexingInProgress())
-      throw new Exception\InvalidStateException("Operazione non consentita; riprova più tardi.");
 
     $this->meta['prevState'] = $this->state->get();
     $this->meta['dustmanId'] = $this->user->id;
     $this->meta['deletedAt'] = time();
+
+    $this->state->set(State::DELETED);
   }
 
 
   /**
    * @brief Restores the document to its previous state, removing it from trash.
    */
-  protected function restore() {
+  public function restore() {
     if (!$this->user->has(new Permission\RestorePermission($this)))
       throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
 
-    if ($this->meta['prevState'] === State::CURRENT)
-      $this->state->set(State::INDEXING);
-    else
-      $this->state->set($this->meta['prevState']);
+    $this->state->set($this->meta['prevState']);
 
     // In case the document has been deleted, restore it to its previous state.
     unset($this->meta['prevState']);
