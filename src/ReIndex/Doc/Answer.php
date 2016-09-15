@@ -11,7 +11,6 @@
 namespace ReIndex\Doc;
 
 
-use ReIndex\Property\TBody;
 use ReIndex\Collection;
 
 
@@ -28,7 +27,6 @@ use ReIndex\Collection;
  * @endcond
  */
 final class Answer extends Revision {
-  use TBody;
 
 
   public function __construct() {
@@ -43,13 +41,6 @@ final class Answer extends Revision {
     return 'answers';
   }
 
-
-  /**
-   * @brief Marks the item as duplicate of another item.
-   */
-  public function markAsDuplicate() {
-
-  }
 
   //! @cond HIDDEN_SYMBOLS
 
