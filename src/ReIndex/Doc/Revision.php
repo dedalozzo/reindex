@@ -20,9 +20,7 @@ use ReIndex\Collection;
 use ReIndex\Security\Permission\IPermission;
 use ReIndex\Security\Permission\Revision as Permission;
 use ReIndex\Controller\BaseController;
-use ReIndex\Property\TExcerpt;
 use ReIndex\Property\TBody;
-use ReIndex\Property\TDescription;
 
 
 /**
@@ -36,7 +34,6 @@ use ReIndex\Property\TDescription;
  * @property State $state
  *
  * @property string $body
- * @property string $excerpt
  * @property string $html
  * @property string $toc
  *
@@ -58,7 +55,7 @@ use ReIndex\Property\TDescription;
  * @endcond
  */
 abstract class Revision extends ActiveDoc {
-  use TExcerpt, TBody, TDescription;
+  use TBody;
 
   private $state; // State of the document.
   private $votes; // Casted votes.
@@ -83,16 +80,13 @@ abstract class Revision extends ActiveDoc {
 
 
   /**
-   * @brief Refreshes metadata.
+   * @brief Parses the body.
    */
   public function parseBody() {
-    if (isset($this->body)) {
-      $metadata = [];
-      $this->html = $this->markdown->parse($this->body, $metadata);
-      $this->toc = !empty($metadata['toc']) ? $metadata['toc'] : NULL;
-      $this->data = is_array($metadata['meta']) ? $metadata['meta'] : NULL;
-      $this->excerpt = Helper\Text::truncate(Helper\Text::purge($this->html));
-    }
+    $metadata = [];
+    $this->html = $this->markdown->parse($this->body, $metadata);
+    $this->toc = !empty($metadata['toc']) ? $metadata['toc'] : NULL;
+    $this->data = is_array($metadata['meta']) ? $metadata['meta'] : NULL;
   }
 
 
@@ -153,7 +147,9 @@ abstract class Revision extends ActiveDoc {
    * @details It also marks the current revision as `approved`.
    * @attention Don't use this method even if it's public, unless you know what are you doing.
    */
-  abstract public function replaceCurrentRevision();
+  public function replaceCurrentRevision() {
+    $this->state->set(State::CURRENT);
+  }
 
 
   /**
