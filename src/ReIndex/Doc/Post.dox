@@ -13,7 +13,10 @@ class Post {
 
   string $title;                //!< Title.
   string $slug;                 //!< A short name given to an article that is in production.
-  public string $description;   //!< The meta tag `description`, used by search engines, 160 characters max.
+
+  string $excerpt;              //!< A short extract from the body.
+
+  string $description;          //!< The meta tag `description`, used by search engines, 160 characters max.
 
   int $publishedAt;             //!< Publishing timestamp.
 
