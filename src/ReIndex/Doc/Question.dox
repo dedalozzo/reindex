@@ -9,9 +9,6 @@ class Question  {
   /** @name Properties */
   //!@{
 
-  string $excerpt;      //!< A short extract from the content.
-  string $body;         //!< Content.
-
   //!@}
 
 }
