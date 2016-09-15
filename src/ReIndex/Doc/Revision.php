@@ -83,6 +83,9 @@ abstract class Revision extends ActiveDoc {
    * @brief Parses the body.
    */
   public function parseBody() {
+    if (is_null($this->body))
+      return;
+    
     $metadata = [];
     $this->html = $this->markdown->parse($this->body, $metadata);
     $this->toc = !empty($metadata['toc']) ? $metadata['toc'] : NULL;
