@@ -70,7 +70,6 @@ abstract class ActiveDoc extends Doc {
     $this->couch = $this->di['couchdb'];
     $this->redis = $this->di['redis'];
     $this->log = $this->di['log'];
-
     $this->user = $this->di['guardian']->getUser();
   }
 
