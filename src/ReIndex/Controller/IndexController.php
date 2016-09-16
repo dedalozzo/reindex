@@ -107,8 +107,8 @@ class IndexController extends ListController {
     // Comments.
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
-    // comments/perPost/view
-    $comments = $this->couch->queryView('comments', 'perPost', 'view', $ids, $opts);
+    // comments/perItem/view
+    $comments = $this->couch->queryView('comments', 'perItem', 'view', $ids, $opts);
 
     $entries = [];
     $postCount = count($posts);
