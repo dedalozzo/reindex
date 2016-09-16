@@ -112,6 +112,17 @@ final class Tag extends Revision {
   }
 
 
+  /**
+   * @copydoc Content::parseBody()
+   */
+  public function parseBody() {
+    if (is_null($this->body))
+      return;
+    else
+      parent::parseBody();
+  }
+
+
   /** @name Starring Methods */
   //!@{
 
