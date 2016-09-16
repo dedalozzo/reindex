@@ -28,8 +28,9 @@ class State {
   const SUBMITTED   = 16;  //!< The document's revision has been submitted for peer review.
   const REJECTED    = 32;  //!< The document's revision has been rejected.
   const DELETED     = 64;  //!< The document's revision has been deleted.
+  const IMPORTED    = 128; //!< The document's revision has been imported.
 
-  const INDEXING    = 128; //!<
+  const INDEXING    = 256; //!< The document's revision must be indexed.
 
 
   /**
@@ -82,6 +83,7 @@ class State {
       case self::SUBMITTED: $this->meta["state"] = $value; break;
       case self::REJECTED: $this->meta["state"] = $value; break;
       case self::DELETED: $this->meta["state"] = $value; break;
+      case self::IMPORTED: $this->meta["state"] = $value; break;
       case (self::CURRENT & self::INDEXING): $this->meta["state"] = $value; break;
       case (self::DELETED & self::INDEXING): $this->meta["state"] = $value; break;
       default: throw new InvalidStateException('Invalid state.');
