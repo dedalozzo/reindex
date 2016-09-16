@@ -22,7 +22,7 @@ class SaveAsDraftPermission extends AbstractPermission  {
   public function checkForMemberRole() {
     return $this->user->match($this->post->creatorId) &&
            ($this->post->state->is(State::CREATED) or $this->post->state->is(State::DRAFT))
-           ? TRUE : FALSE;
+      ? TRUE : FALSE;
   }
 
 }
