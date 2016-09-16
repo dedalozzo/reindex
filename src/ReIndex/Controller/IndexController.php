@@ -500,7 +500,7 @@ class IndexController extends ListController {
    * @param[in] int $day The exact day when a post has been published.
    * @param[in] string $slug The post' slug.
    */
-  public function displayByDateAction($year, $month, $day, $slug) {
+  public function displayBySlugAction($year, $month, $day, $slug) {
     $opts = new ViewQueryOpts();
     $opts->setKey([$year, $month, $day, $slug])->setLimit(1);
     // posts/byUrl/view
