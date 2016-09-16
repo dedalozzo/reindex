@@ -49,8 +49,6 @@ try {
   require $root . "/services/guardian.php";
 
   $taskQueue = $di['taskqueue'];
-
-  // We finally save the book.
   $taskQueue->perform();
 }
 catch(\AMQPQueueException $ex){
