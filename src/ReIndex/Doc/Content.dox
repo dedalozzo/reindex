@@ -1,0 +1,21 @@
+<?php
+
+
+namespace ReIndex\Doc;
+
+
+class Content {
+
+  /** @name Properties */
+  //!@{
+
+  string $body;                   //!< The content.
+  string $html;                   //!< The body converted to HTML.
+
+  string $creatorId;              //!< The user id of whom created the document.
+
+  VoteCollection $votes;          //!< Casted votes.
+
+  //!@}
+
+}
