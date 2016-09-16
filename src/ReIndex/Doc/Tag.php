@@ -12,7 +12,6 @@ namespace ReIndex\Doc;
 
 
 use ReIndex\Property\TExcerpt;
-use ReIndex\Property\TBody;
 use ReIndex\Property\TDescription;
 use ReIndex\Exception;
 use ReIndex\Collection;
@@ -20,7 +19,6 @@ use ReIndex\Helper;
 use ReIndex\Task\SynonymizeTask;
 use ReIndex\Enum\State;
 use ReIndex\Security\Permission\Revision\Tag as Permission;
-use ReIndex\Security\User\System;
 
 use EoC\Opt\ViewQueryOpts;
 
@@ -31,24 +29,35 @@ use Phalcon\Di;
  * @brief A label used to categorize posts.
  * @details Every post must be tagged with a maximun of five tags.
  * @nosubgrouping
+ *
+ * @cond HIDDEN_SYMBOLS
+ *
+ * @property int $legacyId
+ *
+ * @property string $name
+ *
+ * @property string $excerpt
+ *
+ * @property string $description
+ *
+ * @property Collection\SynonymCollection $synonyms
+ * @property Collection\SubscriptionCollection $subscriptions
+ *
+ * @endcond
+ *
  */
 final class Tag extends Revision {
-  use TExcerpt, TBody, TDescription;
+  use TExcerpt, TDescription;
 
-  /** @name Constants */
-  //!@{
-
-  const SYNONYMIZING = "synonymizing"; //!< The tag has been marked as synonym.
-
-  //!@}
-
-  private $synonyms; // Collection of synonyms.
+  private $synonyms;      // Collection of synonyms.
+  private $tasks;         // Collection of tasks.
 
 
   public function __construct() {
     parent::__construct();
 
     $this->synonyms = new Collection\SynonymCollection('synonyms', $this->meta);
+    $this->tasks = new Collection\TaskCollection('tasks', $this->meta);
   }
 
 
@@ -144,14 +153,11 @@ final class Tag extends Revision {
     if (!$this->state->is(State::CURRENT))
       throw new Exception\InvalidStateException('Only the current version of a tag can be synonymized.');
 
-    if ($this->state->is(Tag::SYNONYMIZING))
+    if ($this->state->is(State::INDEXING))
       throw new Exception\InvalidStateException('The tag has been already marked as synonym.');
 
-    $this->state->set(Tag::SYNONYMIZING);
-    $this->save();
-
-    $queue = $this->di['taskqueue'];
-    $queue->add(new SynonymizeTask($tag->unversionId, $this->unversionId));
+    $this->state->set(State::CURRENT | State::INDEXING);
+    $this->tasks->add(new SynonymizeTask($tag->unversionId, $this->unversionId));
   }
 
 
@@ -182,52 +188,11 @@ final class Tag extends Revision {
 
 
   /**
-   * @copydoc Revision::approve()
+   * @copydoc ActiveDoc::save()
    */
-  public function approve() {
-    if (!$value = $this->user->has(new Permission\ApprovePermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
-
-    // Casts a vote just in case the
-    if ($this->user instanceof Member && !$this->user->match($this->creatorId))
-      $this->votes->cast($value, FALSE);
-
-    if ($this->user instanceof System || $this->votes->count(FALSE) >= $this->di['config']->review->scoreToApproveRevision) {
-      // Sets the state of the current revision (if any) to `approved`.
-      $opts = new ViewQueryOpts();
-      $opts->doNotReduce()->setKey($this->unversionId);
-      // tags/byUnversionId/view
-      $rows = $this->couch->queryView('tags', 'byUnversionId', 'view', NULL, $opts);
-
-      if (!$rows->isEmpty()) {
-        $current = $this->couch->getDoc('tags', Couch::STD_DOC_PATH, $rows[0]['id']);
-        $current->state->set(State::APPROVED);
-        $current->save();
-      }
-
-      // This revision becomes the current one.
-      $this->state->set(State::CURRENT);
-
-      if (isset($this->body)) {
-        $this->html = $this->markdown->parse($this->body);
-        $purged = Helper\Text::purge($this->html);
-        $this->excerpt = Helper\Text::truncate($purged);
-      }
-
-      $this->save();
-    }
-  }
-
-
-  /**
-   * @copydoc Revision::delete()
-   */
-  public function delete() {
-    parent::delete();
-
-    $this->state->set(State::DELETED);
-
-    $this->save();
+  public function save($update = TRUE) {
+    parent::save($update);
+    $this->tasks->enqueueAll();
   }
 
 
@@ -244,11 +209,7 @@ final class Tag extends Revision {
 
 
   public function setName($value) {
-    // A tag name can't be changed unless the tag has never been approved.
-    if ($this->state->is(State::CREATED))
-      $this->meta['name'] = $value;
-    else
-      throw new \RuntimeException("Il nome di un tag non può essere cambiato.");
+    $this->meta['name'] = $value;
   }
 
 
