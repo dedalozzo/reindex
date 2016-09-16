@@ -219,8 +219,8 @@ abstract class Post extends Revision {
     // Comments.
     $opts->reset();
     $opts->includeMissingKeys()->groupResults();
-    // comments/perPost/view
-    $comments = $couch->queryView('comments', 'perPost', 'view', $ids, $opts);
+    // comments/perItem/view
+    $comments = $couch->queryView('comments', 'perItem', 'view', $ids, $opts);
 
     // Members.
     $creatorIds = array_column(array_column($posts->asArray(), 'value'), 'creatorId');
