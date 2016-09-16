@@ -71,6 +71,7 @@ abstract class Revision extends ActiveDoc {
    */
   public function __construct() {
     parent::__construct();
+    $this->markdown = $this->di['markdown'];
 
     $this->votes = new Collection\VoteCollection($this);
 
