@@ -58,11 +58,14 @@ final class Thesaurus {
       $synonym->save();
       $master->synonyms->add($synonym);
       $master->save();
-    } else {
+    }
+    else {
       $tag = Tag::find('tags', current($rows->getIterator())['id']);
 
-      if ($tag instanceof Tag)
+      if ($tag instanceof Tag) {
         $tag->markAsSynonymOf($tag);
+        $this->save();
+      }
       else
         throw new \RuntimeException('The synonym already exists.');
     }
