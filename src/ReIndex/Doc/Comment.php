@@ -34,9 +34,16 @@ class Comment extends ActiveDoc {
 
   private $votes; // Casted votes.
 
+  /**
+   * @var Hoedown $markdown
+   */
+  protected $markdown;
+
 
   public function __construct() {
     parent::__construct();
+    $this->markdown = $this->di['markdown'];
+
     $this->votes = new Collection\VoteCollection($this);
     $this->votes->onCastVote = 'zRegisterVote';
   }
