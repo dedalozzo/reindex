@@ -26,6 +26,8 @@ use ReIndex\Property\TExcerpt;
  * @property string $excerpt
  * @property string $html
  *
+ * @property string $creatorId
+ *
  */
 class Comment extends ActiveDoc {
   use TBody, TExcerpt;
@@ -124,6 +126,27 @@ class Comment extends ActiveDoc {
   public function unsetItemId() {
     if ($this->isMetadataPresent('itemId'))
       unset($this->meta['itemId']);
+  }
+
+
+  public function getCreatorId() {
+    return $this->meta["creatorId"];
+  }
+
+
+  public function issetCreatorId() {
+    return isset($this->meta['creatorId']);
+  }
+
+
+  public function setCreatorId($value) {
+    $this->meta["creatorId"] = $value;
+  }
+
+
+  public function unsetCreatorId() {
+    if ($this->isMetadataPresent('creatorId'))
+      unset($this->meta['creatorId']);
   }
 
 
