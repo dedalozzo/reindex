@@ -218,7 +218,7 @@ posts:
     view: # posts/indexing/view
       map: |-
         function($doc) use ($emit) {
-          if ($doc->state & 128)
+          if ($doc->state & 256)
             $emit($doc->unversionId);
         };
 
