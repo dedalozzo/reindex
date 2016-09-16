@@ -56,7 +56,7 @@ final class Article extends Post {
     if (!$this->user->has(new Permission\ImportPermission($this)))
       throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
 
-    $this->state->set(State::CREATED);
+    $this->state->set(State::IMPORTED);
     $this->tasks->add(new IndexPostTask($this));
   }
 
