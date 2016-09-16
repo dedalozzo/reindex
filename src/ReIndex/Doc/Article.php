@@ -14,6 +14,7 @@ namespace ReIndex\Doc;
 use ReIndex\Security\Permission\Revision\Post\Article as Permission;
 use ReIndex\Task\IndexPostTask;
 use ReIndex\Exception;
+use ReIndex\Enum\State;
 
 
 /**
