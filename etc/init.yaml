@@ -238,29 +238,29 @@ posts:
 
 comments:
 
-  perPost:
+  perItem:
 
-    view: # comments/perPost/view
+    view: # comments/perItem/view
       map: |-
         function($doc) use ($emit) {
-          $emit($doc->postId);
+          $emit($doc->itemId);
         };
       reduce: _count
 
-  newestPerPost:
+  newestPerItem:
 
-    view: # comments/newestPerPost/view
+    view: # comments/newestPerItem/view
       map: |-
         function($doc) use ($emit) {
-          $emit([$doc->postId, $doc->publishedAt]);
+          $emit([$doc->itemId, $doc->createdAt]);
         };
 
-  activePerPost:
+  activePerItem:
 
-    view: # comments/activePerPost/view
+    view: # comments/activePerItem/view
       map: |-
         function($doc) use ($emit) {
-          $emit([$doc->postId, $doc->modifiedAt]);
+          $emit([$doc->itemId, $doc->modifiedAt]);
         };
 
 
