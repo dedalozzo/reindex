@@ -16,11 +16,9 @@ use EoC\Opt\ViewQueryOpts;
 use ReIndex\Helper;
 use ReIndex\Exception;
 use ReIndex\Enum\State;
-use ReIndex\Collection;
 use ReIndex\Security\Permission\IPermission;
 use ReIndex\Security\Permission\Revision as Permission;
 use ReIndex\Controller\BaseController;
-use ReIndex\Property\TBody;
 
 
 /**
@@ -33,8 +31,6 @@ use ReIndex\Property\TBody;
  *
  * @property State $state
  *
- * @property string $body
- * @property string $html
  * @property string $toc
  *
  * @property array $data
@@ -42,28 +38,16 @@ use ReIndex\Property\TBody;
  * @property string $versionNumber
  * @property string $previousVersionNumber
  *
- * @property string $username
- *
- * @property string $creatorId
  * @property string $editorId
  * @property string $dustmanId
  *
  * @property string $editSummary
  *
- * @property Collection\VoteCollection $votes // Casted votes.
- *
  * @endcond
  */
-abstract class Revision extends ActiveDoc {
-  use TBody;
+abstract class Revision extends Content {
 
-  private $state; // State of the document.
-  private $votes; // Casted votes.
-
-  /**
-   * @var Hoedown $markdown
-   */
-  protected $markdown;
+  private $state;
 
 
   /**
@@ -71,26 +55,49 @@ abstract class Revision extends ActiveDoc {
    */
   public function __construct() {
     parent::__construct();
-    $this->markdown = $this->di['markdown'];
-
-    $this->votes = new Collection\VoteCollection($this);
-
     $this->state = new State($this->meta);
     $this->state->set(State::CREATED);
   }
 
 
   /**
-   * @brief Parses the body.
+   * @brief Executed when the user is displaying a document's revision.
+   * @param[in] BaseController $controller A controller instance.
+   */
+  protected function viewAction(BaseController $controller) {
+    if (!$this->user->has(new Permission\ViewPermission($this)))
+      return $controller->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
+  }
+
+
+  /**
+   * @copydoc Content::parseBody()
    */
   public function parseBody() {
-    if (is_null($this->body))
-      return;
-
     $metadata = [];
     $this->html = $this->markdown->parse($this->body, $metadata);
     $this->toc = !empty($metadata['toc']) ? $metadata['toc'] : NULL;
     $this->data = is_array($metadata['meta']) ? $metadata['meta'] : NULL;
+  }
+
+
+  /**
+   * @brief A revision document can't be deleted, but it can be moved into the trash.
+   */
+  public function delete() {
+    throw new \BadMethodCallException("You can't call this method on a revision object.");
+  }
+
+
+  /**
+   * @copydoc ActiveDoc::save()
+   */
+  public function save($update = TRUE) {
+    // We force the document's revision state in case it hasn't been changed.
+    if ($this->state->is(State::CREATED))
+      $this->state->set(State::SUBMITTED);
+
+    parent::save($update);
   }
 
 
@@ -266,65 +273,6 @@ abstract class Revision extends ActiveDoc {
   //@}
 
 
-  /**
-   * @brief A revision document can't be deleted, but it can be moved into the trash.
-   */
-  public function delete() {
-    throw new \BadMethodCallException("You can't call this method on a revision object.");
-  }
-
-
-  /**
-   * @copydoc ActiveDoc::save()
-   */
-  public function save($update = TRUE) {
-    $userId = $this->user->getId();
-
-    // Creator ID has not been provided.
-    if (!isset($this->creatorId) && isset($userId))
-      $this->creatorId = $userId;
-
-    // We force the document's revision state in case it hasn't been changed.
-    if ($this->state->is(State::CREATED))
-      $this->state->set(State::SUBMITTED);
-
-    parent::save($update);
-  }
-
-
-  /**
-   * @brief Returns the author's username.
-   */
-  public function getUsername() {
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setKey($this->creatorId);
-    // members/names/view
-    return $this->couch->queryView('members', 'names', 'view', NULL, $opts)[0]['value'][0];
-  }
-
-
-  /**
-   * @brief Builds the gravatar uri.
-   * @retval string
-   */
-  public function getGravatar() {
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setKey($this->creatorId);
-    $email = $this->couch->queryView('members', 'names', 'view', NULL, $opts)[0]['value'][1];
-    return 'http://gravatar.com/avatar/'.md5(strtolower($email)).'?d=identicon';
-  }
-
-
-  /**
-   * @brief Executed when the user is displaying a document's revision.
-   * @param[in] BaseController $controller A controller instance.
-   */
-  protected function viewAction(BaseController $controller) {
-    if (!$this->user->has(new Permission\ViewPermission($this)))
-      return $controller->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
-  }
-
-
   //! @cond HIDDEN_SYMBOLS
 
   public function setId($value) {
@@ -332,6 +280,16 @@ abstract class Revision extends ActiveDoc {
     $this->meta['unversionId'] = Helper\Text::unversion($value);
     $this->meta['versionNumber'] = ($pos) ? substr($value, $pos + strlen(Helper\Text::SEPARATOR)) : (string)time();
     $this->meta['_id'] = $this->meta['unversionId'] . Helper\Text::SEPARATOR . $this->meta['versionNumber'];
+  }
+
+
+  public function getUnversionId() {
+    return $this->meta["unversionId"];
+  }
+
+
+  public function issetUnversionId() {
+    return isset($this->meta["unversionId"]);
   }
 
 
@@ -345,13 +303,23 @@ abstract class Revision extends ActiveDoc {
   }
 
 
-  public function getUnversionId() {
-    return $this->meta["unversionId"];
+  public function getToc() {
+    return $this->toc;
   }
 
 
-  public function issetUnversionId() {
-    return isset($this->meta["unversionId"]);
+  public function issetToc() {
+    return isset($this->toc);
+  }
+
+
+  public function getData() {
+    return $this->data;
+  }
+
+
+  public function issetData() {
+    return isset($this->data);
   }
 
 
@@ -372,27 +340,6 @@ abstract class Revision extends ActiveDoc {
 
   public function issetPreviousVersionNumber() {
     return isset($this->meta['previousVersionNumber']);
-  }
-
-
-  public function getCreatorId() {
-    return $this->meta["creatorId"];
-  }
-
-
-  public function issetCreatorId() {
-    return isset($this->meta['creatorId']);
-  }
-
-
-  public function setCreatorId($value) {
-    $this->meta["creatorId"] = $value;
-  }
-
-
-  public function unsetCreatorId() {
-    if ($this->isMetadataPresent('creatorId'))
-      unset($this->meta['creatorId']);
   }
 
 
@@ -455,16 +402,6 @@ abstract class Revision extends ActiveDoc {
   public function unsetEditSummary() {
     if ($this->isMetadataPresent('editSummary'))
       unset($this->meta['editSummary']);
-  }
-
-
-  public function getVotes() {
-    return $this->votes;
-  }
-
-
-  public function issetVotes() {
-    return isset($this->votes);
   }
 
   //! @endcond
