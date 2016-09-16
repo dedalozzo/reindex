@@ -133,7 +133,7 @@ final class IndexPostTask implements ITask, IChunkHook {
    * @return bool
    */
   private function toDeindex() {
-    return $this->post->state->is(State::DELETED) || $this->post->state->is(State::CURRENT);
+    return $this->post->state->is(State::DELETED | State::INDEXING) or $this->post->state->is(State::CURRENT | State::INDEXING);
   }
 
 
@@ -142,7 +142,7 @@ final class IndexPostTask implements ITask, IChunkHook {
    * @return bool
    */
   private function toIndex() {
-    return $this->post->state->is(State::CURRENT);
+    return $this->post->state->is(State::CURRENT) or $this->post->state->is(State::IMPORTED);
   }
 
 
@@ -253,9 +253,9 @@ final class IndexPostTask implements ITask, IChunkHook {
     $date = new \DateTime();
 
     // In case the post has been imported...
-    if ($this->post->state->is(State::CREATED)) {
-      $this->post->parseBody();
+    if ($this->post->state->is(State::IMPORTED)) {
       $this->post->state->set(State::CURRENT);
+      $this->post->parseBody();
     }
 
     $date->setTimestamp($this->post->publishedAt);
