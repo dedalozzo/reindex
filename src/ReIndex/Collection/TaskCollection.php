@@ -76,8 +76,13 @@ final class TaskCollection extends MetaCollection {
    * @brief Enqueues the tasks.
    */
   public function enqueueAll() {
-    foreach ($this->meta[$this->name] as $task)
-      $this->queue->add($task);
+    $tasks = $this->meta[$this->name];
+    array_walk($tasks, function(&$value) {
+      if ($value instanceof ITask) {
+        $this->queue->add($value);
+        $value = NULL;
+      }
+    });
   }
 
 }
