@@ -507,7 +507,7 @@ abstract class Post extends Revision {
   /**
    * @copydoc Revision::viewAction()
    */
-  protected function viewAction(BaseController $controller) {
+  public function viewAction(BaseController $controller) {
     parent::viewAction($controller);
 
     $controller->view->setVar('post', $this);
