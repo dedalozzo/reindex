@@ -11,9 +11,7 @@
 namespace ReIndex\Doc;
 
 
-use ReIndex\Collection;
 use ReIndex\Helper;
-use ReIndex\Property\TBody;
 use ReIndex\Property\TExcerpt;
 
 
@@ -119,37 +117,6 @@ class Comment extends Content {
   public function unsetItemId() {
     if ($this->isMetadataPresent('itemId'))
       unset($this->meta['itemId']);
-  }
-
-
-  public function getCreatorId() {
-    return $this->meta["creatorId"];
-  }
-
-
-  public function issetCreatorId() {
-    return isset($this->meta['creatorId']);
-  }
-
-
-  public function setCreatorId($value) {
-    $this->meta["creatorId"] = $value;
-  }
-
-
-  public function unsetCreatorId() {
-    if ($this->isMetadataPresent('creatorId'))
-      unset($this->meta['creatorId']);
-  }
-
-
-  public function getVotes() {
-    return $this->votes;
-  }
-
-
-  public function issetVotes() {
-    return isset($this->votes);
   }
 
   //! @endcond
