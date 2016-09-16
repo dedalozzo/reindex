@@ -85,7 +85,7 @@ abstract class Revision extends ActiveDoc {
   public function parseBody() {
     if (is_null($this->body))
       return;
-    
+
     $metadata = [];
     $this->html = $this->markdown->parse($this->body, $metadata);
     $this->toc = !empty($metadata['toc']) ? $metadata['toc'] : NULL;
@@ -146,11 +146,36 @@ abstract class Revision extends ActiveDoc {
 
 
   /**
+   * @brief Cancels the current revision and sets its state to `approved`.
+   */
+  protected function cancelCurrentRevision() {
+    // It's a new document, there is no need to check for a current revision.
+    if (is_null($this->rev))
+      return;
+
+    $dbName = $this->getDbName();
+
+    // Sets the state of the current revision to `approved`.
+    $opts = new ViewQueryOpts();
+    $opts->doNotReduce()->setKey($this->unversionId);
+    // posts/byUnversionId/view
+    $rows = $this->couch->queryView($dbName, 'byUnversionId', 'view', NULL, $opts);
+
+    if (!$rows->isEmpty()) {
+      $current = $this->couch->getDoc($dbName, Couch::STD_DOC_PATH, $rows[0]['id']);
+      $current->state->set(State::APPROVED);
+      $current->tasks->remove(new IndexPostTask($current));
+      $current->save(FALSE);
+    }
+  }
+
+
+  /**
    * @brief Replaces the current revision with this one.
    * @details It also marks the current revision as `approved`.
-   * @attention Don't use this method even if it's public, unless you know what are you doing.
    */
-  public function replaceCurrentRevision() {
+  protected function replaceCurrentRevision() {
+    $this->cancelCurrentRevision();
     $this->state->set(State::CURRENT);
   }
 
