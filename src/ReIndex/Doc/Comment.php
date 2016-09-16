@@ -22,29 +22,15 @@ use ReIndex\Property\TExcerpt;
  * @details A comment may be related to a post (a question, an article or an update) and even to an answer.
  * @nosubgrouping
  *
- * @property string $body
  * @property string $excerpt
- * @property string $html
- *
- * @property string $creatorId
  *
  */
-class Comment extends ActiveDoc {
-  use TBody, TExcerpt;
-
-  private $votes; // Casted votes.
-
-  /**
-   * @var Hoedown $markdown
-   */
-  protected $markdown;
+class Comment extends Content {
+  use TExcerpt;
 
 
   public function __construct() {
     parent::__construct();
-    $this->markdown = $this->di['markdown'];
-
-    $this->votes = new Collection\VoteCollection($this);
     $this->votes->onCastVote = 'zRegisterVote';
   }
 
@@ -61,7 +47,7 @@ class Comment extends ActiveDoc {
    * @brief Parses the body.
    */
   public function parseBody() {
-    $this->html = $this->markdown->parse($this->body);
+    parent::parseBody();
     $this->excerpt = Helper\Text::truncate(Helper\Text::purge($this->html));
   }
 
