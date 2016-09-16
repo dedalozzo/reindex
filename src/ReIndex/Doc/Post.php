@@ -129,26 +129,10 @@ abstract class Post extends Revision {
    * @copydoc Revision::replaceCurrentRevision()
    */
   public function replaceCurrentRevision() {
+    parent::replaceCurrentRevision();
     $this->state->set(State::CURRENT | State::INDEXING);
     $this->tasks->add(new IndexPostTask($this));
-
-    // It's a new document, there is no need to check for a current revision.
-    if (is_null($this->rev))
-      return;
-
-    // Sets the state of the current revision to `approved`.
-    $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setKey($this->unversionId);
-    // posts/byUnversionId/view
-    $rows = $this->couch->queryView('posts', 'byUnversionId', 'view', NULL, $opts);
-
-    if (!$rows->isEmpty()) {
-      $current = $this->couch->getDoc('posts', Couch::STD_DOC_PATH, $rows[0]['id']);
-      $current->state->set(State::APPROVED);
-      $current->tasks->remove(new IndexPostTask($current));
-      $current->save(FALSE);
-    }
-  }
+ }
 
 
   /**
