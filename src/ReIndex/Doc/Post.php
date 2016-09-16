@@ -132,7 +132,7 @@ abstract class Post extends Revision {
 
 
   /**
-   * @copydoc Revision::parseBody()
+   * @copydoc Content::parseBody()
    */
   public function parseBody() {
     parent::parseBody();
@@ -449,7 +449,7 @@ abstract class Post extends Revision {
    * @brief Executed when the user is editing an existent post.
    * @param[in] BaseController $controller A controller instance.
    */
-  protected function editAction(BaseController $controller) {
+  public function editAction(BaseController $controller) {
     if (!$this->user->has(new Permission\EditPermission($this)))
       return $controller->dispatcher->forward(['controller' => 'error', 'action' => 'show401']);
 
@@ -559,8 +559,8 @@ abstract class Post extends Revision {
     $opts = new ViewQueryOpts();
     $opts->doNotReduce()->reverseOrderOfResults()->setLimit(1);
 
-    // todo view
-    $rows = $this->couch->queryView('comments', 'activePerPost', 'view', NULL, $opts);
+    // comments/activePerItem/view
+    $rows = $this->couch->queryView('comments', 'activePerItem', 'view', NULL, $opts);
 
     if ($rows->isEmpty())
       $lastUpdate = $this->modifiedAt;
@@ -589,8 +589,8 @@ abstract class Post extends Revision {
   public function getComments() {
     $opts = new ViewQueryOpts();
     $opts->reverseOrderOfResults()->setStartKey([$this->unversionId, Couch::WildCard()])->setEndKey([$this->unversionId])->includeDocs();
-    // comments/newestPerPost/view
-    $rows = $this->couch->queryView('comments', 'newestPerPost', 'view', NULL, $opts);
+    // comments/newestPerItem/view
+    $rows = $this->couch->queryView('comments', 'newestPerItem', 'view', NULL, $opts);
 
     $comments = [];
     foreach ($rows as $row) {
@@ -609,8 +609,8 @@ abstract class Post extends Revision {
   public function getCommentsCount() {
     $opts = new ViewQueryOpts();
     $opts->groupResults();
-    // comments/perPost/view
-    return $this->couch->queryView('comments', 'perPost', 'view', [$this->unversionId], $opts)->getReducedValue();
+    // comments/perItem/view
+    return $this->couch->queryView('comments', 'perItem', 'view', [$this->unversionId], $opts)->getReducedValue();
   }
 
   //!@}
