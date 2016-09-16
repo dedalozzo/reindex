@@ -100,9 +100,9 @@ class Comment extends ActiveDoc {
   /**
    * @copydoc ActiveDoc::save()
    */
-  public function save() {
+  public function save($update = TRUE) {
     $this->parseBody();
-    $this->save();
+    parent::save($update);
   }
 
 
