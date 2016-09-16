@@ -93,10 +93,6 @@ abstract class Post extends Revision {
     $this->subscriptions = new Collection\SubscriptionCollection($this);
 
     $this->votes->onCastVote = 'zRegisterVote';
-
-    // Since we can't use reflection inside EoC Server, we need a way to recognize every subclass of the `Post` class.
-    // This is done testing `isset($doc->supertype) && $doc->supertype == 'post'`.
-    $this->meta['supertype'] = 'post';
   }
 
 
