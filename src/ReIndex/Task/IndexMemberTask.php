@@ -22,7 +22,6 @@ use Phalcon\Di;
 use Monolog\Logger;
 
 
-
 /**
  * @brief This task updates a bunch of Redis sets eventually used to sort posts in many different ways.
  * @nosubgrouping
