@@ -110,7 +110,7 @@ final class VoteCollection implements \Countable {
   public function cast($vote, $unversion = TRUE, $action = '', $reason = '') {
     if ($this->user->isGuest()) throw new Exception\NoUserLoggedInException('Nessun utente loggato nel sistema.');
 
-    if (property_exists($this->doc, 'creatorId') && $this->user->match($this->doc->creatorId))
+    if (method_exists($this->doc, 'setCreatorId') && $this->user->match($this->doc->creatorId))
       throw new Exception\CannotVoteYourOwnPostException('Non puoi votare il tuo stesso post.');
 
     $fire = $unversion && empty($action) && isset($this->fnOnCastVote);
