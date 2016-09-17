@@ -295,8 +295,10 @@ final class IndexPostTask implements ITask, IChunkHook {
     $this->couch->queryView('followers', 'perMember', 'view' NULL, $opts, $this);
     */
 
-    $this->post->state->remove(State::INDEXING);
-    $this->post->save();
+    if ($this->post->state->is(State::INDEXING)) {
+      $this->post->state->remove(State::INDEXING);
+      $this->post->save();
+    }
   }
 
 
