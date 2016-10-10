@@ -28,7 +28,7 @@
         "lusitanian/oauth": "~0.8",
         "monolog/monolog": "~1",
         "graze/monolog-extensions": "*",
-        "filp/whoops": "dev-master",
+        "filp/whoops": "~2",
         "knplabs/github-api": "~1",
         "reindex/reboot": "dev-master"
     },
