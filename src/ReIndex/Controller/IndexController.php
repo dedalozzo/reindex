@@ -58,8 +58,6 @@ class IndexController extends ListController {
    * @retval string|bool Returns the tag id, or `false` in case the tag doesn't exist.
    */
   protected function getTagId($name) {
-    $name = urldecode($name);
-
     $opts = new ViewQueryOpts();
     $opts->setLimit(1)->setKey($name);
 
