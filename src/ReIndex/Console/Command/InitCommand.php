@@ -20,7 +20,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use EoC\Couch;
 use EoC\Doc\DesignDoc;
 use EoC\Handler\ViewHandler;
-use EoC\Exception\ServerErrorException;
+use EoC\Exception\ClientErrorException;
 
 
 /**
@@ -63,7 +63,7 @@ final class InitCommand extends AbstractCommand {
     try {
       $doc = $this->couch->getDoc($dbName, Couch::DESIGN_DOC_PATH, $docName);
     }
-    catch (ServerErrorException $e) {
+    catch (ClientErrorException $e) {
       if ($e->getResponse()->getStatusCode() == 404)
         $doc = DesignDoc::create($docName);
       else
@@ -153,7 +153,7 @@ final class InitCommand extends AbstractCommand {
 
     $helper = $this->getHelper('question');
 
-    if ($helper->ask($input, $output, $question)) {
+    if ($helper->ask($input, $output, $question) or $input->getOption('no-interaction')) {
       if ($dbName = $input->getArgument('database-name')) {
         if (!array_key_exists($dbName, $this->init)) {
           echo "Invalid database's name." . PHP_EOL;
