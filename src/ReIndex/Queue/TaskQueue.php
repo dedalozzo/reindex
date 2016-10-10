@@ -13,7 +13,7 @@ namespace ReIndex\Queue;
 
 use ReIndex\Task\ITask;
 
-use EoC\Exception\ServerErrorException;
+use EoC\Exception\ClientErrorException;
 
 use AMQPChannel;
 use AMQPExchange;
@@ -83,7 +83,7 @@ class TaskQueue extends AbstractQueue {
         // Acknowledges the receipt of the message.
         $queue->ack($msg->getDeliveryTag());
       }
-      catch (ServerErrorException $e) {
+      catch (ClientErrorException $e) {
         // Just in case the document doesn't exist we acknowledge the message,
         // since we don't have to execute the related task anymore.
         if ($e->getResponse()->getStatusCode() == 404)

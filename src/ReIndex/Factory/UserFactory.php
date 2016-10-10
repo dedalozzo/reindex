@@ -15,7 +15,7 @@ use Phalcon\Di;
 
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
-use EoC\Exception\ServerErrorException;
+use EoC\Exception\ClientErrorException;
 
 use ReIndex\Security\User;
 use ReIndex\Helper\Cookie;
@@ -50,7 +50,7 @@ final class UserFactory {
         // Gets the user.
         $user = $couch->getDoc('members', Couch::STD_DOC_PATH, $id);
       }
-      catch(ServerErrorException $e) { // The user doesn't exist anymore.
+      catch(ClientErrorException $e) { // The user doesn't exist anymore.
         Cookie::delete();
         return new User\Anonymous();
       }
