@@ -83,9 +83,9 @@ class State {
       case self::SUBMITTED: $this->meta["state"] = $value; break;
       case self::REJECTED: $this->meta["state"] = $value; break;
       case self::DELETED: $this->meta["state"] = $value; break;
-      case (self::IMPORTED & self::INDEXING): $this->meta["state"] = $value; break;
-      case (self::CURRENT & self::INDEXING): $this->meta["state"] = $value; break;
-      case (self::DELETED & self::INDEXING): $this->meta["state"] = $value; break;
+      case (self::IMPORTED | self::INDEXING): $this->meta["state"] = $value; break;
+      case (self::CURRENT | self::INDEXING): $this->meta["state"] = $value; break;
+      case (self::DELETED | self::INDEXING): $this->meta["state"] = $value; break;
       default: throw new InvalidStateException('Invalid state.');
     }
 
