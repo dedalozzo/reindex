@@ -254,7 +254,7 @@ final class IndexPostTask implements ITask, IChunkHook {
 
     // In case the post has been imported...
     if ($this->post->state->is(State::IMPORTED)) {
-      $this->post->state->set(State::CURRENT);
+      $this->post->state->set(State::CURRENT | State::INDEXING);
       $this->post->parseBody();
     }
 
