@@ -13,8 +13,8 @@ use ReIndex\Queue\TaskQueue;
 
 
 $di->setShared('taskqueue',
-  function() use ($config) {
-    $queue = new TaskQueue($config);
+  function() use ($config, $di) {
+    $queue = new TaskQueue($config, $di);
 
     return $queue;
   }
