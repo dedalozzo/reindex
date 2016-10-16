@@ -14,6 +14,9 @@ namespace ReIndex\Queue;
 
 use AMQPConnection;
 
+use Phalcon\Config;
+use Phalcon\Di;
+
 
 /**
  * @brief An abstract AMQP queue.
@@ -30,13 +33,20 @@ abstract class AbstractQueue {
    */
   protected $config;
 
+  /**
+   * @var Logger $log
+   */
+  protected $log;
+
 
   /**
    * @brief Constructor.
    * @param[in] \Phalcon\Config $config The configuration object.
+   * @param[in] \Phalcon\Di $di The Dependency Injection component.
    */
-  public function __construct($config) {
+  public function __construct(Config $config, Di $di) {
     $this->config = $config;
+    $this->log = $di['log'];
 
     $this->amqp = new AMQPConnection();
 
