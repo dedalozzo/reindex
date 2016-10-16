@@ -21,6 +21,9 @@ use ReIndex\Security\Role\IRole;
 
 use Monolog\Logger;
 
+use Phalcon\Config;
+use Phalcon\Di;
+
 
 /**
  * @brief This class is responsible to ensure an user has the ability to perform any operation.
@@ -45,7 +48,12 @@ final class Guardian {
   protected $log;
 
 
-  public function __construct($config, $di) {
+  /**
+   * @brief Constructor.
+   * @param[in] \Phalcon\Config $config The configuration object.
+   * @param[in] \Phalcon\Di $di The Dependency Injection component.
+   */
+  public function __construct(Config $config, Di $di) {
     $this->log = $di['log'];
     $this->couch = $di['couchdb'];
 
