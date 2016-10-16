@@ -138,7 +138,7 @@ final class RebuildCommand extends AbstractCommand implements IChunkHook {
 
         $helper = $this->getHelper('question');
 
-        if ($helper->ask($input, $output, $question)) {
+        if ($helper->ask($input, $output, $question) or $input->getOption('no-interaction')) {
           $output->writeln("Refreshing application cache...");
 
           $this->queueTasks($dbName, $output);
@@ -152,7 +152,7 @@ final class RebuildCommand extends AbstractCommand implements IChunkHook {
 
       $helper = $this->getHelper('question');
 
-      if ($helper->ask($input, $output, $question)) {
+      if ($helper->ask($input, $output, $question) or $input->getOption('no-interaction')) {
         $output->writeln("Refreshing application cache...");
 
         $redis = $this->di['redis'];
