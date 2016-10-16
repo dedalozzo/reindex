@@ -20,6 +20,9 @@ use AMQPExchange;
 use AMQPQueue;
 use AMQPEnvelope;
 
+use Phalcon\Config;
+use Phalcon\Di;
+
 
 /**
  * @brief A special queue to handle tasks.
@@ -28,13 +31,15 @@ class TaskQueue extends AbstractQueue {
 
   const ROUTING_KEY = 'task_queue';
 
-  protected $rabbit;
   protected $channel;
   protected $queue;
 
 
-  public function __construct($config) {
-    parent::__construct($config);
+  /**
+   * @copydoc AbstractQueue::__construct
+   */
+  public function __construct(Config $config, Di $di) {
+    parent::__construct($config, $di);
 
     // Creates the channel.
     $this->channel = new AMQPChannel($this->amqp);
@@ -86,11 +91,13 @@ class TaskQueue extends AbstractQueue {
       catch (ClientErrorException $e) {
         // Just in case the document doesn't exist we acknowledge the message,
         // since we don't have to execute the related task anymore.
-        if ($e->getResponse()->getStatusCode() == 404)
+        if ($e->getResponse()->getStatusCode() == 404) {
           $queue->ack($msg->getDeliveryTag());
+          $this->log->warning($e);
+        }
       }
       catch (\Exception $e) {
-        print_r($e);
+        $this->log->error($e);
         $queue->nack($msg->getDeliveryTag(), AMQP_REQUEUE);
       }
 
