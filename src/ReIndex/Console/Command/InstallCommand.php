@@ -48,6 +48,7 @@ class InstallCommand extends AbstractCommand {
     $command = $this->getApplication()->find('init');
     $arguments = [
       'command' => 'init',
+      '--no-interaction'
     ];
     $input = new ArrayInput($arguments);
     $command->run($input, $output);
