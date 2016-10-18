@@ -55,6 +55,11 @@ final class IndexPostTask implements ITask, IChunkHook {
   protected $redis;
 
   /**
+   * @var Hoedown $markdown
+   */
+  protected $markdown;
+
+  /**
    * @var Logger $log
    */
   protected $log;
