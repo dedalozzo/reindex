@@ -222,6 +222,16 @@ posts:
             $emit($doc->unversionId);
         };
 
+  imported:
+
+    view: # posts/imported/view
+      map: |-
+        function($doc) use ($emit) {
+          if ($doc->state === 128)
+            $emit($doc->unversionId);
+        };
+      reduce: _count
+
   tasks:
 
     view: # posts/tasks/view
