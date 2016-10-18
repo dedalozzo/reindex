@@ -13,8 +13,6 @@ namespace ReIndex\Queue;
 
 use ReIndex\Task\ITask;
 
-use EoC\Exception\ClientErrorException;
-
 use AMQPChannel;
 use AMQPExchange;
 use AMQPQueue;
@@ -22,6 +20,10 @@ use AMQPEnvelope;
 
 use Phalcon\Config;
 use Phalcon\Di;
+
+use EoC\Exception\ClientErrorException;
+use EoC\Exception\ServerErrorException;
+use EoC\Exception\UnknownResponseException;
 
 
 /**
@@ -89,16 +91,26 @@ class TaskQueue extends AbstractQueue {
         $queue->ack($msg->getDeliveryTag());
       }
       catch (ClientErrorException $e) {
-        // Just in case the document doesn't exist we acknowledge the message,
-        // since we don't have to execute the related task anymore.
-        if ($e->getResponse()->getStatusCode() == 404) {
-          $queue->ack($msg->getDeliveryTag());
+        if ($e->getResponse()->getStatusCode() == 404) { // document doesn't exist
           $this->log->warning($e);
+          $queue->ack($msg->getDeliveryTag());
         }
+        else {
+          $this->log->error($e);
+          $queue->nack($msg->getDeliveryTag()); // We do not requeue the message.
+        }
+      }
+      catch (ServerErrorException $e) {
+        $this->log->error($e);
+        $queue->nack($msg->getDeliveryTag(), AMQP_REQUEUE); // Something went wrong on CouchDB side, we must requeue.
+      }
+      catch (UnknownResponseException $e) {
+        $this->log->error($e);
+        $queue->nack($msg->getDeliveryTag(), AMQP_REQUEUE); // Something went wrong on CouchDB side, we must requeue.
       }
       catch (\Exception $e) {
         $this->log->error($e);
-        $queue->nack($msg->getDeliveryTag(), AMQP_REQUEUE);
+        $queue->nack($msg->getDeliveryTag()); // Hard to tell what's happening, we do not requeue the message.
       }
 
       // To avoid long running processes and consequently memory leaks,
