@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>KeepAlive</key>
+    <dict>
+        <key>SuccessfulExit</key>
+        <false/>
+    </dict>
+    <key>Label</key>
+    <string>org.supervisord.server</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/opt/local/bin/supervisord</string>
+        <string>-n</string>
+        <string>-c</string>
+        <string>/opt/local/etc/supervisord.conf</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/local/sbin:/usr/bin:/bin:/usr/local/bin:/opt/local/bin:/opt/local/sbin</string>
+    </dict>
+</dict>
+</plist>
