@@ -103,12 +103,15 @@ class Text {
    */
   public static function purge($text) {
     // Removes the content of <pre></pre>.
-    $text = preg_replace('/<(pre)(?:(?!<\/\1).)*?<\/\1>/su', '', $text);
+    $temp = preg_replace('/<(pre)(?:(?!<\/\1).)*?<\/\1>/su', '', $text);
+
+    if (is_null($temp))
+      throw new \RuntimeException(array_flip(get_defined_constants(TRUE)['pcre'])[preg_last_error()]);
 
     // Removes all the HTML tags.
-    $text = strip_tags($text);
+    $temp = strip_tags($temp);
 
-    return $text;
+    return $temp;
   }
 
 
