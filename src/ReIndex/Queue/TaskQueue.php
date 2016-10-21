@@ -24,6 +24,7 @@ use Phalcon\Di;
 use EoC\Exception\ClientErrorException;
 use EoC\Exception\ServerErrorException;
 use EoC\Exception\UnknownResponseException;
+use EoC\Exception\JSONErrorException;
 
 
 /**
@@ -91,7 +92,8 @@ class TaskQueue extends AbstractQueue {
         $queue->ack($msg->getDeliveryTag());
       }
       catch (ClientErrorException $e) {
-        if ($e->getResponse()->getStatusCode() == 404) { // document doesn't exist
+        if ($e->getResponse()->getStatusCode() == 404) {
+          // The document doesn't exist, we can simply move on to the next message.
           $this->log->warning($e);
           $queue->ack($msg->getDeliveryTag());
         }
@@ -108,9 +110,15 @@ class TaskQueue extends AbstractQueue {
         $this->log->error($e);
         $queue->nack($msg->getDeliveryTag(), AMQP_REQUEUE); // Something went wrong on CouchDB side, we must requeue.
       }
+      catch (JSONErrorException $e) {
+        // An error occurred during the document's JSON encoding.
+        // It doesn't make any sense to requeue the message.
+        $this->log->error($e);
+        $queue->nack($msg->getDeliveryTag()); // We do not requeue the message.
+      }
       catch (\Exception $e) {
         $this->log->error($e);
-        $queue->nack($msg->getDeliveryTag()); // Hard to tell what's happening, we do not requeue the message.
+        $queue->nack($msg->getDeliveryTag(), AMQP_REQUEUE); // Hard to tell what's happening, we must requeue.
       }
 
       // To avoid long running processes and consequently memory leaks,
