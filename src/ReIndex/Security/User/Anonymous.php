@@ -57,7 +57,7 @@ final class Anonymous implements IUser {
       $permission->setRole($role);
 
       // Invokes the method.
-      return $method->invoke($this);
+      return $method->invoke($permission);
     }
     else
       return FALSE;
