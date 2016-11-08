@@ -14,7 +14,7 @@ namespace ReIndex\Security\Permission\Role;
 
 use ReIndex\Security\Permission\AbstractPermission;
 use ReIndex\Security\Role\IRole;
-use ReIndex\Security\Role\MemberRole;
+use ReIndex\Security\Role\GuestRole;
 
 
 /**
@@ -46,7 +46,7 @@ class GrantPermission extends AbstractPermission {
    * @return bool
    */
   public function checkForGuestRole() {
-    return ($this->role instanceof MemberRole) ? TRUE : FALSE;
+    return ($this->role instanceof GuestRole) ? TRUE : FALSE;
   }
 
 
