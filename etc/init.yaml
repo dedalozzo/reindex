@@ -113,12 +113,12 @@ friendships:
       map: |-
         function($doc) use ($emit) {
           if ($doc->approved) {
-            $emit([$doc->approved, $doc->senderId, $doc->receiverId], $doc->approvedAt);
-            $emit([$doc->approved, $doc->receiverId, $doc->senderId], $doc->approvedAt);
+            $emit([TRUE, $doc->senderId, $doc->receiverId], $doc->approvedAt);
+            $emit([TRUE, $doc->receiverId, $doc->senderId], $doc->approvedAt);
           }
           else {
-            $emit([$doc->approved, $doc->senderId, $doc->receiverId], $doc->requestedAt);
-            $emit([$doc->approved, $doc->receiverId, $doc->senderId], $doc->requestedAt);
+            $emit([FALSE, $doc->senderId, $doc->receiverId], $doc->requestedAt);
+            $emit([FALSE, $doc->receiverId, $doc->senderId], $doc->requestedAt);
           }
         };
       reduce: _count
