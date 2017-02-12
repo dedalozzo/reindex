@@ -23,8 +23,8 @@ final class ApiController extends BaseController {
 
   /**
    * @brief Extracts the domain name.
-   * @attention This method works, but we no londer use Cross-site HTTP requests.
-   * @param[in] $url The URL.
+   * @attention This method works, but we no longer use Cross-site HTTP requests.
+   * @param[in] string $url The URL.
    * @retval string
    */
   protected function getDomainName($url) {
