@@ -22,6 +22,8 @@ class Validation extends PhalconValidation {
 
   /**
    * @brief Returns the first error message for the specified field.
+   * @param[in] string $field A field's name.
+   * @return string
    */
   public function first($field) {
 
