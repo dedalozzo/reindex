@@ -13,9 +13,13 @@ use Phalcon\Flash\Session as Flash;
 
 // Returns the flash instance.
 $di->setShared('flash', function() {
-  return new Flash([
+  $flash = new Flash([
     'error' => 'alert alert-danger',
     'success' => 'alert alert-success',
     'notice' => 'alert alert-info',
   ]);
+
+  $flash->setAutoescape(FALSE);
+
+  return $flash;
 });
