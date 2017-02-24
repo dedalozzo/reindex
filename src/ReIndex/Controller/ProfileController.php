@@ -157,11 +157,11 @@ final class ProfileController extends ListController {
 
     // Paginates results.
     $startKey = isset($_GET['startkey']) ? $_GET['startkey'] : chr(0);
-    $opts->setStartKey([TRUE, $startKey])->setEndKey([TRUE]);
+    $opts->setStartKey([TRUE, $user->id, $startKey])->setEndKey([TRUE, $user->id]);
     if (isset($_GET['startkey_docid'])) $opts->setStartDocId($_GET['startkey_docid']);
 
-    // friendships/byMemberId/view
-    $rows = $this->couch->queryView('friendships', 'byMemberId', 'view', NULL, $opts)->asArray();
+    // friendships/relations/view
+    $rows = $this->couch->queryView('friendships', 'relations', 'view', NULL, $opts)->asArray();
 
     $members = Member::collect(array_column($rows, 'id'));
 
@@ -485,8 +485,7 @@ final class ProfileController extends ListController {
           if (count($this->user->emails) >= $this->di['config']->application->maxEmailsPerUser)
             throw new Exception\TooManyEmailsException("You have reached the maximum number of e-mails allowed.");
 
-          $validation->setFilters("email", "trim");
-          $validation->setFilters("email", "lower");
+          $validation->setFilters("email", ["email", "lower"]);
           $validation->add("email", new PresenceOf(["message" => "L'e-mail è obbligatoria."]));
           $validation->add("email", new Email(["message" => "L'e-mail non è valida."]));
 
@@ -495,7 +494,7 @@ final class ProfileController extends ListController {
             throw new Exception\InvalidFieldException("I campi sono incompleti o i valori indicati non sono validi. Gli errori sono segnalati in rosso sotto ai rispettivi campi d'inserimento.");
           }
 
-          $email = $this->request->getPost('email');
+          $email = $this->request->getPost('email', ["email", "lower"]);
 
           if ($this->user->emails->exists($email))
             throw new Exception\InvalidEmailException("L'e-mail che stai tentando di aggiungere è già presente.");
@@ -516,7 +515,7 @@ final class ProfileController extends ListController {
           // Removes the email.
           unset($_POST["email"]);
 
-          $this->flash->success('Congratulations, the e-mail has been added to your account. You should receive shortly an e-mail to verify your address.');
+          $this->flash->success(sprintf('Congratulations, <b>%s</b> has been added to your account. You should receive shortly an e-mail to verify your address.', $email));
         }
         elseif ($this->request->getPost('removeEmail')) {
           $email = $this->request->getPost("removeEmail", "email");
@@ -546,7 +545,7 @@ final class ProfileController extends ListController {
           // Removes the email.
           unset($_POST["email"]);
 
-          $this->flash->success(sprintf('Congratulations, the verification e-mail has been sent to the following e-mail address: %s.', $email));
+          $this->flash->success(sprintf('Congratulations, the verification e-mail has been sent to the following e-mail address: <b>%s</b>.', $email));
         }
         elseif ($this->request->getPost('setAsPrimaryEmail')) {
           $email = $this->request->getPost("setAsPrimaryEmail", "email");
@@ -564,7 +563,7 @@ final class ProfileController extends ListController {
           // Removes the email.
           unset($_POST["email"]);
 
-          $this->flash->success(sprintf('Congratulations, %s has been set as your primary e-mail.', $email));
+          $this->flash->success(sprintf('Congratulations, <b>%s</b> has been set as your primary e-mail.', $email));
         }
 
       }
@@ -656,7 +655,7 @@ final class ProfileController extends ListController {
           // Removes the username.
           unset($_POST["nickname"]);
 
-          $this->flash->success(sprintf('Congratulations, the user `%s` has been added to your blacklist.', $member->username));
+          $this->flash->success(sprintf('Congratulations, the user <b>%s</b> has been added to your blacklist.', $member->username));
         }
         elseif ($this->request->getPost('removeMember')) {
           $nickname = $this->request->getPost("removeMember", "string");
