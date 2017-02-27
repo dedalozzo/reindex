@@ -26,6 +26,7 @@ use ReIndex\Doc\Member;
 use ReIndex\Security\Consumer;
 use ReIndex\Validator\Password;
 use ReIndex\Validator\Username;
+use ReIndex\Validator\Captcha;
 
 
 /**
@@ -117,6 +118,8 @@ final class AuthController extends BaseController {
 
         $validation->add("password", new PresenceOf(["message" => "La password è obbligatoria."]));
 
+        $validation->add("captchaSignIn", new Captcha());
+
         $group = $validation->validate($_POST);
         if (count($group) > 0) {
           throw new Exception\InvalidFieldException("I campi sono incompleti o i valori indicati non sono validi. Gli errori sono segnalati in rosso sotto ai rispettivi campi d'inserimento.");
@@ -199,6 +202,8 @@ final class AuthController extends BaseController {
             'message' => "La password è diversa da quella di conferma.",
             'with' => 'confirmPassword'
           ]));
+
+        $validation->add("captchaSignUp", new Captcha());
 
         $group = $validation->validate($_POST);
         if (count($group) > 0) {
