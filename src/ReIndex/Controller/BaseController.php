@@ -190,6 +190,9 @@ abstract class BaseController extends Controller {
 
     $this->view->setVar('dist', $this->dist);
 
+    $this->view->setVar('debug', $this->config['application']['debug']);
+    $this->view->setVar('recaptchaKey', $this->config['recaptcha']['key']);
+
     //$this->log->addDebug(sprintf("Controller: %s", $this->dispatcher->getControllerName()));
     //$this->log->addDebug(sprintf("Action: %s", $this->dispatcher->getActionName()));
   }
