@@ -263,6 +263,7 @@ final class AuthController extends BaseController {
 
     $this->view->setVar('title', 'Unisciti al più grande social network italiano di sviluppatori');
 
+    $this->assets->addJs('https://www.google.com/recaptcha/api.js');
     $this->assets->addJs($this->dist."/js/tab.min.js", FALSE);
 
     $this->view->pick('views/auth/logon');
