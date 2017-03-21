@@ -13,7 +13,7 @@
     ],
     "require": {
         "php": ">=5.6.0",
-        "ext-phalcon": "*",
+        "ext-phalcon": "^3.0",
         "ext-iconv": "*",
         "ext-mbstring": "*",
         "ext-amqp": "*",
