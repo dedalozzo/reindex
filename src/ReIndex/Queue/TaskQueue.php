@@ -32,7 +32,7 @@ use EoC\Exception\JSONErrorException;
  */
 class TaskQueue extends AbstractQueue {
 
-  const ROUTING_KEY = 'task_queue';
+  const ROUTING_KEY = 'reindex_task_queue';
 
   protected $channel;
   protected $queue;
