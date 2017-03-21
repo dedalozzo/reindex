@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file EmailCollection.php
  * @brief This file contains the EmailCollection class.
