@@ -8,6 +8,7 @@
  */
 
 
+//! RabbitMQ's tasks namespace
 namespace ReIndex\Task;
 
 
