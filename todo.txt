@@ -1,0 +1,25 @@
+- handle the permanent redirect (301) in case an article has changed the title and a new slug has been generated
+- integrate pace.js (http://github.hubspot.com/pace/docs/welcome/) to display a bar when loading a page
+- send an e-mail in case of sign-up
+- send an e-mail in case the user has changed the password
+- send an e-mail in case the user has changed his username
+- send a verification e-mail in case the user added a new e-mail
+- improve the formatting of the console
+- add a maintenance action and use the basic error page
+- improve the layout of the navbar
+- create a new logo for programmazione.it and replace the monochrome display with the new logo, removing the site name
+- handle the dynamic pagination a la facebook
+- update automatically the section favorite tags on the right column when a new tag has been added to the favorites or
+  it has been removed
+- design and implement the page privacy settings
+- let the user to change the background picture of his timeline
+- create a box to insert a picture, to make an update or to redirect to the page create an article
+- add a toolbar to the codemirror used to format a text
+- add the notifications
+- create a new footer on the right column and remove the one on the bottom
+- change the background theme
+- integrate a search engine like elastic search
+- let the user to upload a background image for the hero article
+- reduce the above background image in a way can be shown at the left of the article content when listed
+- handle the reputation
+- handle the referrer properly after login
