@@ -19,7 +19,7 @@
         "ext-amqp": "*",
         "ext-yaml": "*",
         "ext-hoedown": "*",
-        "sneakybobito/phalcon-stubs": "3.0.1",
+        "sneakybobito/phalcon-stubs": "^3.0",
         "3f/eoc-client": "dev-master",
         "3f/pygmentize": "dev-master",
         "3f/converter": "dev-master",
