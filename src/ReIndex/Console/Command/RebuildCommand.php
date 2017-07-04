@@ -175,21 +175,25 @@ final class RebuildCommand extends AbstractCommand implements IChunkHook {
    * @brief Extracts from the chunk the document's ID which the task belongs, along with the task's class, creates the corespondent task and enqueue it.
    */
   public function process($chunk) {
-    $row = json_decode(trim($chunk, ',\r\n'));
+    $lines = preg_split('/\n|\r/', $chunk, -1, PREG_SPLIT_NO_EMPTY);
 
-    if (is_null($row))
-      return;
+    foreach ($lines as $line) {
+      $obj = json_decode(trim($line, ',\r\n'));
 
-    $docClass = $row->value->docClass;
-    $taskClass = $row->value->taskClass;
+      if (is_null($obj))
+        continue;
 
-    $doc = new $docClass;
-    $doc->id = $row->id;
+      $docClass = $obj->value->docClass;
+      $taskClass = $obj->value->taskClass;
 
-    $task = new $taskClass($doc);
-    $this->queue->add($task);
+      $doc = new $docClass;
+      $doc->id = $obj->id;
 
-    $this->progress->advance();
+      $task = new $taskClass($doc);
+      $this->queue->add($task);
+
+      $this->progress->advance();
+    }
   }
 
 }
