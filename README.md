@@ -68,7 +68,7 @@ The documentation can be generated using [Doxygen](http://doxygen.org). A `Doxyf
 
 Built With
 ----------
-- [<img alt="" src="./phpstorm-text.svg" width="60">](https://www.jetbrains.com/phpstorm/)
+- [<img alt="" src="./phpstorm-text.svg" height="16">](https://www.jetbrains.com/phpstorm/)
 - [PHP](http://php.net)
 - [Phalcon](https://phalconphp.com)
 - [RabbitMQ](https://www.rabbitmq.com)
