@@ -83,8 +83,7 @@ file for a complete list of dependencies.
 
 A special mention to [JetBrains](https://www.jetbrains.com/) for providing me their IDE for free   
 
-![PhpStorm](./controllers_brief.svg)
-<img src="./controllers_brief.svg">
+<img alt="" src="./phpstorm-text.svg" width="50">
 
 Authors
 -------
