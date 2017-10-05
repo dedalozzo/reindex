@@ -81,9 +81,8 @@ Plus lots of PHP extensions and libraries. See the [composer.json](https://githu
 file for a complete list of dependencies.
 
 
-A special mention to [JetBrains](https://www.jetbrains.com/) for providing me their IDE for free   
+A special mention to [JetBrains](https://www.jetbrains.com/) for providing me <img alt="" src="./phpstorm-text.svg" height="24"> for free.   
 
-<img alt="" src="./phpstorm-text.svg" width="50">
 
 Authors
 -------
