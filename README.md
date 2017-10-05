@@ -68,6 +68,8 @@ The documentation can be generated using [Doxygen](http://doxygen.org). A `Doxyf
 
 Built With
 ----------
+[<img alt="" src="./phpstorm-text.svg" width="110">](https://www.jetbrains.com/phpstorm/)
+
 - [PHP](http://php.net)
 - [Phalcon](https://phalconphp.com)
 - [RabbitMQ](https://www.rabbitmq.com)
@@ -79,11 +81,6 @@ Built With
 
 Plus lots of PHP extensions and libraries. See the [composer.json](https://github.com/dedalozzo/reindex/blob/master/composer.json)
 file for a complete list of dependencies.
-
-
-A special mention to [JetBrains](https://www.jetbrains.com/) for providing me their IDE for free
-
-[<img alt="" src="./phpstorm-text.svg" width="120">](https://www.jetbrains.com/phpstorm/)
 
 Authors
 -------
