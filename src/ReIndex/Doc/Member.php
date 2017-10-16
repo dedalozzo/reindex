@@ -254,7 +254,7 @@ final class Member extends ActiveDoc implements IUser {
 
   /**
    * @brief Impersonates the given user.
-   * @param[in] IUser $user An anonymous user or a member instance.
+   * @param[in] IUser $user A `Guest` or a `Member` instance.
    */
   public function impersonate(IUser $user) {
     if ($this->user->has(new Permission\Member\ImpersonatePermission($user)))

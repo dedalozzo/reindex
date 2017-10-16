@@ -31,7 +31,7 @@ final class UserFactory {
 
   /**
    * @brief This function tries to recognize a user from his id and the secret token. In case the user has been
-   * recognized, an Member object is returned, else this function returns an Anonymous instance.
+   * recognized, a `Member` object is returned, else this function returns a `Guest` instance.
    * @retval User::IUser An instance of the user has been recognized by his cookie.
    * @todo Raise an exception when the user is banned, because obviously he can't login.
    */
@@ -53,24 +53,24 @@ final class UserFactory {
       }
       catch(ClientErrorException $e) { // The user doesn't exist anymore.
         Cookie::delete();
-        return new User\Anonymous();
+        return new User\Guest();
       }
 
       if ($security->checkHash($user->id.$_SERVER['REMOTE_ADDR'], $token))
         return $user;
       else {
         Cookie::delete();
-        return new User\Anonymous();
+        return new User\Guest();
       }
     }
     else
-      return new User\Anonymous();
+      return new User\Guest();
   }
 
 
   /**
    * @brief Searches for the user identified by the identifier associated with the specific provider. If any returns it,
-   * otherwise return an Anonymous instance.
+   * otherwise return a `Guest` instance.
    * @param[in] string $consumerName The consumer name.
    * @param[in] string $userId The user identifier used by the provider.
    * @retval Daikengo::User::IUser An user instance.
@@ -88,7 +88,7 @@ final class UserFactory {
     if (!$result->isEmpty())
       return $couch->getDoc('members', Couch::STD_DOC_PATH, $result[0]['id']);
     else
-      return new User\Anonymous();
+      return new User\Guest();
   }
 
 
@@ -109,12 +109,12 @@ final class UserFactory {
     if (!$result->isEmpty())
       return $couch->getDoc('members', Couch::STD_DOC_PATH, $result[0]['id']);
     else
-      return new User\Anonymous();
+      return new User\Guest();
   }
 
 
   /**
-   * @brief Searches for the user identified with the provided username, if any returns it, otherwise return an Anonymous
+   * @brief Searches for the user identified with the provided username, if any returns it, otherwise return a `Guest`
    * instance.
    * @param[in] string $username The username.
    * @retval User::IUser An user instance.
@@ -131,7 +131,7 @@ final class UserFactory {
     if (!$result->isEmpty())
       return $couch->getDoc('members', Couch::STD_DOC_PATH, $result[0]['value']);
     else
-      return new User\Anonymous();
+      return new User\Guest();
   }
 
 }
