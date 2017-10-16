@@ -34,8 +34,6 @@ class MemberGroup extends Group {
     // All the following routes start with /utenti.
     $this->setPrefix('/users');
     $this->addGet('/', ['action' => 'newest']);
-    $this->addGet('/reputation/', ['action' => 'reputation']);
-    $this->addGet('/reputation/{filter}/', ['action' => 'reputation']);
     $this->addGet('/popular/', ['action' => 'popular']);
     $this->addGet('/popular/{filter}/', ['action' => 'popular']);
     $this->addGet('/new/', ['action' => 'newest']);

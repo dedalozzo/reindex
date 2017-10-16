@@ -114,11 +114,6 @@ final class Member extends ActiveDoc implements IUser {
     // members/info/view
     $result = $couch->queryView('members', 'info', 'view', $ids, $opts);
 
-    // Retrieves the members reputation.
-    //$opts->reset();
-    //$opts->groupResults()->includeMissingKeys();
-    //$reputations = $this->couch->queryView("reputation", "perMember", $keys, $opts);
-
     $members = [];
     $membersCount = count($result);
     for ($i = 0; $i < $membersCount; $i++) {
@@ -216,23 +211,6 @@ final class Member extends ActiveDoc implements IUser {
    */
   public function getElapsedTimeSinceRegistration() {
     return strftime('%e %B, %Y', $this->createdAt);
-  }
-
-
-  /**
-   * @brief Returns the user's reputation.
-   * @retval integer
-   */
-  public function getReputation() {
-    $opts = new ViewQueryOpts();
-    $opts->setKey([$this->id]);
-
-    $reputation = $this->couch->queryView("reputation", "perUser", NULL, $opts)->getReducedValue();
-
-    if ($reputation > 1)
-      return $reputation;
-    else
-      return 1;
   }
 
 

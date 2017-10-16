@@ -70,23 +70,6 @@ final class MemberController extends ListController {
 
 
   /**
-   * @brief Displays the members with the highest reputation.
-   * @param[in] string $filter (optional) Human readable representation of a period.
-   */
-  public function reputationAction($filter = NULL) {
-    $filter = Helper\TimeHelper::period($filter);
-    if ($filter === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
-
-    //$this->dispatcher->setParam('filter', $filter);
-
-    // todo implementation goes here
-
-    //$this->view->setVar('filters', $this->periods);
-    $this->view->setVar('title', 'Users by reputation');
-  }
-
-
-  /**
    * @brief Displays the members from the most popular to the lowest.
    */
   public function popularAction() {
