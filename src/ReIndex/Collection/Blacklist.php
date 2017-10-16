@@ -49,6 +49,7 @@ final class Blacklist extends MetaCollection {
    */
   public function __construct($name, array &$meta) {
     parent::__construct($name, $meta);
+    $this->di = Di::getDefault();
     $this->couch = $this->di['couchdb'];
   }
 
