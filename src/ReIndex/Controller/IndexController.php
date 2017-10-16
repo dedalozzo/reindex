@@ -14,7 +14,8 @@ namespace ReIndex\Controller;
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
-use ReIndex\Helper;
+use ToolBag\Helper;
+
 use ReIndex\Doc\Post;
 
 
@@ -116,8 +117,8 @@ class IndexController extends ListController {
 
       $properties = $posts[$i]['value'];
       $entry->title = $properties['title'];
-      $entry->url = Helper\Url::build($properties['publishedAt'], $properties['slug']);
-      $entry->whenHasBeenPublished = Helper\Time::when($properties['publishedAt']);
+      $entry->url = Helper\TextHelper::buildUrl($properties['publishedAt'], $properties['slug']);
+      $entry->whenHasBeenPublished = Helper\TimeHelper::when($properties['publishedAt']);
       $entry->score = is_null($scores[$i]['value']) ? 0 : $scores[$i]['value'];
       $entry->commentsCount = is_null($comments[$i]['value']) ? 0 : $comments[$i]['value'];
 
@@ -225,7 +226,7 @@ class IndexController extends ListController {
       $posts = [];
 
     $this->view->setVar('entries', $posts);
-    $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
+    $this->view->setVar('entriesCount', Helper\TextHelper::formatNumber($count));
   }
 
 
@@ -260,12 +261,12 @@ class IndexController extends ListController {
    * @param[in] string $unversionTagId (optional) An optional unversioned tag ID.
    */
   protected function popular($filter, $unversionTagId = NULL) {
-    $period = Helper\Time::period($filter);
+    $period = Helper\TimeHelper::period($filter);
     if ($period === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $this->dispatcher->setParam('period', $period);
 
-    $postfix = Helper\Time::aWhileBack($period, "_");
+    $postfix = Helper\TimeHelper::aWhileBack($period, "_");
 
     $this->zRevRangeByScore(Post::POP_SET, $postfix, $unversionTagId);
 
@@ -295,7 +296,7 @@ class IndexController extends ListController {
     if ($this->isListing()) {
       $this->type = $this->controllerName;
       $this->resultsPerPage = $this->di['config']->application->postsPerPage;
-      $this->periods = Helper\Time::$periods;
+      $this->periods = Helper\TimeHelper::$periods;
 
       $this->assets->addJs($this->dist."/js/tab.min.js", FALSE);
       $this->assets->addJs($this->dist."/js/list.min.js", FALSE);
@@ -387,7 +388,7 @@ class IndexController extends ListController {
    * @param[in] int $day (optional) A specific day.
    */
   public function perDateAction($year, $month = NULL, $day = NULL) {
-    Helper\Time::dateLimits($minDate, $maxDate, $year, $month, $day);
+    Helper\TimeHelper::dateLimits($minDate, $maxDate, $year, $month, $day);
 
     $this->perDate($minDate, $maxDate);
   }
@@ -404,9 +405,9 @@ class IndexController extends ListController {
     $tagId = $this->getTagId($tag);
     if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    Helper\Time::dateLimits($minDate, $maxDate, $year, $month, $day);
+    Helper\TimeHelper::dateLimits($minDate, $maxDate, $year, $month, $day);
 
-    $this->perDate($minDate, $maxDate, Helper\Text::unversion($tagId));
+    $this->perDate($minDate, $maxDate, Helper\TextHelper::unversion($tagId));
 
     $this->view->setVar('etag', $this->couch->getDoc('tags', Couch::STD_DOC_PATH, $tagId));
   }
@@ -428,7 +429,7 @@ class IndexController extends ListController {
     $tagId = $this->getTagId($tag);
     if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    $this->newest(Helper\Text::unversion($tagId));
+    $this->newest(Helper\TextHelper::unversion($tagId));
 
     $this->view->setVar('etag', $this->couch->getDoc('tags', Couch::STD_DOC_PATH, $tagId));
   }
@@ -452,7 +453,7 @@ class IndexController extends ListController {
     $tagId = $this->getTagId($tag);
     if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    $this->popular($filter, Helper\Text::unversion($tagId));
+    $this->popular($filter, Helper\TextHelper::unversion($tagId));
 
     $this->view->setVar('etag', $this->couch->getDoc('tags', Couch::STD_DOC_PATH, $tagId));
   }
@@ -474,7 +475,7 @@ class IndexController extends ListController {
     $tagId = $this->getTagId($tag);
     if ($tagId === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
-    $this->active(Helper\Text::unversion($tagId));
+    $this->active(Helper\TextHelper::unversion($tagId));
 
     $this->view->setVar('etag', $this->couch->getDoc('tags', Couch::STD_DOC_PATH, $tagId));
   }

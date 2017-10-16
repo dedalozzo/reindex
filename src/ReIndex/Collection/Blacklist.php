@@ -16,6 +16,10 @@ use ReIndex\Doc\Member;
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
+use ToolBag\Collection\MetaCollection;
+
+use Phalcon\Di;
+
 
 /**
  * @brief This class is used to represent the member's blacklist.
@@ -23,6 +27,12 @@ use EoC\Opt\ViewQueryOpts;
  * @nosubgrouping
  */
 final class Blacklist extends MetaCollection {
+
+  /**
+   * @var Di $di
+   */
+  protected $di;
+
 
   /**
    * @var Couch $couch

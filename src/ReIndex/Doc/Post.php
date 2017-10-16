@@ -14,7 +14,6 @@ namespace ReIndex\Doc;
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
-use ReIndex\Helper;
 use ReIndex\Collection;
 use ReIndex\Enum\State;
 use ReIndex\Task\IndexPostTask;
@@ -29,6 +28,9 @@ use Phalcon\Di;
 use Phalcon\Mvc\View;
 use Phalcon\Validation\Validator\PresenceOf;
 
+use ToolBag\Helper;
+
+use Daikengo\Exception\AccessDeniedException;
 
 
 /**
@@ -137,10 +139,10 @@ abstract class Post extends Revision {
   public function parseBody() {
     parent::parseBody();
 
-    $this->excerpt = Helper\Text::truncate(Helper\Text::purge($this->html));
+    $this->excerpt = Helper\TextHelper::truncate(Helper\TextHelper::purge($this->html));
 
     if (isset($this->title))
-      $this->slug = Helper\Text::slug($this->title);
+      $this->slug = Helper\TextHelper::slug($this->title);
 
     if (!isset($this->publishedAt))
       $this->publishedAt = time();
@@ -236,17 +238,17 @@ abstract class Post extends Revision {
       $entry->id = $posts[$i]['id'];
 
       if ($entry->state == State::CURRENT) {
-        $entry->url = Helper\Url::build($entry->publishedAt, $entry->slug);
-        $entry->timestamp = Helper\Time::when($entry->publishedAt);
+        $entry->url = Helper\TextHelper::buildUrl($entry->publishedAt, $entry->slug);
+        $entry->timestamp = Helper\TimeHelper::when($entry->publishedAt);
       }
       else {
-        $entry->url = Helper\Url::build($entry->createdAt, $entry->slug);
-        $entry->timestamp = Helper\Time::when($entry->createdAt);
+        $entry->url = Helper\TextHelper::buildUrl($entry->createdAt, $entry->slug);
+        $entry->timestamp = Helper\TimeHelper::when($entry->createdAt);
       }
 
       $entry->username = $members[$i]['value'][0];
       $entry->gravatar = Member::getGravatar($members[$i]['value'][1]);
-      $entry->hitsCount = Helper\Text::formatNumber($redis->hGet(Helper\Text::unversion($entry->id), 'hits'));
+      $entry->hitsCount = Helper\TextHelper::formatNumber($redis->hGet(Helper\TextHelper::unversion($entry->id), 'hits'));
       $entry->score = is_null($scores[$i]['value']) ? 0 : $scores[$i]['value'];
       $entry->commentsCount = is_null($comments[$i]['value']) ? 0 : $comments[$i]['value'];
       $entry->liked = $user->isGuest() || is_null($likes[$i]['value']) ? FALSE : TRUE;
@@ -338,7 +340,8 @@ abstract class Post extends Revision {
    */
   public function close() {
     if (!$this->user->has(new Permission\ProtectPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+      throw new
+      AccessDeniedException("Insufficient privileges or illegal state.");
 
     $this->protect(self::CLOSED_PL);
   }
@@ -351,7 +354,7 @@ abstract class Post extends Revision {
    */
   public function lock() {
     if (!$this->user->has(new Permission\ProtectPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+      throw new AccessDeniedException("Insufficient privileges or illegal state.");
 
     $this->protect(self::LOCKED_PL);
   }
@@ -362,7 +365,7 @@ abstract class Post extends Revision {
    */
   public function removeProtection() {
     if (!$this->user->has(new Permission\UnprotectPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+      throw new AccessDeniedException("Insufficient privileges or illegal state.");
 
     $this->unprotect();
   }
@@ -391,7 +394,7 @@ abstract class Post extends Revision {
    */
   public function submit() {
     if (!$this->user->has(new Permission\EditPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+      throw new AccessDeniedException("Insufficient privileges or illegal state.");
 
     parent::submit();
   }
@@ -427,7 +430,7 @@ abstract class Post extends Revision {
    */
   public function markAsDraft() {
     if (!$this->user->has(new Permission\SaveAsDraftPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+      throw new AccessDeniedException("Insufficient privileges or illegal state.");
 
     $this->state->set(State::DRAFT);
   }
@@ -527,7 +530,7 @@ abstract class Post extends Revision {
    * @retval string
    */
   public function whenHasBeenPublished() {
-    return Helper\Time::when($this->publishedAt);
+    return Helper\TimeHelper::when($this->publishedAt);
   }
 
 
@@ -545,7 +548,7 @@ abstract class Post extends Revision {
    * @retval string
    */
   public function getHref() {
-    return Helper\Url::build($this->publishedAt, $this->getSlug());
+    return Helper\TextHelper::buildUrl($this->publishedAt, $this->getSlug());
   }
 
 

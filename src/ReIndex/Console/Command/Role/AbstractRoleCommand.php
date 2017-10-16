@@ -17,8 +17,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use ReIndex\Console\Command\AbstractCommand;
 use ReIndex\Doc\Member;
-use ReIndex\Security\Role\IRole;
 use ReIndex\Factory\UserFactory;
+
+use Daikengo\Role\IRole;
 
 
 /**

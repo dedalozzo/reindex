@@ -19,8 +19,6 @@ use ReIndex\Doc\Follower;
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
-use Phalcon\Di;
-
 
 /**
  * @brief This class is used to represent a collection of friends.

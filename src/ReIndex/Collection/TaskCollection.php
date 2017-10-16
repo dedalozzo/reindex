@@ -14,12 +14,21 @@ namespace ReIndex\Collection;
 use ReIndex\Task\ITask;
 use ReIndex\Queue\TaskQueue;
 
+use ToolBag\Collection\MetaCollection;
+
+use Phalcon\Di;
+
 
 /**
  * @brief This class is used to represent a collection of tasks.
  * @nosubgrouping
  */
 final class TaskCollection extends MetaCollection {
+
+  /**
+   * @var Di $di
+   */
+  protected $di;
 
   /**
    * @var TaskQueue $queue

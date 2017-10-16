@@ -15,12 +15,15 @@ use ReIndex\Property\TExcerpt;
 use ReIndex\Property\TDescription;
 use ReIndex\Exception;
 use ReIndex\Collection;
-use ReIndex\Helper;
 use ReIndex\Task\SynonymizeTask;
 use ReIndex\Enum\State;
 use ReIndex\Security\Permission\Revision\Tag as Permission;
 
 use EoC\Opt\ViewQueryOpts;
+
+use Daikengo\Exception\AccessDeniedException;
+
+use ToolBag\Helper;
 
 use Phalcon\Di;
 
@@ -94,7 +97,7 @@ final class Tag extends Revision {
       $tag->name = $rows[$i]['value'][0];
       $tag->excerpt = $rows[$i]['value'][1];
       $tag->createdAt = $rows[$i]['value'][2];
-      //$entry->whenHasBeenPublished = Helper\Time::when($tags[$i]['value'][2]);
+      //$entry->whenHasBeenPublished = Helper\TimeHelper::when($tags[$i]['value'][2]);
       $tag->postsCount = is_null($postsCount[$i]['value']) ? 0 : $postsCount[$i]['value'];
 
       $tags[] = $tag;
@@ -131,7 +134,7 @@ final class Tag extends Revision {
    */
   public function star() {
     if (!$this->user->has(new Permission\StarPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+      throw new AccessDeniedException("Insufficient privileges or illegal state.");
 
     $result = $this->user->tags->alter($this->unversionId);
     $this->user->save();
@@ -192,7 +195,7 @@ final class Tag extends Revision {
    */
   public function submit() {
     if (!$this->user->has(new Permission\EditPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+      throw new AccessDeniedException("Insufficient privileges or illegal state.");
 
     parent::submit();
   }

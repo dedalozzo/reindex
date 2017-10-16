@@ -12,7 +12,7 @@
 namespace ReIndex\Security\Permission\Revision\Post;
 
 
-use ReIndex\Security\Permission\AbstractPermission as Superclass;
+use Daikengo\Permission\AbstractPermission as Superclass;
 use ReIndex\Doc\Post;
 
 

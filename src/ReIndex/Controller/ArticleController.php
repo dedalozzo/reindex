@@ -12,12 +12,13 @@ namespace ReIndex\Controller;
 
 
 use ReIndex\Validation;
-use ReIndex\Helper;
 use ReIndex\Exception\InvalidFieldException;
 use ReIndex\Doc\Article;
 
 use Phalcon\Validation\Validator\PresenceOf;
 use Phalcon\Mvc\View;
+
+use ToolBag\Helper;
 
 
 /**
@@ -80,7 +81,7 @@ final class ArticleController extends IndexController {
         $article->approve();
         $article->save();
 
-        $this->redirect('http://'.$this->domainName.Helper\Url::build($article->publishedAt, $article->slug));
+        $this->redirect('http://'.$this->domainName.Helper\TextHelper::buildUrl($article->publishedAt, $article->slug));
       }
       catch (\Exception $e) {
         // Displays the error message.

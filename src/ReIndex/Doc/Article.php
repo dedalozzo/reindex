@@ -13,8 +13,9 @@ namespace ReIndex\Doc;
 
 use ReIndex\Security\Permission\Revision\Post\Article as Permission;
 use ReIndex\Task\IndexPostTask;
-use ReIndex\Exception;
 use ReIndex\Enum\State;
+
+use Daikengo\Exception\AccessDeniedException;
 
 
 /**
@@ -55,7 +56,7 @@ final class Article extends Post {
    */
   public function import() {
     if (!$this->user->has(new Permission\ImportPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+      throw new AccessDeniedException("Insufficient privileges or illegal state.");
 
     $this->state->set(State::IMPORTED);
     $this->tasks->add(new IndexPostTask($this));

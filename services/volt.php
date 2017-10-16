@@ -52,7 +52,7 @@ $di->setShared('volt',
 
     // Returns an array of time periods.
     $compiler->addFunction('periods', function($resolvedArgs, $exprArgs) {
-      return 'ReIndex\Helper\Time::periods';
+      return 'ToolBag\Helper\TimeHelper::periods';
     });
 
     //$compiler->addFunction('arraycolumn', 'array_column');

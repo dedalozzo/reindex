@@ -11,8 +11,9 @@
 namespace ReIndex\Doc;
 
 
-use ReIndex\Helper;
 use ReIndex\Property\TExcerpt;
+
+use ToolBag\Helper;
 
 
 /**
@@ -46,7 +47,7 @@ class Comment extends Content {
    */
   public function parseBody() {
     parent::parseBody();
-    $this->excerpt = Helper\Text::truncate(Helper\Text::purge($this->html));
+    $this->excerpt = Helper\TextHelper::truncate(Helper\TextHelper::purge($this->html));
   }
 
 

@@ -11,6 +11,9 @@
 namespace ReIndex\Security\Role;
 
 
+use Daikengo\Role\MemberRole;
+
+
 /**
  * @brief A trusted member.
  * @details It's a role granted by the system (or manually) to every member has shown to be trustworthy. A trusted

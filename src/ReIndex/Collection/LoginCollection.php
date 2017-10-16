@@ -11,6 +11,9 @@
 namespace ReIndex\Collection;
 
 
+use ToolBag\Collection\MetaCollection;
+
+
 /**
  * @brief This class is used to represent a collection of consumers' logins.
  * @nosubgrouping

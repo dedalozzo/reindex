@@ -12,7 +12,8 @@ namespace ReIndex\Doc;
 
 
 use ReIndex\Security\Permission\Revision\Post\Update as Permission;
-use Reindex\Exception;
+
+use Daikengo\Exception\AccessDeniedException;
 
 
 /*
@@ -27,7 +28,7 @@ final class Update extends Post {
    */
   public function close() {
     if (!$this->user->has(new Permission\ProtectPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+      throw new AccessDeniedException("Insufficient privileges or illegal state.");
 
     $this->protect(self::CLOSED_PL);
   }
@@ -38,7 +39,7 @@ final class Update extends Post {
    */
   public function lock() {
     if (!$this->user->has(new Permission\ProtectPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+      throw new AccessDeniedException("Insufficient privileges or illegal state.");
 
     $this->protect(self::LOCKED_PL);
   }
@@ -49,7 +50,7 @@ final class Update extends Post {
    */
   public function removeProtection() {
     if (!$this->user->has(new Permission\UnprotectPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+      throw new AccessDeniedException("Insufficient privileges or illegal state.");
 
     $this->unprotect();
   }

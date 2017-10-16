@@ -12,7 +12,8 @@ namespace ReIndex\Console\Command\Role;
 
 
 use ReIndex\Doc\Member;
-use ReIndex\Security\Role\IRole;
+
+use Daikengo\Role\IRole;
 
 use Symfony\Component\Console\Output\OutputInterface;
 

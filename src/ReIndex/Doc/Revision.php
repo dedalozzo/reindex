@@ -13,12 +13,14 @@ namespace ReIndex\Doc;
 
 use EoC\Opt\ViewQueryOpts;
 
-use ReIndex\Helper;
-use ReIndex\Exception;
+use ToolBag\Helper;
+
 use ReIndex\Enum\State;
-use ReIndex\Security\Permission\IPermission;
 use ReIndex\Security\Permission\Revision as Permission;
 use ReIndex\Controller\BaseController;
+
+use Daikengo\Permission\IPermission;
+use Daikengo\Exception\AccessDeniedException;
 
 
 /**
@@ -132,7 +134,7 @@ abstract class Revision extends Content {
    */
   protected function castVoteForPeerReview(IPermission $permission, $reason = '') {
     if (!$this->user->has($permission))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+      throw new AccessDeniedException("Insufficient privileges or illegal state.");
 
     if ($this->user instanceof Member) {
       $vote = $this->di['config']['peer-review']->{$permission->getRole()->getName().'Vote'};
@@ -234,7 +236,7 @@ abstract class Revision extends Content {
    */
   protected function revert($versionNumber = NULL) {
     if (!$this->user->has(new Permission\RevertPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+      throw new AccessDeniedException("Insufficient privileges or illegal state.");
 
     // cerca se la revisione specificata è approved e la marca come current.
   }
@@ -245,7 +247,7 @@ abstract class Revision extends Content {
    */
   public function moveToTrash() {
     if (!$this->user->has(new Permission\MoveToTrashPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+      throw new AccessDeniedException("Insufficient privileges or illegal state.");
 
     $this->meta['prevState'] = $this->state->get();
     $this->meta['dustmanId'] = $this->user->id;
@@ -260,7 +262,7 @@ abstract class Revision extends Content {
    */
   public function restore() {
     if (!$this->user->has(new Permission\RestorePermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi insufficienti o stato incompatibile.");
+      throw new AccessDeniedException("Insufficient privileges or illegal state.");
 
     $this->state->set($this->meta['prevState']);
 
@@ -276,10 +278,10 @@ abstract class Revision extends Content {
   //! @cond HIDDEN_SYMBOLS
 
   public function setId($value) {
-    $pos = stripos($value, Helper\Text::SEPARATOR);
-    $this->meta['unversionId'] = Helper\Text::unversion($value);
-    $this->meta['versionNumber'] = ($pos) ? substr($value, $pos + strlen(Helper\Text::SEPARATOR)) : (string)time();
-    $this->meta['_id'] = $this->meta['unversionId'] . Helper\Text::SEPARATOR . $this->meta['versionNumber'];
+    $pos = stripos($value, Helper\TextHelper::SEPARATOR);
+    $this->meta['unversionId'] = Helper\TextHelper::unversion($value);
+    $this->meta['versionNumber'] = ($pos) ? substr($value, $pos + strlen(Helper\TextHelper::SEPARATOR)) : (string)time();
+    $this->meta['_id'] = $this->meta['unversionId'] . Helper\TextHelper::SEPARATOR . $this->meta['versionNumber'];
   }
 
 

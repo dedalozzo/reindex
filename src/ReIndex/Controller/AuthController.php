@@ -21,7 +21,7 @@ use EoC\Opt\ViewQueryOpts;
 
 use ReIndex\Exception;
 use ReIndex\Validation;
-use ReIndex\Helper\Cookie;
+use ReIndex\Cookie;
 use ReIndex\Doc\Member;
 use ReIndex\Security\Consumer;
 use ReIndex\Validator\Password;

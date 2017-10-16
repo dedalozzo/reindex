@@ -11,6 +11,9 @@
 namespace ReIndex\Console\Command;
 
 
+use EoC\Exception\BadResponseException;
+use EoC\Exception\ClientErrorException;
+use EoC\Exception\ServerErrorException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -46,7 +49,14 @@ final class CreateCommand extends AbstractCommand {
 
     $databases = $this->di['init'];
     foreach ($databases as $name => $value) {
-      $couch->createDb($name);
+      try {
+        $couch->createDb($name);
+      }
+      catch (BadResponseException $e) {
+        $body = $e->getResponse()->getBodyAsArray();
+        throw new \Exception($name . ' ' .$body['error'] . ' - ' . $body['reason']);
+      }
+
       printf('%s%s... done'.PHP_EOL, $prefix, $name);
     }
 

@@ -17,8 +17,9 @@ use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 use EoC\Exception\ClientErrorException;
 
-use ReIndex\Security\User;
-use ReIndex\Helper\Cookie;
+use Daikengo\User;
+
+use ReIndex\Security\Cookie;
 
 
 /**
@@ -72,7 +73,7 @@ final class UserFactory {
    * otherwise return an Anonymous instance.
    * @param[in] string $consumerName The consumer name.
    * @param[in] string $userId The user identifier used by the provider.
-   * @retval Security::Member::IUser An user instance.
+   * @retval Daikengo::User::IUser An user instance.
    */
   public static function fromLogin($consumerName, $userId) {
     $di = Di::getDefault();

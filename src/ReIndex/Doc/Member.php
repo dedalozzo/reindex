@@ -12,17 +12,19 @@ namespace ReIndex\Doc;
 
 
 use ReIndex\Collection;
-use ReIndex\Exception;
-use ReIndex\Helper;
-use ReIndex\Security\User\IUser;
-use ReIndex\Security\Role;
 use ReIndex\Security\Permission;
-use ReIndex\Security\Permission\IPermission;
-use ReIndex\Security\Role\MemberRole;
 use ReIndex\Task\IndexMemberTask;
 
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
+
+use Daikengo\User\IUser;
+use Daikengo\User\TMember;
+use Daikengo\Role\MemberRole;
+use Daikengo\Collection\RoleCollection;
+use Daikengo\Exception\AccessDeniedException;
+
+use ToolBag\Helper;
 
 use Phalcon\Di;
 
@@ -36,22 +38,21 @@ use Phalcon\Di;
  * @property string $username
  * @property string $firstName
  * @property string $lastName
-
+ *
  * @property Collection\TaskCollection $tasks
  * @property Collection\EmailCollection $emails
  * @property Collection\LoginCollection $logins
- * @property Collection\RoleCollection $roles
  * @property Collection\TagCollection $tags
  * @property Collection\Blacklist $blacklist
  * @property Collection\FriendCollection $friends
  * @property Collection\FollowerCollection $followers
-
+ *
  * @property string $password
  * @property string $hash
  * @property string $internetProtocolAddress
  * @property string $locale
  * @property int $timeOffset
-
+ *
  * @property string $gender
  * @property int $birthday
  * @property string $about
@@ -59,6 +60,7 @@ use Phalcon\Di;
  * @endcond
  */
 final class Member extends ActiveDoc implements IUser {
+  use TMember;
 
   /** @name Constants */
   //!@{
@@ -72,7 +74,6 @@ final class Member extends ActiveDoc implements IUser {
   private $tasks;     // Collection of tasks.
   private $emails;    // Collection of e-mails.
   private $logins;    // Collection of consumers' logins.
-  private $roles;     // Collection of roles.
   private $tags;      // Favorite tags.
   private $blacklist; // Blacklist.
   private $friends;   // List of friends.
@@ -82,10 +83,10 @@ final class Member extends ActiveDoc implements IUser {
   public function __construct() {
     parent::__construct();
 
+    $this->roles = new RoleCollection('roles', $this->meta);
     $this->tasks = new Collection\TaskCollection('tasks', $this->meta);
     $this->emails = new Collection\EmailCollection('emails', $this->meta);
     $this->logins = new Collection\LoginCollection('logins', $this->meta);
-    $this->roles = new Collection\RoleCollection('roles', $this->meta);
     $this->tags = new Collection\TagCollection('tags', $this->meta);
     $this->blacklist = new Collection\Blacklist('blacklist', $this->meta);
     $this->friends = new Collection\FriendCollection($this);
@@ -130,7 +131,7 @@ final class Member extends ActiveDoc implements IUser {
       $member->createdAt = $result[$i]['value'][2];
       $member->fullName = $result[$i]['value'][3] . ' ' . $result[$i]['value'][4];
       $member->headline = $result[$i]['value'][5];
-      $member->when = Helper\Time::when($member->createdAt, false);
+      $member->when = Helper\TimeHelper::when($member->createdAt, false);
 
       // Friendship.
       if ($user->isMember()) {
@@ -148,13 +149,13 @@ final class Member extends ActiveDoc implements IUser {
       $opts->reduce();
       $opts->setStartKey([TRUE, $id, Couch::WildCard()])->setEndKey([TRUE, $id])->reverseOrderOfResults();
       // friendships/relations/view
-      $member->friendsCount = Helper\Text::formatNumber($couch->queryView('friendships', 'relations', 'view', NULL, $opts)->getReducedValue());
+      $member->friendsCount = Helper\TextHelper::formatNumber($couch->queryView('friendships', 'relations', 'view', NULL, $opts)->getReducedValue());
 
       // Followers count.
       $opts->reset();
       $opts->reduce()->setKey($id);
       // followers/perMember/view
-      $member->followersCount = Helper\Text::formatNumber($couch->queryView('followers', 'perMember', 'view', NULL, $opts)->getReducedValue());
+      $member->followersCount = Helper\TextHelper::formatNumber($couch->queryView('followers', 'perMember', 'view', NULL, $opts)->getReducedValue());
 
       $members[] = $member;
     }
@@ -236,7 +237,7 @@ final class Member extends ActiveDoc implements IUser {
 
 
   /**
-   * @brief @copydoc ActiveDoc::save()
+   * @copydoc ActiveDoc::save()
    */
   public function save($update = TRUE) {
     $memberRole = new MemberRole();
@@ -251,59 +252,6 @@ final class Member extends ActiveDoc implements IUser {
   }
 
 
-  /** @name Access Control Management Methods */
-  //!@{
-
-  /**
-   * @copydoc IUser::has()
-   */
-  public function has(IPermission $permission) {
-    $result = FALSE;
-
-    $permissionReflection = new \ReflectionObject($permission);
-
-    foreach ($this->roles as $roleName => $roleClass) {
-
-      do {
-        $role = new $roleClass;
-
-        // Sets the execution role for the current user.
-        $permission->setRole($role);
-
-        // Creates a reflection class for the roleName.
-        $roleReflection = new \ReflectionObject($role);
-
-        // Determines the method's name related to the roleName.
-        $methodName = 'checkFor' . $roleReflection->getShortName();
-
-        if ($permissionReflection->hasMethod($methodName)) { // If a method exists for the roleName...
-          // Gets the method.
-          $method = $permissionReflection->getMethod($methodName);
-
-          // Invokes the method.
-          $result = $method->invoke($permission);
-
-          // Exits from the do while and foreach as well.
-          break 2;
-        }
-        else {
-          // Go back to the previous role class in the hierarchy. For example, from AdminRole to ModeratorRole.
-          $parentRoleReflection = $roleReflection->getParentClass();
-
-          // Proceed only if the parent role is not an abstract class.
-          if (is_object($parentRoleReflection) && !$parentRoleReflection->isAbstract())
-            $roleClass = $parentRoleReflection->name;
-          else
-            break; // No more roles in the hierarchy.
-        }
-      } while (TRUE);
-
-    }
-
-    return $result;
-  }
-
-
   /**
    * @brief Impersonates the given user.
    * @param[in] IUser $user An anonymous user or a member instance.
@@ -312,28 +260,8 @@ final class Member extends ActiveDoc implements IUser {
     if ($this->user->has(new Permission\Member\ImpersonatePermission($user)))
       $this->user = $user;
     else
-      throw new Exception\AccessDeniedException('Non hai sufficienti privilegi per impersonare un altro utente.');
+      throw new AccessDeniedException('You do not have the required permission to impersonate another user.');
   }
-
-
-  /**
-   * @brief This implementation returns always `false`.
-   * @retval bool
-   */
-  public function isGuest() {
-    return FALSE;
-  }
-
-
-  /**
-   * @brief This implementation returns always `true`.
-   * @retval bool
-   */
-  public function isMember() {
-    return TRUE;
-  }
-
-  //!@}
 
 
   /** @name Ban Management Methods */
@@ -360,7 +288,7 @@ final class Member extends ActiveDoc implements IUser {
    */
   public function ban($days = 0) {
     if (!$this->user->has(new Permission\Member\BanPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi di accesso insufficienti.");
+      throw new AccessDeniedException("Not enough privileges to ban the user.");
 
     $this->meta['banned'] = TRUE;
     $this->meta['bannedOn'] = time();
@@ -379,7 +307,7 @@ final class Member extends ActiveDoc implements IUser {
    */
   public function unban() {
     if (!$this->user->has(new Permission\Member\UnbanPermission($this)))
-      throw new Exception\AccessDeniedException("Privilegi di accesso insufficienti.");
+      throw new AccessDeniedException("Not enough privileges to unban the user.");
 
     if ($this->isMetadataPresent('banned')) {
       unset($this->meta['banned']);
@@ -496,16 +424,6 @@ final class Member extends ActiveDoc implements IUser {
 
   public function issetLogins() {
     return isset($this->logins);
-  }
-
-
-  public function getRoles() {
-    return $this->roles;
-  }
-
-
-  public function issetRoles() {
-    return isset($this->roles);
   }
 
 

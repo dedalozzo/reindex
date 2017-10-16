@@ -12,7 +12,8 @@ namespace ReIndex\Security\Consumer;
 
 
 use ReIndex\Doc\Member;
-use ReIndex\Helper\Text;
+
+use ToolBag\Helper;
 
 
 /**
@@ -61,7 +62,7 @@ final class GitHubConsumer extends OAuth2Consumer {
   protected function update(Member $user, array $userData) {
     $user->setMetadata('username', $this->buildUsername($userData[static::USERNAME]), FALSE, FALSE);
 
-    $names = Text::splitFullName(@$userData['name']);
+    $names = Helper\TextHelper::splitFullName(@$userData['name']);
     $user->setMetadata('firstName', @$names[static::FIRST_NAME], FALSE, FALSE);
     $user->setMetadata('lastName', @$names[static::LAST_NAME], FALSE, FALSE);
 

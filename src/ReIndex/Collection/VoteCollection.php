@@ -15,11 +15,13 @@ use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
 use ReIndex\Doc\ActiveDoc;
-use ReIndex\Helper\Text;
 use ReIndex\Doc\Vote;
 use ReIndex\Doc\Member;
-use ReIndex\Security\User\IUser;
 use ReIndex\Exception;
+
+use Daikengo\User\IUser;
+
+use ToolBag\Helper;
 
 use Phalcon\Di;
 
@@ -91,7 +93,7 @@ final class VoteCollection implements \Countable {
    */
   private function getItemId($unversion, $action) {
     // Unversion the ID just in case `$unversion` is `true`.
-    $id = $unversion ? Text::unversion($this->doc->id) : $this->doc->id;
+    $id = $unversion ? Helper\TextHelper::unversion($this->doc->id) : $this->doc->id;
 
     // Appends the `$action` when provided.
     return empty($action) ? $id : $id . '::' . $action;
@@ -263,7 +265,7 @@ final class VoteCollection implements \Countable {
    * @attention This method supports only unversion IDs.
    */
   public function getLastVoteTimestamp() {
-    $unversionId = Text::unversion($this->doc->id);
+    $unversionId = Helper\TextHelper::unversion($this->doc->id);
 
     $opts = new ViewQueryOpts();
     $opts->setStartKey([$unversionId, Couch::WildCard()])->setEndKey([$unversionId])->setLimit(1);

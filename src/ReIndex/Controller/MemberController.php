@@ -13,7 +13,8 @@ namespace ReIndex\Controller;
 use EoC\Opt\ViewQueryOpts;
 
 use ReIndex\Doc\Member;
-use ReIndex\Helper;
+
+use ToolBag\Helper;
 
 use Phalcon\Mvc\View;
 
@@ -73,7 +74,7 @@ final class MemberController extends ListController {
    * @param[in] string $filter (optional) Human readable representation of a period.
    */
   public function reputationAction($filter = NULL) {
-    $filter = Helper\Time::period($filter);
+    $filter = Helper\TimeHelper::period($filter);
     if ($filter === FALSE) return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     //$this->dispatcher->setParam('filter', $filter);
@@ -81,7 +82,7 @@ final class MemberController extends ListController {
     // todo implementation goes here
 
     //$this->view->setVar('filters', $this->periods);
-    $this->view->setVar('title', 'Utenti per reputazione');
+    $this->view->setVar('title', 'Users by reputation');
   }
 
 
@@ -89,7 +90,7 @@ final class MemberController extends ListController {
    * @brief Displays the members from the most popular to the lowest.
    */
   public function popularAction() {
-    $this->view->setVar('title', 'Utenti più popolari');
+    $this->view->setVar('title', 'Most popular users');
   }
 
 
@@ -100,16 +101,16 @@ final class MemberController extends ListController {
    */
   public function newestAction($role = 'all', $period = NULL) {
     $roles = $this->getRoles();
-    $periods = Helper\ArrayHelper::slice(Helper\Time::$periods, 7);
+    $periods = Helper\ArrayHelper::slice(Helper\TimeHelper::$periods, 7);
 
     $role = Helper\ArrayHelper::key($role, $roles);
-    $period = Helper\Time::period($period);
+    $period = Helper\TimeHelper::period($period);
 
     if ($role === FALSE || $period === FALSE)
       return $this->dispatcher->forward(['controller' => 'error', 'action' => 'show404']);
 
     $min = 0; $max = 0;
-    Helper\Time::minMaxInPeriod($period, $min, $max);
+    Helper\TimeHelper::minMaxInPeriod($period, $min, $max);
 
     $opts = new ViewQueryOpts();
     $opts->reverseOrderOfResults()->setLimit($this->resultsPerPage+1);
@@ -141,7 +142,7 @@ final class MemberController extends ListController {
     $this->view->setVar('entries', $members);
     $this->view->setVar('roles', $roles);
     $this->view->setVar('periods', $periods);
-    $this->view->setVar('title', 'Nuovi utenti');
+    $this->view->setVar('title', 'New users');
   }
 
 }

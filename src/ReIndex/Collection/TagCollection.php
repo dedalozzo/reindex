@@ -12,9 +12,13 @@ namespace ReIndex\Collection;
 
 
 use ReIndex\Doc\Tag;
-use ReIndex\Helper;
 
 use EoC\Opt\ViewQueryOpts;
+
+use ToolBag\Collection\MetaCollection;
+use ToolBag\Helper;
+
+use Phalcon\Di;
 
 
 /**
@@ -22,6 +26,11 @@ use EoC\Opt\ViewQueryOpts;
  * @nosubgrouping
  */
 final class TagCollection extends MetaCollection {
+
+  /**
+   * @var Di $di
+   */
+  protected $di;
 
   /**
    * @var Couch $couch
@@ -111,10 +120,10 @@ final class TagCollection extends MetaCollection {
         $tag->creatorId = $this->meta['creatorId'];
         $tag->submit();
 
-        $this->add(Helper\Text::unversion($tag->id));
+        $this->add(Helper\TextHelper::unversion($tag->id));
       }
       else
-        $this->add(Helper\Text::unversion($row['id']));
+        $this->add(Helper\TextHelper::unversion($row['id']));
 
     }
   }

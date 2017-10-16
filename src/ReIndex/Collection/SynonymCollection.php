@@ -12,7 +12,9 @@ namespace ReIndex\Collection;
 
 
 use ReIndex\Doc\Synonym;
-use ReIndex\Helper;
+
+use ToolBag\Helper;
+use ToolBag\Collection\MetaCollection;
 
 
 /**

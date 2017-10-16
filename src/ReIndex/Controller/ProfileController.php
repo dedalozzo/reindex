@@ -13,9 +13,7 @@ namespace ReIndex\Controller;
 use ReIndex\Doc\Post;
 use ReIndex\Doc\Member;
 use ReIndex\Factory\UserFactory;
-use ReIndex\Helper;
 use ReIndex\Exception;
-use ReIndex\Security\User\IUser;
 use ReIndex\Security\Role\ModeratorRole;
 use ReIndex\Validation;
 use ReIndex\Validator\Password;
@@ -28,6 +26,10 @@ use Phalcon\Validation\Validator\Email;
 
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
+
+use Daikengo\User\IUser;
+
+use ToolBag\Helper;
 
 
 /**
@@ -117,7 +119,7 @@ final class ProfileController extends ListController {
     }
 
     $this->view->setVar('posts', $posts);
-    $this->view->setVar('entriesCount', Helper\Text::formatNumber($count));
+    $this->view->setVar('entriesCount', Helper\TextHelper::formatNumber($count));
     */
     $this->view->setVar('entriesLabel', 'contributi');
     $this->view->setVar('title', sprintf('%s timeline', $username));
@@ -236,7 +238,7 @@ final class ProfileController extends ListController {
 
     // Converts ISO 8601 timestamp.
     $formatDate = function (&$value, $key) {
-      $value['created_at'] = Helper\Time::when(date("U", strtotime($value['created_at'])));
+      $value['created_at'] = Helper\TimeHelper::when(date("U", strtotime($value['created_at'])));
     };
     array_walk($repos, $formatDate);
 

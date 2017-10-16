@@ -11,7 +11,7 @@
 namespace ReIndex\Doc;
 
 
-use ReIndex\Helper\Text;
+use ToolBag\Helper;
 
 use EoC\Doc\Doc;
 
@@ -29,7 +29,7 @@ class Subscription extends Doc {
   public static function create($itemId, $memberId, $timestamp = NULL) {
     $instance = new self();
 
-    $instance->meta["itemId"] = Text::unversion($itemId);
+    $instance->meta["itemId"] = Helper\TextHelper::unversion($itemId);
     $instance->meta["memberId"] = $memberId;
 
     if (is_null($timestamp))

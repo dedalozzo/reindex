@@ -21,9 +21,11 @@ use Phalcon\Validation\Validator\PresenceOf;
 
 use ReIndex\Doc\Member;
 use ReIndex\Factory\UserFactory;
-use ReIndex\Helper;
 use ReIndex\Validation;
 use ReIndex\Exception;
+use ReIndex\Security\Cookie;
+
+use ToolBag\Helper;
 
 
 /**
@@ -45,6 +47,7 @@ abstract class OAuth2Consumer implements IConsumer {
   protected $di; // Stores the default Dependency Injector.
   protected $config;
   protected $log; // Sotres the logger instance.
+  protected $guardian;
   protected $user; // Stores the current user.
   protected $uri;
   protected $service; // Stores the service used to connect to the provider.
@@ -241,7 +244,7 @@ abstract class OAuth2Consumer implements IConsumer {
    */
   private function signIn(Member $user, array $userData) {
     $this->update($user, $userData);
-    Helper\Cookie::set($user);
+    Cookie::set($user);
   }
 
 
@@ -252,7 +255,7 @@ abstract class OAuth2Consumer implements IConsumer {
   private function signUp(array $userData) {
     $user = Member::create();
     $this->update($user, $userData);
-    Helper\Cookie::set($user);
+    Cookie::set($user);
     return $user;
   }
 
@@ -297,13 +300,13 @@ abstract class OAuth2Consumer implements IConsumer {
    */
   protected function normalizeUsername($value) {
     // Converts the charset from uft-8 to ASCII.
-    $temp = Helper\Text::convertCharset($value, FALSE, 'utf-8', 'ASCII//TRANSLIT');
+    $temp = Helper\TextHelper::convertCharset($value, FALSE, 'utf-8', 'ASCII//TRANSLIT');
 
     // Removes any character that is not a letter, a number, minus, hyphen or underscore.
     $temp = preg_replace('/[^.\-\w]+/', '', $temp);
 
     // Removes all the occurrences of minus, hyphen or underscore but first.
-    $temp = Helper\Text::replaceAllButFirst('/[.\-_]/', '', $temp);
+    $temp = Helper\TextHelper::replaceAllButFirst('/[.\-_]/', '', $temp);
 
     // Finally returns the string or a substring if the username is > 24 chars.
     return (strlen($temp) > $this->config->application->usernameMaxLength) ? substr($temp, 0, $this->config->application->usernameMaxLength-1) : $temp;

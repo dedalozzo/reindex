@@ -12,7 +12,8 @@ namespace ReIndex\Security\Permission\Member;
 
 
 use ReIndex\Security\Permission\AbstractPermission;
-use ReIndex\Security\User\IUser;
+
+use Daikengo\User\IUser;
 
 
 /**

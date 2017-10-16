@@ -20,7 +20,7 @@ use Monolog\Logger;
 
 use Phalcon\Di;
 
-use ReIndex\Helper;
+use ToolBag\Helper;
 
 
 /**
@@ -145,7 +145,7 @@ abstract class ActiveDoc extends Doc {
    * @retval string
    */
   public function whenHasBeenCreated() {
-    return Helper\Time::when($this->createdAt);
+    return Helper\TimeHelper::when($this->createdAt);
   }
 
 
@@ -155,7 +155,7 @@ abstract class ActiveDoc extends Doc {
    * @retval string
    */
   public function whenHasBeenModified() {
-    return Helper\Time::when($this->modifiedAt);
+    return Helper\TimeHelper::when($this->modifiedAt);
   }
 
 

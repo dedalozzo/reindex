@@ -8,7 +8,7 @@
  */
 
 
-namespace ReIndex\Helper;
+namespace ReIndex\Security;
 
 
 use Phalcon\Di;

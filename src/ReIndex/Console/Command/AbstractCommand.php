@@ -21,7 +21,7 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use EoC\Helper\TimeHelper;
+use ToolBag\Helper;
 
 use Monolog\Logger;
 
@@ -61,7 +61,7 @@ abstract class AbstractCommand extends Command implements InjectionAwareInterfac
    * @brief Executes the command.
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $time = TimeHelper::since($this->start);
+    $time = Helper\TimeHelper::since($this->start);
     $output->writeln(PHP_EOL.sprintf("%d days, %d hours, %d minutes, %d seconds", $time['days'], $time['hours'], $time['minutes'], $time['seconds']));
   }
 

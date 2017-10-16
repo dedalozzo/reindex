@@ -12,7 +12,7 @@
 namespace ReIndex\Security\Permission\Member;
 
 
-use ReIndex\Security\Permission\AbstractPermission as Superclass;
+use Daikengo\Permission\AbstractPermission as Superclass;
 use ReIndex\Doc\Member;
 
 

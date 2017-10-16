@@ -11,7 +11,7 @@
 namespace ReIndex\Controller;
 
 
-use ReIndex\Helper;
+use ToolBag\Helper;
 
 
 /**
@@ -51,7 +51,7 @@ final class QuestionController extends IndexController {
     $this->dispatcher->setParam('filter', $filter);
 
     $this->view->setVar('filters', $filters);
-    $this->view->setVar('entriesCount', Helper\Text::formatNumber(0));
+    $this->view->setVar('entriesCount', Helper\TextHelper::formatNumber(0));
     $this->view->setVar('title', sprintf('Open %s', ucfirst($this->getLabel())));
   }
 

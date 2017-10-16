@@ -13,8 +13,9 @@ namespace ReIndex\Security\Permission\Role;
 
 
 use ReIndex\Security\Permission\AbstractPermission;
-use ReIndex\Security\Role\IRole;
-use ReIndex\Security\Role\GuestRole;
+
+use Daikengo\Role\IRole;
+use Daikengo\Role\GuestRole;
 
 
 /**

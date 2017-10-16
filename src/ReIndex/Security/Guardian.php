@@ -13,11 +13,15 @@ namespace ReIndex\Security;
 
 
 Use EoC\Couch;
-use EoC\Extension\TProperty;
 use EoC\Opt\ViewQueryOpts;
 
 use ReIndex\Factory\UserFactory;
-use ReIndex\Security\Role\IRole;
+use ReIndex\Security\Role as ReIndexRole;
+
+use Daikengo\Role as BaseRole;
+use Daikengo\Role\IRole;
+
+use ToolBag\Extension\TProperty;
 
 use Monolog\Logger;
 
@@ -61,16 +65,16 @@ final class Guardian {
       self::$initialized = TRUE;
       self::$user = UserFactory::fromCookie();
 
-      $this->loadRole(new Role\SupervisorRole());
-      $this->loadRole(new Role\AdminRole());
-      $this->loadRole(new Role\ModeratorRole());
-      $this->loadRole(new Role\ReviewerRole());
-      $this->loadRole(new Role\EditorRole());
-      $this->loadRole(new Role\TrustedRole());
-      $this->loadRole(new Role\MemberRole());
+      $this->loadRole(new BaseRole\SupervisorRole());
+      $this->loadRole(new BaseRole\AdminRole());
+      $this->loadRole(new ReIndexRole\ModeratorRole());
+      $this->loadRole(new ReIndexRole\ReviewerRole());
+      $this->loadRole(new ReIndexRole\EditorRole());
+      $this->loadRole(new ReIndexRole\TrustedRole());
+      $this->loadRole(new BaseRole\MemberRole());
 
       // Special role.
-      $this->loadRole(new Role\DeveloperRole());
+      $this->loadRole(new BaseRole\DeveloperRole());
     }
   }
 
@@ -112,7 +116,6 @@ final class Guardian {
    * @brief Unloads all the roles.
    */
   public function resetRoles() {
-    unset(self::$roles);
     self::$roles = [];
   }
 

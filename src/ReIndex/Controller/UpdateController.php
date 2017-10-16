@@ -11,7 +11,7 @@
 namespace ReIndex\Controller;
 
 
-use ReIndex\Helper;
+use ToolBag\Helper;
 
 
 /**

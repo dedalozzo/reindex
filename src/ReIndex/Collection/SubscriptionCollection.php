@@ -14,10 +14,11 @@ namespace ReIndex\Collection;
 use ReIndex\Doc\Post;
 use ReIndex\Doc\Member;
 use ReIndex\Doc\Subscription;
-use ReIndex\Helper\Text;
 
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
+
+use ToolBag\Helper;
 
 use Phalcon\Di;
 
@@ -68,7 +69,7 @@ final class SubscriptionCollection implements \Countable {
    */
   public function exists(Member $member, &$subscriptionId = NULL) {
     $opts = new ViewQueryOpts();
-    $opts->doNotReduce()->setLimit(1)->setKey([Text::unversion($this->post->id), $member->id]);
+    $opts->doNotReduce()->setLimit(1)->setKey([Helper\TextHelper::unversion($this->post->id), $member->id]);
 
     // subscriptions/perItem/view
     $result = $this->couch->queryView('subscriptions', 'perItem', 'view', NULL, $opts);
