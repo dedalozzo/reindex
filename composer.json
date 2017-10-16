@@ -20,6 +20,8 @@
         "ext-yaml": "*",
         "ext-hoedown": "*",
         "sneakybobito/phalcon-stubs": "^3.0",
+        "3f/tool-bag": "dev-master",
+        "3f/daikengo": "dev-master",
         "3f/eoc-client": "dev-master",
         "3f/pygmentize": "dev-master",
         "3f/converter": "dev-master",
