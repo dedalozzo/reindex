@@ -93,7 +93,7 @@ final class UserFactory {
 
 
   /**
-   * @brief Searches for the user identified by e-mail, if any returns it, otherwise return an Anonymous instance.
+   * @brief Searches for the user identified by e-mail, if any returns it, otherwise return a `Guest` instance.
    * @param[in] string $email The user email.
    * @retval User::IUser An user instance.
    */
