@@ -13,6 +13,7 @@ class Member  {
   string $firstName; //!< First name.
   string $lastName;  //!< Last surname.
 
+  RoleCollection $roles;         //!< A collection of roles associated with the member.
   TaskCollection $tasks;         //!< A collection of tasks.
   EmailCollection $emails;       //!< A collection of e-mails.
   LoginCollection $logins;       //!< A collection of consumers' logins.
