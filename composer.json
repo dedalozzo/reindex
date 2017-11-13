@@ -2,7 +2,7 @@
     "name": "reindex/reindex",
     "description": "The open source social network platform.",
     "keywords": ["journal", "blog", "questions", "answers", "platform", "press", "social", "social network"],
-    "homepage": "http://reindex.xyz",
+    "homepage": "https://github.com/reindexltd/reindex",
     "license": "Apache-2.0",
     "authors": [
         {
