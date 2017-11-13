@@ -41,7 +41,7 @@ $log = new Logger('reindex');
 ErrorHandler::register($log);
 
 // Creates a stream handler to log debugging messages.
-$handler = new StreamHandler($root.'/log/reindex.log', Logger::DEBUG);
+$handler = new StreamHandler($root.'/log/error.log', Logger::DEBUG);
 //$handler->pushProcessor(new MemoryUsageProcessor());
 //$handler->pushProcessor(new MemoryPeakUsageProcessor());
 //$handler->pushProcessor(new UidProcessor());
