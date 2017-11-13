@@ -14,7 +14,7 @@ namespace ReIndex\Collection;
 use ReIndex\Task\ITask;
 use ReIndex\Queue\TaskQueue;
 
-use ToolBag\Collection\MetaCollection;
+use ToolBag\Meta\MetaCollection;
 
 use Phalcon\Di;
 
