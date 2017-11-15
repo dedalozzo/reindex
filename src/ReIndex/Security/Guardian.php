@@ -21,7 +21,7 @@ use ReIndex\Security\Role as ReIndexRole;
 use Daikengo\Role as BaseRole;
 use Daikengo\Role\IRole;
 
-use ToolBag\Extension\TProperty;
+use Meta\Extension\TProperty;
 
 use Monolog\Logger;
 

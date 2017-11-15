@@ -16,7 +16,7 @@ use ReIndex\Doc\Member;
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
 
-use ToolBag\Meta\MetaCollection;
+use Meta\MetaCollection;
 
 use Phalcon\Di;
 

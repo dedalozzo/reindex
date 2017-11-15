@@ -11,7 +11,7 @@
 namespace ReIndex\Collection;
 
 
-use ToolBag\Meta\MetaCollection;
+use Meta\MetaCollection;
 
 
 /**

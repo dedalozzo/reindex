@@ -15,7 +15,8 @@ use ReIndex\Doc\Tag;
 
 use EoC\Opt\ViewQueryOpts;
 
-use ToolBag\Meta\MetaCollection;
+use Meta\MetaCollection;
+
 use ToolBag\Helper;
 
 use Phalcon\Di;

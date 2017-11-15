@@ -14,7 +14,8 @@ namespace ReIndex\Collection;
 use ReIndex\Doc\Synonym;
 
 use ToolBag\Helper;
-use ToolBag\Meta\MetaCollection;
+
+use Meta\MetaCollection;
 
 
 /**
