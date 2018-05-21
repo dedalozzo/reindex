@@ -51,7 +51,7 @@ final class ApiController extends BaseController {
    * web applications.\n
    * To make possible cross-site AJAX calls, for example from www.programmazione.it to api.programmazione.it, we
    * must set `Access-Control-Allow-Origin` header.
-   * @attention This method works, but we no londer use Cross-site HTTP requests.
+   * @attention This method works, but we no longer use Cross-site HTTP requests.
    */
   protected function validateOrigin() {
 
