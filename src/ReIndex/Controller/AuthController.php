@@ -21,8 +21,8 @@ use EoC\Opt\ViewQueryOpts;
 
 use ReIndex\Exception;
 use ReIndex\Validation;
-use ReIndex\Cookie;
 use ReIndex\Doc\Member;
+use ReIndex\Security\Cookie;
 use ReIndex\Security\Consumer;
 use ReIndex\Validator\Password;
 use ReIndex\Validator\Username;
@@ -86,11 +86,29 @@ final class AuthController extends BaseController {
     }
 
     $this->view->setVar("logon", TRUE);
-    $this->view->setVar('title', 'Unisciti al più grande social network italiano di sviluppatori');
+    $this->view->setVar('title', 'Join the social blogging platform powered by Git');
 
     $this->assets->addJs($this->dist."/js/tab.min.js", FALSE);
 
     $this->view->pick('views/auth/logon');
+  }
+
+
+  /**
+   * @brief Validates the the sign in form's input fields.
+   * @param Validation $validation A validation component.
+   */
+  private function signInValidation(Validation $validation) {
+    $validation->setFilters("email", "trim");
+    $validation->setFilters("email", "lower");
+    $validation->add("email", new PresenceOf(["message" => "The e-mail is required."]));
+    $validation->add("email", new Email(["message" => "Please, enter a valid e-mail."]));
+
+    $validation->add("password", new PresenceOf(["message" => "The password is required."]));
+
+    $validation->add("captchaSignIn", new Captcha());
+
+    $validation->run($_POST);
   }
 
 
@@ -109,27 +127,9 @@ final class AuthController extends BaseController {
       try {
 
         if (!$this->security->checkToken())
-          throw new Exception\InvalidTokenException("Il token è invalido, la richiesta non può essere evasa. Riprova.");
+          throw new Exception\InvalidTokenException("The token is invalid, the request cannot be processed. Please, try again.");
 
-        $validation->setFilters("email", "trim");
-        $validation->setFilters("email", "lower");
-        $validation->add("email", new PresenceOf(["message" => "L'e-mail è obbligatoria."]));
-        $validation->add("email", new Email(["message" => "L'e-mail non è valida."]));
-
-        $validation->add("password", new PresenceOf(["message" => "La password è obbligatoria."]));
-
-        $validation->add("captchaSignIn", new Captcha());
-
-        $group = $validation->validate($_POST);
-        if (count($group) > 0) {
-          throw new Exception\InvalidFieldException("I campi sono incompleti o i valori indicati non sono validi. Gli errori sono segnalati in rosso sotto ai rispettivi campi d'inserimento.");
-        }
-
-        // Filters only the messages generated for the field 'name'.
-        /*foreach ($validation->getMessages()->filter('email') as $message) {
-          $this->flash->notice($message->getMessage());
-          break;
-        }*/
+        $this->signInValidation($validation);
 
         $email = $this->request->getPost('email');
         //$password = $this->security->hash($this->request->getPost('password'));
@@ -142,17 +142,17 @@ final class AuthController extends BaseController {
         $rows = $this->couch->queryView('members', 'byEmail', 'view', NULL, $opts);
 
         if ($rows->isEmpty())
-          throw new Exception\UserNotFoundException("Non vi è nessun utente registrato con l'e-mail inserita o la password è errata.");
+          throw new Exception\UserNotFoundException("There is no user registered with the provided e-mail or the password is wrong.");
 
         // Gets the user.
         $user = $this->couchdb->getDoc('members', Couch::STD_DOC_PATH, $rows[0]['id']);
 
         // Checks if the user has verified his e-mail.
         if (!$user->emails->isVerified($email))
-          throw new Exception\EmailNotVerifiedException("L'utente risulta iscritto, ma l'iscrizione non è ancora stata confermata. Segui le istruzioni ricevute nella e-mail di attivazione che ti è stata inviata. Se ancora non l'hai ricevuta, <a href=\"//".$this->domainName."/invia-email-attivazione/\">richiedi una nuova e-mail di attivazione</a>.");
+          throw new Exception\EmailNotVerifiedException("The user is enrolled, but the registration has not been confirmed. Follow the instructions received in the activation e-mail was sent to you. If you didn't receive the e-mail, <a href=\"//".$this->domainName."/sendactemail\">ask for a new activation e-mail</a>.");
 
         if ($user->password != $password)
-          throw new Exception\WrongPasswordException("Non vi è nessun utente registrato con la login inserita o la password è errata. <a href=\"//".$this->domainName."/resetta-password/\">Hai dimenticato la password?</a>");
+          throw new Exception\WrongPasswordException("Ooops, chubby thumbs? Either you don't have an account with this email or the password was entered incorrectly. Have another go. <a href=\"//".$this->domainName."/reset-passwd/\">Did you forget the passowrd?</a>");
 
         // Updates the ip address with the current one.
         $user->internetProtocolAddress = $_SERVER['REMOTE_ADDR'];
@@ -176,6 +176,32 @@ final class AuthController extends BaseController {
 
 
   /**
+   * @brief Validates the the sign up form's input fields.
+   * @param Validation $validation A validation component.
+   */
+  private function signUpValidation(Validation $validation) {
+    $validation->setFilters("username", "trim");
+    $validation->add("username", new Username());
+
+    $validation->setFilters("email", "trim");
+    $validation->setFilters("email", "lower");
+    $validation->add("email", new PresenceOf(["message" => "The e-mail is required."]));
+    $validation->add("email", new Email(["message" => "Please, enter a valid e-mail."]));
+
+    $validation->add("password", new Password());
+    $validation->add('password', new Confirmation(
+      [
+        'message' => "Password is different from the confirm password.",
+        'with' => 'confirmPassword'
+      ]));
+
+    $validation->add("captchaSignUp", new Captcha());
+
+    $validation->run($_POST);
+  }
+
+
+  /**
    * @brief Performs the Sign Up.
    */
   protected function signUp() {
@@ -188,33 +214,7 @@ final class AuthController extends BaseController {
     if ($this->request->isPost()) {
 
       try {
-        $validation->setFilters("username", "trim");
-        $validation->add("username", new Username());
-
-        $validation->setFilters("email", "trim");
-        $validation->setFilters("email", "lower");
-        $validation->add("email", new PresenceOf(["message" => "L'e-mail è obbligatoria."]));
-        $validation->add("email", new Email(["message" => "L'e-mail non è valida."]));
-
-        $validation->add("password", new Password());
-        $validation->add('password', new Confirmation(
-          [
-            'message' => "La password è diversa da quella di conferma.",
-            'with' => 'confirmPassword'
-          ]));
-
-        $validation->add("captchaSignUp", new Captcha());
-
-        $group = $validation->validate($_POST);
-        if (count($group) > 0) {
-          throw new Exception\InvalidFieldException("I campi sono incompleti o i valori indicati non sono validi. Gli errori sono segnalati in rosso sotto ai rispettivi campi d'inserimento.");
-        }
-
-        // Filters only the messages generated for the field 'name'.
-        /*foreach ($validation->getMessages()->filter('email') as $message) {
-          $this->flash->notice($message->getMessage());
-          break;
-        }*/
+        $this->signUpValidation($validation);
 
         $username = $this->request->getPost('username');
         $email = $this->request->getPost('email');
@@ -228,7 +228,7 @@ final class AuthController extends BaseController {
         $rows = $this->couch->queryView('members', 'byEmail', 'view', NULL, $opts);
 
         if (!$rows->isEmpty())
-          throw new Exception\InvalidEmailException("Sei già registrato. <a href=\"#signin\">Fai il login!</a>");
+          throw new Exception\InvalidEmailException("You are already registered. Please, <a href=\"#signin\">sign in</a>!");
 
         $user = Member::create();
         $user->username = $username;
@@ -266,7 +266,7 @@ final class AuthController extends BaseController {
     else
       $this->signIn();
 
-    $this->view->setVar('title', 'Unisciti al più grande social network italiano di sviluppatori');
+    $this->view->setVar('title', 'Social blogging platform powered by Git');
 
     $this->assets->addJs($this->dist."/js/tab.min.js", FALSE);
 
@@ -284,7 +284,7 @@ final class AuthController extends BaseController {
     Cookie::delete();
 
     // Displays the error message.
-    $this->flash->success("Disconnessione avvenuta con successo.");
+    $this->flash->success("You have been successfully logged out!");
 
     $this->view->disable();
 
