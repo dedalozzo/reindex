@@ -9,7 +9,8 @@
 
 
 use EoC\Couch;
-use EoC\Adapter;
+
+use Surfer\Adapter;
 
 
 // Creates an instance of EoC client and return it.
