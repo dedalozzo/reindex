@@ -37,7 +37,7 @@ try {
   ErrorHandler::register($log);
 
   // Creates a stream handler to log debugging messages.
-  $log->pushHandler(new StreamHandler($root.'/log/error.log', Logger::DEBUG));
+  $log->pushHandler(new StreamHandler($root.'/log/rei.log', Logger::DEBUG));
 
   // The FactoryDefault Dependency Injector automatically registers the right services providing a full stack framework.
   $di = new DependencyInjector();
