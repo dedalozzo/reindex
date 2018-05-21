@@ -14,6 +14,7 @@ namespace ReIndex\Security\Consumer;
 use OAuth\Common\Http\Uri\UriFactory;
 use OAuth\Common\Storage\Session;
 use OAuth\Common\Consumer\Credentials;
+use OAuth\OAuth2\Service\ServiceInterface;
 use OAuth\ServiceFactory;
 
 use Phalcon\Di;
@@ -50,7 +51,13 @@ abstract class OAuth2Consumer implements IConsumer {
   protected $guardian;
   protected $user; // Stores the current user.
   protected $uri;
-  protected $service; // Stores the service used to connect to the provider.
+
+  /**
+   * @var ServiceInterface $service Stores the service used to connect to the provider.
+   */
+  protected $service;
+
+
   protected $storage;
 
 
@@ -203,6 +210,7 @@ abstract class OAuth2Consumer implements IConsumer {
    */
   protected function onAuthorizationGranted() {
     $token = $this->service->requestAccessToken($_GET['code']);
+    $this->log->addDebug('Token: '.$token->getAccessToken());
   }
 
 
