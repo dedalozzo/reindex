@@ -10,6 +10,7 @@
 
 namespace ReIndex\Controller;
 
+
 use ReIndex\Doc\Post;
 use ReIndex\Doc\Member;
 use ReIndex\Factory\UserFactory;
@@ -121,7 +122,7 @@ final class ProfileController extends ListController {
     $this->view->setVar('posts', $posts);
     $this->view->setVar('entriesCount', Helper\TextHelper::formatNumber($count));
     */
-    $this->view->setVar('entriesLabel', 'contributi');
+    $this->view->setVar('entriesLabel', 'articles');
     $this->view->setVar('title', sprintf('%s timeline', $username));
 
     $this->view->pick('views/profile/timeline');
@@ -281,15 +282,12 @@ final class ProfileController extends ListController {
 
       try {
         $validation->setFilters("firstName", "trim");
-        $validation->add("firstName", new PresenceOf(["message" => "First name is mandatory."]));
+        $validation->add("firstName", new PresenceOf(["message" => "First name is required."]));
 
         $validation->setFilters("lastName", "trim");
-        $validation->add("lastName", new PresenceOf(["message" => "Last name is mandatory."]));
+        $validation->add("lastName", new PresenceOf(["message" => "Last name is required."]));
 
-        $group = $validation->validate($_POST);
-        if (count($group) > 0) {
-          throw new Exception\InvalidFieldException("Fields are incomplete or the entered values are invalid. The errors are reported in red under the respective entry fields.");
-        }
+        $validation->run($_POST);
 
         $this->user->firstName = $this->request->getPost('firstName');
         $this->user->lastName = $this->request->getPost('lastName');
@@ -322,6 +320,23 @@ final class ProfileController extends ListController {
 
 
   /**
+   * @brief Validates the the password form's input fields.
+   * @param Validation $validation A validation component.
+   */
+  private function passwordValidation(Validation $validation) {
+    $validation->add("oldPassword", new PresenceOf(["message" => "The password is required."]));
+    $validation->add("newPassword", new Password());
+    $validation->add('newPassword', new Confirmation(
+      [
+        'message' => "Password is different from the confirm password.",
+        'with' => 'confirmPassword'
+      ]));
+
+    $validation->run($_POST);
+  }
+
+
+  /**
    * @brief Let the user to update his own password.
    * @param[in] string $username A username.
    */
@@ -337,23 +352,12 @@ final class ProfileController extends ListController {
     if ($this->request->isPost()) {
 
       try {
-        $validation->add("oldPassword", new PresenceOf(["message" => "La password è obbligatoria."]));
-        $validation->add("newPassword", new Password());
-        $validation->add('newPassword', new Confirmation(
-          [
-            'message' => "La password è diversa da quella di conferma.",
-            'with' => 'confirmPassword'
-          ]));
-
-        $group = $validation->validate($_POST);
-        if (count($group) > 0) {
-          throw new Exception\InvalidFieldException("Fields are incomplete or the entered values are invalid. The errors are reported in red under the respective entry fields.");
-        }
+        $this->passwordValidation($validation);
 
         $oldPassword = md5($this->request->getPost('oldPassword'));
 
         if ($this->user->password != $oldPassword)
-          throw new Exception\WrongPasswordException("La password corrente è diversa da quella inserita. <a href=\"//".$this->domainName."/resetta-password/\">Hai dimenticato la password?</a>");
+          throw new Exception\WrongPasswordException("The current password is wrong. <a href=\"//".$this->domainName."/resetpasswd/\">Did you forget it?</a>");
 
         $this->user->password = md5($this->request->getPost('newPassowrd'));
 
@@ -395,11 +399,7 @@ final class ProfileController extends ListController {
       try {
         $validation->setFilters("username", "trim");
         $validation->add("username", new Username());
-
-        $group = $validation->validate($_POST);
-        if (count($group) > 0) {
-          throw new Exception\InvalidFieldException("Fields are incomplete or the entered values are invalid. The errors are reported in red under the respective entry fields.");
-        }
+        $validation->run($_POST);
 
         $this->user->username = $this->request->getPost('username');
 
@@ -488,18 +488,14 @@ final class ProfileController extends ListController {
             throw new Exception\TooManyEmailsException("You have reached the maximum number of e-mails allowed.");
 
           $validation->setFilters("email", ["email", "lower"]);
-          $validation->add("email", new PresenceOf(["message" => "L'e-mail è obbligatoria."]));
-          $validation->add("email", new Email(["message" => "L'e-mail non è valida."]));
-
-          $group = $validation->validate($_POST);
-          if (count($group) > 0) {
-            throw new Exception\InvalidFieldException("I campi sono incompleti o i valori indicati non sono validi. Gli errori sono segnalati in rosso sotto ai rispettivi campi d'inserimento.");
-          }
+          $validation->add("email", new PresenceOf(["message" => "The e-mail is required."]));
+          $validation->add("email", new Email(["message" => "Please, enter a valid e-mail."]));
+          $validation->run($_POST);
 
           $email = $this->request->getPost('email', ["email", "lower"]);
 
           if ($this->user->emails->exists($email))
-            throw new Exception\InvalidEmailException("L'e-mail che stai tentando di aggiungere è già presente.");
+            throw new Exception\InvalidEmailException("Sorry, the e-mail is already associated with your account.");
 
           $opts = new ViewQueryOpts();
           $opts->setKey($email)->setLimit(1);
@@ -508,7 +504,7 @@ final class ProfileController extends ListController {
           $rows = $this->couch->queryView("members", 'byEmail', 'view', NULL, $opts);
 
           if (!$rows->isEmpty())
-            throw new Exception\InvalidEmailException("L'e-mail che stai tentando di aggiungere è già utilizzata da un altro utente.");
+            throw new Exception\InvalidEmailException("Sorry, the e-mail is already in use by another user.");
 
           $this->user->emails->add($email);
 
@@ -532,7 +528,7 @@ final class ProfileController extends ListController {
             $this->flash->success('Congratulations, the e-mail has been removed from your account.');
           }
           else
-            throw new Exception\InvalidEmailException("L'e-mail non può essere rimossa.");
+            throw new Exception\InvalidEmailException("The e-mail cannot be removed.");
         }
         elseif ($this->request->getPost('resendVerificationEmail')) {
           $email = $this->request->getPost("resendVerificationEmail", "email");
@@ -624,31 +620,27 @@ final class ProfileController extends ListController {
         // The user is trying to add a member to the blacklist.
         if ($this->request->getPost('addMember')) {
           $validation->setFilters("nickname", "trim");
-          $validation->add("nickname", new PresenceOf(["message" => "Lo username è obbligatorio."]));
-
-          $group = $validation->validate($_POST);
-          if (count($group) > 0) {
-            throw new Exception\InvalidFieldException("I campi sono incompleti o i valori indicati non sono validi. Gli errori sono segnalati in rosso sotto ai rispettivi campi d'inserimento.");
-          }
+          $validation->add("nickname", new PresenceOf(["message" => "The nickname is required."]));
+          $validation->run($_POST);
 
           $nickname = $this->request->getPost('nickname');
 
           if ($nickname === $this->user->username)
-            throw new Exception\UserMismatchException("Non puoi aggiungere te stesso alla blacklist.");
+            throw new Exception\UserMismatchException("Mate, are you trying to blacklist yourself?");
 
           $member = UserFactory::fromUsername($nickname);
 
           if ($member->isGuest())
-            throw new Exception\UserNotFoundException("Non esiste nessun utente con lo username inserito.");
+            throw new Exception\UserNotFoundException("The user does not exist.");
 
           if ($this->user->blacklist->exists($member))
-            throw new Exception\UserMismatchException("L'utente che stai cercando di aggiungere è già presente nella tua blacklist.");
+            throw new Exception\UserMismatchException("Mate, you are trying to add a user that is already in your blacklist.");
 
           if ($this->user->friends->exists($member))
-            throw new Exception\UserNotFoundException("Non puoi aggiungere un tuo amico alla blacklist, prima rimuovilo dagli amici, poi aggiungilo alla blacklist.");
+            throw new Exception\UserNotFoundException("You cannot blacklist a friend. Unfriend him, then you will be able to add him to the blacklist.");
 
           if ($member->roles->areSuperiorThan(new ModeratorRole()))
-            throw new Exception\InvalidEmailException(sprintf("Siamo spiacenti ma non puoi aggiungere questo utente alla blacklist, in quanto moderatore o amministratore della comunità. Se sei oggetto di molestie da parte di un moderatore contattaci via e-mail all'indirizzo %s.", $this->config->application->supportEmail));
+            throw new Exception\InvalidEmailException(sprintf("We are afraid but you cannot add to the blacklist this user, since he is a moderator or an administrator of this community. If you are subject to harassment by a moderator contact us via e-mail all'indirizzo %s.", $this->config->application->supportEmail));
 
           $this->user->blacklist->add($member);
 
