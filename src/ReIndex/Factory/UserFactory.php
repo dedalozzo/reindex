@@ -15,7 +15,8 @@ use Phalcon\Di;
 
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
-use EoC\Exception\ClientErrorException;
+
+use Surfer\Exception\ClientErrorException;
 
 use Daikengo\User;
 
