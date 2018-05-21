@@ -21,7 +21,8 @@ use Symfony\Component\Console\Helper\ProgressBar;
 
 use EoC\Couch;
 use EoC\Opt\ViewQueryOpts;
-use EoC\Hook\IChunkHook;
+
+use Surfer\Hook\IChunkHook;
 
 use Monolog\Logger;
 

@@ -18,7 +18,8 @@ use ReIndex\Enum\State;
 use Phalcon\Di;
 
 use EoC\Couch;
-use EoC\Hook\IChunkHook;
+
+use Surfer\Hook\IChunkHook;
 
 use Monolog\Logger;
 
