@@ -21,6 +21,13 @@ use Phalcon\Mvc\View;
 final class ErrorController extends BaseController {
 
 
+  public function initialize() {
+    parent::initialize();
+    $this->view->setVar('serverAddr', $_SERVER['SERVER_ADDR']);
+    $this->view->setVar('serverPort', $_SERVER['SERVER_PORT']);
+  }
+
+
   /**
    * @brief 404 Not Found.
    */
