@@ -266,7 +266,7 @@ final class AuthController extends BaseController {
     else
       $this->signIn();
 
-    $this->view->setVar('title', 'Social blogging platform powered by Git');
+    $this->view->setVar('title', 'Join ReIndex, the first social blogging platform powered by Git');
 
     $this->assets->addJs($this->dist."/js/tab.min.js", FALSE);
 
