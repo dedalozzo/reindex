@@ -21,10 +21,10 @@ use AMQPEnvelope;
 use Phalcon\Config;
 use Phalcon\Di;
 
-use EoC\Exception\ClientErrorException;
-use EoC\Exception\ServerErrorException;
-use EoC\Exception\UnknownResponseException;
-use EoC\Exception\JSONErrorException;
+use Surfer\Exception\ClientErrorException;
+use Surfer\Exception\ServerErrorException;
+use Surfer\Exception\UnknownResponseException;
+use Surfer\Exception\JSONErrorException;
 
 
 /**
