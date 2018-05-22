@@ -16,7 +16,8 @@ use Phalcon\Assets\Manager;
 
 use ReIndex\Version;
 use ReIndex\Security\Guardian;
-use ReIndex\Security\User\IUser;
+
+use Daikengo\User\IUser;
 
 use EoC\Couch;
 
